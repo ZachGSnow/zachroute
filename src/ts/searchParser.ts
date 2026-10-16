@@ -318,7 +318,7 @@ function airportSuggestion(a: Airport): Suggestion {
 function routeSuggestion(from: Airport, to: Airport): Suggestion {
   return {
     query: `${codeOf(from)} ${codeOf(to)}`,
-    title: `${codeOf(from)} → ${codeOf(to)}`,
+    title: `${codeOf(from)} \u2192 ${codeOf(to)}`,
     detail: `${from.city || from.name} to ${to.city || to.name}`,
     kind: 'route',
   };
