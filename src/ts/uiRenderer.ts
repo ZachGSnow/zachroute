@@ -1,5 +1,5 @@
 import type { Airport, RunwayDetail } from './geoMath';
-import { formatDistance } from './units';
+import { formatDistance, formatTemp, formatPressure, formatVisibility, tempSpread, fogSpread, getWeatherUnits, metarVisibilityMetric } from './units';
 import { haversineDistance, initialBearing, blockTimeMiles, windAdjustedBlockTime, blockTimeWithHeadwind, slerpArc } from './geoMath';
 import {
   fetchWeather,
@@ -292,8 +292,11 @@ function weatherContentHtml(wx: WeatherSnapshot, elevationFt: number, daytime: b
     const gust = wx.windGustKt !== undefined ? `, gusting ${wx.windGustKt}kt` : '';
     bits.push(`💨 Wind ${wx.windDirDeg}\u00b0 @ ${wx.windSpeedKt}kt${gust}`);
   }
-  if (wx.visibility) bits.push(`👁️ Vis ${wx.visibility} mi`);
-  if (wx.tempF !== undefined) bits.push(`🌡️ ${wx.tempF}\u00b0F`);
+  if (wx.visibility) {
+    const vis = (getWeatherUnits() === 'metric' && metarVisibilityMetric(wx.rawText)) || formatVisibility(wx.visibility);
+    bits.push(`👁️ Vis ${vis}`);
+  }
+  if (wx.tempF !== undefined) bits.push(`🌡️ ${formatTemp(wx.tempF, wx.tempC)}`);
 
   const detailLine = bits.length ? `<div class="weather-detail">${bits.join(' \u2022 ')}</div>` : '';
   const updated = relativeTimeLabel(wx.observedIso);
@@ -303,10 +306,10 @@ function weatherContentHtml(wx: WeatherSnapshot, elevationFt: number, daytime: b
   if (wx.dewpointF !== undefined) {
     let spreadNote = '';
     if (wx.tempF !== undefined) {
-      const spread = wx.tempF - wx.dewpointF;
-      if (spread <= 5) spreadNote = ` (${spread}\u00b0 spread \u2014 fog risk)`;
+      const spread = tempSpread(wx.tempF, wx.dewpointF, wx.tempC, wx.dewpointC);
+      if (spread <= fogSpread()) spreadNote = ` (${spread}\u00b0 spread \u2014 fog risk)`;
     }
-    moreRows.push(`<div class="detail-row"><span>💧 Dewpoint ${wx.dewpointF}\u00b0F${spreadNote}</span></div>`);
+    moreRows.push(`<div class="detail-row"><span>💧 Dewpoint ${formatTemp(wx.dewpointF, wx.dewpointC)}${spreadNote}</span></div>`);
   }
   if (wx.windDirDeg !== undefined && wx.windSpeedKt !== undefined && wx.windSpeedKt >= 3 && magVarDeg !== undefined) {
     const mag = String(trueToMagnetic(wx.windDirDeg, magVarDeg)).padStart(3, '0');
@@ -325,7 +328,7 @@ function weatherContentHtml(wx: WeatherSnapshot, elevationFt: number, daytime: b
     );
   }
   if (wx.altimeterInHg !== undefined) {
-    moreRows.push(`<div class="detail-row"><span>📊 Altimeter ${wx.altimeterInHg} inHg</span></div>`);
+    moreRows.push(`<div class="detail-row"><span>📊 ${formatPressure(wx.altimeterInHg, wx.altimeterHpa)}</span></div>`);
   }
   if (wx.tempF !== undefined) {
     const da = densityAltitudeFt(elevationFt, wx.tempF);

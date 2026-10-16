@@ -1,5 +1,5 @@
 import { decodeWxPhenomena, categoryDot } from './weather';
-import { hourOptions } from './units';
+import { hourOptions, formatVisibility } from './units';
 
 export interface TafCloud {
   cover: string;
@@ -159,7 +159,7 @@ export function describePeriod(p: TafPeriod): string {
   if (wind) parts.push(wind);
 
   const vis = parseVisibilityMiles(p.visib);
-  if (vis !== undefined && vis < 6) parts.push(`visibility ${p.visib} mi`);
+  if (vis !== undefined && vis < 6) parts.push(`visibility ${formatVisibility(p.visib!)}`);
 
   const wx = decodeWxPhenomena(p.wxString);
   if (wx) parts.push(wx.toLowerCase());

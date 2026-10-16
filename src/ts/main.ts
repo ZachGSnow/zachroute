@@ -1,5 +1,5 @@
 import { initMap, showSingleAirport, showRoute, showConnectingRoutes, highlightViaRoute, setAirportDatabase, showConnections, resetView, initAirportLayers, showLargeAirports, showMediumAirports, showRegionalAirports, drawAirportRunways, setPreferredRunwayEnd, colorRouteByWind, setApproachTicks, showAllViaOptions, refreshMapSize, showNearby } from './mapRenderer';
-import { formatDistance, getDistanceUnit, getClockFormat, setDistanceUnit, setClockFormat, UNITS_CHANGED, type DistanceUnit, type ClockFormat } from './units';
+import { formatDistance, getDistanceUnit, getClockFormat, getWeatherUnits, setDistanceUnit, setClockFormat, setWeatherUnits, UNITS_CHANGED, type DistanceUnit, type ClockFormat, type WeatherUnits } from './units';
 import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
 import { haversineDistance } from './geoMath';
@@ -474,6 +474,7 @@ async function init() {
   // Units (settings menu). Changing one re-renders the current result in the new units.
   const distanceSelect = document.getElementById('distance-unit') as HTMLSelectElement | null;
   const clockSelect = document.getElementById('clock-format') as HTMLSelectElement | null;
+  const weatherSelect = document.getElementById('weather-units') as HTMLSelectElement | null;
   if (distanceSelect) {
     distanceSelect.value = getDistanceUnit();
     distanceSelect.addEventListener('change', () => setDistanceUnit(distanceSelect.value as DistanceUnit));
@@ -481,6 +482,10 @@ async function init() {
   if (clockSelect) {
     clockSelect.value = getClockFormat();
     clockSelect.addEventListener('change', () => setClockFormat(clockSelect.value as ClockFormat));
+  }
+  if (weatherSelect) {
+    weatherSelect.value = getWeatherUnits();
+    weatherSelect.addEventListener('change', () => setWeatherUnits(weatherSelect.value as WeatherUnits));
   }
   window.addEventListener(UNITS_CHANGED, () => {
     if (currentQuery) runSearch(currentQuery, 'none');

@@ -9,10 +9,13 @@ export interface WeatherSnapshot {
   visibility?: string;
   tempF?: number;
   dewpointF?: number;
+  tempC?: number;
+  dewpointC?: number;
   weatherPhenomena?: string;
   ceilingFt?: number;
   ceilingCover?: string;
   altimeterInHg?: number;
+  altimeterHpa?: number;
   rawText?: string;
   observedIso?: string;
 }
