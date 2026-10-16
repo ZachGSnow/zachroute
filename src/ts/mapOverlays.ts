@@ -5,7 +5,7 @@ import { resolveCode } from './searchParser';
 import { pointInPolygon, advisoriesNear } from './hazardGeo';
 import { fetchCyclones, stormsAlongRoute, stormTitle, type Cyclone, type StormOnRoute } from './cyclones';
 import { fetchFires, type Fire } from './fires';
-import { AEROSOL_TILE_URL, AEROSOL_MAX_NATIVE_ZOOM, keepAerosolPixels } from './aerosolTiles';
+import { aerosolTileUrl, aerosolDays, AEROSOL_MAX_NATIVE_ZOOM, fillFromYesterday, keepAerosolPixels } from './aerosolTiles';
 import { compassPoint } from './forecast';
 import { summarizePirep, pirepAgeLabel, pirepAltitudeLabel, type RawPirep, type PirepKind } from './pirepText';
 
@@ -690,35 +690,56 @@ function createAerosolLayer(): L.GridLayer {
   });
 }
 
+/** Loads one day's tile as pixels, or null when it is missing. */
+function loadAerosolPixels(day: string, coords: L.Coords): Promise<ImageData | null> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = c.height = 256;
+      const ctx = c.getContext('2d', { willReadFrequently: true });
+      if (!ctx) return resolve(null);
+      ctx.drawImage(img, 0, 0, 256, 256);
+      resolve(ctx.getImageData(0, 0, 256, 256));
+    };
+    img.onerror = () => resolve(null);
+    img.src = L.Util.template(aerosolTileUrl(day), { x: coords.x, y: coords.y, z: coords.z });
+  });
+}
+
+/** Today's observations where there are any yet, yesterday's elsewhere, clean air removed. */
 function aerosolTile(coords: L.Coords, done: L.DoneCallback): HTMLElement {
   const canvas = document.createElement('canvas');
   canvas.width = canvas.height = 256;
-  const img = new Image();
-  img.crossOrigin = 'anonymous';
-  img.onload = () => {
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    if (ctx) {
-      ctx.drawImage(img, 0, 0, 256, 256);
-      const data = ctx.getImageData(0, 0, 256, 256);
-      keepAerosolPixels(data.data);
-      ctx.putImageData(data, 0, 0);
+  const { today, yesterday } = aerosolDays();
+  void Promise.all([loadAerosolPixels(today, coords), loadAerosolPixels(yesterday, coords)]).then(([now, before]) => {
+    const merged = now ?? before; // a missing tile just stays empty
+    const ctx = canvas.getContext('2d');
+    if (merged && ctx) {
+      if (now && before) fillFromYesterday(now.data, before.data);
+      keepAerosolPixels(merged.data);
+      ctx.putImageData(merged, 0, 0);
     }
     done(undefined, canvas);
-  };
-  img.onerror = () => done(undefined, canvas); // a missing tile just stays empty
-  img.src = L.Util.template(AEROSOL_TILE_URL, { x: coords.x, y: coords.y, z: coords.z });
+  });
   return canvas;
 }
 
+let aerosolTimer: number | undefined;
+
 export function setAerosol(on: boolean) {
   if (!map) return;
+  window.clearInterval(aerosolTimer);
   if (!on) {
     if (aerosolLayer && map.hasLayer(aerosolLayer)) map.removeLayer(aerosolLayer);
     return;
   }
   if (!aerosolLayer) aerosolLayer = createAerosolLayer();
   if (!map.hasLayer(aerosolLayer)) aerosolLayer.addTo(map);
-  setHint('Dust and smoke today: yellow is some, red is thick', 5000);
+  // New passes land through the day, so redraw hourly while the layer is on.
+  aerosolTimer = window.setInterval(() => aerosolLayer?.redraw(), 60 * 60 * 1000);
+  setHint('Dust and smoke (latest daily pass): yellow is some, red is thick', 5000);
 }
 
 // ---------------------------------------------------------------------------
