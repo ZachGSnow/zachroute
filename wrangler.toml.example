@@ -1,0 +1,11 @@
+name = "zachroute"
+pages_build_output_dir = "dist"
+compatibility_date = "2024-09-23"
+
+# Copy to wrangler.toml and fill in your KV namespace IDs:
+#   npx wrangler kv namespace create LORE_KV
+#   npx wrangler kv namespace create LORE_KV --preview
+[[kv_namespaces]]
+binding = "LORE_KV"
+id = "<your-kv-namespace-id>"
+preview_id = "<your-preview-kv-namespace-id>"

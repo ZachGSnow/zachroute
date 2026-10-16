@@ -1,0 +1,966 @@
+{
+  "ORD": {
+    "lore": "Chicago O'Hare International Airport is the primary international airport serving Chicago, Illinois, United States, located on the city's Northwest Side, approximately 17 miles (27\u00a0km) northwest of downtown. The airport is operated by the Chicago Department of Aviation and covers 7,627 acres. It is the airport with the most runways in the world, with eight.",
+    "type": "regional"
+  },
+  "ABE": {
+    "lore": "Lehigh Valley International Airport, formerly Allentown\u2013Bethlehem\u2013Easton International Airport, is a domestic airport located in Hanover Township in Lehigh County, Pennsylvania. Lehigh Valley International Airport is located in the center of the Lehigh Valley, roughly 7 miles (11\u00a0km) northeast of Allentown, 4 miles (6.4\u00a0km) northwest of Bethlehem, and 11 miles (18\u00a0km) southwest of Easton.",
+    "type": "regional"
+  },
+  "ABQ": {
+    "lore": "Albuquerque International Sunport, locally known as the Sunport, is the primary international airport serving the U.S. state of New Mexico, particularly the Albuquerque metropolitan area and the larger Albuquerque\u2013Santa Fe\u2013Los Alamos combined statistical area. It handles around 5.5 million passengers annually and over 400 flights daily. ABQ is located in Bernalillo County, between the Rio Grande and the Sandia Mountains, east of Old Town and Barelas, 3\u00a0miles (5\u00a0km) southeast of downtown, south of the University of New Mexico and directly to the west of Sandia National Laboratories and Kirtland Air Force Base.",
+    "type": "regional"
+  },
+  "ACK": {
+    "lore": "Nantucket Memorial Airport is a public airport on the south side of the island of Nantucket, Massachusetts, United States. It is owned by the Town of Nantucket and is located three miles (5\u00a0km) southeast of the town center. It is the second-busiest airport in the state, after Logan International Airport, due to intense corporate travel to and from the island in the high season.",
+    "type": "regional"
+  },
+  "AGS": {
+    "lore": "AGS Airports Limited is the owner of Aberdeen, Glasgow and Southampton airports. Based in Leeds, England, it was formed in September 2014 by Ferrovial and Macquarie Group. In January 2025 it was sold to AviAlliance.",
+    "type": "regional"
+  },
+  "ALB": {
+    "lore": "Albany International Airport is six miles (9.7\u00a0km) northwest of Albany, in Albany County, New York, United States. It is owned by the Albany County Airport Authority. ALB covers 1,000 acres (400\u00a0ha) of land.",
+    "type": "regional"
+  },
+  "ALO": {
+    "lore": "Waterloo Regional Airport (Livingston Betsworth Field) is four miles (6\u00a0km) northwest of Waterloo, in Black Hawk County, Iowa. It is used for general aviation and sees one airline.",
+    "type": "regional"
+  },
+  "AMM": {
+    "lore": "Queen Alia International Airport is an international airport located in Zizya, 30 kilometers south of Amman, the capital and largest city of Jordan.",
+    "type": "regional"
+  },
+  "AMS": {
+    "lore": "Amsterdam Airport Schiphol, known informally as Schiphol Airport, is the main international airport of the Netherlands. It is located 9 kilometres southwest of Amsterdam, in the municipality of Haarlemmermeer in the province of North Holland.",
+    "type": "regional"
+  },
+  "ANC": {
+    "lore": "Ted Stevens Anchorage International Airport is the primary airport serving the US state of Alaska, located 5 miles (8\u00a0km) southwest of downtown Anchorage. The airport is named for Ted Stevens (1923\u20132010), who served as a senator of Alaska from 1968 to 2009. It is included in the Federal Aviation Administration (FAA) National Plan of Integrated Airport Systems for 2017\u20132021, in which it is categorized as a medium-hub primary commercial service facility. It is a major cargo hub for trans-Pacific traffic, ranking as one of the world's busiest airports by cargo traffic.",
+    "type": "regional"
+  },
+  "ARN": {
+    "lore": "Stockholm Arlanda Airport is the main international airport serving Stockholm, the capital of Sweden. It is located in Sigtuna Municipality, 37\u00a0km (23\u00a0mi) north of Stockholm and nearly 40\u00a0km (25\u00a0mi) southeast of Uppsala. The airport is located within Stockholm County.",
+    "type": "regional"
+  },
+  "ASE": {
+    "lore": "Aspen/Pitkin County Airport, also known as Sardy Field, is a county-owned public-use airport located three miles northwest of the central business district of Aspen, in Pitkin County, Colorado, United States. The airport covers an area of 573 acres (232\u00a0ha) at an elevation of 7,820 feet above mean sea level. It has one asphalt paved runway designated 15/33 which measures 8,006 by 100 feet.",
+    "type": "regional"
+  },
+  "ATL": {
+    "lore": "Hartsfield\u2013Jackson Atlanta International Airport is the primary international airport serving Atlanta and its surrounding metropolitan area in the U.S. state of Georgia. Located 10\u00a0mi south of the Downtown Atlanta district, it is named after former Atlanta mayors William B. Hartsfield and Maynard Jackson.",
+    "type": "regional"
+  },
+  "ATW": {
+    "lore": "Appleton International Airport, formerly Outagamie County Regional Airport, is an airport located in Greenville, Wisconsin, United States, 3 nautical miles west of Appleton. It is included in the Federal Aviation Administration (FAA) National Plan of Integrated Airport Systems for 2025\u20132029. Along with Madison\u2019s Dane County Regional Airport, it is one of two airports in the State of Wisconsin categorized as a small hub. The airport covers 1,638 acres (6.63\u00a0km2) at an elevation of 918 feet (280\u00a0m) above sea level.",
+    "type": "regional"
+  },
+  "AUH": {
+    "lore": "Zayed International Airport, also known as Abu Dhabi International Airport, is the primary international airport serving Abu Dhabi, the capital of the United Arab Emirates (UAE). It is the second busiest airport in the UAE after Dubai International Airport, one of the busiest airports in the Middle East and is the hub for Etihad Airways as well as an operating base for Air Arabia Abu Dhabi.",
+    "type": "regional"
+  },
+  "AUS": {
+    "lore": "Austin\u2013Bergstrom International Airport, or ABIA, is the main international airport in Austin, Texas, United States, serving the Greater Austin metropolitan area. Located about 5 miles southeast of downtown, it covers 4,242 acres (1,717\u00a0ha) and has two runways and three helipads.",
+    "type": "regional"
+  },
+  "AVL": {
+    "lore": "Asheville Regional Airport is a Class C airport near the town of Fletcher, North Carolina, 9 miles (14\u00a0km) south of downtown Asheville. It is owned by the Greater Asheville Regional Airport Authority. The Federal Aviation Administration (FAA) National Plan of Integrated Airport Systems for 2019\u20132023 categorized it as a small-hub primary commercial service facility. As of 2026, the airport is the third-busiest in North Carolina. In 2023 it served an all-time record number of passengers for the airport, 2,246,411, an increase of 22.2% over 2022. Between 2016 and 2026, air carrier operations at the airport increased by more than 300 percent.",
+    "type": "regional"
+  },
+  "AVP": {
+    "lore": "Wilkes-Barre/Scranton International Airport is mostly in Pittston Township, Pennsylvania, about 6 miles (9.7\u00a0km) from Scranton and 10\u00a0mi (16\u00a0km) from Wilkes-Barre. It spans the border between Luzerne County and Lackawanna County, and is owned and operated by the two counties. AVP is the fifth-largest airport in Pennsylvania by passenger count after Philadelphia (PHL), Pittsburgh (PIT), Harrisburg (MDT) and Lehigh Valley (ABE). AVP calls itself \"your gateway to Northeastern Pennsylvania and the Pocono Mountains\".",
+    "type": "regional"
+  },
+  "AZO": {
+    "lore": "Kalamazoo/Battle Creek International Airport is a county-owned public airport in Kalamazoo, Kalamazoo County, Michigan, US, 3 miles (4.8\u00a0km) southeast of Downtown Kalamazoo. The airport is located approximately 20 miles (32\u00a0km) west of the city of Battle Creek. It is included in the Federal Aviation Administration (FAA) National Plan of Integrated Airport Systems for 2025\u20132029, in which it is categorized as a non-hub primary commercial service facility.",
+    "type": "regional"
+  },
+  "BDL": {
+    "lore": "Bradley International Airport, formerly known as Bradley Field, is a public international airport in Windsor Locks, Connecticut, United States. Owned and operated by the Connecticut Airport Authority, it is Connecticut's busiest airport and the second-largest airport in New England after Boston's Logan International Airport. The airport is about halfway between Hartford, Connecticut, and Springfield, Massachusetts. Bradley is also a dual-use military facility and home to the 103rd Airlift Wing of the Connecticut Air National Guard.",
+    "type": "regional"
+  },
+  "BGR": {
+    "lore": "Bangor International Airport is a joint civil-military public airport on the west side of the city of Bangor, in Penobscot County, Maine, United States. Owned and operated by the City of Bangor, the airport has a single runway measuring 11,440 by 200\u00a0ft. Originally a military installation known as Dow Air Force Base, Bangor remains the home of the 101st refueling wing of the Maine Air National Guard. Most Air Force operations at the base ceased in the 1960s. Covering 2,079 acres the airport is categorized by the Federal Aviation Administration's (FAA) National Plan of Integrated Airport Systems (2023\u20132027) as a non-hub primary commercial service facility.",
+    "type": "regional"
+  },
+  "BHM": {
+    "lore": "Birmingham\u2013Shuttlesworth International Airport, formerly Birmingham Municipal Airport and later Birmingham International Airport, is a civil-military airport serving Birmingham, Alabama. The airport also provides scheduled airline service for the Birmingham and Tuscaloosa metropolitan areas. It is located in Jefferson County, five miles northeast of Downtown Birmingham, near the interchange of Interstates 20 and 59.",
+    "type": "regional"
+  },
+  "BIL": {
+    "lore": "Billings Logan International Airport is in the western United States, two miles northwest of downtown Billings, in Yellowstone County, Montana. It\u00a0is the fourth busiest airport in Montana, having been surpassed in recent years by Bozeman, Missoula, and Flathead County (Kalispell) in number of annual enplanements. Owned by the city of Billings, the airport is on top of the Rims, a 500-foot (150\u00a0m) cliff overlooking the downtown core, and covers 2,500 acres of land.",
+    "type": "regional"
+  },
+  "BIS": {
+    "lore": "Bismarck Municipal Airport is in Burleigh County, North Dakota, United States, three miles southeast of the City of Bismarck, North Dakota, which owns it. The National Plan of Integrated Airport Systems for 2011\u20132015 categorized it as a primary commercial service airport.",
+    "type": "regional"
+  },
+  "BMI": {
+    "lore": "Central Illinois Regional Airport at Bloomington\u2013Normal is a public airport in McLean County, Illinois, three miles east of Bloomington and southeast of Normal. Owned by the Bloomington\u2013Normal Airport Authority, it is also known as Central Illinois Regional Airport (CIRA).",
+    "type": "regional"
+  },
+  "BNA": {
+    "lore": "Nashville International Airport is a public/military airport in the southeastern section of Nashville, Tennessee, United States. Established in 1937, its original name was Berry Field, from which its ICAO and IATA identifiers are derived. The latest terminal was built in 1987, and the airport took its existing name in 1988. Nashville International Airport has four runways and covers 4,555 acres (1,843\u00a0ha) of land. It is the busiest airport in Tennessee, with more boardings and arrivals than all other airports in the state combined.",
+    "type": "regional"
+  },
+  "BOI": {
+    "lore": "Boise Airport is a joint civil-military airport in the western United States in Idaho, three miles (5\u00a0km) south of downtown Boise in Ada County. The airport is operated by the city of Boise Department of Aviation, overseen by an airport commission. Boise Airport is the busiest airport in the state with more than 5.2 million passengers serviced in 2025. Boise Airport services roughly ten times as many passengers as the next busiest airport at Idaho\u00a0Falls. In 2020 it serviced more passenger flights than all other Idaho airports combined.",
+    "type": "regional"
+  },
+  "BOS": {
+    "lore": "General Edward Lawrence Logan International Airport \u2014 more commonly known as Boston Logan International Airport \u2014 is an international airport located mostly in East Boston and partially in Winthrop, Massachusetts, United States. Covering 2,384 acres (965\u00a0ha), it has six runways and four passenger terminals, and employs an estimated 16,000 people. It is included in the Federal Aviation Administration (FAA) National Plan of Integrated Airport Systems in which it is categorized as a large hub primary commercial service facility.",
+    "type": "regional"
+  },
+  "BRU": {
+    "lore": "Brussels Airport is the main international airport of Belgium. It is located in the municipality of Zaventem in Flemish Brabant, 12\u00a0km northeast of Brussels. Also informally known as Brussels-National Airport or Brussels-Zaventem Airport, Brussels Airport handled more than 26 million passengers in 2019, making it the 26th-busiest airport in Europe. It is home to around 260 companies, together directly employing 20,000 people and serves as the home base for Brussels Airlines and TUI fly Belgium. The airport covers 1,245 hectares and contains three runways.",
+    "type": "regional"
+  },
+  "BTV": {
+    "lore": "Patrick Leahy Burlington International Airport is a joint-use civil-military airport serving Burlington, Vermont's most populous city, and its metropolitan area. Owned by the City of Burlington, the airport itself is located in neighboring South Burlington, just three nautical miles (6\u00a0km) east of Burlington's central business district.",
+    "type": "regional"
+  },
+  "BUF": {
+    "lore": "Buffalo Niagara International Airport is in Cheektowaga, New York, United States. The airport serves Buffalo, New York and Niagara Falls, New York in the United States, and the southern Golden Horseshoe region of Ontario, Canada. It is the third-busiest airport in the state of New York and the busiest inside of the Buffalo-Niagara Falls metropolitan area. The total catchment area for Buffalo Niagara International Airport (BUF) is estimated to be around 9.2 million people, the largest between NYC to the east and Chicago to the west, largely because it serves as a major, lower-cost alternative for travelers in the Southern Golden Horseshoe region of Ontario, Canada, in addition to Western New York. The combined US and Canada service area makes the Buffalo Niagara Region one of the top 10 largest urban regions in North America. It is about 11 miles (18\u00a0km) east of Downtown Buffalo and 60 miles (97\u00a0km) southeast of Toronto. The airport covers a total area of 1,000 acres (400\u00a0ha).",
+    "type": "regional"
+  },
+  "BWI": {
+    "lore": "Baltimore/Washington International Thurgood Marshall Airport, commonly referred to as Baltimore/Washington International Airport or simply as BWI Airport, is an international airport in Anne Arundel County, Maryland, located 9 miles south of downtown Baltimore and 30 miles (50\u00a0km) northeast of Washington, D.C. The airport is the 7th busiest in the Mid-Atlantic region of North America and is owned by the Maryland Aviation Administration.",
+    "type": "regional"
+  },
+  "BZN": {
+    "lore": "Bozeman Yellowstone International Airport is an airport located in unincorporated Gallatin County, Montana, United States, adjacent to Belgrade, and eight miles northwest of Bozeman. Owned by the Gallatin Airport Authority, it has been Montana's busiest airport since 2013.",
+    "type": "regional"
+  },
+  "CAE": {
+    "lore": "Columbia Metropolitan Airport is the main commercial airport for Columbia and the Midlands region of South Carolina, United States. The airport is located in unincorporated Lexington County, southwest of Columbia. Although it has a West Columbia mailing address, the airport is not within that city's boundaries. The city of Cayce and the towns of Springdale, Pine Ridge, and South Congaree surround the airport, separating the airport from West Columbia. The airport is a regional cargo hub for UPS Airlines.",
+    "type": "regional"
+  },
+  "CAK": {
+    "lore": "Akron\u2013Canton Airport is a commercial airport in the city of Green, in southern Summit County, Ohio. The airport is located about 11 miles (18\u00a0km) southeast of Akron and 10 miles (16\u00a0km) northwest of Canton. It is jointly operated by Summit County and Stark County. The airport is a \"reliever\" airport for Northeast Ohio and markets itself as \"A better way to go\", emphasizing the ease of travel in comparison to Cleveland Hopkins International Airport. Just under 90% of its traffic is general aviation. It is included in the Federal Aviation Administration (FAA) National Plan of Integrated Airport Systems for 2019\u20132023, in which it is categorized as a small-hub primary commercial service facility.",
+    "type": "regional"
+  },
+  "CDG": {
+    "lore": "Paris Charles de Gaulle Airport, also known as Roissy Airport, is the primary international airport serving Paris, the capital of France. The airport opened in 1974 and is located in Roissy-en-France, 23\u00a0km (14\u00a0mi) northeast of the city centre of Paris. It is named after World War II leader and French president Charles de Gaulle, whose initials form its IATA airport code. It is one of two airports to serve the greater Paris area, the other being Orly Airport.",
+    "type": "regional"
+  },
+  "CHA": {
+    "lore": "Chattanooga Metropolitan Airport is 5 miles (8\u00a0km) east of downtown Chattanooga, in Hamilton County, Tennessee, United States. The airport is owned and operated by the Chattanooga Metropolitan Airport Authority. It is a Class C airport serviced by the Chattanooga Airport Traffic Control Tower. The Federal Aviation Administration (FAA) National Plan of Integrated Airport Systems for 2019\u20132023 categorized it as a small-hub primary commercial service facility.",
+    "type": "regional"
+  },
+  "CHO": {
+    "lore": "Charlottesville\u2013Albemarle Airport is an airport eight miles north of Charlottesville, in Albemarle County, Virginia, United States. It opened in 1955 and serves the Central Virginia and Shenandoah Valley region with non-stop flights to five major cities on three airlines' subsidiaries. CHO underwent major construction in summer 2006; an 800-foot runway extension began in summer 2010 and was completed in December 2012.",
+    "type": "regional"
+  },
+  "CHS": {
+    "lore": "Charleston International Airport is a joint civil-military airport located in North Charleston, South Carolina, United States. The airport is operated by the Charleston County Aviation Authority under a joint-use agreement with Joint Base Charleston. It is South Carolina's busiest airport; in 2023 the airport served over 6.1 million passengers in its busiest year on record. The airport is in North Charleston and is approximately 12 miles (19\u00a0km) northwest of downtown Charleston. The airport serves as a focus city for Breeze Airways. It is also home to the Boeing facility that assembles the 787 Dreamliner.",
+    "type": "regional"
+  },
+  "CID": {
+    "lore": "Eastern Iowa Airport \u2013 also known as Cedar Rapids Airport \u2013 is a public airport in southern Cedar Rapids, Iowa, United States. It is located on Wright Brothers Boulevard, approximately two miles (3.2\u00a0km) west of Interstate 380. The airport covers 3,288 acres (1,331\u00a0ha) of land.",
+    "type": "regional"
+  },
+  "CIU": {
+    "lore": "Chippewa County International Airport is a public use airport in Chippewa County, Michigan, United States. It is located 15 nautical miles south of the central business district of Sault Ste. Marie, Michigan. The airport is owned by the Chippewa County Economic Development Corporation. It was formerly the site of the Kincheloe Air Force Base, which closed in 1977.",
+    "type": "regional"
+  },
+  "CKB": {
+    "lore": "North Central West Virginia Airport is a public/military airport a mile northeast of Bridgeport and six miles east of Clarksburg, in Harrison County, West Virginia, United States. It is owned and operated by the Benedum Airport Authority, serving Harrison and Marion County, and was formerly Benedum Airport and Harrison-Marion Regional Airport. The airport sees two airlines, with some passenger service subsidized by the Essential Air Service program.",
+    "type": "regional"
+  },
+  "CLE": {
+    "lore": "Cleveland Hopkins International Airport is a city-owned international airport in Cleveland, Ohio, United States, and is the primary airport serving Greater Cleveland and Northeast Ohio. It is the largest and busiest airport in the state, as well as in the top fifty largest airports in the U.S. by passenger numbers. The airport has a passenger catchment area of 4.9 million people. Located in Cleveland's Hopkins neighborhood 9 miles (14\u00a0km) southwest of Downtown Cleveland, it is adjacent to the Glenn Research Center, one of NASA's ten major field centers.",
+    "type": "regional"
+  },
+  "CLT": {
+    "lore": "Charlotte Douglas International Airport is an international airport serving Charlotte, North Carolina, United States, located roughly six miles (9.7\u00a0km) west of the city's central business district. Charlotte Douglas is the primary airport for commercial and military use in the Charlotte metropolitan area. Operated by the City of Charlotte's aviation department, the airport covers 5,558 acres of land.",
+    "type": "regional"
+  },
+  "CMH": {
+    "lore": "John Glenn Columbus International Airport is an international airport located 6 miles (9.7\u00a0km) east of downtown Columbus, Ohio. It is managed by the Columbus Regional Airport Authority, which also oversees operations at Rickenbacker International Airport and Bolton Field. The airport code \"CMH\" stands for \"Columbus Municipal Hangar\", the original name of the airport.",
+    "type": "regional"
+  },
+  "CMI": {
+    "lore": "University of Illinois Willard Airport, also known as Willard Airport and Champaign\u2013Urbana Airport, is an airport south of Savoy in Tolono Township, Champaign County, Illinois, United States. It is owned and operated by the University of Illinois Urbana\u2013Champaign and is named for former University of Illinois president Arthur Cutts Willard.",
+    "type": "regional"
+  },
+  "CMX": {
+    "lore": "Houghton County Memorial Airport is a county-owned public-use airport located four\u00a0nautical miles southwest of the central business district of Calumet, a village in Houghton County, Michigan, United States. The airport is situated in the unincorporated community of Oneco in Franklin Township, near the village of Calumet on the Keweenaw Peninsula in northwest of the Upper Peninsula of Michigan. A limited scheduled commercial service is available, subsidized by the Essential Air Service program. In addition, Royale Air Service provides a seaplane service to Isle Royale National Park depending on traveler demand.",
+    "type": "regional"
+  },
+  "COS": {
+    "lore": "City of Colorado Springs Municipal Airport, also known as Colorado Springs Airport, is owned by the city of Colorado Springs, adjacent to Peterson Space Force Base, Colorado, United States. The airport is 6 miles (9.7\u00a0km) southeast of downtown Colorado Springs. It is the second largest commercial service airport in the state after Denver International Airport.",
+    "type": "regional"
+  },
+  "COU": {
+    "lore": "Columbia Regional Airport is a commercial passenger airport serving Columbia, Missouri. Located about 12 miles (19\u00a0km) southeast of Columbia in Boone County, Missouri, it is the only commercial airport in Mid-Missouri and also serves the state capital of Jefferson City. Commercial passenger service is provided by American Airlines subsidiary American Eagle and United Airlines via its regional airline contractor SkyWest branded as United Express. The airport opened in 1968, replacing the Columbia Municipal Airport off of Interstate 70. It is frequently used for charter flights by college athletic teams visiting the University of Missouri and for MU team flights.",
+    "type": "regional"
+  },
+  "CPH": {
+    "lore": "Copenhagen Airport is an international airport serving Copenhagen, the capital of Denmark, as well as the wider \u00d8resund Region, including Zealand, Malm\u00f6, and the southern Swedish province of Scania as a whole. It is the largest airport in the Nordic countries.",
+    "type": "regional"
+  },
+  "CRW": {
+    "lore": "West Virginia International Yeager Airport is a public airport 3 miles (4.8\u00a0km) east of downtown Charleston, in unincorporated Kanawha County, West Virginia, United States. It is owned by the Central West Virginia Regional Airport Authority. The airport hosts McLaughlin Air National Guard Base, home to eight C-130 Hercules aircraft of the West Virginia Air National Guard's 130th Airlift Wing, an Air Mobility Command (AMC)-gained unit of the West Virginia Air National Guard.",
+    "type": "regional"
+  },
+  "CUN": {
+    "lore": "Canc\u00fan International Airport is an international airport serving Canc\u00fan, the most populous city in the Mexican state of Quintana Roo. It is Mexico's second busiest airport and the busiest in the country and Latin America for international passengers. Located in the Canc\u00fan Metropolitan Area in Quintana Roo, it serves as the primary gateway to the Mexican Caribbean, Riviera Maya, and Yucat\u00e1n Peninsula, offering flights to over 100 cities across the Americas and Europe.",
+    "type": "regional"
+  },
+  "CVG": {
+    "lore": "Cincinnati/Northern Kentucky International Airport is a public international airport located in Boone County, Kentucky, United States, near the community of Hebron. It is the primary commercial airport for Cincinnati, Ohio and the tri-state area. The airport's code, CVG, is derived from the nearest city at the time of the airport's opening, Covington, Kentucky. The airport covers an area of 7,000 acres. It is included in the Federal Aviation Administration (FAA) National Plan of Integrated Airport Systems for 2023\u20132027, in which it is categorized as a medium-hub primary commercial service facility.",
+    "type": "regional"
+  },
+  "CWA": {
+    "lore": "Central Wisconsin Airport, referred to as \"C-Way\", is a public airport located 3 nautical miles southeast of the central business district of Mosinee, in Marathon County, Wisconsin, United States. It is owned by Marathon County and Portage County. It is included in the Federal Aviation Administration (FAA) National Plan of Integrated Airport Systems for 2025\u20132029, in which it is categorized as a non-hub primary commercial service facility. It is the fifth busiest of eight commercial airports in Wisconsin in terms of passengers served.",
+    "type": "regional"
+  },
+  "DAL": {
+    "lore": "Dallas Love Field is a city-owned public airport in the neighborhood of Love Field, about 6 miles northwest of downtown Dallas, Texas, United States. It was Dallas' main airport until 1974 when Dallas Fort Worth International Airport (DFW) opened. Love Field covers an area of 1,300 acres (530\u00a0ha) at an elevation of 487 feet (148\u00a0m) above mean sea level and has two runways.",
+    "type": "regional"
+  },
+  "DAY": {
+    "lore": "Dayton International Airport is 10 miles north of downtown Dayton, in Montgomery County, Ohio, United States. The airport is in an exclave of the city of Dayton not contiguous with the rest of the city.",
+    "type": "regional"
+  },
+  "DCA": {
+    "lore": "Ronald Reagan Washington National Airport is a public airport in Arlington County, Virginia, United States, five miles from Washington, D.C. The closest airport to the nation's capital, it is one of two airports owned by the federal government and operated by the Metropolitan Washington Airports Authority (MWAA) that serve the Washington metropolitan area; the other is Dulles International Airport (IAD), located about 25 miles to the west in Fairfax and Loudoun counties.",
+    "type": "regional"
+  },
+  "DEC": {
+    "lore": "Decatur Airport is a public airport five miles east of Decatur, in Macon County, Illinois, United States. The airport is owned by the Decatur Park District. Airline service is subsidized by the federal government's Essential Air Service program at a cost of $6,120,951.",
+    "type": "regional"
+  },
+  "DEL": {
+    "lore": "Indira Gandhi International Airport is the primary international airport serving New Delhi, the capital of India, and the National Capital Region (NCR). The airport, spread over an area of 5,106 acres (2,066\u00a0ha), is situated in Palam, Delhi, 15\u00a0km (9.3\u00a0mi) southwest of the New Delhi Railway Station and 16\u00a0km (9.9\u00a0mi) from the city centre.",
+    "type": "regional"
+  },
+  "DEN": {
+    "lore": "Denver International Airport, often referred to by locals as DIA, is an international airport in the Western United States, primarily serving metropolitan Denver, Colorado, as well as the greater Front Range Urban Corridor.",
+    "type": "regional"
+  },
+  "DFW": {
+    "lore": "Dallas Fort Worth International Airport is the primary international airport serving the Dallas\u2013Fort Worth metroplex and the North Texas region, in the U.S. state of Texas. It is located approximately 16 miles (26\u00a0km) northwest of Downtown Dallas and 20 miles (32\u00a0km) northeast of Downtown Fort Worth.",
+    "type": "regional"
+  },
+  "DLH": {
+    "lore": "Duluth International Airport is a city-owned public-use joint civil-military airport located five nautical miles (9\u00a0km) northwest of the central business district of Duluth, a city in Saint Louis County, Minnesota, United States. It serves the Twin Ports area, including Superior, Wisconsin. Mostly used for general aviation but also served by three airlines, it is Minnesota's third-busiest airport, behind Minneapolis\u2013St. Paul International Airport (MSP) and Rochester International Airport.",
+    "type": "regional"
+  },
+  "DOH": {
+    "lore": "Hamad International Airport is an international airport in Qatar, and the home base of the national flag carrier airline, Qatar Airways. Located east of the capital, Doha, it replaced the nearby Doha International Airport as Qatar's principal and main national airport and one of the busiest airports in the Middle East.",
+    "type": "regional"
+  },
+  "DSM": {
+    "lore": "Des Moines International Airport is a joint civilian-military commercial service airport 5 miles (8\u00a0km) southwest of Des Moines, the capital of Iowa.",
+    "type": "regional"
+  },
+  "DTW": {
+    "lore": "Detroit Metropolitan Wayne County Airport is a major international airport serving Detroit and the surrounding metropolitan area, in the U.S. state of Michigan. Operated by the Wayne County Airport Authority, it is located approximately 18 miles (29\u00a0km) southwest of Detroit city center, in Romulus, a suburb of Detroit. It is by far Michigan's busiest airport, with about 8 times as many enplanements and deplanements as the next busiest, Gerald R. Ford International Airport in Grand Rapids, and more than all other airports in the state combined.",
+    "type": "regional"
+  },
+  "DUB": {
+    "lore": "Dublin Airport is an international airport serving Dublin, Ireland. It is operated by DAA. The airport is located in Collinstown, seven kilometres north of Dublin, and three kilometres south of Swords.\nIn 2025, over 36.4 million passengers passed through the airport, making it the airport's busiest year on record. It is the 12th busiest airport in Europe, and is the busiest of Ireland's airports by total passenger traffic; it also has the largest traffic levels on the island of Ireland, followed by Belfast International Airport.",
+    "type": "regional"
+  },
+  "DUS": {
+    "lore": "D\u00fcsseldorf Airport, known as D\u00fcsseldorf International Airport until March 2013, is an international airport serving D\u00fcsseldorf, the capital of the German state of North Rhine-Westphalia, and the Rhine-Ruhr area, the largest metropolitan region in Germany. It is about 7 kilometres north of downtown D\u00fcsseldorf and some 30 kilometres southwest of Essen and about 15 kilometres south of Duisburg in the Rhine-Ruhr area, Germany's largest metropolitan area.",
+    "type": "regional"
+  },
+  "EAR": {
+    "lore": "Kearney Regional Airport is an airport five miles northeast of Kearney in Buffalo County, Nebraska.",
+    "type": "regional"
+  },
+  "EAU": {
+    "lore": "Chippewa Valley Regional Airport is a public use airport in Chippewa County, Wisconsin, United States.\nChippewa Valley Regional Airport (EAU) is a non-hub primary commercial service airport owned by Eau Claire County and located three miles north of downtown Eau Claire, Wisconsin. It serves as the largest airport in northwestern Wisconsin, covering 1,100 acres with two runways and providing facilities for general aviation, air cargo, and commercial flights. The airport offers scheduled service to Chicago O'Hare through United Express, operated by SkyWest Airlines, and seasonal service to Florida through Sun Country Airlines.",
+    "type": "regional"
+  },
+  "ECP": {
+    "lore": "Northwest Florida Beaches International Airport is a public airport 18 miles (29\u00a0km) northwest of Panama City, Florida, United States, in Bay County. The airport is owned by the Panama City-Bay County Airport & Industrial District, and is north of Panama City Beach, near West Bay. It replaced Panama City\u2013Bay County International Airport, which was located in Panama City.",
+    "type": "regional"
+  },
+  "EGE": {
+    "lore": "Eagle County Regional Airport is a public airport in Gypsum, Colorado, United States. The airport is also sometimes advertised as the Vail/Eagle Airport by airlines and other entities as it is located 4 miles from Eagle and 37 miles from Vail. It covers 632 acres (256\u00a0ha) and has one runway. It is the primary commercial airport for the Vail and Beaver Creek ski resorts, and, as a result, service is highly seasonal, with more flights in the winter than during the rest of the year.",
+    "type": "regional"
+  },
+  "ELP": {
+    "lore": "El Paso International Airport is an international airport located four miles (6\u00a0km) northeast of downtown El Paso, in El Paso County, Texas, United States. It is the busiest commercial airport serving West Texas, Southern New Mexico and North Central Mexico. It handled 4,038,530 passengers in 2024, a passenger record for ELP, with 97,737 aircraft operations.",
+    "type": "regional"
+  },
+  "ERI": {
+    "lore": "Erie International Airport Tom Ridge Field is a public airport five miles (8.0\u00a0km) southwest of Erie, in Erie County, Pennsylvania, United States. Airline service at Erie faces stiff competition from the Buffalo, Cleveland, and Pittsburgh airports, all within three hours of Erie by car. Erie is 97 miles from the Buffalo airport, 113 miles from the Cleveland airport, and 137 miles from the Pittsburgh airport.",
+    "type": "regional"
+  },
+  "EUG": {
+    "lore": "Eugene Airport, also known as Mahlon Sweet Field, is a public airport 7 miles (11\u00a0km) northwest of Eugene, in Lane County, Oregon, United States. Owned and operated by the City of Eugene, it is the fifth-largest airport in the Pacific Northwest.",
+    "type": "regional"
+  },
+  "EVV": {
+    "lore": "Evansville Regional Airport is three miles north of Evansville, in Vanderburgh County, Indiana, United States. It is owned and operated by the Evansville-Vanderburgh Airport Authority District.",
+    "type": "regional"
+  },
+  "EWR": {
+    "lore": "Newark Liberty International Airport is an international airport in the U.S. state of New Jersey, serving the New York metropolitan area. The airport is located in both Newark and neighboring Elizabeth, straddling the boundary between Essex and Union counties. Owned by the two cities, it is leased to its operator, the Port Authority of New York and New Jersey. Located approximately 4.5 miles (7.2\u00a0km) south of downtown Newark and 9 miles (14\u00a0km) west-southwest of Manhattan, it is a major gateway to destinations in Europe, South America, the Caribbean and Asia. It is the second-busiest airport in the New York airport system behind John F. Kennedy International Airport and ahead of LaGuardia Airport.",
+    "type": "regional"
+  },
+  "EYW": {
+    "lore": "Key West International Airport is an airport located in the City of Key West in Monroe County, Florida, United States, 2 miles east of the main commercial center of Key West.",
+    "type": "regional"
+  },
+  "FAI": {
+    "lore": "Fairbanks International Airport is a state-owned public-use airport located three miles (5\u00a0km) southwest of the central business district of Fairbanks, a city in the Fairbanks North Star Borough of the U.S. state of Alaska. It is located in the South Van Horn census-designated place. Fairbanks was the smallest city in the United States with regularly scheduled non-stop international flights, as Condor offered weekly flights to Frankfurt during the summer tourist season. Air North is now the only international airline to offer scheduled charters with flights.",
+    "type": "regional"
+  },
+  "FAR": {
+    "lore": "Hector International Airport is a civil-military public airport three miles (5\u00a0km) northwest of Fargo, in Cass County, North Dakota, United States. The busiest airport in North Dakota, it is owned by the City of Fargo Municipal Airport Authority. Fargo Air National Guard Base is located adjacent to the airport.",
+    "type": "regional"
+  },
+  "FAT": {
+    "lore": "Fresno Yosemite International Airport is a joint military\u2013public airport in Fresno, California, United States. It is the primary commercial airport for the San Joaquin Valley and three national parks: Yosemite, Sequoia and Kings Canyon. It offers scheduled passenger flights to several major airline hubs in the United States and international service to Mexico. The facility opened in June 1942 as Hammer Field, a military airfield. The airport is owned and operated by the city of Fresno and operates two runways on a property spanning 1,728 acres (699\u00a0ha). Its airport code \"FAT\" stands for Fresno Air Terminal, a former name for the airport.",
+    "type": "regional"
+  },
+  "FCA": {
+    "lore": "Glacier Park International Airport is an airport in Flathead County, Montana, United States, six miles northeast of Kalispell. The airport is owned and operated by the Flathead Municipal Airport Authority, a public agency created by the county in 1974. The airport is near Glacier National Park.",
+    "type": "regional"
+  },
+  "FCO": {
+    "lore": "Rome Fiumicino Leonardo da Vinci International Airport is an international airport in Fiumicino, Italy, serving Rome, its metropolitan area, Vatican City and the wider Lazio region. It is the busiest airport in the country, the eighth-busiest airport in Europe and the world's 40th-busiest airport with over 50 million passengers served in 2025. It covers an area of 16\u00a0km2 (6.2\u00a0sq\u00a0mi).",
+    "type": "regional"
+  },
+  "FLL": {
+    "lore": "Fort Lauderdale\u2013Hollywood International Airport is a major public airport located in unincorporated Broward County, Florida, United States, roughly 3 miles (4.8\u00a0km) southwest of downtown Fort Lauderdale and 21 miles (34\u00a0km) north of Miami. The second busiest of the Miami metropolitan area's commercial airports, it is located off I-595, I-95, Highway 1, SR A1A, and SR 5, and is bounded by the cities of Fort Lauderdale, Hollywood, and Dania Beach.",
+    "type": "regional"
+  },
+  "FNT": {
+    "lore": "Bishop International Airport is a commercial and general aviation airport in Flint, Michigan, United States. It is named after banker and General Motors board member Arthur Giles Bishop, who donated 220 acres of his farmland for the airport in 1928. It is located in southwestern Flint, and is surrounded by Flint Township to the north, east and west; and Mundy Township to the south.",
+    "type": "regional"
+  },
+  "FOD": {
+    "lore": "Fort Dodge Regional Airport is a city owned public use airport located three\u00a0nautical miles (6\u00a0km) north of the central business district of Fort Dodge, a city in Webster County, Iowa, United States. It is mostly used for general aviation, but is also served by one commercial airline United Airlines, a service that is subsidized by the federal government's Essential Air Service program at a cost of $3,892,174.",
+    "type": "regional"
+  },
+  "FRA": {
+    "lore": "Frankfurt Airport is Germany's busiest international airport by passenger numbers, located in Frankfurt, Germany's fifth-largest city. Its official name according to the German Aeronautical Information Publication is Frankfurt Main Airport. The airport is operated by Fraport and serves as the main hub for Lufthansa, including Lufthansa City Airlines, Lufthansa CityLine, Discover Airlines and Lufthansa Cargo as well as Condor and AeroLogic. It covers an area of 2,300 hectares of land and features three passenger terminals with capacity for approximately 65\u00a0million passengers per year; four runways; and extensive logistics and maintenance facilities.",
+    "type": "regional"
+  },
+  "FSD": {
+    "lore": "Sioux Falls Regional Airport, also known as Joe Foss Field, is a public and military use airport three miles north of Sioux Falls, South Dakota, United States. It is named in honor of aviator and Sioux Falls native Joe Foss, who later served as the 20th Governor of South Dakota (1955\u20131959).",
+    "type": "regional"
+  },
+  "FWA": {
+    "lore": "Fort Wayne International Airport lies eight miles southwest of Fort Wayne, in Allen County, Indiana, United States. It is owned by the Fort Wayne-Allen County Airport Authority.",
+    "type": "regional"
+  },
+  "GCM": {
+    "lore": "Owen Roberts International Airport is an airport serving Grand Cayman, Cayman Islands. It is the main international airport for the Cayman Islands as well as the main base for Cayman Airways. The airport is named after British Royal Air Force (RAF) Wing Commander Owen Roberts, a pioneer of commercial aviation in the country, and is one of the two entrance ports to the Cayman Islands.",
+    "type": "regional"
+  },
+  "GDL": {
+    "lore": "Guadalajara International Airport (Spanish: Aeropuerto Internacional de Guadalajara); officially Aeropuerto Internacional Miguel Hidalgo y Costilla (Miguel Hidalgo y Costilla International Airport) (IATA: GDL, ICAO: MMGL), is the international airport serving Guadalajara, Jalisco, Mexico. It is Mexico's third-busiest airport in passenger traffic, aircraft operations, and cargo volume, offering flights across Mexico, the Americas, and Europe. It ranks ninth in Latin America and 39th in North America by passenger traffic.",
+    "type": "regional"
+  },
+  "GEG": {
+    "lore": "Spokane International Airport is a commercial airport in Spokane, Washington, United States, located approximately 7 miles (11\u00a0km) west-southwest of Downtown Spokane. It is the primary airport serving the Inland Northwest, which consists of 30 counties and includes areas such as Spokane, the Tri-Cities, both in Eastern Washington, and Coeur d'Alene in North Idaho. The airport's code, GEG, is derived from its former name, Geiger Field, which honored Major Harold Geiger (1884\u20131927).",
+    "type": "regional"
+  },
+  "GRB": {
+    "lore": "Green Bay Austin Straubel International Airport is a county-owned public-use airport in Brown County, Wisconsin, United States, which serves Northeastern Wisconsin. It is the fourth busiest of eight commercial service airports in Wisconsin in terms of passengers served. The airport is located 7 nautical miles southwest of downtown Green Bay, in the village of Ashwaubenon.",
+    "type": "regional"
+  },
+  "GRR": {
+    "lore": "Grand Rapids Gerald R. Ford International Airport is a commercial airport in Cascade Township, approximately 13 miles (21\u00a0km) southeast of Grand Rapids, Michigan, United States. The facility is owned by the Kent County Board of Commissioners and managed by an independent authority. The US Federal Aviation Administration (FAA) National Plan of Integrated Airport Systems for 2017\u20132021 categorized it as a small hub primary commercial service facility.",
+    "type": "regional"
+  },
+  "GRU": {
+    "lore": "S\u00e3o Paulo/Guarulhos\u2013Governor Andr\u00e9 Franco Montoro International Airport, commonly known as S\u00e3o Paulo/Guarulhos International Airport, is the primary international airport serving S\u00e3o Paulo, located in the municipality of Guarulhos, in the state of S\u00e3o Paulo. It is the largest airport in Brazil and Latin America, and one of the 50 busiest in the world by passenger traffic. It is popularly known locally as either Cumbica Airport, after the district where it is located and the Brazilian Air Force base that exists at the Guarulhos Airport, after the municipality where it is located. Since 28 November 2001, the airport has been named after Andr\u00e9 Franco Montoro (1916\u20131999), former Governor of S\u00e3o Paulo state. The airport was rebranded as GRU Airport in 2012.",
+    "type": "regional"
+  },
+  "GSO": {
+    "lore": "Piedmont Triad International Airport is an airport located in unincorporated Guilford County, North Carolina, west of Greensboro, serving the Piedmont Triad region of Greensboro, High Point and Winston-Salem in North Carolina, United States. The airport, located just off Bryan Boulevard, sits on a 3,770 acre campus and has three runways. It is the third busiest airport in North Carolina in terms of airplane movements, averaging 280 takeoffs and landings each day. As of 2025, GSO ranks 103rd in passenger arrivals and departures in the US, offering passenger service to 14 U.S. destinations. PTI is owned and operated by the Piedmont Triad Airport Authority.",
+    "type": "regional"
+  },
+  "GSP": {
+    "lore": "Greenville\u2013Spartanburg International Airport \u2013 also known as Roger Milliken Field \u2013 is near Greer, South Carolina, United States, midway between Greenville and Spartanburg, the major cities of the Upstate region of South Carolina. The airport is the third-busiest airport in South Carolina, after Charleston International Airport, and Myrtle Beach International Airport with over 3.04 million passengers in 2025, the most in its history.",
+    "type": "regional"
+  },
+  "GTF": {
+    "lore": "Great Falls International Airport is a public/military airport in city limits three miles southwest of central Great Falls in Cascade County, Montana, United States. The airport has also been called Great Falls Municipal Airport.",
+    "type": "regional"
+  },
+  "HDN": {
+    "lore": "Yampa Valley Regional Airport is in Routt County, Colorado, United States, serving the communities of Steamboat Springs, Hayden, and Craig, Colorado. The airport is two miles southeast of Hayden, about 20 miles east of Craig and about 25 miles (40\u00a0km) west of Steamboat Springs. It has the only scheduled passenger flights in northwest Colorado. It is also used by larger business jets that cannot use the smaller Steamboat Springs Airport.",
+    "type": "regional"
+  },
+  "HHH": {
+    "lore": "Hilton Head Airport is on Hilton Head Island, in Beaufort County, South Carolina, United States. Also known as Hilton Head Island Airport, it is owned by Beaufort County.",
+    "type": "regional"
+  },
+  "HKG": {
+    "lore": "Hong Kong International Airport is an international airport located on the island of Chek Lap Kok in western Hong Kong. It is sometimes referred to Chek Lap Kok Airport to distinguish it from its predecessor, Kai Tak Airport.",
+    "type": "regional"
+  },
+  "HNL": {
+    "lore": "Daniel K. Inouye International Airport, also known as Honolulu International Airport, is the primary airport serving the U.S. state of Hawaii. The airport is named after Honolulu native and Medal of Honor recipient Daniel Inouye (1924\u20132012), who represented Hawaii in the United States Senate from 1963 until his death in 2012. The airport is in the Honolulu census-designated place three miles northwest of Honolulu's central business district. The airport covers 4,220 acres, more than 1% of the entire Oahu Island.",
+    "type": "regional"
+  },
+  "HPN": {
+    "lore": "Westchester County Airport is a county-owned airport in Westchester County, New York, United States, three nautical miles northeast of downtown White Plains, with territory in the towns of North Castle and Harrison, New York, and the village of Rye Brook, New York. It is sometimes referred to as the White Plains Airport and is so identified by the Official Airline Guide (OAG).",
+    "type": "regional"
+  },
+  "HSV": {
+    "lore": "Huntsville International Airport is a public airport and spaceport ten miles southwest of downtown Huntsville, in Madison County, Alabama, United States. The FAA has designated the Huntsville International Airport as a Re-entry site for the Dream Chaser, a spaceplane operated by Sierra Space to make reentries from Low Earth Orbit (LEO).",
+    "type": "regional"
+  },
+  "IAD": {
+    "lore": "Washington Dulles International Airport is the primary international airport serving Washington, D.C., the capital of the United States. It is located 26 miles (42\u00a0km) west of downtown Washington, D.C., in Loudoun and Fairfax counties in Northern Virginia.",
+    "type": "regional"
+  },
+  "IAH": {
+    "lore": "George Bush Intercontinental Airport is the main international airport in Houston, Texas, United States, serving the Greater Houston metropolitan area. Initially named Houston Intercontinental Airport upon its opening in 1969, it was renamed in honor of George H. W. Bush, the 41st president of the United States and a resident of Houston, in 1997. It is also commonly called Houston International Airport or George Bush International Airport.",
+    "type": "regional"
+  },
+  "ICN": {
+    "lore": "Incheon International Airport is the main international airport serving Seoul, the capital of South Korea. It is one of the largest and busiest airports in the world.",
+    "type": "regional"
+  },
+  "ICT": {
+    "lore": "Wichita Dwight D. Eisenhower National Airport is a commercial airport 7 miles (11\u00a0km) west of downtown Wichita, Kansas, United States. It is the largest and busiest airport in Kansas. Located south of US-54 in southwest Wichita, it covers 3,248 acres and contains three runways.",
+    "type": "regional"
+  },
+  "IDA": {
+    "lore": "Idaho Falls Regional Airport is 2 miles (3.2\u00a0km) north-northwest of downtown Idaho Falls, Idaho, United States. It is locally known as Fanning Field. It is the second-busiest airport in Idaho after Boise Airport.",
+    "type": "regional"
+  },
+  "ILM": {
+    "lore": "Wilmington International Airport is a public airport located just north of Wilmington, North Carolina, in unincorporated Wrightsboro. ILM covers 1,800 acres.",
+    "type": "regional"
+  },
+  "IND": {
+    "lore": "Indianapolis International Airport is an international airport located seven miles (11\u00a0km) southwest of Downtown Indianapolis in Marion County, Indiana, United States. It is owned and operated by the Indianapolis Airport Authority, and the airport serves over 50 non-stop destinations throughout North America, the Caribbean and Europe. As of 2024, IND is the 46th-busiest airport in the U.S. and the busiest in Indiana with 5,180,917 passengers.",
+    "type": "regional"
+  },
+  "IST": {
+    "lore": "Istanbul Airport is the larger of two international airports serving Istanbul, Turkey. It is located in the Arnavutk\u00f6y district on the European side of the city. It is the largest airport in Turkey, the largest privately-owned airport operation in the world, and one of the busiest airports in Europe.",
+    "type": "regional"
+  },
+  "JAC": {
+    "lore": "Jackson Hole Airport is a public airport located seven miles (11\u00a0km) north of Jackson in unincorporated Teton County, Wyoming, U.S. In 2019, it was the busiest airport in Wyoming by passenger traffic with 455,000 passengers. During peak summer and winter seasons, Jackson Hole offers nonstop airline service from up to 15 destinations across the United States. The airport is served year-round by Alaska Airlines, American Airlines, Delta Air Lines, and United Airlines and seasonally by Sun Country Airlines.",
+    "type": "regional"
+  },
+  "JAX": {
+    "lore": "Jacksonville International Airport is a civil-military public airport 13 miles (21\u00a0km) north of Downtown Jacksonville, in Duval County, Florida, United States. It is owned and operated by the Jacksonville Aviation Authority.",
+    "type": "regional"
+  },
+  "JFK": {
+    "lore": "John F. Kennedy International Airport is the primary international airport serving the New York metropolitan area. It is located on the southwestern shore of Long Island, in Queens, New York City, bordering Jamaica Bay. It is the busiest of the three airports in the New York airport system, the sixth-busiest airport in the United States. The airport, which covers 5,200 acres (2,104\u00a0ha), is the largest in the New York metropolitan area. Nearly 100 airlines operate from JFK Airport, with nonstop or direct flights to destinations on all six permanently inhabited continents.",
+    "type": "regional"
+  },
+  "JLN": {
+    "lore": "Joplin Regional Airport is located four miles (6.4\u00a0km) north of Joplin, in Jasper County, Missouri, United States. It has airline service, which is subsidized by the Essential Air Service program.",
+    "type": "regional"
+  },
+  "JST": {
+    "lore": "John Murtha Johnstown\u2013Cambria County Airport is a civil-military airport 3 miles (4.8\u00a0km) northeast of Johnstown, in Richland Township, Cambria County, Pennsylvania. It is owned by Johnstown\u2013Cambria County Airport Authority and is named after the late Congressman John Murtha. It sees one airline, subsidized by the Essential Air Service.",
+    "type": "regional"
+  },
+  "LAF": {
+    "lore": "Purdue University Airport is a public-use airport in Tippecanoe County, Indiana, United States. It is owned by Purdue University, and is 2 nautical miles southwest of the central business district of Lafayette, Indiana, in West Lafayette.",
+    "type": "regional"
+  },
+  "LAN": {
+    "lore": "Capital Region International Airport, formerly Lansing Capital City Airport, is a public, Class C airport located 3 miles (5\u00a0km) northwest of downtown Lansing in a portion of DeWitt Township, Michigan that has been annexed to the City of Lansing via Public Act 425. Small areas of the airport are located in Watertown Township, and Delta Township. It is included in the Federal Aviation Administration (FAA) National Plan of Integrated Airport Systems for 2025\u20132029, in which it is categorized as a non-hub primary commercial service facility.",
+    "type": "regional"
+  },
+  "LAS": {
+    "lore": "Harry Reid International Airport, formerly McCarran International Airport until 2021, is an international airport serving Las Vegas as well as the surrounding Las Vegas Valley in Nevada, United States. It is located approximately five miles south of downtown Las Vegas, in the unincorporated area of Paradise, and covers 2,800 acres of land.",
+    "type": "regional"
+  },
+  "LAX": {
+    "lore": "Los Angeles International Airport is the primary international airport serving Los Angeles and its surrounding metropolitan area, in the U.S. state of California. LAX is located in the Westchester neighborhood of the City of Los Angeles, 18 miles southwest of downtown Los Angeles, with the commercial and residential areas of Westchester to the north, the city of El Segundo to the south, and the city of Inglewood to the east. LAX is the closest airport to the Westside and the South Bay.",
+    "type": "regional"
+  },
+  "LEX": {
+    "lore": "Blue Grass Airport is a public airport in Fayette County, Kentucky, United States, 6 miles west of downtown Lexington. Located among horse farms and situated directly across from Keeneland Race Course, Blue Grass Airport is the primary airport serving central and eastern Kentucky. In 2025, LEX served 1,614,053 passengers, an all-time record for the facility, breaking the old record set in 2024. The 2025 passenger totals was 2.7 percent higher than in 2024. Four major airline carriers serve its passengers: Allegiant Air, American Airlines, Delta Air Lines, and United Airlines.",
+    "type": "regional"
+  },
+  "LGA": {
+    "lore": "LaGuardia Airport is a civil airport in East Elmhurst, Queens, New York City, United States, situated on the northwestern shore of Long Island, bordering Flushing Bay. It covers 680 acres (280\u00a0ha) as of July\u00a01, 2026. The facility was established in 1929 and began operating as a public airport in 1939. It is named after Fiorello La Guardia, a former mayor of New York City.",
+    "type": "regional"
+  },
+  "LHR": {
+    "lore": "London Heathrow Airport \u2013 named London Airport until 1966 \u2013 is the primary and largest international airport serving London, the capital of England and the United Kingdom. It is the largest of the six international airports in the London airport system.",
+    "type": "regional"
+  },
+  "LIT": {
+    "lore": "Bill and Hillary Clinton National Airport, also known as Adams Field, is a joint civil-military airport on the east side of Little Rock, Arkansas, United States. It is operated by the Little Rock Municipal Airport Commission.",
+    "type": "regional"
+  },
+  "LNK": {
+    "lore": "Lincoln Airport is a joint public/military airport five miles (8.0\u00a0km) northwest of downtown Lincoln, the state capital, in Lancaster County, Nebraska, United States. It is owned by the Lincoln Airport Authority and is the second-largest airport in Nebraska. It is included in the Federal Aviation Administration (FAA) National Plan of Integrated Airport Systems for 2023\u20132027 in which it is categorized as a non-hub primary commercial service facility. The passenger terminal has six gates following completion of the LNK Next renovation in 2024.",
+    "type": "regional"
+  },
+  "LNS": {
+    "lore": "Lancaster Airport is a public use airport four\u00a0nautical miles north of the central business district of Lancaster, in Lancaster County, Pennsylvania, United States. It is owned by the Lancaster Airport Authority. It is served by one commuter airline subsidized by the Essential Air Service program and one charter airline.",
+    "type": "regional"
+  },
+  "LSE": {
+    "lore": "La Crosse Regional Airport is a public airport located 5 nautical miles northwest of La Crosse, a city in La Crosse County, Wisconsin, United States. Until August 2013, the airport was called La Crosse Municipal Airport.",
+    "type": "regional"
+  },
+  "LWB": {
+    "lore": "Greenbrier Valley Airport is three miles north of Lewisburg in Greenbrier County, West Virginia. SkyWest Airlines, on behalf of American Eagle, schedules airline flights subsidized by the Essential Air Service program to Charlotte Douglas International Airport and Chicago O'Hare International Airport.\nFederal Aviation Administration records say the airport had 10,902 passenger boardings (enplanements) in calendar year 2021 and 10,048 in 2022. The National Plan of Integrated Airport Systems for 2023\u20132027 called it a primary commercial service airport based on enplanements in 2021.",
+    "type": "regional"
+  },
+  "LYH": {
+    "lore": "Lynchburg Regional Airport, also known as Preston Glenn Field, is a public use airport in Campbell County, Virginia, United States. It is located at the intersection of Route 29 South and Route 460, five\u00a0nautical miles southwest of the central business district of the City of Lynchburg, which owns the airport. Opened in 1931, it was originally named Preston Glenn Airport in honor of Lt. Preston Glenn, a Lynchburg native who died while serving in World War I as an Army Air Corps pilot. Mostly used for general aviation, the airport is also served by two commercial airlines, American Eagle, flying Embraer ERJ-145 aircraft to Charlotte, and United Express, flying Canadair Regional Jets to Chicago-O'Hare and Washington-Dulles.",
+    "type": "regional"
+  },
+  "MAD": {
+    "lore": "Adolfo Su\u00e1rez Madrid\u2013Barajas Airport is the main international airport serving Madrid, the capital of Spain, and its metropolitan area. At 3,050\u00a0ha in area, it is the second-largest airport in Europe by physical size behind Paris Charles de Gaulle Airport. In 2025, 68.1 million passengers travelled through Madrid\u2013Barajas, making it the country's busiest airport as well as Europe's fifth-busiest.",
+    "type": "regional"
+  },
+  "MAN": {
+    "lore": "Man Airport is an airport serving Man, C\u00f4te d'Ivoire.",
+    "type": "regional"
+  },
+  "MBJ": {
+    "lore": "Sangster International Airport \u2013 also known as Montego Bay International Airport or simply Montego Bay Airport \u2013 is an international airport located three miles (4.8\u00a0km) east of Montego Bay, Jamaica. The airport is capable of handling nine million passengers per year. It serves as the most popular airport for tourists visiting the north coast of Jamaica. The airport is named after former Jamaican Prime Minister Sir Donald Sangster.",
+    "type": "regional"
+  },
+  "MBS": {
+    "lore": "MBS International Airport, located in Freeland, Michigan, is a commercial and general aviation airport serving the nearby cities of Midland, Bay City, and Saginaw. It is included in the Federal Aviation Administration (FAA) National Plan of Integrated Airport Systems for 2017\u20132021, in which it is categorized as a non-hub primary commercial service facility.",
+    "type": "regional"
+  },
+  "MCI": {
+    "lore": "Kansas City International Airport \u2014 originally Mid-Continent International Airport and often referred to by locals as KCI \u2014 is an international airport in Kansas City, Missouri, located 15 miles (24\u00a0km) northwest of Downtown Kansas City in Platte County, Missouri. The airport was opened in 1972 and a new complex in the airport was completed in 2023, replacing the old one. MCI replaced Kansas City Municipal Airport (MKC) in 1972, with all scheduled passenger airline flights moved from MKC to MCI. It serves the Kansas City Metropolitan Area and is the primary passenger airport for much of western Missouri and eastern Kansas.",
+    "type": "regional"
+  },
+  "MCO": {
+    "lore": "Orlando International Airport is the primary international airport serving Orlando, Florida, located 6 miles (9.7\u00a0km) southeast of Downtown. In 2025, the airport served 57,675,573 passengers, making it the busiest airport in the state and the seventh busiest airport in the United States. The airport code MCO comes from the airport's former name, McCoy Air Force Base, a Strategic Air Command installation, that was closed in 1975 as part of a general military drawdown following the end of the Vietnam War.",
+    "type": "regional"
+  },
+  "MCW": {
+    "lore": "Mason City Municipal Airport is located six miles west of downtown Mason City, in Cerro Gordo County, Iowa, United States. It is in the northern part of Lake Township, just east of the city of Clear Lake. It is used for general aviation and has airline service subsidized through the Essential Air Service (EAS) program.",
+    "type": "regional"
+  },
+  "MDT": {
+    "lore": "Harrisburg International Airport is a public airport in Lower Swatara Township, Pennsylvania, United States, nine miles (14\u00a0km) southeast of Harrisburg. It is owned by the Susquehanna Area Regional Airport Authority.",
+    "type": "regional"
+  },
+  "MEM": {
+    "lore": "Memphis International Airport, officially known as Frederick W. Smith International Airport, is a civil\u2013military airport located seven miles southeast of downtown Memphis in Shelby County, Tennessee, United States. It is the primary airport serving Memphis. The airport covers 3,900 acres (1,600\u00a0ha) and has four runways.",
+    "type": "regional"
+  },
+  "MEX": {
+    "lore": "Mexico City International Airport, officially Benito Ju\u00e1rez International Airport, is the main international airport serving Mexico City, the capital of Mexico. It is the busiest airport in Mexico, and as of 2025 ranks as the third-busiest in Latin America, the 15th-busiest in North America, and the 50th-busiest in the world by passenger traffic. The airport is served by more than 25 airlines with routes to over 100 destinations across Mexico, the Americas, Europe, the Middle East, and Asia.",
+    "type": "regional"
+  },
+  "MGW": {
+    "lore": "Morgantown Municipal Airport is three miles east of Morgantown, in Monongalia County, West Virginia. It is also known as Walter L. Bill Hart Field. It sees one passenger airline, United Express operated by Skywest Airlines, which is subsidized by the Essential Air Service program.",
+    "type": "regional"
+  },
+  "MHK": {
+    "lore": "Manhattan Regional Airport in Riley County, Kansas, United States, is the second-busiest commercial airport in Kansas. Owned by the city of Manhattan, Kansas, the airport is located about five miles southwest of downtown Manhattan. American Airlines via its American Eagle affiliate serves the airport with five daily regional jet flights, with two nonstops to Chicago O'Hare International Airport (ORD) and three nonstops to Dallas/Fort Worth International Airport (DFW). The airport is also used for general aviation and for planes chartered by the military and college sports teams.",
+    "type": "regional"
+  },
+  "MHT": {
+    "lore": "Manchester\u2013Boston Regional Airport, informally referred to by its former name Manchester Airport, is a public use airport 3 miles (5\u00a0km) south of the central business district of Manchester, New Hampshire, United States on the border of Hillsborough and Rockingham counties. It is owned by the city of Manchester, and is in the southern part of the city, on the border with Londonderry, New Hampshire, extending into that town.",
+    "type": "regional"
+  },
+  "MIA": {
+    "lore": "Miami International Airport, also known as MIA and historically as Wilcox Field, is the primary international airport serving Miami and its surrounding metropolitan area in the U.S. state of Florida. It hosts over 1,000 daily flights to 195 domestic and international destinations, including most countries in Central and South America and the Caribbean. The airport is in an unincorporated area in Miami-Dade County, Florida, It is located approximately 6 miles (9.7\u00a0km) west-northwest of downtown Miami, adjacent to the cities of Miami and Miami Springs, and the village of Virginia Gardens. Nearby cities include Hialeah, Doral, and the census-designated place of Fontainebleau.",
+    "type": "regional"
+  },
+  "MKE": {
+    "lore": "Milwaukee Mitchell International Airport is a civil\u2013military airport 5 nautical miles south of downtown Milwaukee, Wisconsin, United States. It is included in the Federal Aviation Administration (FAA) National Plan of Integrated Airport Systems for 2025\u20132029, in which it is categorized as a medium-hub primary commercial service facility. Milwaukee Mitchell International Airport covers 2,314 acres (936\u00a0ha) and has five asphalt and concrete runways.",
+    "type": "regional"
+  },
+  "MLI": {
+    "lore": "Quad Cities International Airport is a public airport in Rock Island County, Illinois, three miles (5\u00a0km) south of Moline, partly in Blackhawk Township and partly in Coal Valley Township. In 2012 it was named \"Illinois Primary Airport of the Year\". It serves the Quad Cities Metropolitan area, including Davenport and Bettendorf in Scott County, Iowa as well as Moline in Rock Island County, Illinois.",
+    "type": "regional"
+  },
+  "MQT": {
+    "lore": "Marquette Sawyer Regional Airport \u2014 previously named Sawyer International Airport \u2014 is a county-owned, public-use airport in Marquette County, Michigan, United States. Located 17 nautical miles south of Marquette, it is included in the Federal Aviation Administration (FAA) National Plan of Integrated Airport Systems for 2021\u20132025, in which it is categorized as a nonhub primary commercial service and general aviation facility.",
+    "type": "regional"
+  },
+  "MSN": {
+    "lore": "Dane County Regional Airport (DCRA), also known as Truax Field, is a civil-military airport located 6 nautical miles northeast of downtown Madison, Wisconsin. In the Federal Aviation Administration (FAA) National Plan of Integrated Airport Systems for 2025\u20132029, it is one of two airports in Wisconsin that is categorized as a small-hub primary commercial service facility; the other is Appleton International Airport. It is the second busiest of eight commercial airports in Wisconsin in terms of passengers served after Milwaukee Mitchell International Airport.",
+    "type": "regional"
+  },
+  "MSO": {
+    "lore": "Missoula Montana Airport is located in Missoula, in Missoula County, Montana. It is owned by the Missoula County Airport Authority.",
+    "type": "regional"
+  },
+  "MSP": {
+    "lore": "Minneapolis\u2013Saint Paul International Airport \u2013 also less commonly known as Wold\u2013Chamberlain Field \u2013 is a joint civil-military public international airport serving the Twin Cities in the U.S. state of Minnesota. It is located in Fort Snelling Unorganized Territory and sections of the airport border the city limits of Minneapolis and Richfield; however, the airport property is not part of any city or school district. Although situated within the unorganized territory, the airport is centrally located within 10 miles of both downtown Minneapolis and downtown Saint Paul. In addition to primarily hosting commercial flights from major American and some international airlines, the airport is also home to several United States Air Force and Minnesota Air National Guard operations. The airport is also used by a variety of air cargo operators. MSP, along with Detroit Metropolitan Airport, regularly contends for the busiest airport in the Upper Midwest.",
+    "type": "regional"
+  },
+  "MSY": {
+    "lore": "Louis Armstrong New Orleans International Airport is an international airport under Class B airspace in the City of Kenner, Jefferson Parish, Louisiana, United States. It is owned by the City of New Orleans and is 11 miles (18\u00a0km) west of downtown New Orleans.",
+    "type": "regional"
+  },
+  "MTJ": {
+    "lore": "Montrose Regional Airport is a non-towered public airport on the northwest side of Montrose, in zip code 81401 in southwestern Colorado. Its two runways are at elevation 5,759 feet. MTJ covers 966 acres of land.",
+    "type": "regional"
+  },
+  "MTY": {
+    "lore": "Monterrey International Airport, officially General Mariano Escobedo International Airport, is an international airport serving Greater Monterrey, Nuevo Le\u00f3n, Mexico. In 2025, it served over 15.6 million passengers, making it the fourth busiest airport in Mexico by passenger movement, and holds the 13th position in Latin America and 44th in North America by passenger volume, offering flights across Mexico, the Americas, Asia, and Europe.",
+    "type": "regional"
+  },
+  "MUC": {
+    "lore": "Munich Airport is an international airport serving Munich and the surrounding region of Upper Bavaria and Lower Bavaria. Located 28.5\u00a0km (17.7\u00a0mi) northeast of Munich near the town of Freising, it is named after former Bavarian minister-president Franz Josef Strauss. According to the German Aeronautical Information Publication, the airport's official English name is Muenchen Airport.",
+    "type": "regional"
+  },
+  "MYR": {
+    "lore": "Myrtle Beach International Airport is a county-owned, public-use airport. It is located 3 miles (5\u00a0km) southwest of the central business district of Myrtle Beach, in Horry County, South Carolina, United States. It was formerly known as Myrtle Beach Jetport (1974\u20131989), and it is located on the site of the former Myrtle Beach Air Force Base, which also includes The Market Common shopping complex.",
+    "type": "regional"
+  },
+  "NAS": {
+    "lore": "Lynden Pindling International Airport, formerly known as Nassau International Airport, is the largest airport in the Bahamas and the largest international gateway into the country. It is a hub for Bahamasair, Western Air, Flamingo Air, Southern Air Charter and Pineapple Air. The airport is located in western New Providence island near the capital city of Nassau. The airport is named after Lynden Pindling,\nthe first prime minister of the Bahamas.",
+    "type": "regional"
+  },
+  "NRT": {
+    "lore": "Narita International Airport , originally known as New Tokyo International Airport , is an international airport serving the Greater Tokyo Area. It is located approximately 60 kilometers east of central Tokyo in Narita, Chiba. The airport covers approximately 1,137 hectares and is undergoing expansion that will increase its total area to approximately 2,300 ha.",
+    "type": "regional"
+  },
+  "OGG": {
+    "lore": "Kahului Airport is the main airport of Maui in the state of Hawaii, United States, located east of Kahului. It has offered full airport operations since 1952. Many flights into Kahului originate from the Daniel K. Inouye International Airport in Honolulu; the Honolulu\u2013Kahului corridor is one of the heaviest-trafficked air routes in the US, ranking 13th in 2004 with 1,632,000 passengers.",
+    "type": "regional"
+  },
+  "OKC": {
+    "lore": "OKC Will Rogers International Airport, formerly known as Will Rogers World Airport until 2024, is an airport located in Oklahoma City, Oklahoma, United States, approximately 6 miles (10\u00a0km) southwest of Downtown Oklahoma City. Its facility is used jointly for civil and military, covering 8,081 acres (32.70\u00a0km2) of land. Although the official IATA and ICAO airport codes for OKC Will Rogers International Airport are OKC and KOKC, it is common practice to refer to it as \"WRWA\" or \"Will Rogers\".",
+    "type": "regional"
+  },
+  "OMA": {
+    "lore": "Eppley Airfield, also known as Omaha Airport, is an airport in the midwestern United States, located three miles (5\u00a0km) northeast of downtown Omaha, Nebraska. On the west bank of the Missouri River in Douglas County, it is the busiest airport in Nebraska, with more arrivals and departures than all other airports in the state combined. It is classified as a medium hub airport by the Federal Aviation Administration (FAA). It\u00a0is owned and operated by the Omaha Airport Authority (OAA).",
+    "type": "regional"
+  },
+  "ONT": {
+    "lore": "Ontario International Airport is an international airport 2\u00a0mi (3.2\u00a0km) east of downtown Ontario, in San Bernardino County, California, United States, about 38\u00a0mi (61\u00a0km) east of downtown Los Angeles and 18\u00a0mi (29\u00a0km) west of downtown San Bernardino. It is owned and operated under a joint-powers agreement with the city of Ontario and San Bernardino County.",
+    "type": "regional"
+  },
+  "ORF": {
+    "lore": "Norfolk International Airport, is a regional commercial and cargo airport located seven miles (11\u00a0km) northeast of downtown Norfolk, Virginia. It is owned and operated by the Norfolk Airport Authority, a bureau under the municipal government. The airport serves the Hampton Roads metropolitan area of southeast Virginia as well as northeast North Carolina.",
+    "type": "regional"
+  },
+  "PAH": {
+    "lore": "Barkley Regional Airport is an American domestic airport in West Paducah, Kentucky, 14 miles west of Paducah in McCracken County. It is used for general aviation and sees one airline, subsidized by the Essential Air Service program.",
+    "type": "regional"
+  },
+  "PBI": {
+    "lore": "President Donald J. Trump International Airport, formerly known as Palm Beach International Airport, is a public airport in Palm Beach County, Florida, United States. It is located just west of the city of West Palm Beach, for which it serves as the primary airport. It is also the primary airport for most of Palm Beach County, serving the suburbs and cities of Boca Raton, Wellington, Boynton Beach, Jupiter, and Palm Beach Gardens. It is the third-busiest airport in the Miami metropolitan area, after Miami International Airport and Fort Lauderdale\u2013Hollywood International Airport.",
+    "type": "regional"
+  },
+  "PDX": {
+    "lore": "Portland International Airport is a joint civil\u2013military airport and the largest airport in the U.S. state of Oregon, accounting for 90% of the state's passenger air travel and more than 95% of its air cargo. It is within Portland's city limits just south of the Columbia River in Multnomah County, 6 miles by air and 12\u00a0mi (19\u00a0km) by highway northeast of downtown Portland. Portland International Airport is often referred to by its IATA airport code, PDX. The airport covers 3,000 acres of land.",
+    "type": "regional"
+  },
+  "PEK": {
+    "lore": "Beijing Capital International Airport is the busier of the two international airports serving Beijing, the capital city of China. The airport is located 32\u00a0km (20\u00a0mi) northeast of downtown Beijing, in an exclave of Chaoyang and the surroundings of that exclave in suburban Shunyi. The airport is owned and operated by the Beijing Capital International Airport Company Limited, a state-controlled company. The airport's IATA Airport code, PEK, is based on the city's former romanized name, Peking. The facility covers an area of 1,480 hectares of airport property. It was opened in 1958.",
+    "type": "regional"
+  },
+  "PHL": {
+    "lore": "Philadelphia International Airport is the primary international airport serving Philadelphia, Pennsylvania, United States. It served 30.1 million passengers annually in 2025, making it the busiest airport in Pennsylvania and the 21st-busiest airport in the United States. The airport is located 7 miles (11\u00a0km) from Center City Philadelphia and has 22 airlines that offer nearly 500 daily departures to more than 130 destinations worldwide.",
+    "type": "regional"
+  },
+  "PHX": {
+    "lore": "Phoenix Sky Harbor International Airport is a civil-military public international airport 3 miles east of downtown Phoenix, in Maricopa County, Arizona, United States. It is Arizona's largest and busiest airport. Among the largest commercial airports in the United States, PHX was the 11th-busiest airport in the United States in terms of passenger boardings and 38th-busiest in the world in 2025. The airport serves as a hub for American Airlines and a base for Frontier Airlines and Southwest Airlines.",
+    "type": "regional"
+  },
+  "PIA": {
+    "lore": "General Wayne A. Downing Peoria International Airport is a civil/military public airport five miles west of downtown Peoria, in Peoria County, Illinois, United States. It is on the northwest edge of Bartonville, near Bellevue. It is owned by the Metropolitan Airport Authority of Peoria, which often refers to it as Peoria International Airport. It was formerly the Greater Peoria Regional Airport.",
+    "type": "regional"
+  },
+  "PIT": {
+    "lore": "Pittsburgh International Airport \u2014originally Greater Pittsburgh Airport and later Greater Pittsburgh International Airport\u2014is a civil-military international airport in Findlay Township and Moon Township, Pennsylvania, United States. About 17 miles (27\u00a0km) west of downtown Pittsburgh, it is the primary international airport serving the Greater Pittsburgh Region as well as adjacent areas in West Virginia and Ohio. The airport is owned and operated by the Allegheny County Airport Authority and offers passenger flights to destinations throughout North America, Caribbean, and Europe. PIT has four runways and covers 10,000 acres (40\u00a0km2). PIT is the largest civil/public airport in terms of land area in the state of Pennsylvania. It also hosts a sizable United States Air Force base.",
+    "type": "regional"
+  },
+  "PLN": {
+    "lore": "Pellston Regional Airport, also known as Pellston Regional Airport of Emmet County, is a public airport located one mile (1.6\u00a0km) northwest of the central business district of Pellston, a village in Emmet County, Michigan, United States. It is included in the Federal Aviation Administration (FAA) National Plan of Integrated Airport Systems for 2017\u20132021, in which it is categorized as a non-hub primary commercial service facility.",
+    "type": "regional"
+  },
+  "PNS": {
+    "lore": "Pensacola International Airport, formerly Pensacola Gulf Coast Regional Airport and Pensacola Regional Airport, and temporarily branded Pensacola Intergalactic Airport each February in recognition of the local Pensacon convention, is a public use airport three nautical miles northeast of the central business district of Pensacola, in Escambia County, Florida, United States. It is owned by the City of Pensacola. This airport is one of five major airports in North Florida, and among these is the second largest by passenger count, only behind Jacksonville. The other four airports in North Florida are: Northwest Florida Beaches International Airport, Destin-Fort Walton Beach Airport, Tallahassee International Airport, and Jacksonville International Airport. Pensacola international airport is the largest airport per passenger count between Jacksonville and New Orleans.",
+    "type": "regional"
+  },
+  "PSP": {
+    "lore": "Palm Springs International Airport, formerly Palm Springs Municipal Airport, is an airport two miles east of downtown Palm Springs, California, United States. The airport covers 940 acres and has two runways. The facility operates year-round, with most flights occurring in the fall, winter, and spring.",
+    "type": "regional"
+  },
+  "PTY": {
+    "lore": "Tocumen International Airport is the primary international airport serving Panama City, the capital of Panama. The airport serves as the hub for Copa Airlines and is a regional hub to and from the Caribbean, South, North and Central America and additionally features routes to some European cities as well as cargo flights to Qatar.",
+    "type": "regional"
+  },
+  "PUJ": {
+    "lore": "Punta Cana International Airport, is a privately owned commercial airport in Punta Cana, eastern Dominican Republic. The airport was built with open-air terminals and roofs covered in palm fronds. Grupo Puntacana built the airport, which was designed by architect Oscar Imbert, and inaugurated it in December 1983. It is owned by Grupo Puntacana and became the first privately owned international airport in the world.",
+    "type": "regional"
+  },
+  "PVD": {
+    "lore": "Rhode Island T. F. Green International Airport is a public international airport in Warwick, Rhode Island, United States, 6 miles south of the state's capital and largest city of Providence. Opened in 1931, the airport was named for former Rhode Island governor and longtime senator Theodore Francis Green. Rebuilt in 1996, the renovated main terminal was named for former Rhode Island governor Bruce Sundlun. It is the first state-owned airport in the United States.",
+    "type": "regional"
+  },
+  "PVG": {
+    "lore": "Shanghai Pudong International Airport is the main international airport serving Shanghai, China.",
+    "type": "regional"
+  },
+  "PVR": {
+    "lore": "Licenciado Gustavo D\u00edaz Ordaz International Airport, simply known as Puerto Vallarta International Airport, is an international airport serving Puerto Vallarta, Jalisco, Mexico. It serves as a gateway to the Mexican tourist destination of Riviera Nayarit and the Jalisco coast year-round, offering flights to and from Mexico, the United States, Canada, and the United Kingdom. The airport also houses facilities for the Mexican Army and supports various tourism, flight training, and general aviation activities. Operated by Grupo Aeroportuario del Pac\u00edfico, it is named after President Gustavo D\u00edaz Ordaz.",
+    "type": "regional"
+  },
+  "PWM": {
+    "lore": "Portland International Jetport, locally known as the Jetport, is a public airport two miles (3\u00a0km) west of downtown Portland, Maine, United States. It is owned and operated by the City of Portland. A portion of the Jetport's property, including the main runway, is located within the neighboring city of South Portland. PWM covers 726 acres of land.",
+    "type": "regional"
+  },
+  "RAP": {
+    "lore": "Rapid City Regional Airport is a public use airport, nine miles southeast of Rapid City, in Pennington County, South Dakota, United States.",
+    "type": "regional"
+  },
+  "RDU": {
+    "lore": "Raleigh\u2013Durham International Airport, locally known by its IATA code RDU, is an international airport that serves Raleigh, Durham, and the surrounding Research Triangle region of North Carolina as its main airport. It is located in unincorporated Wake County, but is surrounded by the city of Raleigh to the north and east, and the towns of Cary and Morrisville to the south. The airport covers 5,000 acres (20\u00a0km2) and has three runways.",
+    "type": "regional"
+  },
+  "RHI": {
+    "lore": "Rhinelander\u2013Oneida County Airport is a public use airport located 2 nautical miles southwest of the central business district of Rhinelander, a city in Oneida County, Wisconsin, United States. The airport is owned by the city and county. It is primarily used for general aviation and is also served by two commercial airlines.",
+    "type": "regional"
+  },
+  "RIC": {
+    "lore": "Richmond International Airport is a joint civil-military airport in Sandston, Virginia, United States, an unincorporated community. The airport is about 7 miles (11\u00a0km) southeast of downtown Richmond, the capital of the Commonwealth of Virginia. Richmond International Airport is the busiest airport in central Virginia and the third-busiest in the state behind Washington Reagan and Washington Dulles. RIC covers 2,500 acres of land.",
+    "type": "regional"
+  },
+  "RNO": {
+    "lore": "Reno\u2013Tahoe International Airport is a public and military airport three miles (4.8\u00a0km) southeast of downtown Reno, in Washoe County, Nevada, United States. It is the state's second busiest commercial airport after Harry Reid International Airport in Las Vegas. The Nevada Air National Guard has the 152nd Airlift Wing southwest of the airport's main terminal. The airport is named after both the City of Reno, Nevada and Lake Tahoe. The airspace of Reno-Tahoe Airport is controlled by the Northern California TRACON and Oakland Air Route Traffic Control Center.",
+    "type": "regional"
+  },
+  "ROA": {
+    "lore": "Roanoke\u2013Blacksburg Regional Airport is a regional airport located three miles northwest of downtown Roanoke, Virginia, United States, although still within the independent city's borders. The five-member Roanoke Regional Airport Commission governs it, which includes representatives from the city and county of Roanoke. The airport has two runways and an average of 116 operations a day; it covers 912 acres.",
+    "type": "regional"
+  },
+  "ROC": {
+    "lore": "Frederick Douglass Greater Rochester International Airport is a public airport located within the City of Rochester, three miles (4.8\u00a0km) southwest of Downtown, in Monroe County, New York, United States. It is owned and operated by Monroe County. The airport is home to the 642nd Aviation Support Battalion, part of the 42nd Infantry Division.",
+    "type": "regional"
+  },
+  "RST": {
+    "lore": "Rochester International Airport is an international airport located seven miles (11\u00a0km) south of downtown Rochester in Olmsted County, Minnesota. It is the second-busiest airport in Minnesota. Its name used to be \"Rochester Municipal Airport\", before adding customs and immigration facilities specifically for Mayo Clinic purposes in 1995.",
+    "type": "regional"
+  },
+  "RSW": {
+    "lore": "Southwest Florida International Airport is a major county-owned airport in the South Fort Myers area of unincorporated Lee County, Florida, United States. The airport serves the Southwest Florida region, including the Cape Coral-Fort Myers, Naples-Marco Island, and Punta Gorda metropolitan areas, and is a U.S. Customs and Border Protection port of entry. It currently is the second-busiest single-runway airport in the United States, after San Diego International Airport, California. In 2025, the airport served 11,154,458 passengers, the most in its history.",
+    "type": "regional"
+  },
+  "SAF": {
+    "lore": "Santa Fe Regional Airport is a public use airport in Santa Fe, Santa Fe County, New Mexico, United States, 10 miles (16\u00a0km) southwest of the city center. The airport serves the greater Santa Fe and Los Alamos areas.",
+    "type": "regional"
+  },
+  "SAL": {
+    "lore": "Am\u00edlcar Cabral International Airport, also known as Sal International Airport, is the main international airport of Cape Verde. The airport is named after the revolutionary leader Am\u00edlcar Cabral. It is located 2 kilometres (1.2\u00a0mi) west-southwest from Espargos on Sal Island. Sal is the main hub for the national airline, Cabo Verde Airlines; and serves as a base for carrier Cabo Verde Express. This airport was also one of NASA's locations for a facility to handle the Space Shuttle after reentering from orbit.",
+    "type": "regional"
+  },
+  "SAN": {
+    "lore": "San Diego International Airport is the primary international airport serving San Diego and its surrounding metropolitan area, in the U.S. state of California. The airport is located three miles northwest of downtown San Diego. It is the busiest single-runway airport in the United States and has a relatively small footprint, covering 663 acres of land. The airport is a hub for Alaska Airlines.",
+    "type": "regional"
+  },
+  "SAT": {
+    "lore": "San Antonio International Airport is an international airport in San Antonio, Texas, United States. It is in Uptown Central San Antonio, about 8 miles (13\u00a0km) north of Downtown. It has three runways and covers 2,305 acres (933\u00a0ha). Its elevation is 809 feet (247\u00a0m) above sea level. SAT averages 260 daily departures and arrivals at its 27 gates, which serve 14 airlines flying non-stop to 45 destinations in the US and Mexico. The airport is the 43rd busiest airport in the United States by passenger traffic.",
+    "type": "regional"
+  },
+  "SAV": {
+    "lore": "Savannah/Hilton Head International Airport is a commercial and military-use airport in Savannah, Georgia, United States. Savannah/Hilton Head International provides travelers with access to Savannah, Georgia, and Hilton Head Island, South Carolina, as well as neighboring areas including Bluffton and Beaufort, South Carolina and the Golden Isles region of Coastal Georgia.",
+    "type": "regional"
+  },
+  "SBA": {
+    "lore": "Santa Barbara Municipal Airport is a public regional airport serving Santa Barbara and the surrounding area, in the U.S. state of California. It is owned and operated by the city of Santa Barbara, and is located 7 miles west of the city downtown. The airfield covers 948 acres (384\u00a0ha) of land and has three runways.",
+    "type": "regional"
+  },
+  "SBN": {
+    "lore": "South Bend International Airport \nis a commercial and freight airport located three miles northwest of downtown South Bend, in St. Joseph County, Indiana, United States. It is the state's second busiest airport in terms of passenger traffic after Indianapolis International Airport.",
+    "type": "regional"
+  },
+  "SCE": {
+    "lore": "State College Regional Airport, formerly University Park Airport, is a public airport in Benner Township, Centre County, Pennsylvania, serving State College and Central Pennsylvania. The airport covers 1,105 acres and has one active runway.",
+    "type": "regional"
+  },
+  "SDF": {
+    "lore": "Louisville Muhammad Ali International Airport \u2013 also known by its former official names as Standiford Field and Louisville International Airport \u2013 is a civil-military airport in Louisville, Kentucky. The airport was renamed after boxer and Louisville native Muhammad Ali in 2019, three years after his death. The airport covers 1,500 acres (610\u00a0ha) and has three runways. Its IATA airport code, SDF, is based on the airport's former name, Standiford Field. Despite being called an international airport, it has no regularly scheduled international passenger flights, but is a port of entry, handling many UPS Airlines international cargo flights through the United Parcel Service's worldwide air hub, often referred to as UPS Worldport.",
+    "type": "regional"
+  },
+  "SEA": {
+    "lore": "Seattle\u2013Tacoma International Airport is the primary international airport serving Seattle and its surrounding metropolitan area in the U.S. state of Washington. It is in the city of SeaTac, which was named after the airport's nickname Sea\u2013Tac, approximately 14 miles (23\u00a0km) south of downtown Seattle and 18 miles (29\u00a0km) north-northeast of downtown Tacoma. The airport is the busiest in the Pacific Northwest region of North America and is owned by the Port of Seattle.",
+    "type": "regional"
+  },
+  "SFO": {
+    "lore": "San Francisco International Airport is the primary international airport serving the San Francisco Bay Area in the U.S. state of California. Owned and operated by the City and County of San Francisco, the airport has a San Francisco mailing address and ZIP Code, although it is situated in an unincorporated area of neighboring San Mateo County, approximately 12 miles southeast of San Francisco.",
+    "type": "regional"
+  },
+  "SGF": {
+    "lore": "Springfield\u2013Branson National Airport is five miles (8.0\u00a0km) northwest of the city center of Springfield, in Greene County, Missouri, United States. The airport hosts non-stop flights to 13 cities in the U.S., 1 of which is seasonal.",
+    "type": "regional"
+  },
+  "SHD": {
+    "lore": "Shenandoah Valley Regional Airport is in the census-designated place of Weyers Cave, Virginia, United States, 5 miles (8.0\u00a0km) west of the Town of Grottoes and 12 miles (19\u00a0km) northeast of the City of Staunton. It is used for general aviation and is served by one airline, subsidized by the Essential Air Service program.",
+    "type": "regional"
+  },
+  "SJC": {
+    "lore": "San Jos\u00e9 Mineta International Airport \u2014officially Norman Y. Mineta San Jose International Airport\u2014is a city-owned public airport in San Jose, California. Located 3\u00a0mi (4.8\u00a0km) northwest of Downtown San Jose, the airport serves the city, Santa Clara County, and the greater Bay Area. It is named after San Jose native Norman Mineta, former United States Secretary of Transportation and United States Secretary of Commerce, who also served as Mayor of San Jose and as a San Jose City Councilman.",
+    "type": "regional"
+  },
+  "SJD": {
+    "lore": "Los Cabos International Airport is an international airport located in San Jos\u00e9 del Cabo, Baja California Sur, Mexico, serving as the main gateway to the Los Cabos region on the southern tip of the Baja California Peninsula. It offers flights to more than 50 destinations across the Americas and Europe, primarily functioning as a major destination for most U.S. and Canadian mainline airlines. The airport is also part of a high-traffic air corridor connecting the Baja California Peninsula with Mainland Mexico.",
+    "type": "regional"
+  },
+  "SJO": {
+    "lore": "Juan Santamar\u00eda International Airport is the primary international airport serving San Jos\u00e9, the capital of Costa Rica. The airport is located in Alajuela Province, 20 kilometres northwest of downtown San Jos\u00e9. It is named after Costa Rica's national hero, Juan Santamar\u00eda, a drummer boy who died in 1856 defending his country against forces led by William Walker, an American filibuster. It is the biggest and busiest airport in Costa Rica and second in Central America, transiting more than 5 million passengers per year before COVID.",
+    "type": "regional"
+  },
+  "SJU": {
+    "lore": "Luis Mu\u00f1oz Mar\u00edn International Airport, previously known as Isla Verde International Airport, is the main international airport of Puerto Rico serving the capital municipality of San Juan and its metropolitan area since 1955. Named after Luis Mu\u00f1oz Mar\u00edn, the first popularly elected governor of the archipelago and island, the 1,600 acre airport is located in the beachfront resort district of Isla Verde in the municipality of Carolina, about 4 to 7 miles east of the Milla de Oro financial district in Hato Rey barrio, Condado resort area and Isla Grande secondary airport in Santurce barrio, and Old San Juan historic quarter in San Juan Islet. SJU processed 13,643,689 total passengers in 2025, making it the busiest airport in Puerto Rico and the insular Caribbean.",
+    "type": "regional"
+  },
+  "SLC": {
+    "lore": "Salt Lake City International Airport is a joint civil-military international airport located about 4\u00a0mi west of Downtown Salt Lake City, Utah, United States. The airport, along with the much smaller Provo Airport (PVU) and Ogden\u2013Hinckley Airport (OGD) are the closest commercial airports for more than 3 million people and is within a 30-minute drive of nearly 1.3 million jobs. The airport serves as a hub for Delta Air Lines and is a major gateway to the Intermountain West and West Coast. The airport sees 343 scheduled nonstop airline departures per day to 93 cities in North America, South America, Asia, and Europe. It is by far the busiest airport in Utah.",
+    "type": "regional"
+  },
+  "SLN": {
+    "lore": "Salina Regional Airport, formerly Salina Municipal Airport, is located in Salina, Kansas, United States. The airport is owned by the Salina Airport Authority. It is used for general aviation, and has service from one passenger airline, SkyWest Airlines, which is subsidized by the Essential Air Service program.",
+    "type": "regional"
+  },
+  "SMF": {
+    "lore": "Sacramento International Airport is an international airport located in Sacramento, California, 10.5\u00a0mi (16.9\u00a0km) northwest of Downtown Sacramento and covers 6,000 acres (2,400\u00a0ha). It is the primary airport serving the Sacramento Metropolitan Area, and it is run by the Sacramento County Airport System. The airport is one of 4 airports serving Sacramento, the others being Sacramento Mather Airport, Sacramento Executive Airport, and Franklin Field.",
+    "type": "regional"
+  },
+  "SNA": {
+    "lore": "John Wayne Airport is an international commercial and general aviation airport that serves Orange County and Greater Los Angeles, in the U.S. state of California. The airport is located in an unincorporated area of Orange County, and it is owned and operated by Orange County. John Wayne Airport is surrounded by the cities of Irvine, Newport Beach, and Costa Mesa, and is separated from the city limits of Santa Ana by Interstate 405 and State Route 55. Originally named Orange County Airport, the Orange County Board of Supervisors renamed the airport in 1979 in honor of actor John Wayne, who lived in neighboring Newport Beach and died that year. A statue of John Wayne was installed at the airline terminal in 1982.",
+    "type": "regional"
+  },
+  "SPI": {
+    "lore": "Abraham Lincoln Capital Airport \u2013 also known as Springfield Airport \u2013 is a civil-military airport in Springfield, Sangamon County, Illinois, United States, located approximately 3 miles (4.8\u00a0km) northwest of downtown Springfield. It is owned by the Springfield Airport Authority (SAA).",
+    "type": "regional"
+  },
+  "SRQ": {
+    "lore": "Sarasota\u2013Bradenton International Airport is a public use international airport located within three jurisdictions: Sarasota County, the city limits of Sarasota, and Manatee County, the city limits of Bradenton all in the U.S. state of Florida. Owned by the Sarasota Manatee Airport Authority, it is 3 miles (4.8\u00a0km) north of Downtown Sarasota and 6 miles (9.7\u00a0km) south of Bradenton.",
+    "type": "regional"
+  },
+  "STL": {
+    "lore": "St. Louis Lambert International Airport, commonly referred to as Lambert Field or simply Lambert, is the primary international airport serving St. Louis, Missouri, and its metropolitan area. Covering 3,793 acres (1,535\u00a0ha) of land, it is the largest and busiest airport in the U.S. state of Missouri, being located 14 miles (23\u00a0km) northwest of downtown St. Louis in unincorporated St. Louis County between Berkeley and Bridgeton. The airport provides nonstop service to over 60 destinations within the United States, Canada, Mexico, the Caribbean, and Europe, having served nearly 16 million passengers in 2024.",
+    "type": "regional"
+  },
+  "STT": {
+    "lore": "Cyril E. King Airport is a public airport located two miles (3\u00a0km) west of the central business district in the town of Charlotte Amalie on the island of St. Thomas in the United States Virgin Islands. It is currently the busiest airport in the United States Virgin Islands, and one of the busiest in the eastern Caribbean, servicing 1,403,000 passengers from July 2015 through June 2016. The airport also serves the island of St. John and is additionally often used by those travelling to the nearby British Virgin Islands.",
+    "type": "regional"
+  },
+  "SUN": {
+    "lore": "Friedman Memorial Airport is a city-owned public-use airport in the northwest United States, located one nautical mile (2\u00a0km) southeast of the central business district of Hailey, the county seat of Blaine County, Idaho. The airport is operated by the Friedman Memorial Airport Authority under a joint powers agreement between the city of Hailey and Blaine County. It serves the resort communities of Sun Valley and Ketchum, and the surrounding areas in the Wood River Valley.",
+    "type": "regional"
+  },
+  "SUX": {
+    "lore": "Sioux Gateway Airport, also known as Brigadier General Bud Day Field, is a public and military use airport in Woodbury County, Iowa, United States. It is located six nautical miles south of the central business district of Sioux City, just west of Sergeant Bluff. On May 25, 2002, the airport was named in honor of United States Air Force Colonel George Everette \"Bud\" Day, a Sioux City, Iowa, native who is the only person ever awarded both the Medal of Honor and the Air Force Cross.",
+    "type": "regional"
+  },
+  "SXM": {
+    "lore": "Princess Juliana International Airport is the main international airport serving the Caribbean island of Saint Martin and is located on the Dutch side of the island, in the country of Sint Maarten. The airport sits alongside Simpson Bay Lagoon and is one of the Caribbean's most recognizable airports, known for its famous approach over Maho Beach, where aircraft fly within feet of the beach on approach; making it a popular attraction for aviation enthusiasts and island visitors.",
+    "type": "regional"
+  },
+  "SYR": {
+    "lore": "Syracuse Hancock International Airport is a joint civil\u2013military airport five miles (8\u00a0km) northeast of downtown Syracuse, New York. Operated by the Syracuse Regional Airport Authority, it is located off Interstate 81, near Mattydale. The main terminal complex is at the east end of Colonel Eileen Collins Boulevard. Half of the airport is located within the Town of DeWitt, with portions within the adjacent towns of Salina and Cicero.",
+    "type": "regional"
+  },
+  "TPA": {
+    "lore": "Tampa International Airport is an international airport six miles (9.7\u00a0km) west of Downtown Tampa, in Hillsborough County, Florida, United States. The airport is publicly owned by Hillsborough County Aviation Authority (HCAA). The airport serves 100 non-stop destinations throughout North America, South America, the Caribbean and Europe across multiple carriers.",
+    "type": "regional"
+  },
+  "TRI": {
+    "lore": "Tri-Cities Airport, serves the Tri-Cities area of Northeast Tennessee and Southwest Virginia. It has a street address in the census-designated place of Blountville, Tennessee, but is adjacent to the city limits of Kingsport. The airport is governed by the Tri-Cities Airport Authority (TCAA) whose members are appointed by the cities of Johnson City, Kingsport, Bristol (TN), Bristol (VA) and both Washington and Sullivan counties in Tennessee.",
+    "type": "regional"
+  },
+  "TUL": {
+    "lore": "Tulsa International Airport is a civil-military airport five miles (8\u00a0km) northeast of Downtown Tulsa, in Tulsa County, Oklahoma, United States. It was named Tulsa Municipal Airport when the city acquired it in 1929; it received its present name in 1963. It includes a 45,000-square-foot Customs facility, which allows direct commercial international flights starting with Mexico.",
+    "type": "regional"
+  },
+  "TUS": {
+    "lore": "Tucson International Airport is a civil-military airport owned by the city of Tucson \n8 miles south of downtown Tucson, in Pima County, Arizona, United States. It is the second busiest airport in Arizona, after Phoenix Sky Harbor International Airport.",
+    "type": "regional"
+  },
+  "TVC": {
+    "lore": "Cherry Capital Airport is a commercial and general aviation airport located in Traverse City, Michigan, United States. The airport is located two nautical miles southeast of the central business district of Traverse City. The airport is categorized by the Federal Aviation Administration (FAA) as a non-hub primary commercial service facility.",
+    "type": "regional"
+  },
+  "TXL": {
+    "lore": "Berlin Tegel \"Otto Lilienthal\" Airport was an airport in Berlin, the capital of Germany. In its heyday, it was the city's primary international airport. During the Cold War era, it served West Berlin. The airport was named after aviation pioneer Otto Lilienthal and was the fourth busiest airport in Germany, with over 24 million passengers in 2019. In 2016, Tegel handled over 60% of all airline passenger traffic in Berlin. The airport served as a base for Eurowings, Ryanair and easyJet. It featured flights to several European metropolitan and leisure destinations as well as some intercontinental routes. It was situated in Tegel, a section of the northern borough of Reinickendorf, eight kilometres northwest of the city centre of Berlin. Tegel Airport was notable for its hexagonal main terminal building around an open square, which made walking distances as short as 30\u00a0m (100\u00a0ft) from the aircraft to the terminal exit.",
+    "type": "regional"
+  },
+  "TYS": {
+    "lore": "McGhee Tyson Airport is a public/military airport 12 miles (19\u00a0km) south of Knoxville, in Alcoa, Tennessee. It is named for United States Navy pilot Charles McGhee Tyson, who was killed in World War I.",
+    "type": "regional"
+  },
+  "VIE": {
+    "lore": "Vienna Airport is an international airport serving Vienna, the capital of Austria. It is located in Schwechat, 18\u00a0km (11\u00a0mi) southeast of central Vienna and 57 kilometres (35\u00a0mi) west of Bratislava, the capital of Slovakia. Its official name according to the Austrian Aeronautical Information Publication is Wien-Schwechat Airport. It is the country's largest airport and serves as the hub for Austrian Airlines as well as a base for low-cost carrier Ryanair and since April 2025 also for leisure airline Condor. It is capable of handling wide-body aircraft up to the Airbus A380. The airport features a dense network of European destinations as well as long-haul flights to Asia, North America and Africa.",
+    "type": "regional"
+  },
+  "VPS": {
+    "lore": "Destin\u2013Fort Walton Beach Airport is an airport located within Eglin Air Force Base, adjacent to the city of Valparaiso and near the cities of Destin and Fort Walton Beach, in Okaloosa County, Florida, United States. The airport was previously named Northwest Florida Regional Airport until February 17, 2015, and Okaloosa Regional Airport until September 2008.",
+    "type": "regional"
+  },
+  "WAW": {
+    "lore": "Warsaw Chopin Airport is an international airport in the W\u0142ochy district of Warsaw, Poland. It is the busiest airport in Poland and the 28th busiest airport in Europe with 24.1 million passengers in 2025, handling approximately a third of the country's total air passenger traffic. The airport is a central hub for LOT Polish Airlines as well as a base for Enter Air and Wizz Air.",
+    "type": "regional"
+  },
+  "XNA": {
+    "lore": "Northwest Arkansas National Airport in Northwest Arkansas is a public-use airport located in Benton County, Arkansas, serving the rapidly growing Northwest Arkansas region, 15 nautical miles northwest of Fayetteville and 10 nautical miles northwest of Springdale. Since its opening in 1998, XNA has become a vital transportation hub, reflecting the area's economic expansion and increasing travel demands. In early summer of 2025, XNA surpassed Bill and Hillary Clinton National Airport in Little Rock as the busiest airport by passenger volume in Arkansas.",
+    "type": "regional"
+  },
+  "YEG": {
+    "lore": "Edmonton International Airport, officially branded YEG Edmonton International Airport, is an international airport that serves as the primary air passenger and air cargo facility in the Edmonton Metropolitan Region of the Canadian province of Alberta. It is located 30\u00a0km (19\u00a0mi) south of Downtown Edmonton in Leduc County on Highway 2 opposite of the city of Leduc, and spans just under 28\u00a0km2 making it the largest airport in Canada by land area and the 5th busiest airport in the country by passenger traffic.",
+    "type": "regional"
+  },
+  "YHZ": {
+    "lore": "Halifax Stanfield International Airport is a Canadian airport in Goffs, Nova Scotia, a rural community of the Halifax Regional Municipality. It serves the Halifax region, mainland Nova Scotia, and adjacent areas in the neighbouring Maritime provinces. The airport is named in honour of Robert Stanfield, the 17th Premier of Nova Scotia and former leader of the federal Progressive Conservative Party of Canada.",
+    "type": "regional"
+  },
+  "YKF": {
+    "lore": "Region of Waterloo International Airport or Kitchener/Waterloo Airport is an international airport serving the Regional Municipality of Waterloo in Woolwich, Ontario, Canada, west of Toronto. It has year round daily flights to Edmonton, Vancouver, Calgary, Orlando, Halifax, Fort Lauderdale and Kelowna through Flair Airlines and WestJet. It also has seasonal flights to Canc\u00fan through Sunwing Airlines and Flair Airlines. In 2022, the airport ranked seventh-busiest in Canada by total aircraft movements and twentieth-busiest by passenger traffic.",
+    "type": "regional"
+  },
+  "YOW": {
+    "lore": "Ottawa/Macdonald\u2013Cartier International Airport or simply Ottawa International Airport is the main international airport serving the National Capital Region of Canada which contains the cities of Ottawa, Ontario and Gatineau, Quebec. Located 8 nautical miles south of downtown Ottawa in the south end of the city, it is Canada's sixth-busiest airport, Ontario's second-busiest airport by airline passenger traffic, with 4,866,236 passengers in 2025. The airport is a major hub for Porter Airlines, a focus city for Air Canada and Air Transat and a home base for Canadian North. The airport is named after the Canadian statesmen and two of the \"founding fathers of Canada\", Sir John A. Macdonald and Sir George-\u00c9tienne Cartier.",
+    "type": "regional"
+  },
+  "YQB": {
+    "lore": "Qu\u00e9bec City Jean Lesage International Airport, also known as Jean Lesage International Airport, is the primary airport serving Quebec City, Canada. Designated as an international airport by Transport Canada, it is located 17\u00a0km (10.5\u00a0mi) west of the city, in the Sainte-Foy\u2013Sillery\u2013Cap-Rouge borough. In 2025, it was the 11th-busiest airport in Canada by number of passengers with 1,819,553 passengers. More than ten airlines offer hundreds of weekly flights to destinations across Canada, the United States, Central America, Mexico, the Caribbean and Europe.",
+    "type": "regional"
+  },
+  "YQR": {
+    "lore": "Regina International Airport is an airport located in Regina, Saskatchewan, Canada, located 2 nautical miles south-west and 7 kilometres (4.3\u00a0mi) west-southwest of the city centre. It is run by the Regina Airport Authority. In 2024, it was the 15th busiest airport in Canada.",
+    "type": "regional"
+  },
+  "YUL": {
+    "lore": "Montr\u00e9al\u2013Trudeau International Airport or Montr\u00e9al\u2013Trudeau, formerly known and still commonly referred to as Montr\u00e9al\u2013Dorval International Airport, is an international airport straddling the border of Dorval and Montreal, Quebec, Canada. It is the only Transport Canada designated international airport serving Montreal and is situated 15\u00a0km (9.3\u00a0mi) west of Downtown Montreal. The airport terminals are located entirely in the suburb of Dorval, while one runway is located in the Montreal borough of Saint-Laurent. Air Canada, the country's flag carrier, also has its corporate headquarters complex on the Saint-Laurent side of the airport. It also serves Greater Montreal and adjacent regions in Quebec and eastern Ontario, as well as the states of Vermont and northern New York in the United States. The airport is named in honour of Pierre Trudeau (1919\u20132000), the 15th Prime Minister of Canada.",
+    "type": "regional"
+  },
+  "YVR": {
+    "lore": "Vancouver International Airport is an international airport located on Sea Island in Richmond, British Columbia, serving the city of Vancouver and the Lower Mainland region. It is located 12\u00a0km (7.5\u00a0mi) from Downtown Vancouver. The airport is managed by Vancouver Airport Authority, a nonprofit organization, and covers a total expanse of about 1,340 hectares of airport property.",
+    "type": "regional"
+  },
+  "YWG": {
+    "lore": "Winnipeg James Armstrong Richardson International Airport is an international airport located in Winnipeg, Manitoba, Canada. It is the seventh busiest airport in Canada by passenger traffic, and the 11th busiest airport in Canada by aircraft movements in the previous year. Winnipeg International Airport is a hub for Calm Air, Perimeter Airlines, and cargo airline Cargojet, also serving as a focus city for WestJet and an operating base for Flair Airlines. The airport is co-located with Canadian Forces Base Winnipeg, covering a total land area of 1,370 hectares.",
+    "type": "regional"
+  },
+  "YXE": {
+    "lore": "Saskatoon John G. Diefenbaker International Airport is an international airport located 3 nautical miles north-west of downtown Saskatoon, Saskatchewan, though still within its city limits. The airport is served by passenger, courier and air freight operators. It is named for John Diefenbaker, the 13th prime minister of Canada.",
+    "type": "regional"
+  },
+  "YXU": {
+    "lore": "YXU may refer to:London International Airport, Ontario, Canada, IATA airport code YXU\nYuyu language, of South Australia, ISO 639-3 code yxu",
+    "type": "regional"
+  },
+  "YYC": {
+    "lore": "Calgary International Airport, branded as YYC Calgary Airport, is an international airport that serves the city of Calgary, Alberta, Canada. It is located approximately 17 kilometres (11\u00a0mi) northeast of downtown Calgary and covers an area of 20.82 square kilometres. With 19.4 million passengers and 205,086 aircraft movements in 2025, Calgary International is the busiest airport in Alberta and the fourth-busiest in Canada by both passenger traffic and aircraft movements. This airport is operated by the Calgary Airport Authority, and is served by the Calgary International Airport Emergency Response Service for aircraft rescue and firefighting protection.",
+    "type": "regional"
+  },
+  "YYZ": {
+    "lore": "Toronto Pearson International Airport is an international airport primarily located in Mississauga, Ontario, Canada. It is the main airport serving Toronto, its metropolitan area, and the surrounding region known as the Golden Horseshoe. Pearson is the largest and busiest airport in Canada, and the 49th-busiest airport in the world, handling 47.3 million passengers in 2025. It is named in honour of Lester B. Pearson (1897\u20131972), the 14th Prime Minister of Canada and 1957 Nobel Peace Prize laureate.",
+    "type": "regional"
+  },
+  "ZRH": {
+    "lore": "Zurich Airport is the largest international airport of Switzerland and the principal hub of Swiss International Air Lines. It serves Zurich, the largest city in Switzerland, and, with its surface transport links, much of the rest of the country. The airport is located nine kilometres north of central Zurich, in the municipalities of Kloten, R\u00fcmlang, Oberglatt, Winkel, and Opfikon, all of which are within the canton of Zurich.",
+    "type": "regional"
+  }
+}

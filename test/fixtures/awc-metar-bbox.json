@@ -1,0 +1,470 @@
+[
+  {
+    "icaoId": "KBUU",
+    "receiptTime": "2026-10-16T11:00:07.532Z",
+    "obsTime": 1792148100,
+    "reportTime": "2026-10-16T11:00:00.000Z",
+    "temp": 10.6,
+    "dewp": 7.2,
+    "wdir": 290,
+    "wspd": 9,
+    "visib": "10+",
+    "altim": 1014.3,
+    "qcField": 6,
+    "metarType": "METAR",
+    "rawOb": "METAR KBUU 161055Z AUTO 29009KT 10SM SCT022 OVC029 11/07 A2995 RMK AO2 T01060072",
+    "lat": 42.6908,
+    "lon": -88.308,
+    "elev": 238,
+    "name": "Burlington Muni, WI, US",
+    "cover": "OVC",
+    "clouds": [
+      {
+        "cover": "SCT",
+        "base": 2200
+      },
+      {
+        "cover": "OVC",
+        "base": 2900
+      }
+    ],
+    "fltCat": "MVFR"
+  },
+  {
+    "icaoId": "KIKK",
+    "receiptTime": "2026-10-16T11:02:14.189Z",
+    "obsTime": 1792148100,
+    "reportTime": "2026-10-16T11:00:00.000Z",
+    "temp": 11.4,
+    "dewp": 8.7,
+    "wdir": 280,
+    "wspd": 16,
+    "visib": "10+",
+    "altim": 1016.3,
+    "qcField": 6,
+    "metarType": "METAR",
+    "rawOb": "METAR KIKK 161055Z AUTO 28016KT 10SM BKN020 OVC025 11/09 A3001 RMK AO2 T01140087",
+    "lat": 41.0687,
+    "lon": -87.8537,
+    "elev": 188,
+    "name": "Kankakee Arpt, IL, US",
+    "cover": "OVC",
+    "clouds": [
+      {
+        "cover": "BKN",
+        "base": 2000
+      },
+      {
+        "cover": "OVC",
+        "base": 2500
+      }
+    ],
+    "fltCat": "MVFR"
+  },
+  {
+    "icaoId": "KDKB",
+    "receiptTime": "2026-10-16T11:00:09.341Z",
+    "obsTime": 1792148100,
+    "reportTime": "2026-10-16T11:00:00.000Z",
+    "temp": 9.2,
+    "dewp": 6.1,
+    "wdir": 310,
+    "wspd": 14,
+    "wgst": 18,
+    "visib": "10+",
+    "altim": 1016.3,
+    "qcField": 6,
+    "metarType": "METAR",
+    "rawOb": "METAR KDKB 161055Z AUTO 31014G18KT 10SM OVC023 09/06 A3001 RMK AO2 T00920061",
+    "lat": 41.9338,
+    "lon": -88.7066,
+    "elev": 277,
+    "name": "DeKalb/Taylor Muni, IL, US",
+    "cover": "OVC",
+    "clouds": [
+      {
+        "cover": "OVC",
+        "base": 2300
+      }
+    ],
+    "fltCat": "MVFR"
+  },
+  {
+    "icaoId": "K06C",
+    "receiptTime": "2026-10-16T11:00:11.336Z",
+    "obsTime": 1792148100,
+    "reportTime": "2026-10-16T11:00:00.000Z",
+    "temp": 10.9,
+    "dewp": 8.1,
+    "wdir": 270,
+    "wspd": 11,
+    "wgst": 18,
+    "visib": "10+",
+    "altim": 1015.3,
+    "qcField": 6,
+    "metarType": "METAR",
+    "rawOb": "METAR K06C 161055Z AUTO 27011G18KT 10SM BKN012 OVC017 11/08 A2998 RMK AO2 T01090081",
+    "lat": 41.9924,
+    "lon": -88.1091,
+    "elev": 243,
+    "name": "Schaumburg Rgnl, IL, US",
+    "cover": "OVC",
+    "clouds": [
+      {
+        "cover": "BKN",
+        "base": 1200
+      },
+      {
+        "cover": "OVC",
+        "base": 1700
+      }
+    ],
+    "fltCat": "MVFR"
+  },
+  {
+    "icaoId": "K57C",
+    "receiptTime": "2026-10-16T11:00:03.650Z",
+    "obsTime": 1792148100,
+    "reportTime": "2026-10-16T11:00:00.000Z",
+    "wdir": 290,
+    "wspd": 11,
+    "wgst": 17,
+    "visib": "10+",
+    "altim": 1014,
+    "qcField": 6,
+    "metarType": "METAR",
+    "rawOb": "METAR K57C 161055Z AUTO 29011G17KT 10SM OVC023 A2994 RMK AO2",
+    "lat": 42.7972,
+    "lon": -88.3655,
+    "elev": 454,
+    "name": "East Troy Muni, WI, US",
+    "cover": "OVC",
+    "clouds": [
+      {
+        "cover": "OVC",
+        "base": 2300
+      }
+    ],
+    "fltCat": "MVFR"
+  },
+  {
+    "icaoId": "KJOT",
+    "receiptTime": "2026-10-16T11:00:04.022Z",
+    "obsTime": 1792148100,
+    "reportTime": "2026-10-16T11:00:00.000Z",
+    "temp": 12.1,
+    "dewp": 9.1,
+    "wdir": 290,
+    "wspd": 6,
+    "visib": "10+",
+    "altim": 1016.3,
+    "qcField": 6,
+    "metarType": "METAR",
+    "rawOb": "METAR KJOT 161055Z AUTO 29006KT 260V330 10SM SCT016 BKN023 OVC029 12/09 A3001 RMK AO2 T01210091",
+    "lat": 41.5175,
+    "lon": -88.179,
+    "elev": 175,
+    "name": "Joliet Rgnl, IL, US",
+    "cover": "OVC",
+    "clouds": [
+      {
+        "cover": "SCT",
+        "base": 1600
+      },
+      {
+        "cover": "BKN",
+        "base": 2300
+      },
+      {
+        "cover": "OVC",
+        "base": 2900
+      }
+    ],
+    "fltCat": "MVFR"
+  },
+  {
+    "icaoId": "KIGQ",
+    "receiptTime": "2026-10-16T10:58:25.736Z",
+    "obsTime": 1792148100,
+    "reportTime": "2026-10-16T11:00:00.000Z",
+    "temp": 11.5,
+    "dewp": 6.7,
+    "wdir": 290,
+    "wspd": 10,
+    "wgst": 18,
+    "visib": "10+",
+    "altim": 1015,
+    "qcField": 6,
+    "metarType": "METAR",
+    "rawOb": "METAR KIGQ 161055Z AUTO 29010G18KT 10SM OVC030 12/07 A2997 RMK AO2 T01150067",
+    "lat": 41.5412,
+    "lon": -87.5282,
+    "elev": 187,
+    "name": "Chicago/Lansing Muni, IL, US",
+    "cover": "OVC",
+    "clouds": [
+      {
+        "cover": "OVC",
+        "base": 3000
+      }
+    ],
+    "fltCat": "MVFR"
+  },
+  {
+    "icaoId": "KRAC",
+    "receiptTime": "2026-10-16T10:56:32.462Z",
+    "obsTime": 1792147980,
+    "reportTime": "2026-10-16T11:00:00.000Z",
+    "temp": 10.6,
+    "dewp": 7.8,
+    "wdir": 300,
+    "wspd": 10,
+    "wgst": 19,
+    "visib": "10+",
+    "altim": 1014,
+    "slp": 1013.7,
+    "qcField": 14,
+    "metarType": "METAR",
+    "rawOb": "METAR KRAC 161053Z AUTO 30010G19KT 10SM OVC020 11/08 A2994 RMK AO2 SLP137 T01060078 $",
+    "lat": 42.7586,
+    "lon": -87.8178,
+    "elev": 203,
+    "name": "Racine/Batten Intl, WI, US",
+    "cover": "OVC",
+    "clouds": [
+      {
+        "cover": "OVC",
+        "base": 2000
+      }
+    ],
+    "fltCat": "MVFR"
+  },
+  {
+    "icaoId": "KMDW",
+    "receiptTime": "2026-10-16T10:56:27.039Z",
+    "obsTime": 1792147980,
+    "reportTime": "2026-10-16T11:00:00.000Z",
+    "temp": 11.7,
+    "dewp": 7.8,
+    "wdir": 290,
+    "wspd": 12,
+    "wgst": 19,
+    "visib": "10+",
+    "altim": 1014.6,
+    "slp": 1014.5,
+    "qcField": 4,
+    "metarType": "METAR",
+    "rawOb": "METAR KMDW 161053Z 29012G19KT 10SM FEW024 OVC031 12/08 A2996 RMK AO2 SLP145 T01170078",
+    "lat": 41.7841,
+    "lon": -87.7552,
+    "elev": 186,
+    "name": "Chicago/Midway Intl, IL, US",
+    "cover": "OVC",
+    "clouds": [
+      {
+        "cover": "FEW",
+        "base": 2400
+      },
+      {
+        "cover": "OVC",
+        "base": 3100
+      }
+    ],
+    "fltCat": "VFR"
+  },
+  {
+    "icaoId": "KENW",
+    "receiptTime": "2026-10-16T10:56:34.551Z",
+    "obsTime": 1792147980,
+    "reportTime": "2026-10-16T11:00:00.000Z",
+    "temp": 10.6,
+    "dewp": 7.2,
+    "wdir": 290,
+    "wspd": 12,
+    "wgst": 21,
+    "visib": "10+",
+    "altim": 1014,
+    "slp": 1014,
+    "qcField": 6,
+    "wxString": "BR",
+    "metarType": "METAR",
+    "rawOb": "METAR KENW 161053Z AUTO 29012G21KT 10SM BR OVC022 11/07 A2994 RMK AO2 SLP140 T01060072",
+    "lat": 42.5953,
+    "lon": -87.9383,
+    "elev": 222,
+    "name": "Kenosha Rgnl, WI, US",
+    "cover": "OVC",
+    "clouds": [
+      {
+        "cover": "OVC",
+        "base": 2200
+      }
+    ],
+    "fltCat": "MVFR"
+  },
+  {
+    "icaoId": "KDPA",
+    "receiptTime": "2026-10-16T10:56:15.136Z",
+    "obsTime": 1792147920,
+    "reportTime": "2026-10-16T11:00:00.000Z",
+    "temp": 10.6,
+    "dewp": 7.8,
+    "wdir": 290,
+    "wspd": 13,
+    "wgst": 20,
+    "visib": "10+",
+    "altim": 1015.3,
+    "slp": 1015.7,
+    "qcField": 4,
+    "wxString": "-RA",
+    "precip": 0.005,
+    "metarType": "METAR",
+    "rawOb": "METAR KDPA 161052Z 29013G20KT 10SM -RA BKN018 BKN024 OVC033 11/08 A2998 RMK AO2 RAB08 SLP157 P0000 T01060078",
+    "lat": 41.8964,
+    "lon": -88.2512,
+    "elev": 228,
+    "name": "Dupage Cnty Arpt, IL, US",
+    "cover": "OVC",
+    "clouds": [
+      {
+        "cover": "BKN",
+        "base": 1800
+      },
+      {
+        "cover": "BKN",
+        "base": 2400
+      },
+      {
+        "cover": "OVC",
+        "base": 3300
+      }
+    ],
+    "fltCat": "MVFR"
+  },
+  {
+    "icaoId": "KMKE",
+    "receiptTime": "2026-10-16T10:56:15.339Z",
+    "obsTime": 1792147920,
+    "reportTime": "2026-10-16T11:00:00.000Z",
+    "temp": 10.6,
+    "dewp": 7.8,
+    "wdir": 300,
+    "wspd": 12,
+    "wgst": 21,
+    "visib": "10+",
+    "altim": 1013,
+    "slp": 1013,
+    "qcField": 12,
+    "metarType": "METAR",
+    "rawOb": "METAR KMKE 161052Z 30012G21KT 10SM OVC017 11/08 A2991 RMK AO2 SLP130 T01060078 $",
+    "lat": 42.9549,
+    "lon": -87.9045,
+    "elev": 203,
+    "name": "Milwaukee/Mitchell Intl, WI, US",
+    "cover": "OVC",
+    "clouds": [
+      {
+        "cover": "OVC",
+        "base": 1700
+      }
+    ],
+    "fltCat": "MVFR"
+  },
+  {
+    "icaoId": "KPWK",
+    "receiptTime": "2026-10-16T10:56:21.688Z",
+    "obsTime": 1792147920,
+    "reportTime": "2026-10-16T11:00:00.000Z",
+    "temp": 11.1,
+    "dewp": 7.2,
+    "wdir": 310,
+    "wspd": 10,
+    "visib": "10+",
+    "altim": 1015,
+    "slp": 1014.9,
+    "qcField": 4,
+    "metarType": "METAR",
+    "rawOb": "METAR KPWK 161052Z 31010KT 10SM SCT026 BKN034 11/07 A2997 RMK AO2 SLP149 T01110072",
+    "lat": 42.1208,
+    "lon": -87.9048,
+    "elev": 194,
+    "name": "Chicago Exec, IL, US",
+    "cover": "BKN",
+    "clouds": [
+      {
+        "cover": "SCT",
+        "base": 2600
+      },
+      {
+        "cover": "BKN",
+        "base": 3400
+      }
+    ],
+    "fltCat": "VFR"
+  },
+  {
+    "icaoId": "KARR",
+    "receiptTime": "2026-10-16T10:56:14.932Z",
+    "obsTime": 1792147920,
+    "reportTime": "2026-10-16T11:00:00.000Z",
+    "temp": 10.6,
+    "dewp": 6.7,
+    "wdir": 300,
+    "wspd": 17,
+    "wgst": 25,
+    "visib": "10+",
+    "altim": 1016,
+    "slp": 1015.9,
+    "qcField": 6,
+    "metarType": "METAR",
+    "rawOb": "METAR KARR 161052Z AUTO 30017G25KT 10SM FEW021 OVC033 11/07 A3000 RMK AO2 SLP159 T01060067",
+    "lat": 41.7713,
+    "lon": -88.4815,
+    "elev": 213,
+    "name": "Aurora Muni, IL, US",
+    "cover": "OVC",
+    "clouds": [
+      {
+        "cover": "FEW",
+        "base": 2100
+      },
+      {
+        "cover": "OVC",
+        "base": 3300
+      }
+    ],
+    "fltCat": "VFR"
+  },
+  {
+    "icaoId": "KORD",
+    "receiptTime": "2026-10-16T10:54:21.294Z",
+    "obsTime": 1792147860,
+    "reportTime": "2026-10-16T11:00:00.000Z",
+    "temp": 11.7,
+    "dewp": 7.2,
+    "wdir": 280,
+    "wspd": 11,
+    "visib": "10+",
+    "altim": 1014.3,
+    "slp": 1014.2,
+    "qcField": 12,
+    "metarType": "METAR",
+    "rawOb": "METAR KORD 161051Z 28011KT 10SM FEW026 BKN036 12/07 A2995 RMK AO2 SLP142 T01170072 $",
+    "lat": 41.9602,
+    "lon": -87.9316,
+    "elev": 202,
+    "name": "Chicago/O'Hare Intl, IL, US",
+    "cover": "BKN",
+    "clouds": [
+      {
+        "cover": "FEW",
+        "base": 2600
+      },
+      {
+        "cover": "BKN",
+        "base": 3600
+      }
+    ],
+    "fltCat": "VFR"
+  }
+]

@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: test (${{ matrix.os }}, node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        # Current LTS releases the project supports.
+        node: [20, 22, 24]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build --if-present
+      - run: npm test --if-present
+
+  # Single stable check name for branch protection; fails unless every matrix leg passed.
+  ci:
+    name: ci
+    needs: [test]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: All matrix legs passed
+        run: test "${{ needs.test.result }}" = "success"

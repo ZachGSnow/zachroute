@@ -1,0 +1,34 @@
+[
+  {
+    "icaoId": "KORD",
+    "receiptTime": "2026-10-16T10:54:21.294Z",
+    "obsTime": 1792147860,
+    "reportTime": "2026-10-16T11:00:00.000Z",
+    "temp": 11.7,
+    "dewp": 7.2,
+    "wdir": 280,
+    "wspd": 11,
+    "visib": "10+",
+    "altim": 1014.3,
+    "slp": 1014.2,
+    "qcField": 12,
+    "metarType": "METAR",
+    "rawOb": "METAR KORD 161051Z 28011KT 10SM FEW026 BKN036 12/07 A2995 RMK AO2 SLP142 T01170072 $",
+    "lat": 41.9602,
+    "lon": -87.9316,
+    "elev": 202,
+    "name": "Chicago/O'Hare Intl, IL, US",
+    "cover": "BKN",
+    "clouds": [
+      {
+        "cover": "FEW",
+        "base": 2600
+      },
+      {
+        "cover": "BKN",
+        "base": 3600
+      }
+    ],
+    "fltCat": "VFR"
+  }
+]

@@ -1,0 +1,34 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "event": "Wind Advisory",
+        "severity": "Moderate",
+        "headline": "Wind Advisory issued October 16 at 4:48AM CDT until October 17 at 1:00AM CDT by NWS Shreveport LA",
+        "expires": "2026-10-17T01:00:00-05:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "event": "Red Flag Warning",
+        "severity": "Severe",
+        "headline": "Red Flag Warning issued October 16 at 4:46AM CDT until October 17 at 1:00AM CDT by NWS Shreveport LA",
+        "expires": "2026-10-17T01:00:00-05:00"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "event": "Red Flag Warning",
+        "severity": "Severe",
+        "headline": "Red Flag Warning issued October 16 at 2:31AM PDT until October 16 at 10:00PM PDT by NWS Hanford CA",
+        "expires": "2026-10-16T11:00:00-07:00"
+      }
+    }
+  ],
+  "title": "Current watches, warnings, and advisories for Texas, California, Florida, Alaska",
+  "updated": "2026-10-16T11:05:38+00:00"
+}

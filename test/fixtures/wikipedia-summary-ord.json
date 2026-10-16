@@ -1,0 +1,53 @@
+{
+  "type": "standard",
+  "title": "O'Hare International Airport",
+  "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">O&#039;Hare International Airport</span></span>",
+  "namespace": {
+    "id": 0,
+    "text": ""
+  },
+  "wikibase_item": "Q213717",
+  "titles": {
+    "canonical": "O'Hare_International_Airport",
+    "normalized": "O'Hare International Airport",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">O&#039;Hare International Airport</span></span>"
+  },
+  "pageid": 248449,
+  "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/O%27Hare_International_Airport_%28Iss069e037725%29_%28cropped%29.jpg/330px-O%27Hare_International_Airport_%28Iss069e037725%29_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 301
+  },
+  "originalimage": {
+    "source": "https://upload.wikimedia.org/wikipedia/commons/c/c2/O%27Hare_International_Airport_%28Iss069e037725%29_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "width": 1024,
+    "height": 934
+  },
+  "lang": "en",
+  "dir": "ltr",
+  "revision": "1380307943",
+  "tid": "bd49a7de-c82d-11f1-9c38-ef7ac5f56a8e",
+  "timestamp": "2026-10-15T00:17:00Z",
+  "description": "Airport serving Chicago, Illinois, United States",
+  "description_source": "local",
+  "coordinates": {
+    "lat": 41.97861111,
+    "lon": -87.90472222
+  },
+  "content_urls": {
+    "desktop": {
+      "page": "https://en.wikipedia.org/wiki/O'Hare_International_Airport",
+      "revisions": "https://en.wikipedia.org/wiki/O'Hare_International_Airport?action=history",
+      "edit": "https://en.wikipedia.org/wiki/O'Hare_International_Airport?action=edit",
+      "talk": "https://en.wikipedia.org/wiki/Talk:O'Hare_International_Airport"
+    },
+    "mobile": {
+      "page": "https://en.wikipedia.org/wiki/O'Hare_International_Airport",
+      "revisions": "https://en.wikipedia.org/wiki/Special:History/O'Hare_International_Airport",
+      "edit": "https://en.wikipedia.org/wiki/O'Hare_International_Airport?action=edit",
+      "talk": "https://en.wikipedia.org/wiki/Talk:O'Hare_International_Airport"
+    }
+  },
+  "extract": "Chicago O'Hare International Airport is the primary international airport serving Chicago, Illinois, United States, located on the city's Northwest Side, approximately 17 miles (27\u00a0km) northwest of downtown. The airport is operated by the Chicago Department of Aviation and covers 7,627 acres. It is the airport with the most runways in the world, with eight.",
+  "extract_html": "<p><b>Chicago O'Hare International Airport</b> is the primary international airport serving Chicago, Illinois, United States, located on the city's Northwest Side, approximately 17 miles (27\u00a0km) northwest of downtown. The airport is operated by the Chicago Department of Aviation and covers 7,627 acres. It is the airport with the most runways in the world, with eight.</p>"
+}

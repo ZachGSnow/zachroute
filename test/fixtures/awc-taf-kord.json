@@ -1,0 +1,170 @@
+[
+  {
+    "icaoId": "KORD",
+    "dbPopTime": "2026-10-16T08:56:04.925Z",
+    "bulletinTime": "2026-10-16T08:55:00.000Z",
+    "issueTime": "2026-10-16T08:55:00.000Z",
+    "validTimeFrom": 1792141200,
+    "validTimeTo": 1792238400,
+    "rawTAF": "TAF KORD 160855Z 1609/1712 29016G26KT P6SM BKN018 OVC025 FM161600 33018G31KT P6SM VCSH BKN025 OVC035 PROB30 1618/1622 5SM -SHRA BKN015 OVC025 FM170000 34017G28KT P6SM SCT025 FM170600 35010G20KT P6SM FEW040",
+    "mostRecent": 1,
+    "remarks": " AMD",
+    "lat": 41.96017,
+    "lon": -87.93161,
+    "elev": 202,
+    "prior": 0,
+    "name": "Chicago/O'Hare Intl",
+    "fcsts": [
+      {
+        "timeFrom": 1792141200,
+        "timeTo": 1792166400,
+        "timeBec": null,
+        "fcstChange": null,
+        "probability": null,
+        "wdir": 290,
+        "wspd": 16,
+        "wgst": 26,
+        "wshearHgt": null,
+        "wshearDir": null,
+        "wshearSpd": null,
+        "visib": "6+",
+        "altim": null,
+        "vertVis": null,
+        "wxString": null,
+        "notDecoded": null,
+        "clouds": [
+          {
+            "cover": "BKN",
+            "base": 1800,
+            "type": null
+          },
+          {
+            "cover": "OVC",
+            "base": 2500,
+            "type": null
+          }
+        ],
+        "icgTurb": [],
+        "temp": []
+      },
+      {
+        "timeFrom": 1792166400,
+        "timeTo": 1792195200,
+        "timeBec": null,
+        "fcstChange": "FM",
+        "probability": null,
+        "wdir": 330,
+        "wspd": 18,
+        "wgst": 31,
+        "wshearHgt": null,
+        "wshearDir": null,
+        "wshearSpd": null,
+        "visib": "6+",
+        "altim": null,
+        "vertVis": null,
+        "wxString": "VCSH",
+        "notDecoded": null,
+        "clouds": [
+          {
+            "cover": "BKN",
+            "base": 2500,
+            "type": null
+          },
+          {
+            "cover": "OVC",
+            "base": 3500,
+            "type": null
+          }
+        ],
+        "icgTurb": [],
+        "temp": []
+      },
+      {
+        "timeFrom": 1792173600,
+        "timeTo": 1792188000,
+        "timeBec": null,
+        "fcstChange": "PROB",
+        "probability": 30,
+        "wdir": null,
+        "wspd": null,
+        "wgst": null,
+        "wshearHgt": null,
+        "wshearDir": null,
+        "wshearSpd": null,
+        "visib": 5,
+        "altim": null,
+        "vertVis": null,
+        "wxString": "-SHRA",
+        "notDecoded": null,
+        "clouds": [
+          {
+            "cover": "BKN",
+            "base": 1500,
+            "type": null
+          },
+          {
+            "cover": "OVC",
+            "base": 2500,
+            "type": null
+          }
+        ],
+        "icgTurb": [],
+        "temp": []
+      },
+      {
+        "timeFrom": 1792195200,
+        "timeTo": 1792216800,
+        "timeBec": null,
+        "fcstChange": "FM",
+        "probability": null,
+        "wdir": 340,
+        "wspd": 17,
+        "wgst": 28,
+        "wshearHgt": null,
+        "wshearDir": null,
+        "wshearSpd": null,
+        "visib": "6+",
+        "altim": null,
+        "vertVis": null,
+        "wxString": null,
+        "notDecoded": null,
+        "clouds": [
+          {
+            "cover": "SCT",
+            "base": 2500,
+            "type": null
+          }
+        ],
+        "icgTurb": [],
+        "temp": []
+      },
+      {
+        "timeFrom": 1792216800,
+        "timeTo": 1792238400,
+        "timeBec": null,
+        "fcstChange": "FM",
+        "probability": null,
+        "wdir": 350,
+        "wspd": 10,
+        "wgst": 20,
+        "wshearHgt": null,
+        "wshearDir": null,
+        "wshearSpd": null,
+        "visib": "6+",
+        "altim": null,
+        "vertVis": null,
+        "wxString": null,
+        "notDecoded": null,
+        "clouds": [
+          {
+            "cover": "FEW",
+            "base": 4000,
+            "type": null
+          }
+        ],
+        "icgTurb": [],
+        "temp": []
+      }
+    ]
+  }
+]

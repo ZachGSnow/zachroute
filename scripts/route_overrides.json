@@ -1,0 +1,7 @@
+{
+  "_comment": "Hand-kept corrections applied on top of the BTS-derived US routes. Needed for carriers too small to be BTS reporting carriers (Breeze, Avelo, ...). Each add is made in both directions. Carrier codes are IATA airline codes. Add 'remove' entries for routes that no longer operate.",
+  "add": [
+    { "from": "SDF", "to": "BDL", "carriers": ["MX"], "note": "Breeze Airways nonstop, user-reported, October 2026" }
+  ],
+  "remove": []
+}

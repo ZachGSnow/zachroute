@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="description" content="Instant, offline-capable airport lookup and route planner" />
+  <title>ZachRoute</title>
+  
+  <!-- Cyan airplane favicon -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2338bdf8' class='bi bi-airplane' viewBox='0 0 16 16'%3E%3Cpath d='M6.428 1.151C6.708.591 7.213 0 8 0s1.292.592 1.572 1.151C9.861 1.73 10 2.431 10 3v3.691l5.17 2.585a1.5 1.5 0 0 1 .83 1.342V12a.5.5 0 0 1-.582.493l-5.507-.918-.375 2.253 1.318 1.318A.5.5 0 0 1 10.5 16h-5a.5.5 0 0 1-.354-.854l1.319-1.318-.376-2.253-5.507.918A.5.5 0 0 1 0 12v-1.382a1.5 1.5 0 0 1 .83-1.342L6 6.691V3c0-.568.14-1.271.428-1.849m.894.448C7.111 2.02 7 2.569 7 3v4a.5.5 0 0 1-.276.447l-5.448 2.724a.5.5 0 0 0-.276.447v.792l5.418-.903a.5.5 0 0 1 .575.41l.5 3a.5.5 0 0 1-.14.437L6.708 15h2.586l-.647-.646a.5.5 0 0 1-.14-.436l.5-3a.5.5 0 0 1 .576-.411L15 11.41v-.792a.5.5 0 0 0-.276-.447L9.276 7.447A.5.5 0 0 1 9 7V3c0-.432-.11-.979-.322-1.401C8.458 1.159 8.213 1 8 1s-.458.158-.678.599'/%3E%3C/svg%3E" />
+
+  <!-- PWA manifest + install icons -->
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header-inner">
+        <div class="menu-anchor">
+          <button type="button" id="menu-toggle" class="icon-btn" aria-haspopup="true" aria-expanded="false" aria-label="Settings menu">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#38bdf8" viewBox="0 0 16 16">
+              <path d="M6.428 1.151C6.708.591 7.213 0 8 0s1.292.592 1.572 1.151C9.861 1.73 10 2.431 10 3v3.691l5.17 2.585a1.5 1.5 0 0 1 .83 1.342V12a.5.5 0 0 1-.582.493l-5.507-.918-.375 2.253 1.318 1.318A.5.5 0 0 1 10.5 16h-5a.5.5 0 0 1-.354-.854l1.319-1.318-.376-2.253-5.507.918A.5.5 0 0 1 0 12v-1.382a1.5 1.5 0 0 1 .83-1.342L6 6.691V3c0-.568.14-1.271.428-1.849m.894.448C7.111 2.02 7 2.569 7 3v4a.5.5 0 0 1-.276.447l-5.448 2.724a.5.5 0 0 0-.276.447v.792l5.418-.903a.5.5 0 0 1 .575.41l.5 3a.5.5 0 0 1-.14.437L6.708 15h2.586l-.647-.646a.5.5 0 0 1-.14-.436l.5-3a.5.5 0 0 1 .576-.411L15 11.41v-.792a.5.5 0 0 0-.276-.447L9.276 7.447A.5.5 0 0 1 9 7V3c0-.432-.11-.979-.322-1.401C8.458 1.159 8.213 1 8 1s-.458.158-.678.599"/>
+            </svg>
+          </button>
+          <div id="settings-menu" class="settings-menu" hidden>
+	            <label class="toggle-label">
+              <input type="checkbox" id="connections-toggle" />
+              <span>Show connections</span>
+            </label>
+	            <label class="toggle-label">
+              <input type="checkbox" id="large-toggle" />
+              <span>Large hubs</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" id="medium-toggle" />
+              <span>Medium airports</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" id="regional-toggle" />
+              <span>Regional airports</span>
+            </label>
+            <div class="settings-divider"></div>
+            <label class="toggle-label">
+              <input type="checkbox" id="wxstations-toggle" />
+              <span>Weather stations</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" id="approach-toggle" />
+              <span>Approach distance ticks</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" id="pireps-toggle" />
+              <span>Pilot reports</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" id="hazards-toggle" />
+              <span>Hazards (AIRMET/SIGMET)</span>
+            </label>
+            <label class="toggle-label">
+              <input type="checkbox" id="daynight-toggle" />
+              <span>Day / night shading</span>
+            </label>
+            <div class="settings-divider"></div>
+            <button type="button" id="about-open" class="menu-link">About ZachRoute</button>
+            <div class="menu-version" id="menu-version"></div>
+          </div>
+        </div>
+        <div class="brand" id="brand-reset">
+          <span class="brand-name">ZachRoute</span>
+        </div>
+        <div class="search-container">
+          <input 
+            type="text" 
+            id="search-input" 
+            class="search-input" 
+            placeholder="ORD, Chicago, or ORD DEN" 
+            autocomplete="off"
+            spellcheck="false"
+            enterkeyhint="search"
+          />
+          <button type="button" id="search-clear" class="search-clear" aria-label="Clear search" hidden>&#xd7;</button>
+        </div>
+      </div>
+    </header>
+
+    <div id="about-modal" class="modal-overlay" hidden>
+      <div class="modal-panel">
+        <button type="button" id="about-close" class="icon-btn modal-close" aria-label="Close">✕</button>
+        <h2>ZachRoute</h2>
+        <p>Instant, offline-capable airport lookup and route planner. Search by code, city or name, then see live weather and a plain-English forecast, runways and approaches, delays and hazards. It's a companion app to my <a href="https://theflightwall.com" target="_blank" rel="noopener">FlightWall</a> setup.</p>
+        <p class="about-version">Version <strong id="about-version"></strong> &middot; Built <span id="about-build"></span></p>
+        <p>Designed and built by <a href="https://github.com/ZachGSnow/" target="_blank" rel="noopener">Zach Snow</a> &middot; &copy; 2026</p>
+        <p class="about-disclaimer">For information only. Not for navigation or flight planning. Always use official aviation sources.</p>
+        <p class="muted">Data: <a href="https://ourairports.com" target="_blank" rel="noopener">OurAirports</a> (public domain), <a href="https://www.wikipedia.org" target="_blank" rel="noopener">Wikipedia</a> (CC BY-SA), <a href="https://aviationweather.gov" target="_blank" rel="noopener">Aviation Weather Center</a>, <a href="https://nasstatus.faa.gov" target="_blank" rel="noopener">FAA</a>, <a href="https://www.transtats.bts.gov" target="_blank" rel="noopener">U.S. DOT Bureau of Transportation Statistics</a> (airlines and US routes), <a href="https://www.weather.gov" target="_blank" rel="noopener">National Weather Service</a>, <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>, <a href="https://openflights.org" target="_blank" rel="noopener">OpenFlights</a>, and the World Magnetic Model.</p>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div id="map" class="map-container"></div>
+      <div id="map-hint" class="map-hint" hidden></div>
+      <div id="route-summary" class="route-summary" hidden></div>
+      <div id="route-legend" class="route-legend" hidden>
+        <span>Headwind</span><span class="route-legend-bar"></span><span>Tailwind</span>
+        <small>cruise winds</small>
+      </div>
+      
+      <div id="results-panel" class="results-panel">
+        <div id="results-content" class="results-content">
+          <div class="empty-state">
+            <p>Enter an airport code, a city or airport name, or a route.</p>
+            <p class="example">Examples: <code>ORD</code>, <code>Chicago</code>, <code>ORD DEN</code>, <code>Chicago Denver</code></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script type="module" src="/ts/main.ts"></script>
+</body>
+</html>
