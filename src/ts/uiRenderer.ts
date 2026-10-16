@@ -21,6 +21,7 @@ import { fetchTaf, decodeTaf, compassPoint } from './forecast';
 import { faaDelayChips, nwsAlertChips, fetchPirepLines, type Chip } from './advisories';
 import { fetchCyclones, stormsNearPoint, stormTitle } from './cyclones';
 import { fetchAirQuality, aqiScaleFor, aqiCategory, aqiValue, hazeNote, worseningAhead } from './airQuality';
+import { fetchFires, boxAround, summarizeFiresNear, AIRPORT_FIRE_RADIUS_MI } from './fires';
 import { fetchCruiseWind } from './windsAloft';
 import { fetchAirportPhoto } from './wikiPhoto';
 import { carriersFor, carrierNames, carrierDataNote } from './carriers';
@@ -409,6 +410,7 @@ function buildFacilityCard(airport: Airport): string {
 
       <div class="weather-block">${weatherPlaceholderHtml()}</div>
       <div class="aq-block"></div>
+      <div class="fires-block"></div>
       ${timeLineHtml(airport)}
       <div class="forecast-block"></div>
       <div class="pirep-block"></div>
@@ -586,6 +588,20 @@ async function fillAirQuality(cardEl: HTMLElement, airport: Airport) {
   el.innerHTML = lines.map((l) => `<div class="aq-line">${l}</div>`).join('');
 }
 
+/** "12 satellite fire or heat detections within 50 mi in the last 24 h, the most intense 18 mi NW". */
+async function fillFires(cardEl: HTMLElement, airport: Airport) {
+  const el = cardEl.querySelector('.fires-block') as HTMLElement | null;
+  if (!el) return;
+  const fires = await fetchFires(...boxAround(airport.lat, airport.lon, AIRPORT_FIRE_RADIUS_MI));
+  if (!el.isConnected) return;
+  const s = summarizeFiresNear(airport.lat, airport.lon, fires);
+  if (!s) return;
+  const where = s.strongest.miles < 3 ? 'at the airport' : `${formatDistance(s.strongest.miles)} ${compassPoint(s.strongest.bearing)}`;
+  const what = s.count === 1 ? '1 satellite fire or heat detection' : `${s.count} satellite fire or heat detections`;
+  const most = s.count === 1 ? `, ${where}` : `, the most intense ${where}`;
+  el.innerHTML = `<div class="fires-line">🔥 ${what} within ${formatDistance(AIRPORT_FIRE_RADIUS_MI)} in the last 24 h${most}</div>`;
+}
+
 async function wireFacilityCard(cardEl: HTMLElement, airport: Airport) {
   wireExpandables(cardEl);
   wireFavButton(cardEl, airport);
@@ -598,6 +614,7 @@ async function wireFacilityCard(cardEl: HTMLElement, airport: Airport) {
   void fillForecast(cardEl, airport);
   void fillPireps(cardEl, airport);
   void fillAirQuality(cardEl, airport);
+  void fillFires(cardEl, airport);
 
   const weatherEl = cardEl.querySelector('.weather-block');
   if (!weatherEl || !airport.icao) return;

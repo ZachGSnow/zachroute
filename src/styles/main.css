@@ -846,7 +846,8 @@ body {
   background: linear-gradient(90deg, #f87171, #e2e8f0, #4ade80);
 }
 
-.aq-block {
+.aq-block,
+.fires-line {
   margin-top: 4px;
   font-size: 0.85rem;
 }
