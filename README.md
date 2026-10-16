@@ -45,6 +45,10 @@ display: see a plane overhead, look up where it is going.
   components, frequencies, navaids, local time, sunrise or sunset, airport photo and history.
 - Nonstop destinations with the airlines that fly them today (US routes).
 
+**Airports near me**: the location button lists the 5 closest airports with scheduled-service codes,
+with distance, direction and current flight category, and shows them on the map. The position is
+used once and not stored; denying permission just shows a message.
+
 **Routes**
 - Great-circle distance, block time, and a wind-adjusted block time from forecast winds at
   cruise altitude.
@@ -123,7 +127,7 @@ and the reasoning behind the main decisions.
 ## Testing
 
 ```bash
-npm test          # Vitest: 62 tests
+npm test          # Vitest: 64 tests
 npm run typecheck
 ```
 

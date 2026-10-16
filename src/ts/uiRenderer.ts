@@ -16,7 +16,7 @@ import {
 } from './weather';
 import { localTimeLabel, nextDaylightEventLabel, moonPhaseLabel, isDaytime, utcOffsetMinutes } from './timeUtils';
 import { resolveCode } from './searchParser';
-import { fetchTaf, decodeTaf } from './forecast';
+import { fetchTaf, decodeTaf, compassPoint } from './forecast';
 import { faaDelayChips, nwsAlertChips, fetchPirepLines, type Chip } from './advisories';
 import { fetchCruiseWind } from './windsAloft';
 import { fetchAirportPhoto } from './wikiPhoto';
@@ -33,6 +33,7 @@ import {
 } from './connections';
 
 const resultsContent = document.getElementById('results-content')!;
+const BULLET = '\u00b7';
 
 const LORE_CACHE_KEY = (iata: string) => `zachroute:lore:${iata}`;
 
@@ -827,6 +828,26 @@ export function renderRoute(origin: Airport, destination: Airport) {
     (window as any).selectViaHub = undefined;
     wireWindAdjustedBlockTime(origin, destination, dist, bearing);
   }
+}
+
+/** List for "Airports near me": distance, direction and the current flight category. */
+export function renderNearby(list: Array<{ airport: Airport; miles: number; bearingDeg: number }>, categories: Record<string, string>) {
+  const rows = list
+    .map(({ airport, miles, bearingDeg }) => {
+      const code = airport.iata || airport.icao;
+      const cat = categories[airport.icao];
+      const catHtml = cat ? `<span class="muted">${categoryDot(cat)} ${cat}</span>` : '';
+      return (
+        `<button type="button" class="detail-row destination-row nearby-row" data-code="${code}">` +
+        `<span><strong>${code}</strong> ${airport.name}<br><span class="muted">${Math.round(miles).toLocaleString()} mi ${compassPoint(bearingDeg)} ${BULLET} ${airport.city || ''}</span></span>` +
+        `${catHtml}</button>`
+      );
+    })
+    .join('');
+  resultsContent.innerHTML = `<div class="facility-card"><h3>Airports near you</h3><div class="nearby-list">${rows}</div><div class="detail-footnote">Closest airports with scheduled-service codes. Your location is used once and not stored.</div></div>`;
+  resultsContent.querySelectorAll('.nearby-row').forEach((el) => {
+    (el as HTMLButtonElement).onclick = () => (window as any).runSearchFor?.((el as HTMLElement).dataset.code);
+  });
 }
 
 export function renderError(message: string) {
