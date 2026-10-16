@@ -1,4 +1,5 @@
 import * as SunCalc from 'suncalc';
+import { clockOptions } from './units';
 
 /**
  * Formats "current local time" at an airport, e.g. "3:42 PM EDT".
@@ -10,11 +11,7 @@ export function localTimeLabel(timeZone?: string): string | null {
   if (!timeZone) return null;
   try {
     const now = new Date();
-    const time = new Intl.DateTimeFormat('en-US', {
-      timeZone,
-      hour: 'numeric',
-      minute: '2-digit',
-    }).format(now);
+    const time = new Intl.DateTimeFormat('en-US', { timeZone, ...clockOptions() }).format(now);
     const zoneAbbrev = new Intl.DateTimeFormat('en-US', {
       timeZone,
       timeZoneName: 'short',
@@ -64,8 +61,8 @@ export function nextDaylightEventLabel(
     }
 
     const formatted = timeZone
-      ? new Intl.DateTimeFormat('en-US', { timeZone, hour: 'numeric', minute: '2-digit' }).format(when)
-      : new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(when);
+      ? new Intl.DateTimeFormat('en-US', { timeZone, ...clockOptions() }).format(when)
+      : new Intl.DateTimeFormat('en-US', clockOptions()).format(when);
 
     return `${label} ${formatted}`;
   } catch {

@@ -1,4 +1,5 @@
 import type { Airport, RunwayDetail } from './geoMath';
+import { formatDistance, clockOptions } from './units';
 import { bearingBetween, destinationPoint, haversineDistanceLatLon } from './geoMath';
 import { resolveCode } from './searchParser';
 import { compassPoint } from './forecast';
@@ -130,7 +131,7 @@ function placeNear(lat: number, lon: number): string {
   const miles = Math.round(haversineDistanceLatLon(best.lat, best.lon, lat, lon));
   if (miles < 3) return `near ${best.city}`;
   const dir = compassPoint(bearingBetween(best.lat, best.lon, lat, lon));
-  return `${miles} mi ${dir} of ${best.city}`;
+  return `${formatDistance(miles)} ${dir} of ${best.city}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -303,7 +304,7 @@ export function setHazards(on: boolean) {
 
 function timeLabel(unixSec?: number): string {
   if (!unixSec) return '';
-  return new Date(unixSec * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  return new Date(unixSec * 1000).toLocaleTimeString('en-US', clockOptions());
 }
 
 function altitudeLabel(low?: number, high?: number): string {

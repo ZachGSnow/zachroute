@@ -1,4 +1,5 @@
 import type { Airport, RunwayDetail } from './geoMath';
+import { formatDistance } from './units';
 import { haversineDistance, initialBearing, blockTimeMiles, windAdjustedBlockTime, blockTimeWithHeadwind, slerpArc } from './geoMath';
 import {
   fetchWeather,
@@ -579,7 +580,7 @@ function viaRowHtml(origin: Airport, destination: Airport, option: ViaOption, se
   return `
     <button type="button" class="via-row via-row--${depth}${selected ? ' via-row--selected' : ''}" data-via-key="${option.key}">
       <span class="via-path">${viaPathLabel(origin, destination, option)}</span>
-      <span class="via-meta">via ${viaCityLabel(option)} \u00b7 ${detourLabel(option.detourRatio)} \u00b7 ${Math.round(option.viaMiles)} mi \u00b7 ${formatBlockTime(option.blockMinutes)}</span>
+      <span class="via-meta">via ${viaCityLabel(option)} \u00b7 ${detourLabel(option.detourRatio)} \u00b7 ${formatDistance(option.viaMiles)} \u00b7 ${formatBlockTime(option.blockMinutes)}</span>
     </button>
   `;
 }
@@ -615,7 +616,7 @@ function viaConnectionsHtml(
           <div class="via-list">${rows}</div>
           ${options.length > 4 ? `<button type="button" class="via-showall">Show all ${options.length} options on the map</button>` : ''}
           <div class="via-selected-stats">
-            Combined via ${viaCityLabel(selected)}: ${Math.round(selected.viaMiles)} mi \u00b7 ${formatBlockTime(selected.blockMinutes)}
+            Combined via ${viaCityLabel(selected)}: ${formatDistance(selected.viaMiles)} \u00b7 ${formatBlockTime(selected.blockMinutes)}
           </div>
           <div class="via-footnote muted">In the connections data \u2014 not live schedules.${depth === 'two-stop' ? ' Three or more stops are not searched.' : ''}</div>
         </div>
@@ -653,7 +654,7 @@ function updateViaSelection(options: ViaOption[], key: string) {
   const selected = options.find((option) => option.key === key);
   const statsEl = resultsContent.querySelector('.via-selected-stats');
   if (selected && statsEl) {
-    statsEl.textContent = `Combined via ${viaCityLabel(selected)}: ${Math.round(selected.viaMiles)} mi \u00b7 ${formatBlockTime(selected.blockMinutes)}`;
+    statsEl.textContent = `Combined via ${viaCityLabel(selected)}: ${formatDistance(selected.viaMiles)} \u00b7 ${formatBlockTime(selected.blockMinutes)}`;
   }
 
   (window as any).highlightViaRoute?.(key);
@@ -797,7 +798,7 @@ export function renderRoute(origin: Airport, destination: Airport) {
 
   const statsHtml = `
     <div class="stats">
-      <div class="stats-row"><span class="stats-label">📏 Distance</span><span class="stats-value">${Math.round(dist)} mi</span></div>
+      <div class="stats-row"><span class="stats-label">📏 Distance</span><span class="stats-value">${formatDistance(dist)}</span></div>
       <div class="stats-row"><span class="stats-label">\u23f1️ Block time</span><span class="stats-value">${formatBlockTime(block)}</span></div>
       ${direct ? `<div class="stats-row"><span class="stats-label">🌬️ Wind-adjusted</span><span class="stats-value wind-adjusted-value">\u2026</span></div>` : ''}
       <div class="stats-row"><span class="stats-label">✅ Known direct route</span><span class="stats-value">${direct ? 'Yes' : 'No'}</span></div>
@@ -839,7 +840,7 @@ export function renderNearby(list: Array<{ airport: Airport; miles: number; bear
       const catHtml = cat ? `<span class="muted">${categoryDot(cat)} ${cat}</span>` : '';
       return (
         `<button type="button" class="detail-row destination-row nearby-row" data-code="${code}">` +
-        `<span><strong>${code}</strong> ${airport.name}<br><span class="muted">${Math.round(miles).toLocaleString()} mi ${compassPoint(bearingDeg)} ${BULLET} ${airport.city || ''}</span></span>` +
+        `<span><strong>${code}</strong> ${airport.name}<br><span class="muted">${formatDistance(miles)} ${compassPoint(bearingDeg)} ${BULLET} ${airport.city || ''}</span></span>` +
         `${catHtml}</button>`
       );
     })

@@ -1,4 +1,5 @@
 import type { Airport } from './geoMath';
+import { formatDistance } from './units';
 import { haversineDistanceLatLon, bearingBetween } from './geoMath';
 import { compassPoint } from './forecast';
 import { summarizePirep, pirepAgeLabel, pirepAltitudeLabel, type RawPirep } from './pirepText';
@@ -174,7 +175,7 @@ export async function fetchPirepLines(airport: Airport): Promise<PirepLine[]> {
 
       const miles = Math.round(haversineDistanceLatLon(airport.lat, airport.lon, p.lat, p.lon));
       const dir = compassPoint(bearingBetween(airport.lat, airport.lon, p.lat, p.lon));
-      const where = miles < 3 ? 'at the airport' : `${miles} mi ${dir} of here`;
+      const where = miles < 3 ? 'at the airport' : `${formatDistance(miles)} ${dir} of here`;
       const meta = [pirepAltitudeLabel(p), where, p.acType, pirepAgeLabel(p.obsTime)].filter(Boolean).join(' - ');
       lines.push({ text: `${summary.headline} <span class="muted">(${meta})</span>`, severe: summary.severe });
     }

@@ -66,6 +66,9 @@ day/night shading, approach distance ticks, and runway outlines with runway numb
 **Phone layout**: the results panel is a bottom sheet. Drag its handle between a one-line peek
 (map almost full screen), half (the default for a new result) and full; a tap toggles peek and half.
 
+**Units**: distances in miles, kilometers or nautical miles and a 12 or 24-hour clock (settings menu;
+miles and 12-hour by default). Wind stays in knots and altitudes in feet, as aviation sources report them.
+
 **App**: installs as a PWA, works offline after the first load (the airport database is
 precached), and updates itself after a deploy. The About screen shows the version and build time.
 
@@ -127,7 +130,7 @@ and the reasoning behind the main decisions.
 ## Testing
 
 ```bash
-npm test          # Vitest: 64 tests
+npm test          # Vitest: 67 tests
 npm run typecheck
 ```
 

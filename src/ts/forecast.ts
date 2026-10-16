@@ -1,4 +1,5 @@
 import { decodeWxPhenomena, categoryDot } from './weather';
+import { hourOptions } from './units';
 
 export interface TafCloud {
   cover: string;
@@ -178,9 +179,9 @@ export function describePeriod(p: TafPeriod): string {
 function hourLabel(unixSec: number, timeZone?: string): string {
   const d = new Date(unixSec * 1000);
   try {
-    return new Intl.DateTimeFormat('en-US', { timeZone, hour: 'numeric' }).format(d);
+    return new Intl.DateTimeFormat('en-US', { timeZone, ...hourOptions() }).format(d);
   } catch {
-    return new Intl.DateTimeFormat('en-US', { hour: 'numeric' }).format(d);
+    return new Intl.DateTimeFormat('en-US', hourOptions()).format(d);
   }
 }
 
