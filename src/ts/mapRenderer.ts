@@ -56,6 +56,11 @@ let viaContext: {
   drawLimit: number;
 } | null = null;
 
+/** Re-measures the map after its container changes size (the phone results sheet). */
+export function refreshMapSize() {
+  map?.invalidateSize();
+}
+
 export function initMap(containerId: string): L.Map {
   if (map) return map;
 

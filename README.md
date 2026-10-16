@@ -59,6 +59,9 @@ display: see a plane overhead, look up where it is going.
 (wind arrows, with a ring only when conditions are below VFR), pilot reports, weather hazards,
 day/night shading, approach distance ticks, and runway outlines with runway numbers when zoomed in.
 
+**Phone layout**: the results panel is a bottom sheet. Drag its handle between a one-line peek
+(map almost full screen), half (the default for a new result) and full; a tap toggles peek and half.
+
 **App**: installs as a PWA, works offline after the first load (the airport database is
 precached), and updates itself after a deploy. The About screen shows the version and build time.
 
@@ -120,7 +123,7 @@ and the reasoning behind the main decisions.
 ## Testing
 
 ```bash
-npm test          # Vitest: 59 tests
+npm test          # Vitest: 62 tests
 npm run typecheck
 ```
 
