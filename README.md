@@ -56,8 +56,9 @@ used once and not stored; denying permission just shows a message.
   and is colored by headwind or tailwind.
 - When there is no nonstop, one-stop and two-stop connections are drawn and listed; the selected
   itinerary shows per-leg distance and time.
-- Weather advisories (AIRMET/SIGMET) the route passes through and pilot reports near it are
-  listed and drawn on the map.
+- Weather advisories the route passes through and pilot reports near it are listed and drawn on
+  the map: US AIRMETs and SIGMETs, plus international SIGMETs worldwide (thunderstorms,
+  turbulence, icing, volcanic ash, tropical cyclones), each with the FIR that issued it.
 
 **Map layers** (settings menu): nonstop connections, airport size layers, weather stations
 (wind arrows, with a ring only when conditions are below VFR), pilot reports, weather hazards,
@@ -130,13 +131,13 @@ and the reasoning behind the main decisions.
 ## Testing
 
 ```bash
-npm test          # Vitest: 67 tests
+npm test          # Vitest: 72 tests
 npm run typecheck
 ```
 
 Every integration is tested against a real response captured from the source on 2026-10-16
 (`test/fixtures/`): aviationweather.gov METAR, TAF, PIREP (by airport and by area), METAR by
-area and AIRMET/SIGMET; the FAA NAS status XML; NWS alerts; Open-Meteo winds aloft; Wikipedia
+area, AIRMET/SIGMET and international SIGMET; the FAA NAS status XML; NWS alerts; Open-Meteo winds aloft; Wikipedia
 search and summaries; OurAirports CSVs; OpenFlights `routes.dat`; and the US DOT on-time CSV.
 Each test was confirmed to fail when its parser is deliberately broken. Writing these tests
 found a real bug: the FAA parser's `<Delay` pattern also matched `<Delay_type>`, so general

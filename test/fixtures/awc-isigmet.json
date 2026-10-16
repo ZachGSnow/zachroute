@@ -1,0 +1,572 @@
+[
+  {
+    "icaoId": "WAAA",
+    "firId": "WAAF",
+    "firName": "WAAF UJUNG PANDANG",
+    "receiptTime": "2026-10-16T12:58:36.267Z",
+    "validTimeFrom": 1792155600,
+    "validTimeTo": 1792177200,
+    "seriesId": "11",
+    "hazard": "VA",
+    "qualifier": "ERUPTION MT IBU",
+    "base": 0,
+    "top": 6000,
+    "geom": "AREA",
+    "coords": [
+      {
+        "lon": 127.667,
+        "lat": 1.4
+      },
+      {
+        "lon": 127.267,
+        "lat": 1.333
+      },
+      {
+        "lon": 127.133,
+        "lat": 1.6
+      },
+      {
+        "lon": 127.35,
+        "lat": 1.767
+      },
+      {
+        "lon": 127.7,
+        "lat": 1.567
+      },
+      {
+        "lon": 127.667,
+        "lat": 1.4
+      }
+    ],
+    "dir": "W",
+    "spd": "5",
+    "chng": "NC",
+    "rawSigmet": "WVID21 WAAA 161300\nWAAF SIGMET 11 VALID 161300/161900 WAAA-\nWAAF UJUNG PANDANG  FIR VA\nERUPTION MT IBU PSN N0129 E12738 VA CLD OBS AT 1240Z WI N0124 E12740\n- N0120 E12716 - N0136 E12708 - N0146 E12721 - N0134 E12742 - N0124\nE12740 SFC/FL060 MOV W 05KT NC="
+  },
+  {
+    "icaoId": "PHFO",
+    "firId": "KZAK",
+    "firName": "OAKLAND OCEANIC",
+    "receiptTime": "2026-10-16T13:08:00.302Z",
+    "validTimeFrom": 1792156800,
+    "validTimeTo": 1792178400,
+    "seriesId": "XRAY 7",
+    "hazard": "TC",
+    "qualifier": "CHAMPI",
+    "base": null,
+    "top": 58000,
+    "geom": "AREA",
+    "coords": [
+      {
+        "lon": 145.25,
+        "lat": 16.5
+      },
+      {
+        "lon": 154.5,
+        "lat": 15.75
+      },
+      {
+        "lon": 155.25,
+        "lat": 9.25
+      },
+      {
+        "lon": 149.5,
+        "lat": 6.25
+      },
+      {
+        "lon": 143.25,
+        "lat": 9.25
+      },
+      {
+        "lon": 145.25,
+        "lat": 16.5
+      }
+    ],
+    "dir": "W",
+    "spd": "11",
+    "chng": "INTSF",
+    "rawSigmet": "WCPA11 PHFO 161307\n\nKZAK SIGMET XRAY 7 VALID 161320/161920 PHFO-\nOAKLAND OCEANIC FIR TC CHAMPI PSN N1125 E15130 CB OBS AT 1200Z WI\nN1630 E14515 - N1545 E15430 - N0915 E15515 - N0615 E14930 - N0915\nE14315 - N1630 E14515. TOP FL580. MOV W 11KT. INTSF. FCST AT 1800Z TC\nCENTER PSN N1150 E15025."
+  },
+  {
+    "icaoId": "SLLP",
+    "firId": "SLLF",
+    "firName": "SLLF LA PAZ",
+    "receiptTime": "2026-10-16T14:38:46.247Z",
+    "validTimeFrom": 1792161300,
+    "validTimeTo": 1792175700,
+    "seriesId": "A3",
+    "hazard": "TS",
+    "qualifier": "EMBD",
+    "base": null,
+    "top": 43000,
+    "geom": "AREA",
+    "coords": [
+      {
+        "lon": -68.633,
+        "lat": -12.483
+      },
+      {
+        "lon": -69.517,
+        "lat": -10.983
+      },
+      {
+        "lon": -68.75,
+        "lat": -11.117
+      },
+      {
+        "lon": -68.433,
+        "lat": -11.15
+      },
+      {
+        "lon": -68.267,
+        "lat": -11.033
+      },
+      {
+        "lon": -68.067,
+        "lat": -10.7
+      },
+      {
+        "lon": -67.633,
+        "lat": -10.7
+      },
+      {
+        "lon": -67.5,
+        "lat": -10.45
+      },
+      {
+        "lon": -67.1,
+        "lat": -10.4
+      },
+      {
+        "lon": -66.7,
+        "lat": -10.033
+      },
+      {
+        "lon": -66.217,
+        "lat": -9.95
+      },
+      {
+        "lon": -65.817,
+        "lat": -9.95
+      },
+      {
+        "lon": -65.483,
+        "lat": -9.817
+      },
+      {
+        "lon": -65.333,
+        "lat": -10.117
+      },
+      {
+        "lon": -65.333,
+        "lat": -10.617
+      },
+      {
+        "lon": -65.2,
+        "lat": -10.983
+      },
+      {
+        "lon": -65.45,
+        "lat": -11.367
+      },
+      {
+        "lon": -66.25,
+        "lat": -12.9
+      },
+      {
+        "lon": -68.633,
+        "lat": -12.483
+      }
+    ],
+    "dir": "-",
+    "spd": "0",
+    "chng": "WKN",
+    "rawSigmet": "WSBO31 SLLP 161435\nSLLF SIGMET A3 VALID 161435/161835 SLLP-\nSLLF LA PAZ FIR EMBD TS OBS AND FCST AT 1435Z WI S1229 W06838 -\nS1059 W06931 - S1107 W06845 - S1109 W06826 -\nS1102 W06816 - S1042 W06804 - S1042 W06738 -\nS1027 W06730 - S1024 W06706 - S1002 W06642 -\nS0957 W06613 - S0957 W06549 - S0949 W06529 -\nS1007 W06520 - S1037 W06520 - S1059 W06512 -\nS1122 W06527 - S1254 W06615 - S1229 W06838 -\nTOP FL430 STNR WKN="
+  },
+  {
+    "icaoId": "SLLP",
+    "firId": "SLLF",
+    "firName": "SLLF LA PAZ",
+    "receiptTime": "2026-10-16T14:41:50.979Z",
+    "validTimeFrom": 1792161360,
+    "validTimeTo": 1792175760,
+    "seriesId": "B1",
+    "hazard": "TURB",
+    "qualifier": "SEV",
+    "base": 27000,
+    "top": 43000,
+    "geom": "AREA",
+    "coords": [
+      {
+        "lon": -69.483,
+        "lat": -17.117
+      },
+      {
+        "lon": -66.583,
+        "lat": -17.533
+      },
+      {
+        "lon": -63.917,
+        "lat": -21.717
+      },
+      {
+        "lon": -64.317,
+        "lat": -22.417
+      },
+      {
+        "lon": -64.567,
+        "lat": -21.967
+      },
+      {
+        "lon": -65.2,
+        "lat": -21.833
+      },
+      {
+        "lon": -65.683,
+        "lat": -21.883
+      },
+      {
+        "lon": -66.1,
+        "lat": -21.583
+      },
+      {
+        "lon": -66.25,
+        "lat": -21.8
+      },
+      {
+        "lon": -66.65,
+        "lat": -21.917
+      },
+      {
+        "lon": -66.733,
+        "lat": -22.3
+      },
+      {
+        "lon": -66.933,
+        "lat": -22.217
+      },
+      {
+        "lon": -67.267,
+        "lat": -22.583
+      },
+      {
+        "lon": -67.833,
+        "lat": -22.417
+      },
+      {
+        "lon": -68.067,
+        "lat": -21.583
+      },
+      {
+        "lon": -68.15,
+        "lat": -21.383
+      },
+      {
+        "lon": -68.183,
+        "lat": -21
+      },
+      {
+        "lon": -68.433,
+        "lat": -20.667
+      },
+      {
+        "lon": -68.55,
+        "lat": -20.55
+      },
+      {
+        "lon": -68.4,
+        "lat": -20.383
+      },
+      {
+        "lon": -68.633,
+        "lat": -20.167
+      },
+      {
+        "lon": -68.633,
+        "lat": -19.8
+      },
+      {
+        "lon": -68.55,
+        "lat": -19.717
+      },
+      {
+        "lon": -68.667,
+        "lat": -19.55
+      },
+      {
+        "lon": -68.467,
+        "lat": -19.217
+      },
+      {
+        "lon": -69,
+        "lat": -18.7
+      },
+      {
+        "lon": -69.167,
+        "lat": -18
+      },
+      {
+        "lon": -69.483,
+        "lat": -17.117
+      }
+    ],
+    "dir": "-",
+    "spd": "0",
+    "chng": "NC",
+    "rawSigmet": "WSBO31 SLLP 161436\nSLLF SIGMET B1 VALID 161436/161836 SLLP-\nSLLF LA PAZ FIR SEV TURB FCST AT 1436Z WI S1707 W06929 -\nS1732 W06635 - S2143 W06355 - S2225 W06419 -\nS2158 W06434 - S2150 W06512 - S2153 W06541 -\nS2135 W06606 - S2148 W06615 - S2155 W06639 -\nS2218 W06644 - S2213 W06656 - S2235 W06716 -\nS2225 W06750 - S2135 W06804 - S2123 W06809 -\nS2100 W06811 - S2040 W06826 - S2033 W06833 -\nS2023 W06824 - S2010 W06838 - S1948 W06838 -\nS1943 W06833 - S1933 W06840 - S1913 W06828 -\nS1842 W06900 - S1800 W06910 - S1707 W06929 -\nFL270/430 STNR NC="
+  },
+  {
+    "icaoId": "SBGL",
+    "firId": "SBCW",
+    "firName": "SBCW CURITIBA",
+    "receiptTime": "2026-10-16T15:23:21.062Z",
+    "validTimeFrom": 1792164600,
+    "validTimeTo": 1792179000,
+    "seriesId": "70",
+    "hazard": "ICE",
+    "qualifier": "SEV",
+    "base": 14000,
+    "top": 21000,
+    "geom": "AREA",
+    "coords": [
+      {
+        "lon": -45.867,
+        "lat": -23.2
+      },
+      {
+        "lon": -45.583,
+        "lat": -23.733
+      },
+      {
+        "lon": -43.2,
+        "lat": -22.8
+      },
+      {
+        "lon": -43.5,
+        "lat": -22.517
+      },
+      {
+        "lon": -43.867,
+        "lat": -20.467
+      },
+      {
+        "lon": -43.4,
+        "lat": -20.15
+      },
+      {
+        "lon": -43.967,
+        "lat": -20.533
+      },
+      {
+        "lon": -45.767,
+        "lat": -22.8
+      },
+      {
+        "lon": -45.867,
+        "lat": -23.2
+      }
+    ],
+    "dir": "SE",
+    "spd": "15",
+    "chng": "NC",
+    "rawSigmet": "WSBZ23 SBGL 161525\nSBCW SIGMET 70 VALID 161530/161930 SBCW - SBCW CURITIBA FIR SEV ICE FCST WI S2312 W04552 - S2344 W04535 - S2248 W04312 - S2231 W04330 - S2028 W04352 - S2009 W04324 - S2032 W04358 - S2248 W04546 - S2312 W04552 FL140/210 MOV SE 15KT NC="
+  },
+  {
+    "icaoId": "CWAO",
+    "firId": "CZVR",
+    "firName": "CZVR VANCOUVER",
+    "receiptTime": "2026-10-16T16:21:54.089Z",
+    "validTimeFrom": 1792167600,
+    "validTimeTo": 1792182000,
+    "seriesId": "N6",
+    "hazard": "TURB",
+    "qualifier": "SEV MTW",
+    "base": 0,
+    "top": 14000,
+    "geom": "AREA",
+    "coords": [
+      {
+        "lon": -123.183,
+        "lat": 51.875
+      },
+      {
+        "lon": -124.95,
+        "lat": 50.859
+      },
+      {
+        "lon": -127.008,
+        "lat": 52.254
+      },
+      {
+        "lon": -131.492,
+        "lat": 57.126
+      },
+      {
+        "lon": -129.408,
+        "lat": 57.874
+      },
+      {
+        "lon": -125.059,
+        "lat": 53.146
+      },
+      {
+        "lon": -123.183,
+        "lat": 51.875
+      }
+    ],
+    "dir": "-",
+    "spd": "0",
+    "chng": "NC",
+    "rawSigmet": "WSCN01 CWAO 161621\nCZVR SIGMET N6 VALID 161620/162020 CWEG-\nCZVR VANCOUVER FIR SEV MTW FCST WI 90NM WID LINE BTN N5122 W12404 - N5242 W12602\n- N5730 W13027 SFC/FL140 STNR NC="
+  },
+  {
+    "icaoId": "FCBB",
+    "firId": "FCCC",
+    "firName": "FCCC BRAZZAVILLE",
+    "receiptTime": "2026-10-16T16:28:16.037Z",
+    "validTimeFrom": 1792169100,
+    "validTimeTo": 1792183500,
+    "seriesId": "H1",
+    "hazard": "TS",
+    "qualifier": "EMBD",
+    "base": null,
+    "top": 42000,
+    "geom": "AREAS",
+    "coords": [
+      [
+        {
+          "lon": 25.35,
+          "lat": 7.317
+        },
+        {
+          "lon": 23.683,
+          "lat": 5.083
+        },
+        {
+          "lon": 25.683,
+          "lat": 3.083
+        },
+        {
+          "lon": 27.35,
+          "lat": 5.317
+        },
+        {
+          "lon": 25.35,
+          "lat": 7.317
+        }
+      ],
+      [
+        {
+          "lon": 10.633,
+          "lat": 6.867
+        },
+        {
+          "lon": 9.95,
+          "lat": 4.8
+        },
+        {
+          "lon": 7.95,
+          "lat": 4.8
+        },
+        {
+          "lon": 8.633,
+          "lat": 6.867
+        },
+        {
+          "lon": 10.633,
+          "lat": 6.867
+        }
+      ],
+      [
+        {
+          "lon": 16.767,
+          "lat": 1.883
+        },
+        {
+          "lon": 16.483,
+          "lat": 0.7
+        },
+        {
+          "lon": 18.483,
+          "lat": 0.7
+        },
+        {
+          "lon": 18.767,
+          "lat": 1.883
+        },
+        {
+          "lon": 16.767,
+          "lat": 1.883
+        }
+      ]
+    ],
+    "dir": "W",
+    "spd": "5",
+    "chng": "NC",
+    "rawSigmet": "WSCG31 FCBB 161626\nFCCC SIGMET H1 VALID 161645/162045 FCBB-\nFCCC BRAZZAVILLE FIR/UIR EMBD TS OBS AT 1600Z\nSE OF LINE N0719 E02521 - N0505 E02341\n W OF LINE N0652 E01038 - N0448 E00957\n E OF LINE N0153 E01646 - N0042 E01629\nTOP FL420 MOV W 05KT NC="
+  },
+  {
+    "icaoId": "ORBI",
+    "firId": "ORBB",
+    "firName": "ORBB BAGHDAD",
+    "receiptTime": "2026-10-16T16:16:28.792Z",
+    "validTimeFrom": 1792166400,
+    "validTimeTo": 1792180800,
+    "seriesId": "H1",
+    "hazard": "TS",
+    "qualifier": "EMBD",
+    "base": null,
+    "top": null,
+    "geom": "AREA",
+    "coords": [
+      {
+        "lon": 42.083,
+        "lat": 36.25
+      }
+    ],
+    "dir": null,
+    "spd": null,
+    "chng": null,
+    "rawSigmet": "WSIQ01 ORBI 161620\nORBB SIGMET H1 VALID 161600/162000 ORBI-\nORBB BAGHDAD FIR/UIR EMBD TS OBS AT 1545Z WI N3615 E04205 - N3617 E04\n324 N3509 E04335 - N3511 E04208 - N3615 E04205 MOV NE 10KT NC="
+  },
+  {
+    "icaoId": "FCBB",
+    "firId": "FCCC",
+    "firName": "FCCC BRAZZAVILLE",
+    "receiptTime": "2026-10-16T17:07:28.294Z",
+    "validTimeFrom": 1792170360,
+    "validTimeTo": 1792183500,
+    "seriesId": "I1",
+    "hazard": "TS",
+    "qualifier": "EMBD",
+    "base": null,
+    "top": 42000,
+    "geom": null,
+    "coords": [
+      {
+        "lon": 12.017,
+        "lat": 6.867
+      },
+      {
+        "lon": 11.917,
+        "lat": 6.183
+      },
+      {
+        "lon": 9.917,
+        "lat": 6.183
+      },
+      {
+        "lon": 10.017,
+        "lat": 6.867
+      },
+      {
+        "lon": 12.017,
+        "lat": 6.867
+      }
+    ],
+    "dir": "W",
+    "spd": "5",
+    "chng": "NC",
+    "rawSigmet": "WSCG31 FCBB 161706\nFCCC SIGMET I1 VALID 161706/162045 FCBB-\nFCCC BRAZZAVILLE FIR/UIR EMBD TS OBS AT 1645Z\nW OF LINE N0652 E01201 - N0611 E01155\nTOP FL420 MOV W 05KT NC="
+  }
+]

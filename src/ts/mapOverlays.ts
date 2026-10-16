@@ -246,6 +246,12 @@ interface Advisory {
   type: string;
   hazard: string;
   severity?: number;
+  /** Intensity in words for international SIGMETs ("embedded", "severe mountain wave"). */
+  detail?: string;
+  /** Volcano or tropical cyclone name. */
+  name?: string;
+  /** FIR that issued an international SIGMET. */
+  region?: string;
   validFrom?: number;
   validTo?: number;
   altLow?: number;
@@ -261,10 +267,18 @@ const HAZARD_STYLE: Record<string, { color: string; label: string }> = {
   'MTN OBSCN': { color: '#c4b5fd', label: 'Mountain obscuration' },
   CONVECTIVE: { color: '#ef4444', label: 'Thunderstorms' },
   ASH: { color: '#a8a29e', label: 'Volcanic ash' },
+  TC: { color: '#f472b6', label: 'Tropical cyclone' },
 };
 
 function hazardStyle(hazard: string) {
   return HAZARD_STYLE[hazard] || { color: '#e2e8f0', label: hazard };
+}
+
+/** "Severe turbulence", "Embedded thunderstorms", "Volcanic ash (Mt Ibu)". */
+function advisoryTitle(adv: Advisory): string {
+  const label = hazardStyle(adv.hazard).label;
+  const base = adv.detail ? `${adv.detail[0].toUpperCase()}${adv.detail.slice(1)} ${label.toLowerCase()}` : label;
+  return adv.name ? `${base} (${adv.name})` : base;
 }
 
 let advisoryCache: { at: number; data: Promise<Advisory[]> } | null = null;
@@ -328,7 +342,8 @@ function advisoryPolygon(adv: Advisory, strong: boolean): L.Polygon {
   });
   const alt = altitudeLabel(adv.altLow, adv.altHigh);
   poly.bindPopup(
-    `<strong>${esc(adv.type)}: ${esc(style.label)}</strong>` +
+    `<strong>${esc(adv.type)}: ${esc(advisoryTitle(adv))}</strong>` +
+      (adv.region ? `<br>${esc(adv.region)} FIR` : '') +
       (alt ? `<br>${esc(alt)}` : '') +
       (adv.validTo ? `<br>Until ${esc(timeLabel(adv.validTo))}` : '') +
       (adv.raw ? `<br><small style="color:#64748b">${esc(String(adv.raw).replace(/\s+/g, ' ').slice(0, 320))}</small>` : '')
@@ -435,7 +450,7 @@ export interface RouteHazardResult {
   pireps: RawPirep[];
 }
 
-function pointInPolygon(lat: number, lon: number, ring: [number, number][]): boolean {
+function pointInRing(lat: number, lon: number, ring: [number, number][]): boolean {
   let inside = false;
   for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
     const [yi, xi] = ring[i];
@@ -443,6 +458,11 @@ function pointInPolygon(lat: number, lon: number, ring: [number, number][]): boo
     if (yi > lat !== yj > lat && lon < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) inside = !inside;
   }
   return inside;
+}
+
+/** Rings that cross the antimeridian are unwrapped past +/-180, so also try the point a world away. */
+function pointInPolygon(lat: number, lon: number, ring: [number, number][]): boolean {
+  return pointInRing(lat, lon, ring) || pointInRing(lat, lon + 360, ring) || pointInRing(lat, lon - 360, ring);
 }
 
 const ROUTE_PIREP_RADIUS_MI = 50;
@@ -474,10 +494,10 @@ export async function analyzeRoute(points: Array<[number, number]>): Promise<Rou
 
 /** One-line plain-English description of an advisory for the route stats. */
 export function describeAdvisory(adv: Advisory): string {
-  const style = hazardStyle(adv.hazard);
   const alt = altitudeLabel(adv.altLow, adv.altHigh);
   const until = adv.validTo ? `until ${timeLabel(adv.validTo)}` : '';
-  return [`${adv.type}: ${style.label}`, alt, until].filter(Boolean).join(', ');
+  const region = adv.region ? `${adv.region} FIR` : '';
+  return [`${adv.type}: ${advisoryTitle(adv)}`, alt, until, region].filter(Boolean).join(', ');
 }
 
 export function describeRoutePirep(p: RawPirep): string | null {
