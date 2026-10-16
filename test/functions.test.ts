@@ -26,6 +26,9 @@ describe('aviationweather.gov METAR -> /api/weather', () => {
     expect(out.windDirDeg).toBe(raw.wdir);
     expect(out.windSpeedKt).toBe(raw.wspd);
     expect(out.tempF).toBe(Math.round((raw.temp * 9) / 5 + 32));
+    expect(out.tempC).toBe(raw.temp);
+    expect(out.dewpointC).toBe(raw.dewp);
+    expect(out.altimeterHpa).toBe(Math.round(raw.altim));
     expect(out.ceilingFt).toBe(3600); // lowest BKN/OVC layer in the fixture
     expect(out.observedIso).toBe(raw.reportTime);
   });

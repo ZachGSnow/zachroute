@@ -1,5 +1,7 @@
 // Plain-English translation of pilot reports (PIREPs) for the card and the map.
 
+import { formatVisibility } from './units';
+
 export interface RawPirep {
   obsTime: number;
   acType?: string;
@@ -61,8 +63,8 @@ export function summarizePirep(p: RawPirep): PirepSummary | null {
   const parts: string[] = [];
   if (hasTurb) parts.push(TURB_WORDS[turb] || `${turb.toLowerCase()} turbulence`);
   if (hasIce) parts.push(ICE_WORDS[ice] || `${ice.toLowerCase()} icing`);
-  if (lowVis && !hasTurb && !hasIce) parts.push(`Low visibility (${p.visib} mi)`);
-  else if (lowVis) parts.push(`low visibility (${p.visib} mi)`);
+  if (lowVis && !hasTurb && !hasIce) parts.push(`Low visibility (${formatVisibility(p.visib!)})`);
+  else if (lowVis) parts.push(`low visibility (${formatVisibility(p.visib!)})`);
 
   const kind: PirepKind = hasTurb && hasIce ? 'both' : hasTurb ? 'turb' : hasIce ? 'ice' : 'vis';
   const severe = !!p.urgent || /MOD|SEV|EXTRM|HVY/.test(turb) || /MOD|SEV|HVY/.test(ice);

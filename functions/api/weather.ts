@@ -66,9 +66,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         visibility: ob.visib !== undefined ? String(ob.visib) : undefined,
         tempF: typeof ob.temp === 'number' ? Math.round((ob.temp * 9) / 5 + 32) : undefined,
         dewpointF: typeof ob.dewp === 'number' ? Math.round((ob.dewp * 9) / 5 + 32) : undefined,
+        // As reported (whole degrees C, hPa), so metric display is not converted twice.
+        tempC: typeof ob.temp === 'number' ? ob.temp : undefined,
+        dewpointC: typeof ob.dewp === 'number' ? ob.dewp : undefined,
         weatherPhenomena: ob.wxString || undefined,
         ...computeCeiling(ob.clouds),
         altimeterInHg: typeof ob.altim === 'number' ? Math.round(ob.altim * 0.0295299 * 100) / 100 : undefined,
+        altimeterHpa: typeof ob.altim === 'number' ? Math.round(ob.altim) : undefined,
         rawText: ob.rawOb || undefined,
         observedIso: ob.reportTime || undefined,
       };

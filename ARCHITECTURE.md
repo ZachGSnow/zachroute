@@ -23,7 +23,7 @@ browser (src/ts) <--------------------------------------+
 | `src/ts/history.ts` | Recent searches and favorite airports (device-only `localStorage`) |
 | `src/ts/sheet.ts` | Phone bottom sheet: peek / half / full, drag and tap |
 | `src/ts/nearby.ts` | Airports near me: geolocation and nearest-airport ranking |
-| `src/ts/units.ts` | Display units: distance and 12/24-hour clock |
+| `src/ts/units.ts` | Display units: distance, 12/24-hour clock, and US or metric weather (temperature, pressure, visibility; default from the device region) |
 | `src/ts/searchParser.ts` | Code / name / route parsing and ranking |
 | `src/ts/uiRenderer.ts` | Airport card and route panel |
 | `src/ts/mapRenderer.ts` | Leaflet map: routes, connections, connecting itineraries, airport layers |
