@@ -161,6 +161,19 @@ describe('aviationweather.gov AIRMET/SIGMET + international SIGMET -> /api/airsi
     expect(out.advisories).toHaveLength(single.length + multi.coords.length);
   });
 
+  it('drops a SIGMET the international feed lists twice', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(1792172000 * 1000));
+    const raw = jsonFixture<any[]>('awc-isigmet.json');
+    const tc = raw.find((r) => r.hazard === 'TC');
+    stubFetch([
+      ['/airsigmet', []],
+      ['/isigmet', [...raw, structuredClone(tc)]],
+    ]);
+    const out = await json(await airsigmet(pagesContext('https://x/api/airsigmet')));
+    expect(out.advisories.filter((a: any) => a.hazard === 'TC')).toHaveLength(1);
+  });
+
   it('keeps the US list when the international feed fails', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(1792149000 * 1000));

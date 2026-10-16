@@ -162,6 +162,17 @@ export function fromIntlFeed(data: any[], now: number): Advisory[] {
     });
 }
 
+/** The international feed sometimes lists the same SIGMET twice; keep one of each. */
+export function dedupe(list: Advisory[]): Advisory[] {
+  const seen = new Set<string>();
+  return list.filter((a) => {
+    const key = `${a.hazard}|${a.validFrom}|${a.raw ?? ''}|${a.coords.join(';')}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 async function getFeed(url: string): Promise<any[] | null> {
   try {
     const res = await fetch(url, { headers: { 'User-Agent': USER_AGENT } });
@@ -181,7 +192,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   const [us, intl] = await Promise.all([getFeed(US_URL), getFeed(INTL_URL)]);
   const now = Math.floor(Date.now() / 1000);
-  const advisories = [...fromUsFeed(us || [], now), ...fromIntlFeed(intl || [], now)];
+  const advisories = dedupe([...fromUsFeed(us || [], now), ...fromIntlFeed(intl || [], now)]);
   const result = { advisories };
 
   // Only cache a complete answer, so one feed being down does not hide it for five minutes.
