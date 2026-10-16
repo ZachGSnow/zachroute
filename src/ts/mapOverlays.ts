@@ -3,6 +3,7 @@ import { formatDistance, clockOptions } from './units';
 import { bearingBetween, destinationPoint, haversineDistanceLatLon } from './geoMath';
 import { resolveCode } from './searchParser';
 import { pointInPolygon, advisoriesNear } from './hazardGeo';
+import { fetchCyclones, stormsAlongRoute, stormTitle, type Cyclone, type StormOnRoute } from './cyclones';
 import { compassPoint } from './forecast';
 import { summarizePirep, pirepAgeLabel, pirepAltitudeLabel, type RawPirep, type PirepKind } from './pirepText';
 
@@ -451,6 +452,7 @@ export type { Advisory };
 export interface RouteHazardResult {
   advisories: Advisory[];
   pireps: RawPirep[];
+  cyclones: StormOnRoute[];
 }
 
 const ROUTE_PIREP_RADIUS_MI = 50;
@@ -460,14 +462,15 @@ const ROUTE_PIREP_RADIUS_MI = 50;
  * within ~50 mi of it. `points` is the route sampled densely as [lat, lon].
  */
 export async function analyzeRoute(points: Array<[number, number]>): Promise<RouteHazardResult> {
-  if (points.length === 0) return { advisories: [], pireps: [] };
+  if (points.length === 0) return { advisories: [], pireps: [], cyclones: [] };
 
   const lats = points.map((p) => p[0]);
   const lons = points.map((p) => p[1]);
   const pad = 1;
-  const [advisories, boxReports] = await Promise.all([
+  const [advisories, boxReports, storms] = await Promise.all([
     fetchAdvisories(),
     fetchPirepBox(Math.min(...lats) - pad, Math.min(...lons) - pad, Math.max(...lats) + pad, Math.max(...lons) + pad),
+    fetchCyclones(),
   ]);
 
   const crossed = advisories.filter((adv) => points.some(([lat, lon]) => pointInPolygon(lat, lon, adv.coords)));
@@ -477,7 +480,7 @@ export async function analyzeRoute(points: Array<[number, number]>): Promise<Rou
     return points.some(([lat, lon]) => haversineDistanceLatLon(lat, lon, p.lat, p.lon) <= ROUTE_PIREP_RADIUS_MI);
   });
 
-  return { advisories: crossed, pireps: nearby };
+  return { advisories: crossed, pireps: nearby, cyclones: stormsAlongRoute(points, storms) };
 }
 
 const ASH_RADIUS_MI = 100;
@@ -523,6 +526,89 @@ export function drawRouteHazards(result: RouteHazardResult) {
     const m = pirepMarker(p);
     if (m) routeHazardLayer.addLayer(m);
   }
+  for (const hit of result.cyclones) for (const layer of stormLayers(hit.storm, true)) routeHazardLayer.addLayer(layer);
+}
+
+// ---------------------------------------------------------------------------
+// Tropical cyclones worldwide (GDACS): forecast cone, track, current position
+// ---------------------------------------------------------------------------
+
+const STORM_COLOR = '#f472b6';
+
+function stormTimeLabel(iso: string): string {
+  const d = new Date(iso);
+  return `${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ${d.toLocaleTimeString('en-US', clockOptions())}`;
+}
+
+function stormPopup(storm: Cyclone): string {
+  const source = storm.source ? `${esc(storm.source)} advisory via GDACS` : 'via GDACS';
+  const link = storm.report ? `<br><a href="${esc(storm.report)}" target="_blank" rel="noopener">GDACS report</a>` : '';
+  return (
+    `<strong>${esc(stormTitle(storm))}</strong>` +
+    `<br>As of ${esc(stormTimeLabel(storm.asOf))} (${source})` +
+    `<br>Impact alert: ${esc(storm.alert)}` +
+    (storm.cone ? '<br><small>Shaded: forecast uncertainty cone. Dashed: forecast track.</small>' : '') +
+    link +
+    '<br><small style="color:#64748b">For information only; follow official advisories.</small>'
+  );
+}
+
+/** Cone, past track (solid), forecast track (dashed) and a marker at the current position. */
+function stormLayers(storm: Cyclone, strong: boolean): L.Layer[] {
+  const layers: L.Layer[] = [];
+  const popup = stormPopup(storm);
+  if (storm.cone) {
+    layers.push(
+      L.polygon(storm.cone, {
+        pane: 'hazards',
+        color: STORM_COLOR,
+        weight: strong ? 2 : 1,
+        dashArray: '4, 4',
+        fillColor: STORM_COLOR,
+        fillOpacity: strong ? 0.18 : 0.1,
+      }).bindPopup(popup)
+    );
+  }
+  const past = storm.track.filter((t) => !t.forecast).map((t) => [t.lat, t.lon] as [number, number]);
+  const ahead = storm.track.filter((t) => t.forecast).map((t) => [t.lat, t.lon] as [number, number]);
+  if (past.length > 1) layers.push(L.polyline(past, { pane: 'hazards', color: STORM_COLOR, weight: 2, opacity: 0.9 }));
+  if (ahead.length > 0) {
+    layers.push(L.polyline([[storm.lat, storm.lon], ...ahead], { pane: 'hazards', color: STORM_COLOR, weight: 2, dashArray: '6, 6', opacity: 0.9 }));
+  }
+  layers.push(
+    L.marker([storm.lat, storm.lon], {
+      icon: L.divIcon({ className: 'storm-icon', html: '<span aria-hidden="true">🌀</span>', iconSize: [26, 26], iconAnchor: [13, 13] }),
+      title: stormTitle(storm),
+    }).bindPopup(popup)
+  );
+  return layers;
+}
+
+let cycloneLayer: L.LayerGroup | null = null;
+let cyclonesOn = false;
+let cycloneTimer: number | undefined;
+
+export function setCyclones(on: boolean) {
+  cyclonesOn = on;
+  window.clearInterval(cycloneTimer);
+  if (!map) return;
+  if (!on) {
+    cycloneLayer?.clearLayers();
+    return;
+  }
+  void refreshCyclones(true);
+  cycloneTimer = window.setInterval(() => void refreshCyclones(false), 30 * 60 * 1000);
+}
+
+async function refreshCyclones(announce: boolean) {
+  if (!map || !cyclonesOn) return;
+  const storms = await fetchCyclones();
+  if (!map || !cyclonesOn) return;
+  if (!cycloneLayer) cycloneLayer = L.layerGroup();
+  cycloneLayer.clearLayers();
+  for (const storm of storms) for (const layer of stormLayers(storm, false)) cycloneLayer.addLayer(layer);
+  if (!map.hasLayer(cycloneLayer)) cycloneLayer.addTo(map);
+  if (announce && storms.length === 0) setHint('No active tropical cyclones', 3500);
 }
 
 // ---------------------------------------------------------------------------

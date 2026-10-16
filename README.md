@@ -42,6 +42,8 @@ display: see a plane overhead, look up where it is going.
 - FAA ground stops, ground delay programs and departure/arrival delays, plus active National
   Weather Service alerts (US).
 - Volcanic ash over or within 100 miles of the airport, anywhere in the world (from SIGMETs).
+- Tropical cyclones (hurricanes, typhoons, cyclones in every ocean) within 300 miles, or whose
+  forecast cone covers the airport.
 - Runways with dimensions and surface, the wind-favored runway with headwind/crosswind
   components, frequencies, navaids, local time, sunrise or sunset, airport photo and history.
 - Nonstop destinations with the airlines that fly them today (US routes).
@@ -61,9 +63,11 @@ used once and not stored; denying permission just shows a message.
   the map: US AIRMETs and SIGMETs, plus international SIGMETs worldwide (thunderstorms,
   turbulence, icing, volcanic ash, tropical cyclones), each with the FIR that issued it.
   Volcanic ash on a route gets its own warning at the top of the list.
+- Tropical cyclones the route passes within 150 miles of, or through the forecast cone of.
 
 **Map layers** (settings menu): nonstop connections, airport size layers, weather stations
 (wind arrows, with a ring only when conditions are below VFR), pilot reports, weather hazards,
+tropical cyclones worldwide (track, forecast track and uncertainty cone),
 day/night shading, approach distance ticks, and runway outlines with runway numbers when zoomed in.
 
 **Phone layout**: the results panel is a bottom sheet. Drag its handle between a one-line peek
@@ -133,7 +137,7 @@ and the reasoning behind the main decisions.
 ## Testing
 
 ```bash
-npm test          # Vitest: 78 tests
+npm test          # Vitest: 90 tests
 npm run typecheck
 ```
 
@@ -163,6 +167,7 @@ The code is MIT licensed. The data it uses keeps its own terms:
 | Weather, forecasts, pilot reports, advisories | [Aviation Weather Center](https://aviationweather.gov) | Public domain (US government) |
 | Delay programs | [FAA NAS Status](https://nasstatus.faa.gov) | Public domain (US government) |
 | Weather alerts | [National Weather Service](https://www.weather.gov) | Public domain (US government) |
+| Tropical cyclones (positions, tracks, forecast cones, from NHC, JTWC and other agencies) | [GDACS](https://www.gdacs.org), the UN / European Commission Global Disaster Alert and Coordination System | Free to use; provided as is, for information only (credited in the app) |
 | Winds aloft | [Open-Meteo](https://open-meteo.com) | CC BY 4.0, free for non-commercial use |
 | Map tiles | [Stadia Maps](https://stadiamaps.com), OpenMapTiles, OpenStreetMap | Per provider terms |
 

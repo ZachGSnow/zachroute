@@ -3,7 +3,7 @@ import { formatDistance, getDistanceUnit, getClockFormat, setDistanceUnit, setCl
 import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
 import { haversineDistance } from './geoMath';
-import { setWeatherStations, setHazards, setDayNight, setPireps, highlightRunway } from './mapOverlays';
+import { setWeatherStations, setHazards, setDayNight, setPireps, setCyclones, highlightRunway } from './mapOverlays';
 import { parseQuery, loadAirports, suggest, type SearchIntent } from './searchParser';
 import { createSuggestList, type SuggestItem } from './suggestList';
 import { loadRecent, addRecent, clearRecent, loadFavorites, FAVORITES_CHANGED } from './history';
@@ -449,6 +449,9 @@ async function init() {
   const pirepToggle = document.getElementById('pireps-toggle') as HTMLInputElement | null;
   const PIREP_KEY = 'zachroute:show-pireps';
   restoreAirportToggle(pirepToggle, PIREP_KEY, setPireps);
+  const cycloneToggle = document.getElementById('cyclones-toggle') as HTMLInputElement | null;
+  const CYCLONE_KEY = 'zachroute:show-cyclones';
+  restoreAirportToggle(cycloneToggle, CYCLONE_KEY, setCyclones);
 
   restoreAirportToggle(wxToggle, WX_KEY, setWeatherStations);
   restoreAirportToggle(hazardToggle, HAZARD_KEY, setHazards);
@@ -465,6 +468,7 @@ async function init() {
   wireOverlayToggle(hazardToggle, HAZARD_KEY, setHazards);
   wireOverlayToggle(nightToggle, NIGHT_KEY, setDayNight);
   wireOverlayToggle(pirepToggle, PIREP_KEY, setPireps);
+  wireOverlayToggle(cycloneToggle, CYCLONE_KEY, setCyclones);
   wireOverlayToggle(approachToggle, APPROACH_KEY, setApproachTicks);
 
   // Units (settings menu). Changing one re-renders the current result in the new units.
