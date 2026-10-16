@@ -1,4 +1,5 @@
 import type { Airport } from './geoMath';
+import { formatDistance } from './units';
 import { slerpArc, bearingBetween, haversineDistance, blockTimeMiles } from './geoMath';
 import connectionsData from '../data/connections.json';
 import type { ConnectingDepth, ViaOption } from './connections';
@@ -671,7 +672,7 @@ function drawSelectedDecorations(itinerary: ViaItinerary, option: ViaOption | un
 
   itinerary.arcs.forEach((pts, i) => {
     const miles = haversineDistance(itinerary.chain[i], itinerary.chain[i + 1]);
-    const text = `${Math.round(miles).toLocaleString()} mi \u00b7 ${formatMinutes(blockTimeMiles(miles))}`;
+    const text = `${formatDistance(miles)} \u00b7 ${formatMinutes(blockTimeMiles(miles))}`;
     const mid = pts[Math.floor(pts.length / 2)];
     const icon = L.divIcon({
       className: 'leg-label',
@@ -685,7 +686,7 @@ function drawSelectedDecorations(itinerary: ViaItinerary, option: ViaOption | un
   const summary = document.getElementById('route-summary');
   if (summary && option) {
     const codes = option.hubs.map(airportCode).join(', ');
-    summary.textContent = `via ${codes} \u00b7 ${Math.round(option.viaMiles).toLocaleString()} mi \u00b7 ~${formatMinutes(option.blockMinutes)} flying, before any layover`;
+    summary.textContent = `via ${codes} \u00b7 ${formatDistance(option.viaMiles)} \u00b7 ~${formatMinutes(option.blockMinutes)} flying, before any layover`;
     summary.hidden = false;
   }
 }

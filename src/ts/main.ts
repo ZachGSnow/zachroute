@@ -1,4 +1,5 @@
 import { initMap, showSingleAirport, showRoute, showConnectingRoutes, highlightViaRoute, setAirportDatabase, showConnections, resetView, initAirportLayers, showLargeAirports, showMediumAirports, showRegionalAirports, drawAirportRunways, setPreferredRunwayEnd, colorRouteByWind, setApproachTicks, showAllViaOptions, refreshMapSize, showNearby } from './mapRenderer';
+import { formatDistance, getDistanceUnit, getClockFormat, setDistanceUnit, setClockFormat, UNITS_CHANGED, type DistanceUnit, type ClockFormat } from './units';
 import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
 import { haversineDistance } from './geoMath';
@@ -106,7 +107,7 @@ async function init() {
   // One-line summaries for the phone sheet's header (visible even when the sheet is lowered).
   const singleSummary = (a: Airport) => `${a.iata || a.icao} \u2014 ${a.name}`;
   const routeSummary = (o: Airport, d: Airport) =>
-    `${o.iata || o.icao} \u2192 ${d.iata || d.icao} \u00b7 ${Math.round(haversineDistance(o, d)).toLocaleString()} mi`;
+    `${o.iata || o.icao} \u2192 ${d.iata || d.icao} \u00b7 ${formatDistance(haversineDistance(o, d))}`;
 
   /** Runs a search and renders it. `how` controls the history entry. */
   function runSearch(raw: string, how: HistoryMode) {
@@ -465,6 +466,21 @@ async function init() {
   wireOverlayToggle(nightToggle, NIGHT_KEY, setDayNight);
   wireOverlayToggle(pirepToggle, PIREP_KEY, setPireps);
   wireOverlayToggle(approachToggle, APPROACH_KEY, setApproachTicks);
+
+  // Units (settings menu). Changing one re-renders the current result in the new units.
+  const distanceSelect = document.getElementById('distance-unit') as HTMLSelectElement | null;
+  const clockSelect = document.getElementById('clock-format') as HTMLSelectElement | null;
+  if (distanceSelect) {
+    distanceSelect.value = getDistanceUnit();
+    distanceSelect.addEventListener('change', () => setDistanceUnit(distanceSelect.value as DistanceUnit));
+  }
+  if (clockSelect) {
+    clockSelect.value = getClockFormat();
+    clockSelect.addEventListener('change', () => setClockFormat(clockSelect.value as ClockFormat));
+  }
+  window.addEventListener(UNITS_CHANGED, () => {
+    if (currentQuery) runSearch(currentQuery, 'none');
+  });
 
   // Version / build stamp (About and the settings menu) so it's clear which build a device is running.
   const buildDate = new Date(__BUILD_TIME__);

@@ -1191,3 +1191,23 @@ body {
   padding: 8px 0;
   text-align: left;
 }
+
+/* Units selects in the settings menu */
+.select-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px;
+  color: var(--text);
+  font-size: 0.875rem;
+}
+
+.select-label select {
+  padding: 4px 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.82rem;
+}
