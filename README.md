@@ -147,7 +147,7 @@ and the reasoning behind the main decisions.
 ## Testing
 
 ```bash
-npm test          # Vitest: 116 tests
+npm test          # Vitest: 117 tests
 npm run typecheck
 ```
 

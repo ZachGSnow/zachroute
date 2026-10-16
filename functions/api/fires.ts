@@ -2,7 +2,9 @@ import { USER_AGENT } from '../../shared/userAgent';
 // Cloudflare Pages Function: /api/fires?bbox=minLat,minLon,maxLat,maxLon
 // Satellite fire and heat detections from the last 24 hours, worldwide, from NASA FIRMS (MODIS
 // near-real-time global file; free, no key). Detections include wildfires, agricultural burning
-// and gas flares. The global file is about 1 MB; it is cached at the Cloudflare edge for 30
+// and gas flares. Despite its "24h" name the file spans about two days (on 2026-10-16, 44% of
+// confident detections were over 24 hours old), so older detections are dropped here.
+// The global file is about 1 MB; it is cached at the Cloudflare edge for 30
 // minutes and scanned line by line, keeping only the requested rectangle, to stay within a
 // function's CPU budget. Results are KV-cached 30 minutes per rectangle.
 
@@ -26,6 +28,7 @@ const MAX_SPAN_LON = 80;
 /** MODIS confidence is 0-100; below 50 is mostly low-confidence noise. */
 const MIN_CONFIDENCE = 50;
 const MAX_FIRES = 500;
+const MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -41,11 +44,12 @@ export interface Box {
 }
 
 /**
- * Scans the FIRMS CSV and returns detections inside the box with confidence >= 50, most intense
- * first. Columns are located from the header, and only the latitude and longitude are parsed
- * for rows outside the box.
+ * Scans the FIRMS CSV and returns detections inside the box with confidence >= 50 from the 24
+ * hours before `now`, most intense first. Columns are located from the header, and only the
+ * latitude and longitude are parsed for rows outside the box.
  */
-export function parseFires(csv: string, box: Box, max = MAX_FIRES): Fire[] {
+export function parseFires(csv: string, box: Box, max = MAX_FIRES, now = Date.now()): Fire[] {
+  const oldest = now - MAX_AGE_MS;
   const headerEnd = csv.indexOf('\n');
   if (headerEnd < 0) return [];
   const header = csv.slice(0, headerEnd).trim().split(',');
@@ -68,12 +72,8 @@ export function parseFires(csv: string, box: Box, max = MAX_FIRES): Fire[] {
         const conf = Number(cells[iConf]);
         if (conf >= MIN_CONFIDENCE) {
           const hhmm = String(cells[iTime] || '').padStart(4, '0');
-          out.push({
-            lat,
-            lon,
-            frp: Number(cells[iFrp]) || 0,
-            time: `${cells[iDate]}T${hhmm.slice(0, 2)}:${hhmm.slice(2)}:00Z`,
-          });
+          const time = `${cells[iDate]}T${hhmm.slice(0, 2)}:${hhmm.slice(2)}:00Z`;
+          if (Date.parse(time) >= oldest) out.push({ lat, lon, frp: Number(cells[iFrp]) || 0, time });
         }
       }
     }
