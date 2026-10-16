@@ -135,11 +135,21 @@
       <div class="modal-panel">
         <button type="button" id="about-close" class="icon-btn modal-close" aria-label="Close">✕</button>
         <h2>ZachRoute</h2>
-        <p>Instant, offline-capable airport lookup and route planner. Search by code, city or name, then see live weather and a plain-English forecast, runways and approaches, delays and hazards. It's a companion app to my <a href="https://theflightwall.com" target="_blank" rel="noopener">FlightWall</a> setup.</p>
+        <p>Instant, offline-capable airport lookup and route planner for anywhere in the world. Search by code, city or name, then see live weather and a plain-English forecast, runways and approaches, delays, and hazards from thunderstorms and turbulence to volcanic ash, tropical cyclones, fires, smoke and dust. It's a companion app to my <a href="https://theflightwall.com" target="_blank" rel="noopener">FlightWall</a> setup.</p>
         <p class="about-version">Version <strong id="about-version"></strong> &middot; Built <span id="about-build"></span></p>
         <p>Designed and built by <a href="https://github.com/ZachGSnow/" target="_blank" rel="noopener">Zach Snow</a> &middot; &copy; 2026</p>
         <p class="about-disclaimer">For information only. Not for navigation or flight planning. Always use official aviation sources.</p>
-        <p class="muted">Data: <a href="https://ourairports.com" target="_blank" rel="noopener">OurAirports</a> (public domain), <a href="https://www.wikipedia.org" target="_blank" rel="noopener">Wikipedia</a> (CC BY-SA), <a href="https://aviationweather.gov" target="_blank" rel="noopener">Aviation Weather Center</a>, <a href="https://nasstatus.faa.gov" target="_blank" rel="noopener">FAA</a>, <a href="https://www.transtats.bts.gov" target="_blank" rel="noopener">U.S. DOT Bureau of Transportation Statistics</a> (airlines and US routes), <a href="https://www.weather.gov" target="_blank" rel="noopener">National Weather Service</a>, <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>, <a href="https://openflights.org" target="_blank" rel="noopener">OpenFlights</a>, and the World Magnetic Model.</p>
+        <p class="about-sources-title">Data sources</p>
+        <ul class="about-sources">
+          <li>Weather, forecasts, pilot reports, AIRMETs and SIGMETs worldwide: <a href="https://aviationweather.gov" target="_blank" rel="noopener">Aviation Weather Center</a> (updated within minutes)</li>
+          <li>US delays: <a href="https://nasstatus.faa.gov" target="_blank" rel="noopener">FAA</a>; US weather alerts: <a href="https://www.weather.gov" target="_blank" rel="noopener">National Weather Service</a></li>
+          <li>Tropical cyclones: <a href="https://www.gdacs.org" target="_blank" rel="noopener">GDACS</a> (UN / European Commission), from the official advisories, every 6 hours</li>
+          <li>Fires: <a href="https://firms.modaps.eosdis.nasa.gov" target="_blank" rel="noopener">NASA FIRMS</a> (last 24 hours); dust and smoke: <a href="https://nasa-gibs.github.io/gibs-api-docs/" target="_blank" rel="noopener">NASA GIBS</a>, OMPS on NOAA-20 (daily)</li>
+          <li>Air quality and winds aloft: <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0), model estimates; air quality contains Copernicus Atmosphere Monitoring Service information</li>
+          <li>Airports and runways: <a href="https://ourairports.com" target="_blank" rel="noopener">OurAirports</a> (public domain); airlines and US routes: <a href="https://www.transtats.bts.gov" target="_blank" rel="noopener">U.S. DOT BTS</a>; other routes: <a href="https://openflights.org" target="_blank" rel="noopener">OpenFlights</a> (ODbL, 2017)</li>
+          <li>Airport history and photos: <a href="https://www.wikipedia.org" target="_blank" rel="noopener">Wikipedia</a> (CC BY-SA); magnetic variation: World Magnetic Model; map: <a href="https://stadiamaps.com" target="_blank" rel="noopener">Stadia Maps</a>, OpenMapTiles, OpenStreetMap</li>
+        </ul>
+        <p class="muted">An airport card loads its data when you search and does not refresh while open; search again for newer data.</p>
       </div>
     </div>
 

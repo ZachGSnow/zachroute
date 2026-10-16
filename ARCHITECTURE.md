@@ -40,7 +40,7 @@ browser (src/ts) <--------------------------------------+
 | `src/ts/connections.ts`, `carriers.ts` | Nonstop topology, one/two-stop search, airlines per route |
 | `functions/api/*.ts` | `weather`, `taf`, `pireps`, `metar-bbox`, `airsigmet`, `cyclones`, `fires`, `faa-status`, `lore` |
 | `shared/userAgent.ts` | User-Agent for upstream calls, built from `package.json` |
-| `scripts/` | Data pipeline (below) |
+| `scripts/` | Data pipeline (below), and `capture-screenshots.mjs`, which captures the README screenshots from the running app with headless Chrome or Edge |
 
 ## Data pipeline (build time)
 
