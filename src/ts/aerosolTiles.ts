@@ -3,12 +3,42 @@
 // and pale yellows, which would wash out the dark base map, so each tile is drawn through a
 // canvas that keeps only the strongly colored (yellow to red) pixels. No Leaflet here; the layer
 // is in mapOverlays.ts.
+//
+// Each day's map is one UTC day built from the satellite's daily passes (about 13:30 local time
+// everywhere), so a new day starts empty and fills in from east to west: at 19:49 UTC on
+// 2026-10-16 the Americas had no data for the day yet. Each tile is therefore drawn from today's
+// image where today has been observed and from yesterday's everywhere else.
 
-export const AEROSOL_TILE_URL =
-  'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/OMPS_NOAA20_NadirMapper_AerosolIndex_380/default/default/GoogleMapsCompatible_Level6/{z}/{y}/{x}.png';
+const TILE_BASE = 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/OMPS_NOAA20_NadirMapper_AerosolIndex_380/default';
+
+/** Tile URL template for one UTC day ("2026-10-16"), with {z}/{y}/{x} left for Leaflet. */
+export function aerosolTileUrl(day: string): string {
+  return `${TILE_BASE}/${day}/GoogleMapsCompatible_Level6/{z}/{y}/{x}.png`;
+}
+
+/** Today and yesterday as UTC dates, the two days a tile is drawn from. */
+export function aerosolDays(now = new Date()): { today: string; yesterday: string } {
+  const today = now.toISOString().slice(0, 10);
+  const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  return { today, yesterday };
+}
 
 /** The source has tiles up to zoom 6; Leaflet scales them up beyond that. */
 export const AEROSOL_MAX_NATIVE_ZOOM = 6;
+
+/**
+ * Fills the pixels today's image has not observed yet (transparent; observed clean air is drawn
+ * grey) from yesterday's image, in place. Both are canvas ImageData of the same size.
+ */
+export function fillFromYesterday(today: Uint8ClampedArray, yesterday: Uint8ClampedArray): void {
+  for (let i = 0; i < today.length; i += 4) {
+    if (today[i + 3] !== 0) continue;
+    today[i] = yesterday[i];
+    today[i + 1] = yesterday[i + 1];
+    today[i + 2] = yesterday[i + 2];
+    today[i + 3] = yesterday[i + 3];
+  }
+}
 
 /**
  * Below this saturation a pixel is grey, white or pale yellow (little or no aerosol) and is

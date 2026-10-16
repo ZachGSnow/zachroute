@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { keepAerosolPixels, AEROSOL_TILE_URL } from '../src/ts/aerosolTiles';
+import { keepAerosolPixels, fillFromYesterday, aerosolDays, aerosolTileUrl } from '../src/ts/aerosolTiles';
 
 /** Runs the filter over a list of [r, g, b, a] pixels and returns the resulting alphas. */
 function alphas(pixels: number[][]): number[] {
@@ -43,7 +43,29 @@ describe('dust and smoke tiles', () => {
     expect(alphas([[255, 0, 0, 0]])).toEqual([0]);
   });
 
-  it('asks GIBS for the latest daily NOAA-20 aerosol index', () => {
-    expect(AEROSOL_TILE_URL).toContain('OMPS_NOAA20_NadirMapper_AerosolIndex_380/default/default/GoogleMapsCompatible_Level6/{z}/{y}/{x}.png');
+  it('asks GIBS for a given day of the NOAA-20 aerosol index', () => {
+    expect(aerosolTileUrl('2026-10-16')).toBe(
+      'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/OMPS_NOAA20_NadirMapper_AerosolIndex_380/default/2026-10-16/GoogleMapsCompatible_Level6/{z}/{y}/{x}.png'
+    );
+  });
+
+  it('uses UTC days, including across a month boundary', () => {
+    expect(aerosolDays(new Date('2026-10-16T19:49:00Z'))).toEqual({ today: '2026-10-16', yesterday: '2026-10-15' });
+    expect(aerosolDays(new Date('2026-11-01T00:30:00Z'))).toEqual({ today: '2026-11-01', yesterday: '2026-10-31' });
+  });
+
+  it('fills only the pixels today has not observed yet from yesterday', () => {
+    const today = new Uint8ClampedArray([
+      0, 0, 0, 0, // not observed yet today
+      200, 200, 200, 255, // observed today: clean air (grey)
+      255, 0, 0, 255, // observed today: thick
+    ]);
+    const yesterday = new Uint8ClampedArray([
+      255, 200, 0, 255, // yesterday: dust here
+      255, 0, 0, 255, // yesterday: thick here, but today is newer
+      0, 0, 0, 0,
+    ]);
+    fillFromYesterday(today, yesterday);
+    expect([...today]).toEqual([255, 200, 0, 255, 200, 200, 200, 255, 255, 0, 0, 255]);
   });
 });
