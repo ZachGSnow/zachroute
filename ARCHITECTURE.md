@@ -27,7 +27,8 @@ browser (src/ts) <--------------------------------------+
 | `src/ts/searchParser.ts` | Code / name / route parsing and ranking |
 | `src/ts/uiRenderer.ts` | Airport card and route panel |
 | `src/ts/mapRenderer.ts` | Leaflet map: routes, connections, connecting itineraries, airport layers |
-| `src/ts/mapOverlays.ts` | Weather stations, AIRMET/SIGMET, pilot reports, day/night, runway outlines, hazards along a route |
+| `src/ts/mapOverlays.ts` | Weather stations, AIRMET/SIGMET, pilot reports, day/night, runway outlines, hazards along a route, volcanic ash near an airport |
+| `src/ts/hazardGeo.ts` | Advisory polygon geometry without Leaflet: point in polygon (antimeridian-aware), distance to a polygon, advisories near a point |
 | `src/ts/approach.ts` | Runway-end geometry: extended centerline, 3 degree glide ticks, departure leg, path smoothing |
 | `src/ts/forecast.ts`, `pirepText.ts`, `weather.ts`, `advisories.ts` | Plain-English decoding of TAF, PIREP, METAR, FAA status and NWS alerts |
 | `src/ts/windsAloft.ts` | Cruise-level winds along a route (Open-Meteo) |

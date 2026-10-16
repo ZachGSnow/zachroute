@@ -867,6 +867,15 @@ body {
   color: #86efac;
 }
 
+.route-hazard-ash {
+  margin: 4px 0 6px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(239, 68, 68, 0.16);
+  border: 1px solid rgba(239, 68, 68, 0.55);
+  color: #fecaca;
+}
+
 /* On phones the results panel sits under the map, so keep map overlays above it. */
 
 

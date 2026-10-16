@@ -41,6 +41,7 @@ display: see a plane overhead, look up where it is going.
 - Recent pilot reports of turbulence or icing nearby, in plain English.
 - FAA ground stops, ground delay programs and departure/arrival delays, plus active National
   Weather Service alerts (US).
+- Volcanic ash over or within 100 miles of the airport, anywhere in the world (from SIGMETs).
 - Runways with dimensions and surface, the wind-favored runway with headwind/crosswind
   components, frequencies, navaids, local time, sunrise or sunset, airport photo and history.
 - Nonstop destinations with the airlines that fly them today (US routes).
@@ -59,6 +60,7 @@ used once and not stored; denying permission just shows a message.
 - Weather advisories the route passes through and pilot reports near it are listed and drawn on
   the map: US AIRMETs and SIGMETs, plus international SIGMETs worldwide (thunderstorms,
   turbulence, icing, volcanic ash, tropical cyclones), each with the FIR that issued it.
+  Volcanic ash on a route gets its own warning at the top of the list.
 
 **Map layers** (settings menu): nonstop connections, airport size layers, weather stations
 (wind arrows, with a ring only when conditions are below VFR), pilot reports, weather hazards,
@@ -131,7 +133,7 @@ and the reasoning behind the main decisions.
 ## Testing
 
 ```bash
-npm test          # Vitest: 72 tests
+npm test          # Vitest: 78 tests
 npm run typecheck
 ```
 
