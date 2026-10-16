@@ -311,7 +311,8 @@ function airportCandidates(text: string, limit: number, short = false): Airport[
 }
 
 function airportSuggestion(a: Airport): Suggestion {
-  const place = [a.city, a.state || a.countryName].filter(Boolean).join(', ');
+  const region = a.state === '(unassigned)' ? undefined : a.state; // OurAirports placeholder, in older data
+  const place = [a.city, region || a.countryName].filter(Boolean).join(', ');
   return { query: codeOf(a), title: `${codeOf(a)}  ${a.name}`, detail: place, kind: 'airport' };
 }
 

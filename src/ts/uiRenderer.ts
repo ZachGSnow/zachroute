@@ -393,7 +393,9 @@ function buildFacilityCard(airport: Airport): string {
     : `<span class="type-pill">n/a</span>`;
 
   const elevationText = airport.elevation ? `${airport.elevation.toLocaleString()} ft elevation` : 'n/a';
-  const locationLine = [airport.city, airport.state, airport.countryName || airport.country].filter(Boolean).join(', ');
+  // "(unassigned)" is OurAirports' placeholder region; data built before the ETL dropped it still has it.
+  const region = airport.state === '(unassigned)' ? undefined : airport.state;
+  const locationLine = [airport.city, region, airport.countryName || airport.country].filter(Boolean).join(', ');
 
   const initialLore = airport.lore || getCachedLore(airport.iata) || '';
 

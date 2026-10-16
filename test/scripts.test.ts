@@ -32,6 +32,13 @@ describe('OurAirports CSVs -> buildRecords', () => {
     expect(records.ORD.countryName).toBe('United States');
   });
 
+  it('drops the "(unassigned)" placeholder region OurAirports uses', () => {
+    // Guam's airports sit in region GU-U-A, named "(unassigned)"
+    expect(records.GUM.state).toBeUndefined();
+    expect(records.GUM.regionCode).toBeUndefined();
+    expect(records.GUM.countryName).toBe('Guam');
+  });
+
   it('keeps runway end coordinates and true headings', () => {
     const rwys = records.DEN.runways;
     expect(rwys.length).toBeGreaterThan(3);
