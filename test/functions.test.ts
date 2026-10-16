@@ -6,7 +6,7 @@ import { onRequest as weather } from '../functions/api/weather';
 import { onRequest as taf } from '../functions/api/taf';
 import { onRequest as pireps } from '../functions/api/pireps';
 import { onRequest as metarBbox } from '../functions/api/metar-bbox';
-import { onRequest as airsigmet } from '../functions/api/airsigmet';
+import { onRequest as airsigmet, readQualifier, unwrapRing } from '../functions/api/airsigmet';
 import { onRequest as faaStatus } from '../functions/api/faa-status';
 import { onRequest as lore } from '../functions/api/lore';
 
@@ -96,12 +96,15 @@ describe('aviationweather.gov METAR bbox -> /api/metar-bbox', () => {
   });
 });
 
-describe('aviationweather.gov AIRMET/SIGMET -> /api/airsigmet', () => {
-  it('turns coordinate objects into [lat, lon] polygons', async () => {
+describe('aviationweather.gov AIRMET/SIGMET + international SIGMET -> /api/airsigmet', () => {
+  it('turns US coordinate objects into [lat, lon] polygons', async () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(1792149000 * 1000)); // inside every fixture advisory's validity
+    vi.setSystemTime(new Date(1792149000 * 1000)); // inside every US fixture advisory's validity
     const raw = jsonFixture<any[]>('awc-airsigmet.json');
-    stubFetch([['airsigmet', raw]]);
+    stubFetch([
+      ['/airsigmet', raw],
+      ['/isigmet', []],
+    ]);
     const out = await json(await airsigmet(pagesContext('https://x/api/airsigmet')));
     expect(out.advisories).toHaveLength(raw.length);
     expect(out.advisories[0].coords[0]).toEqual([raw[0].coords[0].lat, raw[0].coords[0].lon]);
@@ -110,10 +113,104 @@ describe('aviationweather.gov AIRMET/SIGMET -> /api/airsigmet', () => {
 
   it('drops expired advisories', async () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date(1792160000 * 1000)); // after every fixture advisory ended
-    stubFetch([['airsigmet', jsonFixture('awc-airsigmet.json')]]);
+    vi.setSystemTime(new Date(1792190000 * 1000)); // after every fixture advisory ended
+    stubFetch([
+      ['/airsigmet', jsonFixture('awc-airsigmet.json')],
+      ['/isigmet', jsonFixture('awc-isigmet.json')],
+    ]);
     const out = await json(await airsigmet(pagesContext('https://x/api/airsigmet')));
     expect(out.advisories).toHaveLength(0);
+  });
+
+  it('adds international SIGMETs with hazards mapped to the US names', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(1792172000 * 1000)); // inside every international fixture record's validity
+    const raw = jsonFixture<any[]>('awc-isigmet.json');
+    stubFetch([
+      ['/airsigmet', []],
+      ['/isigmet', raw],
+    ]);
+    const out = await json(await airsigmet(pagesContext('https://x/api/airsigmet')));
+    const hazards = out.advisories.map((a: any) => a.hazard);
+    expect(hazards).toContain('ASH');
+    expect(hazards).toContain('TC');
+    expect(hazards).toContain('CONVECTIVE');
+    expect(hazards).not.toContain('TS');
+    expect(out.advisories.every((a: any) => a.type === 'SIGMET' && a.coords.length >= 3)).toBe(true);
+
+    const ash = out.advisories.find((a: any) => a.hazard === 'ASH');
+    expect(ash.name).toBe('Mt Ibu');
+    expect(ash.region).toBe('Ujung Pandang');
+    expect(ash.altLow).toBe(0);
+    expect(ash.altHigh).toBe(6000);
+    expect(out.advisories.find((a: any) => a.hazard === 'TC').name).toBe('Champi');
+  });
+
+  it('splits multi-area SIGMETs and drops ones without a usable polygon', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(1792172000 * 1000));
+    const raw = jsonFixture<any[]>('awc-isigmet.json');
+    stubFetch([
+      ['/airsigmet', []],
+      ['/isigmet', raw],
+    ]);
+    const out = await json(await airsigmet(pagesContext('https://x/api/airsigmet')));
+    const multi = raw.find((r) => r.geom === 'AREAS');
+    const single = raw.filter((r) => r.geom !== 'AREAS' && Array.isArray(r.coords) && r.coords.length >= 3);
+    // one advisory per usable ring; the record with a single position is dropped
+    expect(out.advisories).toHaveLength(single.length + multi.coords.length);
+  });
+
+  it('keeps the US list when the international feed fails', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(1792149000 * 1000));
+    const raw = jsonFixture<any[]>('awc-airsigmet.json');
+    const fn = vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input instanceof Request ? input.url : input);
+      if (url.includes('/isigmet')) return new Response('upstream error', { status: 502 });
+      return new Response(JSON.stringify(raw), { status: 200 });
+    });
+    vi.stubGlobal('fetch', fn);
+    const out = await json(await airsigmet(pagesContext('https://x/api/airsigmet')));
+    expect(out.advisories).toHaveLength(raw.length);
+  });
+});
+
+describe('international SIGMET helpers', () => {
+  it('reads intensity words, volcano names and storm names from the qualifier', () => {
+    expect(readQualifier('TS', 'EMBD')).toEqual({ detail: 'embedded' });
+    expect(readQualifier('TURB', 'SEV MTW')).toEqual({ detail: 'severe mountain wave' });
+    expect(readQualifier('VA', 'ERUPTION MT NEVADOS DE CHILLAN')).toEqual({ name: 'Mt Nevados De Chillan' });
+    expect(readQualifier('VA', 'FUEGO')).toEqual({ name: 'Fuego' });
+    expect(readQualifier('TC', 'TRUDY')).toEqual({ name: 'Trudy' });
+    expect(readQualifier('TS', null)).toEqual({});
+  });
+
+  it('unwraps a ring that crosses the antimeridian', () => {
+    expect(
+      unwrapRing([
+        [10, 175],
+        [10, -178],
+        [5, -178],
+        [5, 175],
+      ])
+    ).toEqual([
+      [10, 175],
+      [10, 182],
+      [5, 182],
+      [5, 175],
+    ]);
+    expect(
+      unwrapRing([
+        [10, -178],
+        [10, 175],
+        [5, -178],
+      ])
+    ).toEqual([
+      [10, -178],
+      [10, -185],
+      [5, -178],
+    ]);
   });
 });
 
