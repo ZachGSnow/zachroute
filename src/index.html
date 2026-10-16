@@ -80,9 +80,14 @@
             class="search-input" 
             placeholder="ORD, Chicago, or ORD DEN" 
             autocomplete="off"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-controls="search-suggest"
+            aria-expanded="false"
             spellcheck="false"
             enterkeyhint="search"
           />
+          <ul id="search-suggest" class="suggest-list" role="listbox" aria-label="Suggestions" hidden></ul>
           <button type="button" id="search-clear" class="search-clear" aria-label="Clear search" hidden>&#xd7;</button>
         </div>
       </div>

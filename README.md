@@ -24,6 +24,8 @@ display: see a plane overhead, look up where it is going.
 **Search**
 - Airport codes (IATA, ICAO, FAA), city or airport names, and routes: `ORD`, `Chicago`, `ORD DEN`,
   `Chicago to Denver`, `chicago denver`, `portland me`, `london uk`.
+- Suggestions appear as you type (airports, and routes once the first airport is settled); the map
+  only changes when you pick one or press Enter.
 - Ranks the airport you most likely mean (by nonstop destinations) and offers the others in the
   same city as one-tap chips.
 - Every result has a shareable link (`?q=ORD+DEN`); the Android back button returns to the
@@ -115,7 +117,7 @@ and the reasoning behind the main decisions.
 ## Testing
 
 ```bash
-npm test          # Vitest: 46 tests
+npm test          # Vitest: 53 tests
 npm run typecheck
 ```
 

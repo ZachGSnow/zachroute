@@ -272,3 +272,94 @@ export function parseQuery(query: string): SearchIntent {
   }
   return { mode: 'INVALID', rawQuery: query, error: `No airport found for "${query.trim()}"` };
 }
+
+// ---------------------------------------------------------------------------
+// Suggestions while typing
+// ---------------------------------------------------------------------------
+
+export interface Suggestion {
+  /** The search to run when this suggestion is picked, e.g. "ORD" or "ORD DEN". */
+  query: string;
+  title: string;
+  detail: string;
+  kind: 'airport' | 'route';
+}
+
+const codeOf = (a: Airport) => a.iata || a.icao;
+
+/** Airports for a partial entry: an exact code first, then code prefixes, then name matches. */
+/** `short` allows a one-letter code prefix (used for the second airport of a route). */
+function airportCandidates(text: string, limit: number, short = false): Airport[] {
+  const out: Airport[] = [];
+  const add = (a: Airport | null | undefined) => {
+    if (a && !out.includes(a)) out.push(a);
+  };
+  const raw = text.trim();
+  const isCodeLike = (short ? /^[a-z0-9]{1,4}$/i : /^[a-z0-9]{2,4}$/i).test(raw);
+
+  if (isCodeLike) add(resolveCode(raw));
+  if (isCodeLike && raw.length < 4) {
+    const prefix = raw.toUpperCase();
+    searchIndex
+      .filter((e) => e.airport.iata && e.airport.iata.startsWith(prefix))
+      .sort((a, b) => b.boost - a.boost)
+      .slice(0, limit)
+      .forEach((e) => add(e.airport));
+  }
+  for (const hit of searchAirports(raw, limit)) add(hit.airport);
+  return out.slice(0, limit);
+}
+
+function airportSuggestion(a: Airport): Suggestion {
+  const place = [a.city, a.state || a.countryName].filter(Boolean).join(', ');
+  return { query: codeOf(a), title: `${codeOf(a)}  ${a.name}`, detail: place, kind: 'airport' };
+}
+
+function routeSuggestion(from: Airport, to: Airport): Suggestion {
+  return {
+    query: `${codeOf(from)} ${codeOf(to)}`,
+    title: `${codeOf(from)} \u2192 ${codeOf(to)}`,
+    detail: `${from.city || from.name} to ${to.city || to.name}`,
+    kind: 'route',
+  };
+}
+
+/**
+ * Suggestions for what has been typed so far. A settled first airport plus a partial second
+ * one ("chicago den", "ord to d") suggests routes; anything else suggests airports.
+ */
+export function suggest(query: string, limit = 6): Suggestion[] {
+  const text = query.replace(/^\s+/, '');
+  if (text.trim().length < 2) return [];
+
+  const routes: Suggestion[] = [];
+  const parts = text.split(ROUTE_SEPARATOR);
+  if (parts.length >= 2) {
+    // Explicit separator: the left side is settled, suggest the right side.
+    const from = resolvePart(parts[0]);
+    const rest = parts.slice(1).join(' ').trim();
+    if (from && rest.length >= 1) {
+      for (const to of airportCandidates(rest, limit, true)) if (to !== from.airport) routes.push(routeSuggestion(from.airport, to));
+    }
+    return routes.slice(0, limit);
+  }
+
+  const words = text.trim().split(/\s+/);
+  if (words.length >= 2) {
+    // No separator: find a split where the left side is a confident match.
+    for (let i = words.length - 1; i >= 1; i--) {
+      const from = resolvePart(words.slice(0, i).join(' '));
+      if (!from || from.match < STRONG_MATCH) continue;
+      const rest = words.slice(i).join(' ');
+      for (const to of airportCandidates(rest, 4, true)) if (to !== from.airport) routes.push(routeSuggestion(from.airport, to));
+      if (routes.length) break;
+    }
+  }
+
+  const singles = airportCandidates(text, limit).map(airportSuggestion);
+  const whole = resolvePart(text);
+  const singleIsStrong = !!whole && whole.match >= STRONG_MATCH && words.length > 1;
+  const merged = singleIsStrong ? [...singles, ...routes] : [...routes, ...singles];
+  const seen = new Set<string>();
+  return merged.filter((s) => (seen.has(s.query) ? false : (seen.add(s.query), true))).slice(0, limit);
+}

@@ -1,6 +1,7 @@
 import { initMap, showSingleAirport, showRoute, showConnectingRoutes, highlightViaRoute, setAirportDatabase, showConnections, resetView, initAirportLayers, showLargeAirports, showMediumAirports, showRegionalAirports, drawAirportRunways, setPreferredRunwayEnd, colorRouteByWind, setApproachTicks, showAllViaOptions } from './mapRenderer';
 import { setWeatherStations, setHazards, setDayNight, setPireps, highlightRunway } from './mapOverlays';
-import { parseQuery, loadAirports, type SearchIntent } from './searchParser';
+import { parseQuery, loadAirports, suggest, type SearchIntent } from './searchParser';
+import { createSuggestList, type SuggestItem } from './suggestList';
 import type { Airport } from './geoMath';
 import { renderSingle, renderRoute, renderError, enrichLore } from './uiRenderer';
 import { findConnectingRoutes, isKnownDirect } from './connections';
@@ -52,10 +53,9 @@ async function init() {
 
   // ---- History / shareable links ------------------------------------------
   // Every view has a URL (?q=ORD+DEN) so it can be shared, and the Android back button
-  // returns to the previous search instead of closing the app. One burst of typing makes
-  // one history entry (replaced as you type), not one per keystroke.
-  type HistoryMode = 'typing' | 'push' | 'none';
-  let typingEntryOpen = false;
+  // returns to the previous search instead of closing the app. Typing only updates the
+  // suggestion list; a search (and its history entry) happens when one is picked or on Enter.
+  type HistoryMode = 'push' | 'none';
   let currentQuery = '';
 
   function urlFor(q: string): string {
@@ -65,12 +65,11 @@ async function init() {
   function recordHistory(q: string, how: HistoryMode) {
     if (how === 'none') return;
     const state = { q };
-    if ((how === 'typing' && typingEntryOpen) || (history.state?.q ?? '') === q) {
+    if ((history.state?.q ?? '') === q) {
       history.replaceState(state, '', urlFor(q));
     } else {
       history.pushState(state, '', urlFor(q));
     }
-    typingEntryOpen = how === 'typing';
   }
 
   function updateClearButton() {
@@ -113,26 +112,43 @@ async function init() {
     }
   }
 
+  // ---- Suggestions while typing --------------------------------------------
+  const suggestEl = document.getElementById('search-suggest') as HTMLElement;
+  const commit = (q: string) => {
+    suggestions.hide();
+    runSearch(q, 'push');
+    if (isTouch) input.blur(); // hide the phone keyboard so the result is visible
+  };
+  const suggestions = createSuggestList(input, suggestEl, (item: SuggestItem) => commit(item.query));
+
+  function suggestionsFor(text: string): SuggestItem[] {
+    return suggest(text).map((s) => ({ query: s.query, title: s.title, detail: s.detail, badge: s.kind === 'route' ? 'Route' : undefined }));
+  }
+
   let debounceTimer: number;
   input.addEventListener('input', () => {
     updateClearButton();
     clearTimeout(debounceTimer);
-    debounceTimer = window.setTimeout(() => runSearch(input.value, 'typing'), 250);
+    debounceTimer = window.setTimeout(() => suggestions.show(suggestionsFor(input.value)), 120);
   });
-  input.addEventListener('blur', () => {
-    typingEntryOpen = false;
+  input.addEventListener('focus', () => {
+    if (input.value.trim()) suggestions.show(suggestionsFor(input.value));
   });
+  input.addEventListener('blur', () => suggestions.hide());
   input.addEventListener('keydown', (e) => {
+    if (suggestions.handleKey(e)) {
+      e.preventDefault();
+      return;
+    }
     if (e.key !== 'Enter') return;
     clearTimeout(debounceTimer);
-    runSearch(input.value, 'typing');
-    typingEntryOpen = false;
-    if (isTouch) input.blur(); // hide the phone keyboard so the result is visible
+    commit(input.value);
   });
 
   if (clearBtn) {
     clearBtn.addEventListener('click', () => {
       clearTimeout(debounceTimer);
+      suggestions.hide();
       runSearch('', 'push');
       input.focus();
     });
@@ -140,7 +156,7 @@ async function init() {
 
   window.addEventListener('popstate', (e) => {
     const q = (e.state && typeof e.state.q === 'string' ? e.state.q : new URLSearchParams(location.search).get('q')) || '';
-    typingEntryOpen = false;
+    suggestions.hide();
     runSearch(q, 'none');
   });
 
