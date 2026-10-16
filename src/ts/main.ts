@@ -1,4 +1,6 @@
-import { initMap, showSingleAirport, showRoute, showConnectingRoutes, highlightViaRoute, setAirportDatabase, showConnections, resetView, initAirportLayers, showLargeAirports, showMediumAirports, showRegionalAirports, drawAirportRunways, setPreferredRunwayEnd, colorRouteByWind, setApproachTicks, showAllViaOptions } from './mapRenderer';
+import { initMap, showSingleAirport, showRoute, showConnectingRoutes, highlightViaRoute, setAirportDatabase, showConnections, resetView, initAirportLayers, showLargeAirports, showMediumAirports, showRegionalAirports, drawAirportRunways, setPreferredRunwayEnd, colorRouteByWind, setApproachTicks, showAllViaOptions, refreshMapSize } from './mapRenderer';
+import { initSheet } from './sheet';
+import { haversineDistance } from './geoMath';
 import { setWeatherStations, setHazards, setDayNight, setPireps, highlightRunway } from './mapOverlays';
 import { parseQuery, loadAirports, suggest, type SearchIntent } from './searchParser';
 import { createSuggestList, type SuggestItem } from './suggestList';
@@ -38,6 +40,7 @@ async function init() {
   if (!input) return;
   const clearBtn = document.getElementById('search-clear') as HTMLButtonElement | null;
   const resultsEl = document.getElementById('results-content')!;
+  const sheet = initSheet(refreshMapSize);
 
   // Phones: don't focus the box on launch, or the keyboard covers the app every time it opens.
   const isTouch = window.matchMedia('(pointer: coarse)').matches;
@@ -99,6 +102,11 @@ async function init() {
     if (clearBtn) clearBtn.hidden = input.value.length === 0;
   }
 
+  // One-line summaries for the phone sheet's header (visible even when the sheet is lowered).
+  const singleSummary = (a: Airport) => `${a.iata || a.icao} \u2014 ${a.name}`;
+  const routeSummary = (o: Airport, d: Airport) =>
+    `${o.iata || o.icao} \u2192 ${d.iata || d.icao} \u00b7 ${Math.round(haversineDistance(o, d)).toLocaleString()} mi`;
+
   /** Runs a search and renders it. `how` controls the history entry. */
   function runSearch(raw: string, how: HistoryMode) {
     const query = raw.trim();
@@ -111,6 +119,7 @@ async function init() {
     resetView();
 
     if (!query) {
+      sheet.setSummary('Search an airport or route');
       renderEmptyState();
       return;
     }
@@ -122,8 +131,10 @@ async function init() {
       return;
     }
     if (how === 'push') addRecent(query);
+    if (sheet.isPhone()) sheet.setState('half');
 
     if (intent.mode === 'SINGLE') {
+      sheet.setSummary(singleSummary(intent.airport));
       showSingleAirport(intent.airport);
       renderSingle(intent.airport);
       addResultActions(null);
@@ -132,6 +143,7 @@ async function init() {
         showConnections(intent.airport);
       }
     } else if (intent.mode === 'ROUTE') {
+      sheet.setSummary(routeSummary(intent.origin, intent.destination));
       showRoutePair(intent.origin, intent.destination);
     }
   }
@@ -457,6 +469,8 @@ async function init() {
     input.value = code;
     updateClearButton();
     recordHistory(code, 'push');
+    sheet.setSummary(singleSummary(airport));
+    if (sheet.isPhone()) sheet.setState('half');
     renderSingle(airport);
     addResultActions(null);
     drawAirportRunways([airport]);

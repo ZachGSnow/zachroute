@@ -868,11 +868,7 @@ body {
 }
 
 /* On phones the results panel sits under the map, so keep map overlays above it. */
-@media (max-width: 768px) {
-  .route-legend {
-    bottom: calc(45vh + 12px);
-  }
-}
+
 
 .about-version {
   font-size: 0.85rem;
@@ -1122,4 +1118,64 @@ body {
 .fav-btn.is-on {
   color: #facc15;
   border-color: rgba(250, 204, 21, 0.5);
+}
+
+/* Phone bottom sheet (sheet.ts sets --sheet-h on .main-content) */
+.sheet-header {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    --sheet-h: 45vh;
+  }
+
+  .results-panel {
+    height: var(--sheet-h);
+    transition: height 0.2s ease;
+  }
+
+  .sheet-dragging .results-panel {
+    transition: none;
+  }
+
+  .sheet-header {
+    display: block;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    padding: 6px 16px 8px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+  }
+
+  .sheet-handle-bar {
+    width: 40px;
+    height: 4px;
+    margin: 0 auto 6px;
+    border-radius: 2px;
+    background: var(--text-muted);
+    opacity: 0.6;
+  }
+
+  .sheet-summary {
+    overflow: hidden;
+    color: var(--text);
+    font-size: 0.85rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .route-legend {
+    bottom: calc(var(--sheet-h) + 12px);
+  }
+
+  .main-content[data-sheet='full'] .route-legend,
+  .main-content[data-sheet='full'] .map-hint,
+  .main-content[data-sheet='full'] .route-summary {
+    display: none;
+  }
 }
