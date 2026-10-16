@@ -42,6 +42,8 @@ display: see a plane overhead, look up where it is going.
 - Air quality worldwide (US AQI, or the European AQI at European airports) with PM2.5, a note when
   smoke, dust or haze may reduce visibility, and a heads-up when it is forecast to get worse in the
   next 12 hours.
+- Satellite fire and heat detections within 50 miles in the last 24 hours (worldwide), with the
+  most intense one's distance and direction.
 - FAA ground stops, ground delay programs and departure/arrival delays, plus active National
   Weather Service alerts (US).
 - Volcanic ash over or within 100 miles of the airport, anywhere in the world (from SIGMETs).
@@ -71,6 +73,7 @@ used once and not stored; denying permission just shows a message.
 **Map layers** (settings menu): nonstop connections, airport size layers, weather stations
 (wind arrows, with a ring only when conditions are below VFR), pilot reports, weather hazards,
 tropical cyclones worldwide (track, forecast track and uncertainty cone),
+fires detected by satellite in the last 24 hours,
 day/night shading, approach distance ticks, and runway outlines with runway numbers when zoomed in.
 
 **Phone layout**: the results panel is a bottom sheet. Drag its handle between a one-line peek
@@ -143,7 +146,7 @@ and the reasoning behind the main decisions.
 ## Testing
 
 ```bash
-npm test          # Vitest: 102 tests
+npm test          # Vitest: 111 tests
 npm run typecheck
 ```
 
@@ -174,6 +177,7 @@ The code is MIT licensed. The data it uses keeps its own terms:
 | Delay programs | [FAA NAS Status](https://nasstatus.faa.gov) | Public domain (US government) |
 | Weather alerts | [National Weather Service](https://www.weather.gov) | Public domain (US government) |
 | Tropical cyclones (positions, tracks, forecast cones, from NHC, JTWC and other agencies) | [GDACS](https://www.gdacs.org), the UN / European Commission Global Disaster Alert and Coordination System | Free to use; provided as is, for information only (credited in the app) |
+| Fire and heat detections (MODIS, last 24 hours) | [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov) | Free and open (NASA); credited in the app |
 | Winds aloft, air quality (Copernicus CAMS models) | [Open-Meteo](https://open-meteo.com) | CC BY 4.0, free for non-commercial use |
 | Map tiles | [Stadia Maps](https://stadiamaps.com), OpenMapTiles, OpenStreetMap | Per provider terms |
 

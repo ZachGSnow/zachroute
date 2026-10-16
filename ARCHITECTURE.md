@@ -32,11 +32,12 @@ browser (src/ts) <--------------------------------------+
 | `src/ts/hazardGeo.ts` | Advisory polygon geometry without Leaflet: point in polygon (antimeridian-aware), distance to a polygon, advisories near a point |
 | `src/ts/approach.ts` | Runway-end geometry: extended centerline, 3 degree glide ticks, departure leg, path smoothing |
 | `src/ts/forecast.ts`, `pirepText.ts`, `weather.ts`, `advisories.ts` | Plain-English decoding of TAF, PIREP, METAR, FAA status and NWS alerts |
+| `src/ts/fires.ts` | Fire detections by map rectangle and the 50-mile summary on the airport card |
 | `src/ts/windsAloft.ts` | Cruise-level winds along a route (Open-Meteo) |
 | `src/ts/airQuality.ts` | Air quality, haze and smoke at an airport (Open-Meteo air-quality API): AQI bands, haze note, 12-hour worsening check |
 | `src/ts/geoMath.ts` | Great circle, bearings, destination points, block time |
 | `src/ts/connections.ts`, `carriers.ts` | Nonstop topology, one/two-stop search, airlines per route |
-| `functions/api/*.ts` | `weather`, `taf`, `pireps`, `metar-bbox`, `airsigmet`, `cyclones`, `faa-status`, `lore` |
+| `functions/api/*.ts` | `weather`, `taf`, `pireps`, `metar-bbox`, `airsigmet`, `cyclones`, `fires`, `faa-status`, `lore` |
 | `shared/userAgent.ts` | User-Agent for upstream calls, built from `package.json` |
 | `scripts/` | Data pipeline (below) |
 
@@ -75,6 +76,7 @@ trims the response to what the client renders, and caches it in the `LORE_KV` na
 | `/api/airsigmet` | aviationweather.gov US AIRMET/SIGMET and international SIGMET, merged (multi-area SIGMETs split into one polygon each; rings unwrapped across the antimeridian) | 5 min |
 | `/api/faa-status` | FAA NAS status XML (closures ignored: the feed mixes partial NOTAM closures with real ones) | 5 min |
 | `/api/cyclones` | GDACS event list plus one geometry request per current tropical cyclone, trimmed to position, track and a thinned forecast cone | 30 min |
+| `/api/fires?bbox=` | NASA FIRMS MODIS global 24-hour CSV (about 1 MB, cached at the Cloudflare edge); scanned line by line keeping only the rectangle and confidence >= 50, so it stays within a function's CPU budget | 30 min |
 | `/api/lore?iata=` | Wikipedia search + summary | 7 days |
 
 Upstream failures return `{available: false}` or an empty list, and the card simply omits that

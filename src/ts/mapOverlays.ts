@@ -4,6 +4,7 @@ import { bearingBetween, destinationPoint, haversineDistanceLatLon } from './geo
 import { resolveCode } from './searchParser';
 import { pointInPolygon, advisoriesNear } from './hazardGeo';
 import { fetchCyclones, stormsAlongRoute, stormTitle, type Cyclone, type StormOnRoute } from './cyclones';
+import { fetchFires, type Fire } from './fires';
 import { compassPoint } from './forecast';
 import { summarizePirep, pirepAgeLabel, pirepAltitudeLabel, type RawPirep, type PirepKind } from './pirepText';
 
@@ -56,6 +57,7 @@ function setHint(text: string | null, autoClearMs?: number) {
 
 const MIN_STATION_ZOOM = 5;
 const MIN_PIREP_ZOOM = 6;
+const MIN_FIRE_ZOOM = 5;
 
 /** Shows a "zoom in" hint naming whichever zoom-limited layers are on but too far out. */
 function updateZoomHint() {
@@ -64,6 +66,7 @@ function updateZoomHint() {
   const needed: string[] = [];
   if (stationsOn && z < MIN_STATION_ZOOM) needed.push('weather stations');
   if (pirepsOn && z < MIN_PIREP_ZOOM) needed.push('pilot reports');
+  if (firesOn && z < MIN_FIRE_ZOOM) needed.push('fires');
   setHint(needed.length ? `Zoom in to see ${needed.join(' and ')}` : null);
 }
 
@@ -97,6 +100,7 @@ export function initOverlays(m: L.Map) {
     timer = window.setTimeout(() => {
       void refreshStations();
       void refreshPireps();
+      void refreshFires();
       refreshViewRunways();
     }, 500);
   });
@@ -441,6 +445,63 @@ async function refreshPireps() {
     if (m) pirepLayer.addLayer(m);
   }
   if (!map.hasLayer(pirepLayer)) pirepLayer.addTo(map);
+}
+
+// ---------------------------------------------------------------------------
+// Fire and heat detections (NASA FIRMS, last 24 hours)
+// ---------------------------------------------------------------------------
+
+function fireMarker(f: Fire): L.CircleMarker {
+  const strong = f.frp >= 100;
+  const marker = L.circleMarker([f.lat, f.lon], {
+    pane: 'hazards',
+    radius: strong ? 6 : f.frp >= 30 ? 4.5 : 3.5,
+    color: '#7c2d12',
+    weight: 1,
+    fillColor: strong ? '#ef4444' : '#fb923c',
+    fillOpacity: 0.9,
+  });
+  const when = new Date(f.time);
+  const label = `${when.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })} ${f.time.slice(11, 16)} UTC`;
+  marker.bindPopup(
+    `<strong>Fire or heat source</strong><br>${Math.round(f.frp)} MW, seen by satellite ${esc(label)}` +
+      `<br><small>${esc(placeNear(f.lat, f.lon))}</small>` +
+      '<br><small style="color:#64748b">NASA FIRMS (MODIS). Includes wildfires, field burning and gas flares.</small>'
+  );
+  return marker;
+}
+
+let fireLayer: L.LayerGroup | null = null;
+let firesOn = false;
+let fireGen = 0;
+
+export function setFires(on: boolean) {
+  firesOn = on;
+  if (!map) return;
+  if (!on) {
+    fireGen += 1;
+    fireLayer?.clearLayers();
+    updateZoomHint();
+    return;
+  }
+  void refreshFires();
+}
+
+async function refreshFires() {
+  updateZoomHint();
+  if (!map || !firesOn) return;
+  if (map.getZoom() < MIN_FIRE_ZOOM) {
+    fireLayer?.clearLayers();
+    return;
+  }
+  const gen = ++fireGen;
+  const b = map.getBounds();
+  const fires = await fetchFires(b.getSouth(), b.getWest(), b.getNorth(), b.getEast());
+  if (gen !== fireGen || !map || !firesOn) return;
+  if (!fireLayer) fireLayer = L.layerGroup();
+  fireLayer.clearLayers();
+  for (const f of fires) fireLayer.addLayer(fireMarker(f));
+  if (!map.hasLayer(fireLayer)) fireLayer.addTo(map);
 }
 
 // ---------------------------------------------------------------------------
