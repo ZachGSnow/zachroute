@@ -28,13 +28,14 @@ browser (src/ts) <--------------------------------------+
 | `src/ts/uiRenderer.ts` | Airport card and route panel |
 | `src/ts/mapRenderer.ts` | Leaflet map: routes, connections, connecting itineraries, airport layers |
 | `src/ts/mapOverlays.ts` | Weather stations, AIRMET/SIGMET, pilot reports, day/night, runway outlines, hazards along a route, volcanic ash near an airport |
+| `src/ts/cyclones.ts` | Tropical cyclones near an airport (center within 300 mi or inside the forecast cone) and along a route (150 mi or through the cone) |
 | `src/ts/hazardGeo.ts` | Advisory polygon geometry without Leaflet: point in polygon (antimeridian-aware), distance to a polygon, advisories near a point |
 | `src/ts/approach.ts` | Runway-end geometry: extended centerline, 3 degree glide ticks, departure leg, path smoothing |
 | `src/ts/forecast.ts`, `pirepText.ts`, `weather.ts`, `advisories.ts` | Plain-English decoding of TAF, PIREP, METAR, FAA status and NWS alerts |
 | `src/ts/windsAloft.ts` | Cruise-level winds along a route (Open-Meteo) |
 | `src/ts/geoMath.ts` | Great circle, bearings, destination points, block time |
 | `src/ts/connections.ts`, `carriers.ts` | Nonstop topology, one/two-stop search, airlines per route |
-| `functions/api/*.ts` | `weather`, `taf`, `pireps`, `metar-bbox`, `airsigmet`, `faa-status`, `lore` |
+| `functions/api/*.ts` | `weather`, `taf`, `pireps`, `metar-bbox`, `airsigmet`, `cyclones`, `faa-status`, `lore` |
 | `shared/userAgent.ts` | User-Agent for upstream calls, built from `package.json` |
 | `scripts/` | Data pipeline (below) |
 
@@ -72,6 +73,7 @@ trims the response to what the client renders, and caches it in the `LORE_KV` na
 | `/api/metar-bbox?bbox=` | aviationweather.gov METAR by area | 5 min |
 | `/api/airsigmet` | aviationweather.gov US AIRMET/SIGMET and international SIGMET, merged (multi-area SIGMETs split into one polygon each; rings unwrapped across the antimeridian) | 5 min |
 | `/api/faa-status` | FAA NAS status XML (closures ignored: the feed mixes partial NOTAM closures with real ones) | 5 min |
+| `/api/cyclones` | GDACS event list plus one geometry request per current tropical cyclone, trimmed to position, track and a thinned forecast cone | 30 min |
 | `/api/lore?iata=` | Wikipedia search + summary | 7 days |
 
 Upstream failures return `{available: false}` or an empty list, and the card simply omits that

@@ -1,0 +1,298 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "bbox": [
+    -109.5,
+    20.6,
+    -109.5,
+    20.6
+   ],
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -109.5,
+     20.6
+    ]
+   },
+   "properties": {
+    "eventtype": "TC",
+    "eventid": 1001335,
+    "episodeid": 37,
+    "eventname": "SIMON-26",
+    "glide": "",
+    "name": "Tropical Cyclone SIMON-26",
+    "description": "Tropical Cyclone SIMON-26",
+    "htmldescription": "Orange Tropical Cyclone SIMON-26 in México from: 07 Oct 2026  to: 16 Oct 2026 .",
+    "icon": "https://www.gdacs.org/images/gdacs_icons/maps/Green/TC.png",
+    "iconoverall": "https://www.gdacs.org/images/gdacs_icons/maps/Orange/TC.png",
+    "url": {
+     "geometry": "https://www.gdacs.org/gdacsapi/api/polygons/getgeometry?eventtype=TC&eventid=1001335&episodeid=37",
+     "report": "https://www.gdacs.org/report.aspx?eventid=1001335&episodeid=37&eventtype=TC",
+     "details": "https://www.gdacs.org/gdacsapi/api/events/geteventdata?eventtype=TC&eventid=1001335"
+    },
+    "alertlevel": "Orange",
+    "alertscore": 2,
+    "episodealertlevel": "Green",
+    "episodealertscore": 1,
+    "istemporary": "false",
+    "iscurrent": "true",
+    "country": "México",
+    "fromdate": "2026-10-07T15:00:00",
+    "todate": "2026-10-16T15:00:00",
+    "datemodified": "2026-10-16T17:39:14",
+    "iso3": "MEX",
+    "source": "NOAA",
+    "sourceid": "",
+    "polygonlabel": "Centroid",
+    "Class": "Point_Centroid",
+    "countryonland": "",
+    "affectedcountries": [],
+    "severitydata": {
+     "severity": 249.9984,
+     "severitytext": "Tropical Storm (maximum wind speed of 250 km/h)",
+     "severityunit": "km/h"
+    }
+   }
+  },
+  {
+   "type": "Feature",
+   "bbox": [
+    -102.5,
+    14.6,
+    -102.5,
+    14.6
+   ],
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -102.5,
+     14.6
+    ]
+   },
+   "properties": {
+    "eventtype": "TC",
+    "eventid": 1001337,
+    "episodeid": 13,
+    "eventname": "TRUDY-26",
+    "glide": "",
+    "name": "Tropical Cyclone TRUDY-26",
+    "description": "Tropical Cyclone TRUDY-26",
+    "htmldescription": "Green Tropical Cyclone TRUDY-26 in México from: 13 Oct 2026  to: 16 Oct 2026 .",
+    "icon": "https://www.gdacs.org/images/gdacs_icons/maps/Green/TC.png",
+    "iconoverall": "https://www.gdacs.org/images/gdacs_icons/maps/Green/TC.png",
+    "url": {
+     "geometry": "https://www.gdacs.org/gdacsapi/api/polygons/getgeometry?eventtype=TC&eventid=1001337&episodeid=13",
+     "report": "https://www.gdacs.org/report.aspx?eventid=1001337&episodeid=13&eventtype=TC",
+     "details": "https://www.gdacs.org/gdacsapi/api/events/geteventdata?eventtype=TC&eventid=1001337"
+    },
+    "alertlevel": "Green",
+    "alertscore": 1,
+    "episodealertlevel": "Green",
+    "episodealertscore": 1,
+    "istemporary": "false",
+    "iscurrent": "true",
+    "country": "México",
+    "fromdate": "2026-10-13T15:00:00",
+    "todate": "2026-10-16T15:00:00",
+    "datemodified": "2026-10-16T17:40:42",
+    "iso3": "MEX",
+    "source": "NOAA",
+    "sourceid": "",
+    "polygonlabel": "Centroid",
+    "Class": "Point_Centroid",
+    "countryonland": "",
+    "affectedcountries": [],
+    "severitydata": {
+     "severity": 222.2208,
+     "severitytext": "Hurricane/Typhoon > 74 mph (maximum wind speed of 222 km/h)",
+     "severityunit": "km/h"
+    }
+   }
+  },
+  {
+   "type": "Feature",
+   "bbox": [
+    151.4,
+    11.4,
+    151.4,
+    11.4
+   ],
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     151.4,
+     11.4
+    ]
+   },
+   "properties": {
+    "eventtype": "TC",
+    "eventid": 1001338,
+    "episodeid": 9,
+    "eventname": "CHAMPI-26",
+    "glide": "",
+    "name": "Tropical Cyclone CHAMPI-26",
+    "description": "Tropical Cyclone CHAMPI-26",
+    "htmldescription": "Orange Tropical Cyclone CHAMPI-26 in Guam from: 14 Oct 2026  to: 16 Oct 2026 .",
+    "icon": "https://www.gdacs.org/images/gdacs_icons/maps/Orange/TC.png",
+    "iconoverall": "https://www.gdacs.org/images/gdacs_icons/maps/Orange/TC.png",
+    "url": {
+     "geometry": "https://www.gdacs.org/gdacsapi/api/polygons/getgeometry?eventtype=TC&eventid=1001338&episodeid=9",
+     "report": "https://www.gdacs.org/report.aspx?eventid=1001338&episodeid=9&eventtype=TC",
+     "details": "https://www.gdacs.org/gdacsapi/api/events/geteventdata?eventtype=TC&eventid=1001338"
+    },
+    "alertlevel": "Orange",
+    "alertscore": 2,
+    "episodealertlevel": "Orange",
+    "episodealertscore": 2,
+    "istemporary": "false",
+    "iscurrent": "true",
+    "country": "Guam",
+    "fromdate": "2026-10-14T12:00:00",
+    "todate": "2026-10-16T12:00:00",
+    "datemodified": "2026-10-16T14:09:41",
+    "iso3": "GUM",
+    "source": "JTWC",
+    "sourceid": "",
+    "polygonlabel": "Centroid",
+    "Class": "Point_Centroid",
+    "countryonland": "",
+    "affectedcountries": [
+     {
+      "iso2": "GU",
+      "iso3": "GUM",
+      "countryname": "Guam"
+     }
+    ],
+    "severitydata": {
+     "severity": 249.9984,
+     "severitytext": "Tropical Storm (maximum wind speed of 250 km/h)",
+     "severityunit": "km/h"
+    }
+   }
+  },
+  {
+   "type": "Feature",
+   "bbox": [
+    -163.3,
+    -10.8,
+    -163.3,
+    -10.8
+   ],
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -163.3,
+     -10.8
+    ]
+   },
+   "properties": {
+    "eventtype": "TC",
+    "eventid": 1001339,
+    "episodeid": 1,
+    "eventname": "ONE-26",
+    "glide": "",
+    "name": "Tropical Cyclone ONE-26",
+    "description": "Tropical Cyclone ONE-26",
+    "htmldescription": "Green Tropical Cyclone ONE-26 in Cook Islands, French Polynesia from: 16 Oct 2026  to: 16 Oct 2026 .",
+    "icon": "https://www.gdacs.org/images/gdacs_icons/maps/Green/TC.png",
+    "iconoverall": "https://www.gdacs.org/images/gdacs_icons/maps/Green/TC.png",
+    "url": {
+     "geometry": "https://www.gdacs.org/gdacsapi/api/polygons/getgeometry?eventtype=TC&eventid=1001339&episodeid=1",
+     "report": "https://www.gdacs.org/report.aspx?eventid=1001339&episodeid=1&eventtype=TC",
+     "details": "https://www.gdacs.org/gdacsapi/api/events/geteventdata?eventtype=TC&eventid=1001339"
+    },
+    "alertlevel": "Green",
+    "alertscore": 1,
+    "episodealertlevel": "Green",
+    "episodealertscore": 1,
+    "istemporary": "false",
+    "iscurrent": "true",
+    "country": "Cook Islands, French Polynesia",
+    "fromdate": "2026-10-16T06:00:00",
+    "todate": "2026-10-16T06:00:00",
+    "datemodified": "2026-10-16T14:22:43",
+    "iso3": "PYF",
+    "source": "JTWC",
+    "sourceid": "",
+    "polygonlabel": "Centroid",
+    "Class": "Point_Centroid",
+    "countryonland": "",
+    "affectedcountries": [
+     {
+      "iso2": "PF",
+      "iso3": "PYF",
+      "countryname": "French Polynesia"
+     }
+    ],
+    "severitydata": {
+     "severity": 120.3696,
+     "severitytext": "Tropical Storm (maximum wind speed of 120 km/h)",
+     "severityunit": "km/h"
+    }
+   }
+  },
+  {
+   "type": "Feature",
+   "bbox": [
+    35.1303,
+    -5.524,
+    35.1303,
+    -5.524
+   ],
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     35.1303,
+     -5.524
+    ]
+   },
+   "properties": {
+    "eventtype": "EQ",
+    "eventid": 1572024,
+    "episodeid": 1740575,
+    "eventname": "",
+    "glide": "",
+    "name": "Earthquake in Tanzania",
+    "description": "Earthquake in Tanzania",
+    "htmldescription": "Green M 4.6 Earthquake in Tanzania at: 16 Oct 2026 16:17:25.",
+    "icon": "https://www.gdacs.org/images/gdacs_icons/maps/Green/EQ.png",
+    "iconoverall": "https://www.gdacs.org/images/gdacs_icons/maps/Green/EQ.png",
+    "url": {
+     "geometry": "https://www.gdacs.org/gdacsapi/api/polygons/getgeometry?eventtype=EQ&eventid=1572024&episodeid=1740575",
+     "report": "https://www.gdacs.org/report.aspx?eventid=1572024&episodeid=1740575&eventtype=EQ",
+     "details": "https://www.gdacs.org/gdacsapi/api/events/geteventdata?eventtype=EQ&eventid=1572024"
+    },
+    "alertlevel": "Green",
+    "alertscore": 1,
+    "episodealertlevel": "Green",
+    "episodealertscore": 0,
+    "istemporary": "false",
+    "iscurrent": "true",
+    "country": "Tanzania",
+    "fromdate": "2026-10-16T16:17:25",
+    "todate": "2026-10-16T16:17:25",
+    "datemodified": "2026-10-16T16:57:47",
+    "iso3": "TZA",
+    "source": "NEIC",
+    "sourceid": "",
+    "polygonlabel": "Centroid",
+    "Class": "Point_Centroid",
+    "affectedcountries": [
+     {
+      "iso2": "TZ",
+      "iso3": "TZA",
+      "countryname": "Tanzania"
+     }
+    ],
+    "severitydata": {
+     "severity": 4.6,
+     "severitytext": "Magnitude 4.6M, Depth:10km",
+     "severityunit": "M"
+    }
+   }
+  }
+ ],
+ "bbox": null
+}

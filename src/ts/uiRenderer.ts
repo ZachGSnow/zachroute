@@ -19,6 +19,7 @@ import { localTimeLabel, nextDaylightEventLabel, moonPhaseLabel, isDaytime, utcO
 import { resolveCode } from './searchParser';
 import { fetchTaf, decodeTaf, compassPoint } from './forecast';
 import { faaDelayChips, nwsAlertChips, fetchPirepLines, type Chip } from './advisories';
+import { fetchCyclones, stormsNearPoint, stormTitle } from './cyclones';
 import { fetchCruiseWind } from './windsAloft';
 import { fetchAirportPhoto } from './wikiPhoto';
 import { carriersFor, carrierNames, carrierDataNote } from './carriers';
@@ -469,12 +470,27 @@ async function ashChips(airport: Airport): Promise<Chip[]> {
   });
 }
 
+/** A chip for each tropical cyclone near the airport or forecast to pass over it (worldwide, GDACS). */
+async function cycloneChips(airport: Airport): Promise<Chip[]> {
+  if (!navigator.onLine) return [];
+  const near = stormsNearPoint(airport.lat, airport.lon, await fetchCyclones());
+  return near.slice(0, 2).map(({ storm, miles, bearing, inCone }) => {
+    const where = miles < 30 ? 'over the airport' : `${formatDistance(miles)} ${compassPoint(bearing)}`;
+    const path = inCone && miles >= 30 ? ', airport in forecast path' : '';
+    return {
+      level: miles <= 150 || (inCone && storm.category === 'HU') ? 'alert' : 'warn',
+      text: `🌀 ${stormTitle(storm)} ${where}${path}`,
+      title: `As of ${new Date(storm.asOf).toUTCString().replace(':00 GMT', ' UTC')}${storm.source ? `, ${storm.source} via GDACS` : ''}`,
+    };
+  });
+}
+
 async function fillAlerts(cardEl: HTMLElement, airport: Airport) {
   const el = cardEl.querySelector('.alerts-block') as HTMLElement | null;
   if (!el) return;
-  const [ash, delays, alerts] = await Promise.all([ashChips(airport), faaDelayChips(airport), nwsAlertChips(airport)]);
+  const [ash, storms, delays, alerts] = await Promise.all([ashChips(airport), cycloneChips(airport), faaDelayChips(airport), nwsAlertChips(airport)]);
   if (!el.isConnected) return;
-  const chips = [...ash, ...delays, ...alerts];
+  const chips = [...ash, ...storms, ...delays, ...alerts];
   if (chips.length === 0) return;
   el.innerHTML = `<div class="chips">${chipsHtml(chips)}</div>`;
 }
@@ -785,14 +801,23 @@ async function wireRouteHazards(points: Array<[number, number]>) {
   if (gen !== routeHazardGen || !el.isConnected) return;
   drawRouteHazards(result);
 
-  if (result.advisories.length === 0 && result.pireps.length === 0) {
-    el.innerHTML = '<div class="route-hazard-ok">✅ No current AIRMETs/SIGMETs or notable pilot reports along the route</div>';
+  if (result.advisories.length === 0 && result.pireps.length === 0 && result.cyclones.length === 0) {
+    el.innerHTML = '<div class="route-hazard-ok">✅ No current AIRMETs/SIGMETs, tropical cyclones or notable pilot reports along the route</div>';
     return;
   }
 
   const parts: string[] = [];
   const ash = result.advisories.filter((a) => a.hazard === 'ASH');
   if (ash.length > 0) parts.push(`<div class="route-hazard-ash">${ashBanner(ash)}</div>`);
+  if (result.cyclones.length > 0) {
+    const rows = result.cyclones
+      .map(({ storm, miles, crossesCone }) => {
+        const how = crossesCone ? 'passes through its forecast cone' : `passes ${formatDistance(miles)} from its center`;
+        return `<div class="route-hazard-row">${stormTitle(storm)}: the route ${how}</div>`;
+      })
+      .join('');
+    parts.push(`<div class="route-hazard-head">🌀 Tropical cyclone${result.cyclones.length === 1 ? '' : 's'} near the route (drawn on the map)</div>${rows}`);
+  }
   if (result.advisories.length > 0) {
     // Ash first: it is the one advisory flights do not fly through at any altitude.
     const ordered = [...ash, ...result.advisories.filter((a) => a.hazard !== 'ASH')];

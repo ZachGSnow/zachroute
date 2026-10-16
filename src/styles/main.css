@@ -867,6 +867,13 @@ body {
   color: #86efac;
 }
 
+.storm-icon {
+  font-size: 22px;
+  line-height: 26px;
+  text-align: center;
+  filter: drop-shadow(0 0 3px rgba(15, 23, 42, 0.9));
+}
+
 .route-hazard-ash {
   margin: 4px 0 6px;
   padding: 6px 8px;
