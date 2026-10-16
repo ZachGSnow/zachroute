@@ -245,7 +245,10 @@ export function buildRecords({ airportsText, runwaysText, freqText, countriesTex
     const longestRunwayFeet = runways?.[0]?.lengthFt || undefined;
     const frequencies = freqByIdent[icao] || undefined;
 
-    const regionName = regionNames[isoRegion] || undefined;
+    // OurAirports puts places without a first-level division in a placeholder region named
+    // "(unassigned)" (Guam, for one): treat that as no region rather than show it.
+    const unassigned = regionNames[isoRegion] === '(unassigned)';
+    const regionName = (!unassigned && regionNames[isoRegion]) || undefined;
     const countryName = countryNames[isoCountry] || isoCountry;
 
     let timeZone;
@@ -280,7 +283,7 @@ export function buildRecords({ airportsText, runwaysText, freqText, countriesTex
       wikipediaLink,
       homeLink,
       localCode: localCode && localCode !== icao && localCode !== iata ? localCode : undefined,
-      regionCode: isoRegion.includes('-') ? isoRegion.split('-')[1] : undefined,
+      regionCode: !unassigned && isoRegion.includes('-') ? isoRegion.split('-')[1] : undefined,
       keywords,
       navaids: navaidsByIdent[icao] || undefined,
       magVarDeg: magVar(magModel, lat, lon),
