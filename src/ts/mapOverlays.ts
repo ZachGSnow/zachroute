@@ -5,6 +5,7 @@ import { resolveCode } from './searchParser';
 import { pointInPolygon, advisoriesNear } from './hazardGeo';
 import { fetchCyclones, stormsAlongRoute, stormTitle, type Cyclone, type StormOnRoute } from './cyclones';
 import { fetchFires, type Fire } from './fires';
+import { AEROSOL_TILE_URL, AEROSOL_MAX_NATIVE_ZOOM, keepAerosolPixels } from './aerosolTiles';
 import { compassPoint } from './forecast';
 import { summarizePirep, pirepAgeLabel, pirepAltitudeLabel, type RawPirep, type PirepKind } from './pirepText';
 
@@ -670,6 +671,54 @@ async function refreshCyclones(announce: boolean) {
   for (const storm of storms) for (const layer of stormLayers(storm, false)) cycloneLayer.addLayer(layer);
   if (!map.hasLayer(cycloneLayer)) cycloneLayer.addTo(map);
   if (announce && storms.length === 0) setHint('No active tropical cyclones', 3500);
+}
+
+// ---------------------------------------------------------------------------
+// Dust and smoke (NASA GIBS, daily OMPS aerosol index), clean-air pixels removed
+// ---------------------------------------------------------------------------
+
+let aerosolLayer: L.GridLayer | null = null;
+
+function createAerosolLayer(): L.GridLayer {
+  const AerosolLayer = L.GridLayer.extend({ createTile: aerosolTile }) as new (options: L.GridLayerOptions) => L.GridLayer;
+  return new AerosolLayer({
+    pane: 'hazards',
+    tileSize: 256,
+    maxNativeZoom: AEROSOL_MAX_NATIVE_ZOOM,
+    opacity: 0.85,
+    attribution: 'Dust and smoke: NASA GIBS, OMPS (NOAA-20)',
+  });
+}
+
+function aerosolTile(coords: L.Coords, done: L.DoneCallback): HTMLElement {
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 256;
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (ctx) {
+      ctx.drawImage(img, 0, 0, 256, 256);
+      const data = ctx.getImageData(0, 0, 256, 256);
+      keepAerosolPixels(data.data);
+      ctx.putImageData(data, 0, 0);
+    }
+    done(undefined, canvas);
+  };
+  img.onerror = () => done(undefined, canvas); // a missing tile just stays empty
+  img.src = L.Util.template(AEROSOL_TILE_URL, { x: coords.x, y: coords.y, z: coords.z });
+  return canvas;
+}
+
+export function setAerosol(on: boolean) {
+  if (!map) return;
+  if (!on) {
+    if (aerosolLayer && map.hasLayer(aerosolLayer)) map.removeLayer(aerosolLayer);
+    return;
+  }
+  if (!aerosolLayer) aerosolLayer = createAerosolLayer();
+  if (!map.hasLayer(aerosolLayer)) aerosolLayer.addTo(map);
+  setHint('Dust and smoke today: yellow is some, red is thick', 5000);
 }
 
 // ---------------------------------------------------------------------------

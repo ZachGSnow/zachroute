@@ -33,6 +33,7 @@ browser (src/ts) <--------------------------------------+
 | `src/ts/approach.ts` | Runway-end geometry: extended centerline, 3 degree glide ticks, departure leg, path smoothing |
 | `src/ts/forecast.ts`, `pirepText.ts`, `weather.ts`, `advisories.ts` | Plain-English decoding of TAF, PIREP, METAR, FAA status and NWS alerts |
 | `src/ts/fires.ts` | Fire detections by map rectangle and the 50-mile summary on the airport card |
+| `src/ts/aerosolTiles.ts` | Dust and smoke layer source (NASA GIBS, daily OMPS aerosol index) and the pixel filter that drops clean-air greys so the dark base map stays readable |
 | `src/ts/windsAloft.ts` | Cruise-level winds along a route (Open-Meteo) |
 | `src/ts/airQuality.ts` | Air quality, haze and smoke at an airport (Open-Meteo air-quality API): AQI bands, haze note, 12-hour worsening check |
 | `src/ts/geoMath.ts` | Great circle, bearings, destination points, block time |
@@ -115,6 +116,9 @@ transition so Leaflet re-measures. New results open at half; the last position i
   the ones aligned with the route and switch to the wind-favored ends once the cards load
   weather. Drawn as short segments so it can be colored by the headwind interpolated from seven
   Open-Meteo samples. The approach geometry is schematic, not a published procedure.
+- **Dust and smoke**: NASA GIBS tiles of the daily OMPS aerosol index, drawn through a canvas
+  (GIBS sends CORS headers) that makes grey, white and pale pixels transparent and fades the rest
+  by how strongly colored they are, so only real plumes show over the dark base map.
 - **Connecting routes**: each itinerary is a chain of great-circle legs unwrapped continuously
   across the dateline. The selected one is styled like a direct route with stop labels and
   per-leg pills; three alternatives are drawn faded, the rest on request.

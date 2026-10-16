@@ -74,6 +74,7 @@ used once and not stored; denying permission just shows a message.
 (wind arrows, with a ring only when conditions are below VFR), pilot reports, weather hazards,
 tropical cyclones worldwide (track, forecast track and uncertainty cone),
 fires detected by satellite in the last 24 hours,
+dust and smoke from space (daily, worldwide),
 day/night shading, approach distance ticks, and runway outlines with runway numbers when zoomed in.
 
 **Phone layout**: the results panel is a bottom sheet. Drag its handle between a one-line peek
@@ -146,7 +147,7 @@ and the reasoning behind the main decisions.
 ## Testing
 
 ```bash
-npm test          # Vitest: 111 tests
+npm test          # Vitest: 116 tests
 npm run typecheck
 ```
 
@@ -178,6 +179,7 @@ The code is MIT licensed. The data it uses keeps its own terms:
 | Weather alerts | [National Weather Service](https://www.weather.gov) | Public domain (US government) |
 | Tropical cyclones (positions, tracks, forecast cones, from NHC, JTWC and other agencies) | [GDACS](https://www.gdacs.org), the UN / European Commission Global Disaster Alert and Coordination System | Free to use; provided as is, for information only (credited in the app) |
 | Fire and heat detections (MODIS, last 24 hours) | [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov) | Free and open (NASA); credited in the app |
+| Dust and smoke map layer (OMPS aerosol index, NOAA-20) | [NASA GIBS](https://nasa-gibs.github.io/gibs-api-docs/) | Free and open (NASA); credited on the map |
 | Winds aloft, air quality (Copernicus CAMS models) | [Open-Meteo](https://open-meteo.com) | CC BY 4.0, free for non-commercial use |
 | Map tiles | [Stadia Maps](https://stadiamaps.com), OpenMapTiles, OpenStreetMap | Per provider terms |
 
