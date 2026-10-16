@@ -26,6 +26,7 @@ display: see a plane overhead, look up where it is going.
   `Chicago to Denver`, `chicago denver`, `portland me`, `london uk`.
 - Suggestions appear as you type (airports, and routes once the first airport is settled); the map
   only changes when you pick one or press Enter.
+- Focusing the empty search box lists your last 8 searches (kept on the device only).
 - Ranks the airport you most likely mean (by nonstop destinations) and offers the others in the
   same city as one-tap chips.
 - Every result has a shareable link (`?q=ORD+DEN`); the Android back button returns to the
@@ -117,7 +118,7 @@ and the reasoning behind the main decisions.
 ## Testing
 
 ```bash
-npm test          # Vitest: 53 tests
+npm test          # Vitest: 57 tests
 npm run typecheck
 ```
 
