@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { stubBrowser } from './helpers';
-import { addRecent, clearRecent, loadRecent, MAX_RECENT } from '../src/ts/history';
+import { addRecent, clearRecent, loadRecent, MAX_RECENT, isFavorite, loadFavorites, toggleFavorite } from '../src/ts/history';
 
 describe('recent searches', () => {
   beforeEach(() => {
@@ -38,5 +38,26 @@ describe('recent searches', () => {
     });
     expect(loadRecent()).toEqual([]);
     expect(() => addRecent('ORD')).not.toThrow();
+  });
+});
+
+describe('favorites', () => {
+  beforeEach(() => {
+    stubBrowser();
+  });
+
+  it('toggles an airport on and off, case-insensitively', () => {
+    expect(toggleFavorite('ord')).toBe(true);
+    expect(isFavorite('ORD')).toBe(true);
+    expect(loadFavorites()).toEqual(['ORD']);
+    expect(toggleFavorite('ORD')).toBe(false);
+    expect(loadFavorites()).toEqual([]);
+  });
+
+  it('keeps favorites in the order they were added', () => {
+    toggleFavorite('DEN');
+    toggleFavorite('ORD');
+    toggleFavorite('LHR');
+    expect(loadFavorites()).toEqual(['DEN', 'ORD', 'LHR']);
   });
 });

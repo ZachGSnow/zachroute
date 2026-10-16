@@ -21,6 +21,7 @@ import { faaDelayChips, nwsAlertChips, fetchPirepLines, type Chip } from './advi
 import { fetchCruiseWind } from './windsAloft';
 import { fetchAirportPhoto } from './wikiPhoto';
 import { carriersFor, carrierNames, carrierDataNote } from './carriers';
+import { isFavorite, toggleFavorite } from './history';
 import { analyzeRoute, drawRouteHazards, describeAdvisory, describeRoutePirep } from './mapOverlays';
 import {
   airportCode,
@@ -390,7 +391,10 @@ function buildFacilityCard(airport: Airport): string {
 
   return `
     <div class="facility-card" data-iata="${airport.iata}" data-icao="${airport.icao}">
-      <h3>${airport.iata || airport.icao} \u2014 ${airport.name} ${typePill}</h3>
+      <div class="card-title-row">
+        <h3>${airport.iata || airport.icao} \u2014 ${airport.name} ${typePill}</h3>
+        ${favButtonHtml(airport)}
+      </div>
       <div class="subhead">${locationLine} \u2022 ${elevationText}</div>
       ${airport.primaryOperator ? `<div class="subhead">Primary operator: ${airport.primaryOperator}</div>` : ''}
       <div class="alerts-block"></div>
@@ -488,8 +492,29 @@ async function fillPireps(cardEl: HTMLElement, airport: Airport) {
   wireExpandables(el);
 }
 
+function favButtonHtml(airport: Airport): string {
+  const on = isFavorite(airport.iata || airport.icao);
+  const label = on ? 'Remove from favorites' : 'Add to favorites';
+  return `<button type="button" class="fav-btn${on ? ' is-on' : ''}" aria-pressed="${on}" aria-label="${label}" title="${label}">${on ? '\u2605' : '\u2606'}</button>`;
+}
+
+function wireFavButton(cardEl: HTMLElement, airport: Airport) {
+  const btn = cardEl.querySelector('.fav-btn') as HTMLButtonElement | null;
+  if (!btn) return;
+  btn.onclick = () => {
+    const on = toggleFavorite(airport.iata || airport.icao);
+    btn.classList.toggle('is-on', on);
+    btn.setAttribute('aria-pressed', String(on));
+    const label = on ? 'Remove from favorites' : 'Add to favorites';
+    btn.setAttribute('aria-label', label);
+    btn.title = label;
+    btn.textContent = on ? '\u2605' : '\u2606';
+  };
+}
+
 async function wireFacilityCard(cardEl: HTMLElement, airport: Airport) {
   wireExpandables(cardEl);
+  wireFavButton(cardEl, airport);
   wireLoreButton(cardEl, airport);
   wireDestinationsList(cardEl, airport);
 
