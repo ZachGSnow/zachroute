@@ -102,7 +102,7 @@ function wireExpandables(root: ParentNode) {
       const targetId = btn.dataset.target!;
       const content = root.querySelector(`#${targetId}`) as HTMLElement | null;
       if (!content) return;
-      const willShow = content.hidden;
+      const willShow = Boolean(content.hidden);
       content.hidden = !willShow;
       btn.classList.toggle('is-open', willShow);
     };
