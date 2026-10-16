@@ -19,6 +19,11 @@ browser (src/ts) <--------------------------------------+
 | Path | Role |
 |---|---|
 | `src/ts/main.ts` | Boot, search box, history and shareable links (`runSearch` is the single entry point), settings menu |
+| `src/ts/suggestList.ts` | Suggestion dropdown (keyboard, tap, utility rows) |
+| `src/ts/history.ts` | Recent searches and favorite airports (device-only `localStorage`) |
+| `src/ts/sheet.ts` | Phone bottom sheet: peek / half / full, drag and tap |
+| `src/ts/nearby.ts` | Airports near me: geolocation and nearest-airport ranking |
+| `src/ts/units.ts` | Display units: distance and 12/24-hour clock |
 | `src/ts/searchParser.ts` | Code / name / route parsing and ranking |
 | `src/ts/uiRenderer.ts` | Airport card and route panel |
 | `src/ts/mapRenderer.ts` | Leaflet map: routes, connections, connecting itineraries, airport layers |
@@ -82,6 +87,20 @@ the name is, so `portland me` is an exact city match for PWM. Ranking adds airpo
 passenger service and the number of nonstop destinations, since the source `type` field alone
 does not separate a hub from a nearby field. Two places with no separator (`chicago denver`) try
 every split point and keep the one where both sides match best.
+
+## Search box (2.5)
+
+Typing only updates the suggestion list (`suggest` in `searchParser.ts`): an exact code first, then
+code prefixes, then name matches; once a first airport is settled ("chicago den", "ord to d"),
+route suggestions come first. A search runs, and gets one history entry and one recent-search
+entry, only when a suggestion is picked or Enter is pressed. An empty, focused box lists favorites
+then recent searches.
+
+## Phone layout (2.5)
+
+At 768 px and narrower the results panel is a bottom sheet. `sheet.ts` sets `--sheet-h` on
+`.main-content` (peek 64 px, half 45%, full 100%) and calls `map.invalidateSize()` after the height
+transition so Leaflet re-measures. New results open at half; the last position is remembered.
 
 ## Map
 
