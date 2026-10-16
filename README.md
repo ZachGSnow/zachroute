@@ -39,6 +39,9 @@ display: see a plane overhead, look up where it is going.
   (dewpoint and fog risk, ceiling, altimeter, density altitude, wind as the tower states it).
 - Forecast (TAF) decoded into an outlook ("Conditions drop to MVFR around Fri 6 AM") and a period list.
 - Recent pilot reports of turbulence or icing nearby, in plain English.
+- Air quality worldwide (US AQI, or the European AQI at European airports) with PM2.5, a note when
+  smoke, dust or haze may reduce visibility, and a heads-up when it is forecast to get worse in the
+  next 12 hours.
 - FAA ground stops, ground delay programs and departure/arrival delays, plus active National
   Weather Service alerts (US).
 - Volcanic ash over or within 100 miles of the airport, anywhere in the world (from SIGMETs).
@@ -140,7 +143,7 @@ and the reasoning behind the main decisions.
 ## Testing
 
 ```bash
-npm test          # Vitest: 96 tests
+npm test          # Vitest: 102 tests
 npm run typecheck
 ```
 
@@ -171,7 +174,7 @@ The code is MIT licensed. The data it uses keeps its own terms:
 | Delay programs | [FAA NAS Status](https://nasstatus.faa.gov) | Public domain (US government) |
 | Weather alerts | [National Weather Service](https://www.weather.gov) | Public domain (US government) |
 | Tropical cyclones (positions, tracks, forecast cones, from NHC, JTWC and other agencies) | [GDACS](https://www.gdacs.org), the UN / European Commission Global Disaster Alert and Coordination System | Free to use; provided as is, for information only (credited in the app) |
-| Winds aloft | [Open-Meteo](https://open-meteo.com) | CC BY 4.0, free for non-commercial use |
+| Winds aloft, air quality (Copernicus CAMS models) | [Open-Meteo](https://open-meteo.com) | CC BY 4.0, free for non-commercial use |
 | Map tiles | [Stadia Maps](https://stadiamaps.com), OpenMapTiles, OpenStreetMap | Per provider terms |
 
 OpenFlights' route file has not been updated since 2017, so it is only used for routes outside

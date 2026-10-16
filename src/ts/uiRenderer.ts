@@ -1,5 +1,5 @@
 import type { Airport, RunwayDetail } from './geoMath';
-import { formatDistance, formatTemp, formatPressure, formatVisibility, tempSpread, fogSpread, getWeatherUnits, metarVisibilityMetric } from './units';
+import { formatDistance, formatTemp, formatPressure, formatVisibility, tempSpread, fogSpread, getWeatherUnits, metarVisibilityMetric, hourOptions } from './units';
 import { haversineDistance, initialBearing, blockTimeMiles, windAdjustedBlockTime, blockTimeWithHeadwind, slerpArc } from './geoMath';
 import {
   fetchWeather,
@@ -20,6 +20,7 @@ import { resolveCode } from './searchParser';
 import { fetchTaf, decodeTaf, compassPoint } from './forecast';
 import { faaDelayChips, nwsAlertChips, fetchPirepLines, type Chip } from './advisories';
 import { fetchCyclones, stormsNearPoint, stormTitle } from './cyclones';
+import { fetchAirQuality, aqiScaleFor, aqiCategory, aqiValue, hazeNote, worseningAhead } from './airQuality';
 import { fetchCruiseWind } from './windsAloft';
 import { fetchAirportPhoto } from './wikiPhoto';
 import { carriersFor, carrierNames, carrierDataNote } from './carriers';
@@ -407,6 +408,7 @@ function buildFacilityCard(airport: Airport): string {
       <div class="photo-block"></div>
 
       <div class="weather-block">${weatherPlaceholderHtml()}</div>
+      <div class="aq-block"></div>
       ${timeLineHtml(airport)}
       <div class="forecast-block"></div>
       <div class="pirep-block"></div>
@@ -555,6 +557,35 @@ function wireFavButton(cardEl: HTMLElement, airport: Airport) {
   };
 }
 
+const AQ_DOTS = ['🟢', '🟡', '🟠', '🔴', '🟣', '🟤'];
+
+/** Air quality line, plus a haze note and a "getting worse" line when they apply. */
+async function fillAirQuality(cardEl: HTMLElement, airport: Airport) {
+  const el = cardEl.querySelector('.aq-block') as HTMLElement | null;
+  if (!el) return;
+  const aq = await fetchAirQuality(airport.lat, airport.lon);
+  if (!aq || !el.isConnected) return;
+
+  const scale = aqiScaleFor(airport.country);
+  const scaleName = scale === 'eu' ? 'European AQI' : 'US AQI';
+  const value = aqiValue(aq, scale);
+  const lines: string[] = [];
+  if (value !== undefined) {
+    const cat = aqiCategory(value, scale);
+    const pm = aq.pm25 !== undefined ? ` \u2022 PM2.5 ${Math.round(aq.pm25)} \u00b5g/m\u00b3` : '';
+    lines.push(`${AQ_DOTS[cat.level]} Air quality: ${cat.label} <span class="muted">(${scaleName} ${Math.round(value)})</span>${pm}`);
+  }
+  const haze = hazeNote(aq);
+  if (haze) lines.push(`🌫️ ${haze}`);
+  const ahead = worseningAhead(aq, scale);
+  if (ahead) {
+    const at = new Date(ahead.hour.time).toLocaleTimeString('en-US', { ...hourOptions(), timeZone: airport.timeZone || undefined });
+    lines.push(`<span class="muted">Forecast to reach ${ahead.category.label.toLowerCase()} (${Math.round(ahead.value)}) around ${at}</span>`);
+  }
+  if (lines.length === 0) return;
+  el.innerHTML = lines.map((l) => `<div class="aq-line">${l}</div>`).join('');
+}
+
 async function wireFacilityCard(cardEl: HTMLElement, airport: Airport) {
   wireExpandables(cardEl);
   wireFavButton(cardEl, airport);
@@ -566,6 +597,7 @@ async function wireFacilityCard(cardEl: HTMLElement, airport: Airport) {
   void fillPhoto(cardEl, airport);
   void fillForecast(cardEl, airport);
   void fillPireps(cardEl, airport);
+  void fillAirQuality(cardEl, airport);
 
   const weatherEl = cardEl.querySelector('.weather-block');
   if (!weatherEl || !airport.icao) return;

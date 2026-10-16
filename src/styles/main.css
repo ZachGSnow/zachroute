@@ -846,6 +846,15 @@ body {
   background: linear-gradient(90deg, #f87171, #e2e8f0, #4ade80);
 }
 
+.aq-block {
+  margin-top: 4px;
+  font-size: 0.85rem;
+}
+
+.aq-line {
+  margin-top: 2px;
+}
+
 .route-hazards {
   margin-top: 8px;
   padding-top: 8px;

@@ -33,6 +33,7 @@ browser (src/ts) <--------------------------------------+
 | `src/ts/approach.ts` | Runway-end geometry: extended centerline, 3 degree glide ticks, departure leg, path smoothing |
 | `src/ts/forecast.ts`, `pirepText.ts`, `weather.ts`, `advisories.ts` | Plain-English decoding of TAF, PIREP, METAR, FAA status and NWS alerts |
 | `src/ts/windsAloft.ts` | Cruise-level winds along a route (Open-Meteo) |
+| `src/ts/airQuality.ts` | Air quality, haze and smoke at an airport (Open-Meteo air-quality API): AQI bands, haze note, 12-hour worsening check |
 | `src/ts/geoMath.ts` | Great circle, bearings, destination points, block time |
 | `src/ts/connections.ts`, `carriers.ts` | Nonstop topology, one/two-stop search, airlines per route |
 | `functions/api/*.ts` | `weather`, `taf`, `pireps`, `metar-bbox`, `airsigmet`, `cyclones`, `faa-status`, `lore` |
