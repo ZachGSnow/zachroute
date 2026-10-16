@@ -2,6 +2,7 @@ import { initMap, showSingleAirport, showRoute, showConnectingRoutes, highlightV
 import { setWeatherStations, setHazards, setDayNight, setPireps, highlightRunway } from './mapOverlays';
 import { parseQuery, loadAirports, suggest, type SearchIntent } from './searchParser';
 import { createSuggestList, type SuggestItem } from './suggestList';
+import { loadRecent, addRecent, clearRecent } from './history';
 import type { Airport } from './geoMath';
 import { renderSingle, renderRoute, renderError, enrichLore } from './uiRenderer';
 import { findConnectingRoutes, isKnownDirect } from './connections';
@@ -98,6 +99,7 @@ async function init() {
       renderError(intent.error);
       return;
     }
+    if (how === 'push') addRecent(query);
 
     if (intent.mode === 'SINGLE') {
       showSingleAirport(intent.airport);
@@ -119,10 +121,37 @@ async function init() {
     runSearch(q, 'push');
     if (isTouch) input.blur(); // hide the phone keyboard so the result is visible
   };
-  const suggestions = createSuggestList(input, suggestEl, (item: SuggestItem) => commit(item.query));
+  const suggestions = createSuggestList(input, suggestEl, (item: SuggestItem) => (item.action ? item.action() : commit(item.query)));
 
   function suggestionsFor(text: string): SuggestItem[] {
+    if (!text.trim()) return emptyBoxItems();
     return suggest(text).map((s) => ({ query: s.query, title: s.title, detail: s.detail, badge: s.kind === 'route' ? 'Route' : undefined }));
+  }
+
+  /** What a recent search resolves to, e.g. "Chicago to Denver" or "Denver International Airport". */
+  function describeSearch(q: string): string | undefined {
+    const intent = parseQuery(q);
+    if (intent.mode === 'SINGLE') return intent.airport.name;
+    if (intent.mode === 'ROUTE') return `${intent.origin.city || intent.origin.name} to ${intent.destination.city || intent.destination.name}`;
+    return undefined;
+  }
+
+  // Shown when the box is focused and empty.
+  function emptyBoxItems(): SuggestItem[] {
+    const recent = loadRecent();
+    if (recent.length === 0) return [];
+    return [
+      ...recent.map((q) => ({ query: q, title: q, detail: describeSearch(q), badge: 'Recent' })),
+      {
+        query: '',
+        title: 'Clear recent searches',
+        subtle: true,
+        action: () => {
+          clearRecent();
+          suggestions.hide();
+        },
+      },
+    ];
   }
 
   let debounceTimer: number;
@@ -131,9 +160,7 @@ async function init() {
     clearTimeout(debounceTimer);
     debounceTimer = window.setTimeout(() => suggestions.show(suggestionsFor(input.value)), 120);
   });
-  input.addEventListener('focus', () => {
-    if (input.value.trim()) suggestions.show(suggestionsFor(input.value));
-  });
+  input.addEventListener('focus', () => suggestions.show(suggestionsFor(input.value)));
   input.addEventListener('blur', () => suggestions.hide());
   input.addEventListener('keydown', (e) => {
     if (suggestions.handleKey(e)) {

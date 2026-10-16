@@ -1092,3 +1092,8 @@ body {
   color: var(--text-muted);
   font-size: 0.78rem;
 }
+
+.suggest-item.is-subtle .suggest-title {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}

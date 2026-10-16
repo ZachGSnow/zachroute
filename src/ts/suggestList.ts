@@ -7,6 +7,10 @@ export interface SuggestItem {
   detail?: string;
   /** Small label shown at the right of the row ("Route", "Recent", ...). */
   badge?: string;
+  /** Runs instead of a search when picked (e.g. "Clear recent searches"). */
+  action?: () => void;
+  /** Rendered muted, for utility rows like "Clear recent searches". */
+  subtle?: boolean;
 }
 
 export interface SuggestList {
@@ -29,7 +33,7 @@ export function createSuggestList(input: HTMLInputElement, listEl: HTMLElement, 
     listEl.innerHTML = items
       .map(
         (item, i) =>
-          `<li role="option" id="suggest-${i}" class="suggest-item${i === active ? ' is-active' : ''}" data-index="${i}" aria-selected="${i === active}">` +
+          `<li role="option" id="suggest-${i}" class="suggest-item${i === active ? ' is-active' : ''}${item.subtle ? ' is-subtle' : ''}" data-index="${i}" aria-selected="${i === active}">` +
           `<span class="suggest-title">${esc(item.title)}</span>` +
           (item.badge ? `<span class="suggest-badge">${esc(item.badge)}</span>` : '') +
           (item.detail ? `<span class="suggest-detail">${esc(item.detail)}</span>` : '') +
