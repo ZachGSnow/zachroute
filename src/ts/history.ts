@@ -1,4 +1,4 @@
-// Recent searches, kept on this device only (localStorage). Every read and write is guarded:
+// Recent searches and favorite airports, kept on this device only (localStorage). Every read and write is guarded:
 // storage can be unavailable (private mode, blocked site data) and the app must still work.
 
 const RECENT_KEY = 'zachroute:recent-searches';
@@ -38,4 +38,33 @@ export function addRecent(query: string) {
 
 export function clearRecent() {
   write(RECENT_KEY, []);
+}
+
+// ---------------------------------------------------------------------------
+// Favorite airports (stored as airport codes)
+// ---------------------------------------------------------------------------
+
+const FAVORITES_KEY = 'zachroute:favorites';
+export const FAVORITES_CHANGED = 'zachroute:favorites-changed';
+
+export function loadFavorites(): string[] {
+  return read(FAVORITES_KEY);
+}
+
+export function isFavorite(code: string): boolean {
+  return loadFavorites().some((c) => sameSearch(c, code));
+}
+
+/** Adds or removes an airport; returns whether it is now a favorite. */
+export function toggleFavorite(code: string): boolean {
+  const list = loadFavorites();
+  const on = !list.some((c) => sameSearch(c, code));
+  const next = on ? [...list, code.toUpperCase()] : list.filter((c) => !sameSearch(c, code));
+  write(FAVORITES_KEY, next);
+  try {
+    window.dispatchEvent(new CustomEvent(FAVORITES_CHANGED));
+  } catch {
+    /* no window in tests */
+  }
+  return on;
 }

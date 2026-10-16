@@ -1097,3 +1097,29 @@ body {
   color: var(--text-muted);
   font-size: 0.8rem;
 }
+
+/* Favorite star on the airport card */
+.card-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.fav-btn {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.fav-btn.is-on {
+  color: #facc15;
+  border-color: rgba(250, 204, 21, 0.5);
+}

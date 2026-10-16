@@ -2,7 +2,7 @@ import { initMap, showSingleAirport, showRoute, showConnectingRoutes, highlightV
 import { setWeatherStations, setHazards, setDayNight, setPireps, highlightRunway } from './mapOverlays';
 import { parseQuery, loadAirports, suggest, type SearchIntent } from './searchParser';
 import { createSuggestList, type SuggestItem } from './suggestList';
-import { loadRecent, addRecent, clearRecent } from './history';
+import { loadRecent, addRecent, clearRecent, loadFavorites, FAVORITES_CHANGED } from './history';
 import type { Airport } from './geoMath';
 import { renderSingle, renderRoute, renderError, enrichLore } from './uiRenderer';
 import { findConnectingRoutes, isKnownDirect } from './connections';
@@ -52,6 +52,28 @@ async function init() {
     </div>
   `;
 
+  /** Start screen: the usual hint plus one-tap favorites when there are any. */
+  function renderEmptyState() {
+    resultsEl.innerHTML = EMPTY_STATE;
+    const favorites = loadFavorites();
+    if (favorites.length === 0) return;
+    const bar = document.createElement('div');
+    bar.className = 'alt-matches favorites-bar';
+    bar.append(Object.assign(document.createElement('span'), { className: 'muted', textContent: 'Favorites:' }));
+    for (const code of favorites) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'alt-chip';
+      btn.textContent = code;
+      btn.addEventListener('click', () => runSearch(code, 'push'));
+      bar.append(btn);
+    }
+    resultsEl.prepend(bar);
+  }
+  window.addEventListener(FAVORITES_CHANGED, () => {
+    if (!currentQuery) renderEmptyState();
+  });
+
   // ---- History / shareable links ------------------------------------------
   // Every view has a URL (?q=ORD+DEN) so it can be shared, and the Android back button
   // returns to the previous search instead of closing the app. Typing only updates the
@@ -89,7 +111,7 @@ async function init() {
     resetView();
 
     if (!query) {
-      resultsEl.innerHTML = EMPTY_STATE;
+      renderEmptyState();
       return;
     }
 
@@ -136,11 +158,14 @@ async function init() {
     return undefined;
   }
 
-  // Shown when the box is focused and empty.
+  // Shown when the box is focused and empty: favorites first, then recent searches.
   function emptyBoxItems(): SuggestItem[] {
-    const recent = loadRecent();
-    if (recent.length === 0) return [];
+    const favorites = loadFavorites();
+    const recent = loadRecent().filter((q) => !favorites.some((f) => f.toUpperCase() === q.trim().toUpperCase()));
+    const favItems = favorites.map((code) => ({ query: code, title: code, detail: describeSearch(code), badge: 'Favorite' }));
+    if (recent.length === 0) return favItems;
     return [
+      ...favItems,
       ...recent.map((q) => ({ query: q, title: q, detail: describeSearch(q), badge: 'Recent' })),
       {
         query: '',
@@ -472,6 +497,7 @@ async function init() {
     runSearch(initialQuery, 'none');
   } else {
     history.replaceState({ q: '' }, '', location.pathname);
+    renderEmptyState();
   }
 }
 
