@@ -1,4 +1,5 @@
-import { initMap, showSingleAirport, showRoute, showConnectingRoutes, highlightViaRoute, setAirportDatabase, showConnections, resetView, initAirportLayers, showLargeAirports, showMediumAirports, showRegionalAirports, drawAirportRunways, setPreferredRunwayEnd, colorRouteByWind, setApproachTicks, showAllViaOptions, refreshMapSize } from './mapRenderer';
+import { initMap, showSingleAirport, showRoute, showConnectingRoutes, highlightViaRoute, setAirportDatabase, showConnections, resetView, initAirportLayers, showLargeAirports, showMediumAirports, showRegionalAirports, drawAirportRunways, setPreferredRunwayEnd, colorRouteByWind, setApproachTicks, showAllViaOptions, refreshMapSize, showNearby } from './mapRenderer';
+import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
 import { haversineDistance } from './geoMath';
 import { setWeatherStations, setHazards, setDayNight, setPireps, highlightRunway } from './mapOverlays';
@@ -6,7 +7,7 @@ import { parseQuery, loadAirports, suggest, type SearchIntent } from './searchPa
 import { createSuggestList, type SuggestItem } from './suggestList';
 import { loadRecent, addRecent, clearRecent, loadFavorites, FAVORITES_CHANGED } from './history';
 import type { Airport } from './geoMath';
-import { renderSingle, renderRoute, renderError, enrichLore } from './uiRenderer';
+import { renderSingle, renderRoute, renderError, enrichLore, renderNearby } from './uiRenderer';
 import { findConnectingRoutes, isKnownDirect } from './connections';
 
 async function init() {
@@ -223,6 +224,49 @@ async function init() {
     suggestions.hide();
     runSearch(q, 'none');
   });
+
+  // ---- Airports near me -----------------------------------------------------
+  const nearBtn = document.getElementById('near-me') as HTMLButtonElement | null;
+  async function showAirportsNearMe() {
+    suggestions.hide();
+    sheet.setSummary('Finding airports near you...');
+    if (sheet.isPhone()) sheet.setState('half');
+    resultsEl.innerHTML = '<div class="empty-state"><p>Finding your location...</p></div>';
+    const where = await locate();
+    if (!where.ok) {
+      sheet.setSummary('Location unavailable');
+      renderError(
+        where.reason === 'denied'
+          ? 'Location permission was denied. Allow it in your browser site settings to see airports near you.'
+          : 'Your location could not be determined right now.'
+      );
+      return;
+    }
+    const list = nearestAirports(where.lat, where.lon, Object.values(airportsData) as Airport[]);
+    input.value = '';
+    updateClearButton();
+    currentQuery = '';
+    sheet.setSummary('Airports near you');
+    showNearby(where, list.map((n) => n.airport));
+    renderNearby(list, {});
+
+    // One weather request for the whole area, then add flight categories to the list.
+    try {
+      const lats = [where.lat, ...list.map((n) => n.airport.lat)];
+      const lons = [where.lon, ...list.map((n) => n.airport.lon)];
+      const bbox = [Math.min(...lats) - 0.2, Math.min(...lons) - 0.2, Math.max(...lats) + 0.2, Math.max(...lons) + 0.2].map((n) => n.toFixed(2)).join(',');
+      const res = await fetch(`/api/metar-bbox?bbox=${bbox}`);
+      if (!res.ok || currentQuery) return;
+      const json = await res.json();
+      const cats: Record<string, string> = {};
+      for (const s of json.stations || []) if (s.cat) cats[s.id] = s.cat;
+      if (!currentQuery && resultsEl.querySelector('.nearby-list')) renderNearby(list, cats);
+    } catch {
+      /* weather is a bonus here */
+    }
+  }
+  nearBtn?.addEventListener('click', () => void showAirportsNearMe());
+  (window as any).runSearchFor = (q: string) => runSearch(q, 'push');
 
   // ---- Result toolbar: share (and swap for routes) ------------------------
   function codeOf(a: Airport): string {

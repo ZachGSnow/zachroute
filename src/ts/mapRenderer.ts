@@ -56,6 +56,31 @@ let viaContext: {
   drawLimit: number;
 } | null = null;
 
+/** "Airports near me": the user's position plus the nearby airports, framed together. */
+export function showNearby(here: { lat: number; lon: number }, airports: Airport[]) {
+  if (!map) return;
+  clearLayers();
+  clearViaRoutes();
+  clearWeather();
+
+  const you = L.circleMarker([here.lat, here.lon], {
+    radius: 7,
+    color: '#f8fafc',
+    weight: 3,
+    fillColor: '#38bdf8',
+    fillOpacity: 1,
+  }).addTo(map);
+  you.bindTooltip('You are here', { direction: 'top' });
+  currentLayers.push(you);
+
+  const bounds = L.latLngBounds([[here.lat, here.lon]]);
+  for (const a of airports) {
+    addEndpointMarker(a);
+    bounds.extend([a.lat, a.lon]);
+  }
+  map.flyToBounds(bounds, { padding: [50, 50], maxZoom: 10, duration: 0.8 });
+}
+
 /** Re-measures the map after its container changes size (the phone results sheet). */
 export function refreshMapSize() {
   map?.invalidateSize();
