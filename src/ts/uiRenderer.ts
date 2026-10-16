@@ -23,7 +23,7 @@ import { fetchCruiseWind } from './windsAloft';
 import { fetchAirportPhoto } from './wikiPhoto';
 import { carriersFor, carrierNames, carrierDataNote } from './carriers';
 import { isFavorite, toggleFavorite } from './history';
-import { analyzeRoute, drawRouteHazards, describeAdvisory, describeRoutePirep } from './mapOverlays';
+import { analyzeRoute, drawRouteHazards, describeAdvisory, describeRoutePirep, ashNear, advisoryAltitude, type Advisory } from './mapOverlays';
 import {
   airportCode,
   destinationCodesFor,
@@ -447,12 +447,34 @@ function chipsHtml(chips: Chip[]): string {
     .join('');
 }
 
+/** A chip for each volcanic ash advisory over or near the airport (worldwide, from SIGMETs). */
+async function ashChips(airport: Airport): Promise<Chip[]> {
+  if (!navigator.onLine) return [];
+  // A volcano often has two SIGMETs (the observed cloud and its forecast position): keep the closest.
+  const seen = new Set<string>();
+  const near = (await ashNear(airport.lat, airport.lon)).filter(({ advisory }) => {
+    const key = advisory.name || advisory.coords.join();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  return near.slice(0, 2).map(({ advisory, miles }) => {
+    const where = miles < 1 ? 'over the airport' : `${formatDistance(miles)} away`;
+    const alt = advisoryAltitude(advisory);
+    return {
+      level: 'alert',
+      text: `🌋 Volcanic ash ${where}${advisory.name ? ` (${advisory.name})` : ''}`,
+      title: [alt && `Ash cloud ${alt}`, advisory.region && `${advisory.region} FIR`].filter(Boolean).join(', ') || undefined,
+    };
+  });
+}
+
 async function fillAlerts(cardEl: HTMLElement, airport: Airport) {
   const el = cardEl.querySelector('.alerts-block') as HTMLElement | null;
   if (!el) return;
-  const [delays, alerts] = await Promise.all([faaDelayChips(airport), nwsAlertChips(airport)]);
+  const [ash, delays, alerts] = await Promise.all([ashChips(airport), faaDelayChips(airport), nwsAlertChips(airport)]);
   if (!el.isConnected) return;
-  const chips = [...delays, ...alerts];
+  const chips = [...ash, ...delays, ...alerts];
   if (chips.length === 0) return;
   el.innerHTML = `<div class="chips">${chipsHtml(chips)}</div>`;
 }
@@ -741,6 +763,14 @@ function routePoints(origin: Airport, destination: Airport, via?: ViaOption | nu
   return out;
 }
 
+/** "Volcanic ash along the route (Mt Ibu, surface to FL060). ..." */
+function ashBanner(ash: Advisory[]): string {
+  const names = [...new Set(ash.map((a) => a.name).filter(Boolean))].join(', ');
+  const alt = ash.length === 1 ? advisoryAltitude(ash[0]) : '';
+  const detail = [names, alt].filter(Boolean).join(', ');
+  return `🌋 <strong>Volcanic ash along the route</strong>${detail ? ` (${detail})` : ''}. Flights route around ash clouds, so expect reroutes or delays.`;
+}
+
 async function wireRouteHazards(points: Array<[number, number]>) {
   const gen = ++routeHazardGen;
   const el = resultsContent.querySelector('.route-hazards') as HTMLElement | null;
@@ -761,8 +791,12 @@ async function wireRouteHazards(points: Array<[number, number]>) {
   }
 
   const parts: string[] = [];
+  const ash = result.advisories.filter((a) => a.hazard === 'ASH');
+  if (ash.length > 0) parts.push(`<div class="route-hazard-ash">${ashBanner(ash)}</div>`);
   if (result.advisories.length > 0) {
-    const rows = result.advisories.map((a) => `<div class="route-hazard-row">${describeAdvisory(a)}</div>`).join('');
+    // Ash first: it is the one advisory flights do not fly through at any altitude.
+    const ordered = [...ash, ...result.advisories.filter((a) => a.hazard !== 'ASH')];
+    const rows = ordered.map((a) => `<div class="route-hazard-row">${describeAdvisory(a)}</div>`).join('');
     parts.push(`<div class="route-hazard-head">⚠️ Route passes through ${result.advisories.length} weather advisor${result.advisories.length === 1 ? 'y' : 'ies'} (outlined on the map)</div>${rows}`);
   }
   const pirepLines = result.pireps

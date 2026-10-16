@@ -2,6 +2,7 @@ import type { Airport, RunwayDetail } from './geoMath';
 import { formatDistance, clockOptions } from './units';
 import { bearingBetween, destinationPoint, haversineDistanceLatLon } from './geoMath';
 import { resolveCode } from './searchParser';
+import { pointInPolygon, advisoriesNear } from './hazardGeo';
 import { compassPoint } from './forecast';
 import { summarizePirep, pirepAgeLabel, pirepAltitudeLabel, type RawPirep, type PirepKind } from './pirepText';
 
@@ -340,7 +341,7 @@ function advisoryPolygon(adv: Advisory, strong: boolean): L.Polygon {
     fillColor: style.color,
     fillOpacity: strong ? 0.24 : sigmet ? 0.18 : 0.1,
   });
-  const alt = altitudeLabel(adv.altLow, adv.altHigh);
+  const alt = advisoryAltitude(adv);
   poly.bindPopup(
     `<strong>${esc(adv.type)}: ${esc(advisoryTitle(adv))}</strong>` +
       (adv.region ? `<br>${esc(adv.region)} FIR` : '') +
@@ -445,24 +446,11 @@ async function refreshPireps() {
 // Hazards and pilot reports along a route
 // ---------------------------------------------------------------------------
 
+export type { Advisory };
+
 export interface RouteHazardResult {
   advisories: Advisory[];
   pireps: RawPirep[];
-}
-
-function pointInRing(lat: number, lon: number, ring: [number, number][]): boolean {
-  let inside = false;
-  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-    const [yi, xi] = ring[i];
-    const [yj, xj] = ring[j];
-    if (yi > lat !== yj > lat && lon < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) inside = !inside;
-  }
-  return inside;
-}
-
-/** Rings that cross the antimeridian are unwrapped past +/-180, so also try the point a world away. */
-function pointInPolygon(lat: number, lon: number, ring: [number, number][]): boolean {
-  return pointInRing(lat, lon, ring) || pointInRing(lat, lon + 360, ring) || pointInRing(lat, lon - 360, ring);
 }
 
 const ROUTE_PIREP_RADIUS_MI = 50;
@@ -492,9 +480,22 @@ export async function analyzeRoute(points: Array<[number, number]>): Promise<Rou
   return { advisories: crossed, pireps: nearby };
 }
 
+const ASH_RADIUS_MI = 100;
+
+/** Volcanic ash advisories over or within 100 mi of a point, closest first. */
+export async function ashNear(lat: number, lon: number): Promise<Array<{ advisory: Advisory; miles: number }>> {
+  return advisoriesNear(lat, lon, await fetchAdvisories(), 'ASH', ASH_RADIUS_MI);
+}
+
+/** Altitude range of an advisory in words ("surface to FL060"), or ''. */
+export function advisoryAltitude(adv: Advisory): string {
+  if (adv.altLow === 0) return adv.altHigh !== undefined ? `surface to ${altitudeLabel(undefined, adv.altHigh).replace(/^up to /, '')}` : '';
+  return altitudeLabel(adv.altLow, adv.altHigh);
+}
+
 /** One-line plain-English description of an advisory for the route stats. */
 export function describeAdvisory(adv: Advisory): string {
-  const alt = altitudeLabel(adv.altLow, adv.altHigh);
+  const alt = advisoryAltitude(adv);
   const until = adv.validTo ? `until ${timeLabel(adv.validTo)}` : '';
   const region = adv.region ? `${adv.region} FIR` : '';
   return [`${adv.type}: ${advisoryTitle(adv)}`, alt, until, region].filter(Boolean).join(', ');
