@@ -209,7 +209,9 @@ body {
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 24px;
-  max-width: 420px;
+  max-width: 460px;
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
   margin: 16px;
 }
 
@@ -899,6 +901,22 @@ body {
 .about-version {
   font-size: 0.85rem;
   color: var(--accent);
+}
+
+.about-sources-title {
+  margin-bottom: 4px !important;
+  font-weight: 600;
+}
+
+.about-sources {
+  margin: 0 0 10px 18px;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.about-sources li {
+  margin-bottom: 4px;
 }
 
 .about-disclaimer {
