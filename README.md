@@ -45,8 +45,8 @@ companion to a FlightWall display: see a plane overhead, look up where it is goi
 - Recent pilot reports of turbulence or icing nearby, in plain English.
 - Runways with dimensions and surface, the wind-favored runway with headwind/crosswind
   components, frequencies, navaids, local time, sunrise or sunset, airport photo and history.
-- Nonstop destinations and the airlines that fly them, from route data: US DOT for US routes
-  (about three months behind), OpenFlights (2017) elsewhere.
+- Nonstop destinations from route data, with the airlines that fly them on US routes (US DOT data,
+  about three months behind). Other routes come from OpenFlights (2017) and list no airlines.
 
 **Hazards and air near an airport** (worldwide unless noted)
 - Volcanic ash over or within 100 miles of the airport, from international SIGMETs.
@@ -217,7 +217,7 @@ can add on top of the source's age.
 | Airport history text and photos | [Wikipedia](https://en.wikipedia.org) | As edited | Up to 7 days | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
 | Airports, runways, frequencies, navaids | [OurAirports](https://ourairports.com/data/) | Nightly | Until you run `npm run data` | Public domain |
 | Current US routes and airlines | [US DOT Bureau of Transportation Statistics](https://www.transtats.bts.gov) on-time data | Monthly, about 3 months behind | Until you run `npm run data` | Public domain (US government) |
-| International routes | [OpenFlights](https://openflights.org/data.php) `routes.dat` | Not updated since 2017 | Until you run `npm run data` | [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/) |
+| International routes | [OpenFlights](https://openflights.org/data.php) `routes.dat` | Not updated since 2017 | Until you run `npm run data` | [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/); `src/data/connections.json` is shared under the same license (see [`src/data/README.md`](src/data/README.md)) |
 | Map tiles | [Stadia Maps](https://stadiamaps.com), OpenMapTiles, OpenStreetMap | Per provider | Not cached by the app | Per provider terms; credited on the map |
 
 The last weather and history seen for an airport stay available offline. For information only:
