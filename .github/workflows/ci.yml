@@ -20,8 +20,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        # Current LTS releases the project supports.
-        node: [20, 22, 24]
+        # Supported LTS releases: vitest 5 needs Node 22.12+ (package.json engines). Node 20 is end-of-life.
+        node: [22, 24]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
