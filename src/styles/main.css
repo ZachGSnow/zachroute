@@ -816,6 +816,21 @@ body {
   text-shadow: 0 0 3px #020617, 0 0 3px #020617, 0 0 5px #020617;
 }
 
+/* Map credits (required by the tile providers), styled for the dark map. */
+.leaflet-container .leaflet-control-attribution {
+  background: rgba(15, 23, 42, 0.75);
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  line-height: 1.4;
+  padding: 1px 6px;
+  border-top-left-radius: 4px;
+}
+
+.leaflet-container .leaflet-control-attribution a {
+  color: var(--text-muted);
+  text-decoration: underline;
+}
+
 .route-legend {
   position: absolute;
   left: 12px;
@@ -1213,8 +1228,9 @@ body {
     text-overflow: ellipsis;
   }
 
+  /* Above the sheet, and clear of the map credits in the corner below it. */
   .route-legend {
-    bottom: calc(var(--sheet-h) + 12px);
+    bottom: calc(var(--sheet-h) + 28px);
   }
 
   .main-content[data-sheet='full'] .route-legend,
