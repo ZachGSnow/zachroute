@@ -96,6 +96,10 @@ export function initMap(containerId: string): L.Map {
     worldCopyJump: true,
   }).setView([39.5, -98.35], 4);
 
+  // The tile providers' terms require their credit on the map itself (an About screen is not
+  // enough), so show Leaflet's attribution control, without its "Leaflet" prefix to keep it small.
+  L.control.attribution({ prefix: false, position: 'bottomright' }).addTo(map);
+
   // Halo sits under airport circleMarkers (overlayPane 400); wind ticks use markerPane.
   const wxHalo = map.createPane('wxHalo');
   wxHalo.style.zIndex = '350';
@@ -107,7 +111,8 @@ export function initMap(containerId: string): L.Map {
   // domain must register that domain with its own Stadia account.
   L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
     maxZoom: 20,
-    attribution: '&copy; Stadia Maps &copy; OpenMapTiles &copy; OpenStreetMap contributors',
+    attribution:
+      '&copy; <a href="https://stadiamaps.com/" target="_blank" rel="noopener">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
   }).addTo(map);
 
   return map;
