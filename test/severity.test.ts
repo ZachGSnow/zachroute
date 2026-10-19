@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { chipLevel, fireSeverity, pirepCodeSeverity, severityColor, severityLegendItems, severityName } from '../src/ts/severity';
+import { advisorySeverity, chipLevel, cycloneSeverity, fireSeverity, pirepCodeSeverity, severityColor, severityLegendItems, severityName, tfrSeverity } from '../src/ts/severity';
+import { peakWind } from '../functions/api/cyclones';
 import { severityBadge } from '../src/ts/severityBadge';
 import { summarizePirep } from '../src/ts/pirepText';
-import { fireLegend, pirepLegend } from '../src/ts/legends';
+import { cycloneLegend, fireLegend, hazardLegend, pirepLegend, tfrLegend } from '../src/ts/legends';
 
 describe('severity ladder', () => {
   it('names and colors four levels', () => {
@@ -65,5 +66,60 @@ describe('severity legends', () => {
     const spec = fireLegend();
     expect(spec.kind === 'items' && spec.items[2].label).toBe('Severe, 100-500 MW');
     expect(spec.kind === 'items' && spec.items[2].color).toBe(severityColor(3));
+  });
+});
+
+describe('severity of advisories, cyclones and TFRs', () => {
+  it('rates advisories by type, hazard and wording', () => {
+    expect(advisorySeverity({ type: 'AIRMET', hazard: 'IFR' })).toBe(1);
+    expect(advisorySeverity({ type: 'AIRMET', hazard: 'MTN OBSCN' })).toBe(1);
+    expect(advisorySeverity({ type: 'AIRMET', hazard: 'TURB' })).toBe(2);
+    expect(advisorySeverity({ type: 'CWA', hazard: 'CONVECTIVE', detail: 'developing' })).toBe(2);
+    expect(advisorySeverity({ type: 'CWA', hazard: 'TURB', detail: 'isolated severe' })).toBe(3);
+    expect(advisorySeverity({ type: 'SIGMET', hazard: 'TURB' })).toBe(3);
+    expect(advisorySeverity({ type: 'SIGMET', hazard: 'CONVECTIVE', detail: 'isolated' })).toBe(3);
+    expect(advisorySeverity({ type: 'SIGMET', hazard: 'CONVECTIVE', detail: 'embedded' })).toBe(4);
+    expect(advisorySeverity({ type: 'SIGMET', hazard: 'CONVECTIVE', raw: 'LINE EMBD TS 20 NM WIDE' })).toBe(4);
+    expect(advisorySeverity({ type: 'SIGMET', hazard: 'ASH' })).toBe(4);
+    expect(advisorySeverity({ type: 'AIRMET', hazard: 'ASH' })).toBe(4);
+  });
+
+  it('rates tropical cyclones by class and strongest wind so far', () => {
+    expect(cycloneSeverity('TD')).toBe(1);
+    expect(cycloneSeverity('TS', 250)).toBe(2);
+    expect(cycloneSeverity('HU', 150)).toBe(3);
+    expect(cycloneSeverity('HU', 178)).toBe(4);
+    expect(cycloneSeverity('TY')).toBe(3);
+    expect(cycloneSeverity(undefined)).toBe(2);
+  });
+
+  it('reads GDACS peak wind in any unit', () => {
+    expect(peakWind({ severity: 249.9984, severityunit: 'km/h' })).toBe(250);
+    expect(peakWind({ severity: 100, severityunit: 'kt' })).toBe(185);
+    expect(peakWind({ severity: 0, severityunit: 'km/h' })).toBeUndefined();
+    expect(peakWind(undefined)).toBeUndefined();
+  });
+
+  it('rates TFRs by how restrictive they are', () => {
+    expect(tfrSeverity('UAS PUBLIC GATHERING')).toBe(1);
+    expect(tfrSeverity('HAZARDS')).toBe(2);
+    expect(tfrSeverity('AIR SHOWS/SPORTS')).toBe(2);
+    expect(tfrSeverity('SECURITY')).toBe(3);
+    expect(tfrSeverity('VIP')).toBe(3);
+    expect(tfrSeverity('SPACE OPERATIONS')).toBe(3);
+    expect(tfrSeverity('SOMETHING NEW')).toBe(2);
+  });
+
+  it('legends explain each level in the layer terms', () => {
+    const h = hazardLegend();
+    expect(h.kind === 'items' && h.items.slice(0, 4).map((i) => i.color)).toEqual([1, 2, 3, 4].map((s) => severityColor(s as 1)));
+    const c = cycloneLegend();
+    expect(c.kind === 'items' && c.items[3].label).toBe('Extreme: has reached Category 3+');
+    const t = tfrLegend();
+    expect(t.kind === 'items' && t.items.map((i) => i.label)).toEqual([
+      'Light: drones, to 400 ft',
+      'Moderate: hazards, air shows, stadiums',
+      'Severe: security, VIP, space launch',
+    ]);
   });
 });

@@ -760,8 +760,6 @@ async function refreshTfrs(announce: boolean) {
 // Tropical cyclones worldwide (GDACS): forecast cone, track, current position
 // ---------------------------------------------------------------------------
 
-const STORM_COLOR = '#f472b6';
-
 function stormTimeLabel(iso: string): string {
   const d = new Date(iso);
   return `${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} ${d.toLocaleTimeString('en-US', clockOptions())}`;
