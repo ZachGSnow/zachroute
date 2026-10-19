@@ -45,8 +45,8 @@ companion to a FlightWall display: see a plane overhead, look up where it is goi
 - Forecast (TAF) decoded into an outlook ("Conditions drop to MVFR around Fri 6 AM") and a period list.
 - Recent pilot reports of turbulence or icing nearby, in plain English.
 - US airports: the National Weather Service forecaster's aviation notes from the local forecast
-  discussion, in the forecaster's own words ("Shallow ground fog may develop around ORD early
-  tomorrow").
+  discussion, in the forecaster's own words (for example, a heads-up about shallow ground fog
+  around ORD and MDW the next morning).
 - Runways with dimensions and surface, the wind-favored runway with headwind/crosswind
   components, frequencies, navaids, local time, sunrise or sunset, airport photo and history.
 - Nonstop destinations from route data, with the airlines that fly them on US routes (US DOT data,
