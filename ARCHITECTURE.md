@@ -76,7 +76,7 @@ trims the response to what the client renders, and caches it in the `LORE_KV` na
 | `/api/taf?icao=` | aviationweather.gov TAF | 15 min |
 | `/api/pireps?icao=` or `?bbox=` | aviationweather.gov PIREP (bbox mode keeps only notable reports) | 5 min |
 | `/api/metar-bbox?bbox=` | aviationweather.gov METAR by area (category, wind, temperature and dewpoint per station) | 5 min |
-| `/api/airsigmet` | aviationweather.gov US AIRMET/SIGMET and international SIGMET, merged (multi-area SIGMETs split into one polygon each; rings unwrapped across the antimeridian) | 5 min |
+| `/api/airsigmet` | aviationweather.gov US AIRMET/SIGMET, international SIGMET and US center weather advisories, merged (multi-area SIGMETs split into one polygon each; rings unwrapped across the antimeridian) | 5 min |
 | `/api/faa-status` | FAA NAS status XML (closures ignored: the feed mixes partial NOTAM closures with real ones) | 5 min |
 | `/api/cyclones` | GDACS event list plus one geometry request per current tropical cyclone, trimmed to position, track and a thinned forecast cone | 30 min |
 | `/api/fires?bbox=` | NASA FIRMS MODIS global 24-hour CSV (about 1 MB, cached at the Cloudflare edge); scanned line by line keeping only the rectangle and confidence >= 50, so it stays within a function's CPU budget | 30 min |

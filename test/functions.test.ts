@@ -6,7 +6,7 @@ import { onRequest as weather } from '../functions/api/weather';
 import { onRequest as taf } from '../functions/api/taf';
 import { onRequest as pireps } from '../functions/api/pireps';
 import { onRequest as metarBbox } from '../functions/api/metar-bbox';
-import { onRequest as airsigmet, readQualifier, unwrapRing } from '../functions/api/airsigmet';
+import { onRequest as airsigmet, readQualifier, unwrapRing, fromCwaFeed, readCwaQualifier } from '../functions/api/airsigmet';
 import { onRequest as faaStatus } from '../functions/api/faa-status';
 import { onRequest as lore } from '../functions/api/lore';
 import { summaryMatchesAirport, titleFromWikipediaLink } from '../shared/wikiLore.js';
@@ -130,6 +130,48 @@ describe('aviationweather.gov METAR bbox -> /api/metar-bbox', () => {
   });
 });
 
+describe('aviationweather.gov Center Weather Advisories -> /api/airsigmet', () => {
+  // Two real CWAs from Miami Center: developing thunderstorms near the Bahamas, tops to FL310 in
+  // the text, and an area of thunderstorms with tops to 45,000 ft.
+  const raw = jsonFixture<any[]>('awc-cwa.json');
+  const during = 1792432000;
+
+  it('turns string coordinates into [lat, lon] polygons and names the center', () => {
+    const out = fromCwaFeed(raw, during);
+    expect(out).toHaveLength(2);
+    expect(out[0].type).toBe('CWA');
+    expect(out[0].hazard).toBe('CONVECTIVE');
+    expect(out[0].region).toBe('Miami Center');
+    expect(out[0].coords[0]).toEqual([parseFloat(raw[0].coords[0].lat), parseFloat(raw[0].coords[0].lon)]);
+    expect(out[0].detail).toBe('developing');
+    expect(out[1].altHigh).toBe(45000);
+    expect(out[1].detail).toBeUndefined();
+  });
+
+  it('drops expired CWAs', () => {
+    expect(fromCwaFeed(raw, 1792440000)).toHaveLength(0);
+  });
+
+  it('reads only the words it knows from a qualifier', () => {
+    expect(readCwaQualifier('DVLPG TSRA')).toBe('developing');
+    expect(readCwaQualifier('ISOL SEV')).toBe('isolated severe');
+    expect(readCwaQualifier('XYZ')).toBeUndefined();
+    expect(readCwaQualifier(null)).toBeUndefined();
+  });
+
+  it('merges CWAs with the AIRMET/SIGMET feeds', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(during * 1000));
+    stubFetch([
+      ['/airsigmet', []],
+      ['/isigmet', []],
+      ['/cwa', raw],
+    ]);
+    const out = await json(await airsigmet(pagesContext('https://x/api/airsigmet')));
+    expect(out.advisories.map((a: any) => a.type)).toEqual(['CWA', 'CWA']);
+  });
+});
+
 describe('aviationweather.gov AIRMET/SIGMET + international SIGMET -> /api/airsigmet', () => {
   it('turns US coordinate objects into [lat, lon] polygons', async () => {
     vi.useFakeTimers();
@@ -215,6 +257,7 @@ describe('aviationweather.gov AIRMET/SIGMET + international SIGMET -> /api/airsi
     const fn = vi.fn(async (input: RequestInfo | URL) => {
       const url = String(input instanceof Request ? input.url : input);
       if (url.includes('/isigmet')) return new Response('upstream error', { status: 502 });
+      if (url.includes('/cwa')) return new Response('[]', { status: 200 });
       return new Response(JSON.stringify(raw), { status: 200 });
     });
     vi.stubGlobal('fetch', fn);

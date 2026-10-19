@@ -332,7 +332,19 @@ const HAZARD_STYLE: Record<string, { color: string; label: string }> = {
   CONVECTIVE: { color: '#ef4444', label: 'Thunderstorms' },
   ASH: { color: '#a8a29e', label: 'Volcanic ash' },
   TC: { color: '#f472b6', label: 'Tropical cyclone' },
+  PCPN: { color: '#60a5fa', label: 'Heavy precipitation' },
 };
+
+/** Who issued it: "Miami Center" for a CWA, "Oakland Oceanic FIR" for an international SIGMET. */
+function issuerLabel(adv: Advisory): string {
+  if (!adv.region) return '';
+  return adv.type === 'CWA' ? adv.region : `${adv.region} FIR`;
+}
+
+/** "Center weather advisory" spelled out, since few readers know "CWA". */
+function typeLabel(adv: Advisory): string {
+  return adv.type === 'CWA' ? 'Center weather advisory' : adv.type;
+}
 
 function hazardStyle(hazard: string) {
   return HAZARD_STYLE[hazard] || { color: '#e2e8f0', label: hazard };
@@ -395,7 +407,7 @@ function altitudeLabel(low?: number, high?: number): string {
 
 function advisoryPolygon(adv: Advisory, strong: boolean): L.Polygon {
   const style = hazardStyle(adv.hazard);
-  const sigmet = adv.type === 'SIGMET';
+  const sigmet = adv.type === 'SIGMET' || adv.type === 'CWA'; // both drawn solid: short-lived, significant
   const poly = L.polygon(adv.coords, {
     pane: 'hazards',
     color: style.color,
@@ -406,8 +418,8 @@ function advisoryPolygon(adv: Advisory, strong: boolean): L.Polygon {
   });
   const alt = advisoryAltitude(adv);
   poly.bindPopup(
-    `<strong>${esc(adv.type)}: ${esc(advisoryTitle(adv))}</strong>` +
-      (adv.region ? `<br>${esc(adv.region)} FIR` : '') +
+    `<strong>${esc(typeLabel(adv))}: ${esc(advisoryTitle(adv))}</strong>` +
+      (adv.region ? `<br>${esc(issuerLabel(adv))}` : '') +
       (alt ? `<br>${esc(alt)}` : '') +
       (adv.validTo ? `<br>Until ${esc(timeLabel(adv.validTo))}` : '') +
       (adv.raw ? `<br><small style="color:#64748b">${esc(String(adv.raw).replace(/\s+/g, ' ').slice(0, 320))}</small>` : '')
@@ -425,7 +437,7 @@ async function refreshHazards(announce: boolean) {
   hazardLayer.clearLayers();
   for (const adv of list) hazardLayer.addLayer(advisoryPolygon(adv, false));
   if (!map.hasLayer(hazardLayer)) hazardLayer.addTo(map);
-  if (announce && list.length === 0) setHint('No active AIRMETs or SIGMETs', 3500);
+  if (announce && list.length === 0) setHint('No active AIRMETs, SIGMETs or center weather advisories', 3500);
 }
 
 // ---------------------------------------------------------------------------
@@ -619,8 +631,7 @@ export function advisoryAltitude(adv: Advisory): string {
 export function describeAdvisory(adv: Advisory): string {
   const alt = advisoryAltitude(adv);
   const until = adv.validTo ? `until ${timeLabel(adv.validTo)}` : '';
-  const region = adv.region ? `${adv.region} FIR` : '';
-  return [`${adv.type}: ${advisoryTitle(adv)}`, alt, until, region].filter(Boolean).join(', ');
+  return [`${typeLabel(adv)}: ${advisoryTitle(adv)}`, alt, until, issuerLabel(adv)].filter(Boolean).join(', ');
 }
 
 export function describeRoutePirep(p: RawPirep): string | null {
