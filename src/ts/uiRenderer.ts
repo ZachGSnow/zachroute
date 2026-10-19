@@ -908,7 +908,7 @@ async function wireRouteHazards(points: Array<[number, number]>) {
   drawRouteHazards(result);
 
   if (result.advisories.length === 0 && result.pireps.length === 0 && result.cyclones.length === 0) {
-    el.innerHTML = '<div class="route-hazard-ok">✅ No current AIRMETs/SIGMETs, tropical cyclones or notable pilot reports along the route</div>';
+    el.innerHTML = '<div class="route-hazard-ok">✅ No current AIRMETs, SIGMETs, center weather advisories, tropical cyclones or notable pilot reports along the route</div>';
     return;
   }
 
