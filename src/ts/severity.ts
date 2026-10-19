@@ -62,3 +62,59 @@ export function fireSeverity(frpMw: number): Severity {
   if (frpMw >= 30) return 2;
   return 1;
 }
+
+/** The fields of an AIRMET, SIGMET or CWA the ladder looks at. */
+export interface AdvisoryLevelInput {
+  type: string;
+  hazard: string;
+  detail?: string;
+  raw?: string;
+}
+
+/**
+ * AIRMETs warn of moderate conditions (Light for low ceilings and mountain obscuration, which
+ * matter little to airliners); CWAs are Moderate unless they say severe; SIGMETs are Severe by
+ * definition. Thunderstorms that are embedded in cloud, in a line or severe, and volcanic ash
+ * anywhere, are Extreme.
+ */
+export function advisorySeverity(a: AdvisoryLevelInput): Severity {
+  if (a.hazard === 'ASH') return 4;
+  const detail = (a.detail || '').toLowerCase();
+  if (a.type === 'AIRMET') return a.hazard === 'IFR' || a.hazard === 'MTN OBSCN' ? 1 : 2;
+  if (a.type === 'CWA') return /severe/.test(detail) ? 3 : 2;
+  if (a.hazard === 'CONVECTIVE') {
+    const raw = (a.raw || '').toUpperCase();
+    if (/embedded|squall line|severe|line of/.test(detail) || /\bEMBD\b|\bLINE\b|\bSEV\b|TORNADO|\bHAIL\b/.test(raw)) return 4;
+  }
+  return 3;
+}
+
+/** Major strength (Category 3 and up) begins at 178 km/h (96 kt). */
+export const MAJOR_HURRICANE_KMH = 178;
+
+/**
+ * Tropical cyclones by their current class (GDACS: TD, TS, HU/TY): depression Light, storm
+ * Moderate, hurricane or typhoon Severe, and Extreme once it has reached major strength.
+ */
+export function cycloneSeverity(category?: string, peakWindKmh?: number): Severity {
+  const c = (category || '').toUpperCase();
+  if (c === 'HU' || c === 'TY') return peakWindKmh !== undefined && peakWindKmh >= MAJOR_HURRICANE_KMH ? 4 : 3;
+  if (c === 'TS') return 2;
+  if (c === 'TD') return 1;
+  return 2;
+}
+
+const TFR_LEVEL: Record<string, Severity> = {
+  'UAS PUBLIC GATHERING': 1,
+  HAZARDS: 2,
+  'AIR SHOWS/SPORTS': 2,
+  SPECIAL: 2,
+  SECURITY: 3,
+  VIP: 3,
+  'SPACE OPERATIONS': 3,
+};
+
+/** TFRs by how restrictive they are: drones (to 400 ft) Light; hazards, air shows, stadiums Moderate; security, VIP, launches Severe. */
+export function tfrSeverity(type: string): Severity {
+  return TFR_LEVEL[(type || '').toUpperCase()] ?? 2;
+}
