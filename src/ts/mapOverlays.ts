@@ -1,6 +1,7 @@
 import type { Airport, RunwayDetail } from './geoMath';
 import { formatDistance, clockOptions, UNITS_CHANGED } from './units';
 import { stationTemp } from './stationTemp';
+import { gridFor, fetchFreezingGrid, freezingColor, freezingLabel } from './freezingLayer';
 import { bearingBetween, destinationPoint, haversineDistanceLatLon } from './geoMath';
 import { resolveCode } from './searchParser';
 import { pointInPolygon, advisoriesNear } from './hazardGeo';
@@ -60,6 +61,7 @@ function setHint(text: string | null, autoClearMs?: number) {
 const MIN_STATION_ZOOM = 5;
 const MIN_PIREP_ZOOM = 6;
 const MIN_FIRE_ZOOM = 5;
+const MIN_FREEZING_ZOOM = 3;
 
 /** Shows a "zoom in" hint naming whichever zoom-limited layers are on but too far out. */
 function updateZoomHint() {
@@ -69,6 +71,7 @@ function updateZoomHint() {
   if (stationsOn && z < MIN_STATION_ZOOM) needed.push('weather stations');
   if (pirepsOn && z < MIN_PIREP_ZOOM) needed.push('pilot reports');
   if (firesOn && z < MIN_FIRE_ZOOM) needed.push('fires');
+  if (freezingOn && z < MIN_FREEZING_ZOOM) needed.push('the freezing level');
   setHint(needed.length ? `Zoom in to see ${needed.join(' and ')}` : null);
 }
 
@@ -103,6 +106,7 @@ export function initOverlays(m: L.Map) {
       void refreshStations();
       void refreshPireps();
       void refreshFires();
+      void refreshFreezing();
       refreshViewRunways();
     }, 500);
   });
@@ -789,6 +793,102 @@ export function setAerosol(on: boolean) {
   // New passes land through the day, so redraw hourly while the layer is on.
   aerosolTimer = window.setInterval(() => aerosolLayer?.redraw(), 60 * 60 * 1000);
   setHint('Dust and smoke (latest daily pass): yellow is some, red is thick', 5000);
+}
+
+// ---------------------------------------------------------------------------
+// Freezing level (Open-Meteo model, coarse grid over the view, smoothed by the browser)
+// ---------------------------------------------------------------------------
+
+let freezingOn = false;
+let freezingGen = 0;
+let freezingLayer: L.LayerGroup | null = null;
+let freezingTimer: number | undefined;
+
+export function setFreezingLevel(on: boolean) {
+  freezingOn = on;
+  if (!map) return;
+  window.clearInterval(freezingTimer);
+  if (!on) {
+    freezingGen += 1;
+    freezingLayer?.clearLayers();
+    updateZoomHint();
+    return;
+  }
+  setHint('Freezing level in thousands of feet: dark blue is low, near the ground', 5000);
+  void refreshFreezing();
+  // Model values change hourly; the grid cache keeps each point for 30 minutes.
+  freezingTimer = window.setInterval(() => void refreshFreezing(), 30 * 60 * 1000);
+}
+
+/** One canvas pixel per sample, stretched over the grid so the browser blends between them. */
+function freezingImage(values: number[][]): string | null {
+  const rows = values.length;
+  const cols = values[0]?.length || 0;
+  if (!rows || !cols) return null;
+  const canvas = document.createElement('canvas');
+  canvas.width = cols;
+  canvas.height = rows;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+  const img = ctx.createImageData(cols, rows);
+  for (let r = 0; r < rows; r++) {
+    const src = values[rows - 1 - r]; // canvas rows run north to south
+    for (let c = 0; c < cols; c++) {
+      const [R, G, B, A] = freezingColor(src[c]);
+      const i = (r * cols + c) * 4;
+      img.data[i] = R;
+      img.data[i + 1] = G;
+      img.data[i + 2] = B;
+      img.data[i + 3] = Math.round(A * 255);
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+  return canvas.toDataURL();
+}
+
+async function refreshFreezing() {
+  updateZoomHint();
+  if (!map || !freezingOn) return;
+  if (map.getZoom() < MIN_FREEZING_ZOOM) {
+    freezingLayer?.clearLayers();
+    return;
+  }
+  const b = map.getBounds();
+  const grid = gridFor(b.getSouth(), b.getWest(), b.getNorth(), b.getEast());
+  if (!grid) return;
+
+  const gen = ++freezingGen;
+  const values = await fetchFreezingGrid(grid);
+  if (gen !== freezingGen || !map || !freezingOn) return;
+  if (!values.some((row) => row.some(Number.isFinite))) return; // nothing to draw yet: keep what is shown
+
+  if (!freezingLayer) freezingLayer = L.layerGroup().addTo(map);
+  if (!map.hasLayer(freezingLayer)) freezingLayer.addTo(map);
+  freezingLayer.clearLayers();
+
+  const url = freezingImage(values);
+  if (url) {
+    const half = grid.cell / 2;
+    const bounds = L.latLngBounds(
+      [grid.lats[0] - half, grid.lons[0] - half],
+      [grid.lats[grid.lats.length - 1] + half, grid.lons[grid.lons.length - 1] + half]
+    );
+    freezingLayer.addLayer(L.imageOverlay(url, bounds, { pane: 'night', className: 'freezing-image', interactive: false }));
+  }
+  grid.lats.forEach((lat, r) =>
+    grid.lons.forEach((lon, c) => {
+      const label = freezingLabel(values[r][c]);
+      if (!label) return;
+      freezingLayer!.addLayer(
+        L.marker([lat, lon], {
+          icon: L.divIcon({ className: 'freezing-label', html: label, iconSize: [24, 14], iconAnchor: [12, 7] }),
+          interactive: false,
+          keyboard: false,
+          pane: 'night',
+        })
+      );
+    })
+  );
 }
 
 // ---------------------------------------------------------------------------
