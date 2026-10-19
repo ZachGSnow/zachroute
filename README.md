@@ -103,6 +103,9 @@ distance ticks, and runway outlines with runway numbers when zoomed in.
 
 **Map legend**: a panel at the bottom left explains each layer that is switched on (colors,
 scales and marks, in your units). On a phone it starts as a small "Legend" chip; tap it to open.
+Hazards share one severity scale: yellow Light, orange Moderate, red Severe, magenta Extreme. Pilot
+reports are colored by how bad the turbulence or icing was (their shape says which), and fires by
+their radiative power.
 
 **Phone layout**: the results panel is a bottom sheet. Drag its handle between a one-line peek
 (map almost full screen), half (the default for a new result) and full; a tap toggles peek and half.

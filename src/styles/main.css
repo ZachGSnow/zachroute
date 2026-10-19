@@ -728,6 +728,51 @@ body {
   color: #fcd34d;
 }
 
+/* Pilot report markers: shape is the kind, color the severity */
+.pirep-icon {
+  background: none;
+  border: none;
+}
+
+.pirep-mark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--s);
+  height: var(--s);
+  translate: -50% -50%;
+  background: var(--c);
+  border: 1.5px solid #0f172a;
+}
+
+.pirep-dot {
+  border-radius: 50%;
+}
+
+.pirep-diamond {
+  width: calc(var(--s) * 0.82);
+  height: calc(var(--s) * 0.82);
+  rotate: 45deg;
+}
+
+.pirep-square {
+  border-radius: 2px;
+}
+
+/* Severity badge in cards and lists: Light, Moderate, Severe, Extreme */
+.sev-badge {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--c);
+  color: #0f172a;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.5;
+  vertical-align: 1px;
+}
+
 /* ---------- v2.1: wind arrows, runway numbers, approach ticks, route hazards ---------- */
 
 .wx-station {
@@ -991,6 +1036,19 @@ body {
 
 .lg-dot {
   border-radius: 50%;
+  background: var(--c);
+}
+
+.lg-diamond {
+  width: 8px;
+  height: 8px;
+  margin: 0 1px;
+  rotate: 45deg;
+  background: var(--c);
+}
+
+.lg-square {
+  border-radius: 2px;
   background: var(--c);
 }
 

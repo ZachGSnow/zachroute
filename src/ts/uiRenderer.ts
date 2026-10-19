@@ -25,6 +25,7 @@ import { fetchFires, boxAround, summarizeFiresNear, AIRPORT_FIRE_RADIUS_MI } fro
 import { fetchCruiseWind } from './windsAloft';
 import { fetchFreezingLevel, describeFreezingLevel, routeFreezingSummary } from './freezingLevel';
 import { tfrChips, describeTfr } from './tfr';
+import { severityBadge } from './severityBadge';
 import { fetchForecasterNotes, forecasterNotesLabel } from './forecasterNotes';
 import { fetchAirportPhoto, englishWikiTitle, airportWikiLink } from './wikiPhoto';
 import { carriersFor, carrierNames, carrierDataNote } from './carriers';
@@ -585,7 +586,7 @@ async function fillPireps(cardEl: HTMLElement, airport: Airport) {
   const lines = await fetchPirepLines(airport);
   if (!el.isConnected || lines.length === 0) return;
   const rows = lines
-    .map((l) => `<div class="detail-row${l.severe ? ' pirep-severe' : ''}"><span>${l.severe ? '⚠️ ' : ''}${l.text}</span></div>`)
+    .map((l) => `<div class="detail-row${l.severe ? ' pirep-severe' : ''}"><span>${l.severity ? severityBadge(l.severity) : ''}${l.text}</span></div>`)
     .join('');
   el.innerHTML = expandableSection(`Pilot reports (${lines.length})`, rows);
   wireExpandables(el);
