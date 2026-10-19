@@ -18,6 +18,7 @@ structure left untouched. They contain only public aviation, weather and geograp
 | `open-meteo-aq-del.json`, `-pek.json`, `-syd.json` | air-quality-api.open-meteo.com current and hourly air quality for Delhi (unhealthy, hazy), Beijing (hazy, worse later) and Sydney (good), 18:00 UTC |
 | `open-meteo-250hpa-7pts.json` | api.open-meteo.com winds at 250 hPa for seven points between ORD and DEN |
 | `wikipedia-search-ord.json`, `wikipedia-summary-ord.json` | Wikipedia search API and REST page summary |
+| `wikipedia-search-her-*.json`, `wikipedia-summary-her*.json`, `wikipedia-summary-lhr.json` | The same for Heraklion (HER), captured 2026-10-19: searches by code and by name, the "Her" disambiguation page, the airport's article, and Heathrow's |
 | `ourairports-*.csv` | OurAirports CSVs, header plus rows for KORD, KDEN, KMDW and EGLL |
 | `openflights-routes.dat` | OpenFlights `routes.dat`, a few rows each for ORD, DEN and LHR |
 | `bts-ontime-sample.csv` | US DOT BTS on-time performance, July 2026, header plus ORD rows |

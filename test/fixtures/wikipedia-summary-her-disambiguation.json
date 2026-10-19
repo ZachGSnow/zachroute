@@ -1,0 +1,39 @@
+{
+  "type": "disambiguation",
+  "title": "Her",
+  "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Her</span></span>",
+  "namespace": {
+    "id": 0,
+    "text": ""
+  },
+  "wikibase_item": "Q1428920",
+  "titles": {
+    "canonical": "Her",
+    "normalized": "Her",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Her</span></span>"
+  },
+  "pageid": 839716,
+  "lang": "en",
+  "dir": "ltr",
+  "revision": "1378824145",
+  "tid": "7c83cd48-c167-11f1-9306-793da593865d",
+  "timestamp": "2026-10-06T09:22:44Z",
+  "description": "Topics referred to by the same term",
+  "description_source": "local",
+  "content_urls": {
+    "desktop": {
+      "page": "https://en.wikipedia.org/wiki/Her",
+      "revisions": "https://en.wikipedia.org/wiki/Her?action=history",
+      "edit": "https://en.wikipedia.org/wiki/Her?action=edit",
+      "talk": "https://en.wikipedia.org/wiki/Talk:Her"
+    },
+    "mobile": {
+      "page": "https://en.wikipedia.org/wiki/Her",
+      "revisions": "https://en.wikipedia.org/wiki/Special:History/Her",
+      "edit": "https://en.wikipedia.org/wiki/Her?action=edit",
+      "talk": "https://en.wikipedia.org/wiki/Talk:Her"
+    }
+  },
+  "extract": "Her is the objective and possessive form of the English-language feminine pronoun she.",
+  "extract_html": "<p><b>Her</b> is the objective and possessive form of the English-language feminine pronoun she.</p>"
+}

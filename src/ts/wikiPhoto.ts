@@ -10,6 +10,20 @@ function titleFromLink(link?: string): string | null {
   return m ? m[1] : null;
 }
 
+/**
+ * Decoded article title when the link is to English Wikipedia (the only one /api/lore reads),
+ * else null. Same rule as titleFromWikipediaLink in shared/wikiLore.js.
+ */
+export function englishWikiTitle(link?: string): string | null {
+  const m = link?.match(/^https?:\/\/en\.(?:m\.)?wikipedia\.org\/wiki\/([^?#]+)/i);
+  if (!m) return null;
+  try {
+    return decodeURIComponent(m[1]).replace(/_/g, ' ').trim() || null;
+  } catch {
+    return null;
+  }
+}
+
 function readCache(title: string): string | null | undefined {
   try {
     const v = localStorage.getItem(PHOTO_KEY(title));

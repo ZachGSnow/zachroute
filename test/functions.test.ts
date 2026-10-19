@@ -9,6 +9,25 @@ import { onRequest as metarBbox } from '../functions/api/metar-bbox';
 import { onRequest as airsigmet, readQualifier, unwrapRing } from '../functions/api/airsigmet';
 import { onRequest as faaStatus } from '../functions/api/faa-status';
 import { onRequest as lore } from '../functions/api/lore';
+import { summaryMatchesAirport, titleFromWikipediaLink } from '../shared/wikiLore.js';
+import { englishWikiTitle } from '../src/ts/wikiPhoto';
+
+/** [URL substring, status, body]: like stubFetch, but with a status per route. First match wins. */
+type Route = [string, number, unknown];
+function routeFetch(routes: Route[]) {
+  const calls: string[] = [];
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input instanceof Request ? input.url : input);
+      calls.push(url);
+      const hit = routes.find(([needle]) => url.includes(needle));
+      if (!hit) throw new Error(`Unexpected fetch in test: ${url}`);
+      return new Response(typeof hit[2] === 'string' ? hit[2] : JSON.stringify(hit[2]), { status: hit[1] });
+    })
+  );
+  return { calls };
+}
 
 const json = async (res: Response) => JSON.parse(await res.text());
 
@@ -248,16 +267,122 @@ describe('FAA NAS status XML -> /api/faa-status', () => {
   });
 });
 
-describe('Wikipedia search + summary -> /api/lore', () => {
-  it('returns the summary of the first search hit', async () => {
+describe('Wikipedia article lookup -> /api/lore', () => {
+  // Real responses for Heraklion (HER), whose code is also an English word. The title OurAirports
+  // links to no longer exists on Wikipedia (404), the "HER airport" search ranks the pronoun's
+  // disambiguation page first, and a search by the airport's name finds the real article.
+  const HER = '&name=Heraklion%20International%20Nikos%20Kazantzakis%20Airport&lat=35.3397&lon=25.1803';
+  const herRoutes = (): Route[] => [
+    ['summary/Heraklion_International_Airport_Nikos_Kazantzakis', 404, { type: 'Internal error' }],
+    ['summary/Heraklion_International_Airport_%22Nikos_Kazantzakis%22', 200, jsonFixture('wikipedia-summary-her.json')],
+    ['summary/Her', 200, jsonFixture('wikipedia-summary-her-disambiguation.json')],
+    ['summary/', 404, { type: 'Internal error' }],
+    ['srsearch=Heraklion', 200, jsonFixture('wikipedia-search-her-name.json')],
+    ['srsearch=HER%20airport', 200, jsonFixture('wikipedia-search-her-code.json')],
+  ];
+
+  it('finds the airport by name when the linked article is missing (HER is not "Her")', async () => {
+    const { calls } = routeFetch(herRoutes());
+    const res = await lore(
+      pagesContext(`https://x/api/lore?iata=HER&title=Heraklion%20International%20Airport%20Nikos%20Kazantzakis${HER}`)
+    );
+    const out = await json(res);
+    expect(res.status).toBe(200);
+    expect(out.iata).toBe('HER');
+    expect(out.title).toBe(jsonFixture('wikipedia-summary-her.json').title);
+    expect(out.extract).not.toMatch(/pronoun/);
+    expect(calls.some((u) => u.includes('srsearch=HER%20airport'))).toBe(false);
+  });
+
+  it('uses the linked article directly when it exists, without searching', async () => {
     const summary = jsonFixture('wikipedia-summary-ord.json');
-    stubFetch([
-      ['w/api.php', jsonFixture('wikipedia-search-ord.json')],
-      ['rest_v1/page/summary', summary],
-    ]);
-    const out = await json(await lore(pagesContext('https://x/api/lore?iata=ORD')));
+    const { calls } = routeFetch([["summary/O'Hare_International_Airport", 200, summary]]);
+    const out = await json(
+      await lore(pagesContext("https://x/api/lore?iata=ORD&title=O'Hare%20International%20Airport&lat=41.9786&lon=-87.9048"))
+    );
     expect(out.title).toBe(summary.title);
     expect(out.extract).toBe(summary.extract);
     expect(out.thumbnail).toBe(summary.thumbnail.source);
+    expect(calls).toHaveLength(1);
+  });
+
+  it('checks search hits against the airport name', async () => {
+    const summary = jsonFixture('wikipedia-summary-ord.json');
+    routeFetch([
+      ['w/api.php', 200, jsonFixture('wikipedia-search-ord.json')],
+      ['rest_v1/page/summary', 200, summary],
+    ]);
+    const out = await json(await lore(pagesContext("https://x/api/lore?iata=ORD&name=Chicago%20O'Hare%20International%20Airport")));
+    expect(out.title).toBe(summary.title);
+  });
+
+  it('returns 404 rather than an unrelated article when nothing checks out', async () => {
+    routeFetch(herRoutes());
+    const res = await lore(pagesContext('https://x/api/lore?iata=HER'));
+    expect(res.status).toBe(404);
+    expect((await json(res)).extract).toBeUndefined();
+  });
+
+  it('reports a Wikipedia rate limit as a retryable 503', async () => {
+    routeFetch([['w/api.php', 429, 'You are making too many requests to the API.']]);
+    const res = await lore(pagesContext(`https://x/api/lore?iata=HER${HER}`));
+    expect(res.status).toBe(503);
+    expect(res.headers.get('Retry-After')).toBe('60');
+  });
+
+  it('keys the KV cache on every input, so a request only fills the entry it would read', async () => {
+    routeFetch(herRoutes());
+    const store = new Map<string, string>();
+    const kv = {
+      get: async (k: string) => (store.has(k) ? JSON.parse(store.get(k)!) : null),
+      put: async (k: string, v: string) => void store.set(k, v),
+    };
+    const ctx = (q: string) => ({ request: new Request(`https://x/api/lore?${q}`), env: { LORE_KV: kv } }) as any;
+    await lore(ctx(`iata=HER${HER}`));
+    expect([...store.keys()]).toEqual(['lore:v2:q:HER:Heraklion International Nikos Kazantzakis Airport:35.34,25.18']);
+    const again = await json(await lore(ctx(`iata=HER${HER}`)));
+    expect(again.title).toBe(jsonFixture('wikipedia-summary-her.json').title);
+    expect((await lore(ctx('iata=HER'))).status).toBe(404); // different inputs, no cache hit
+  });
+});
+
+describe('shared/wikiLore article checks', () => {
+  const her = { iata: 'HER', name: 'Heraklion International Nikos Kazantzakis Airport', lat: 35.3397, lon: 25.1803 };
+
+  it('rejects a disambiguation page', () => {
+    expect(summaryMatchesAirport(jsonFixture('wikipedia-summary-her-disambiguation.json'), her)).toBe(false);
+  });
+
+  it('rejects an airport article far from the airport', () => {
+    const lhr = jsonFixture('wikipedia-summary-lhr.json');
+    expect(summaryMatchesAirport(lhr, her)).toBe(false);
+    expect(summaryMatchesAirport(lhr, { iata: 'LHR', name: 'London Heathrow Airport', lat: 51.4706, lon: -0.4619 })).toBe(true);
+  });
+
+  it('rejects list pages and, without coordinates, hits that share nothing with the name', () => {
+    const base = { type: 'standard', extract: 'An airport serving the town.', description: 'Airport in Wisconsin' };
+    const q = { iata: 'BCK', name: 'Bolwarra Airport' };
+    expect(summaryMatchesAirport({ ...base, title: 'List of airports in Kiribati' }, q)).toBe(false);
+    expect(summaryMatchesAirport({ ...base, title: 'Black River Falls Area Airport' }, q)).toBe(false);
+    expect(summaryMatchesAirport({ ...base, title: 'Bolwarra Airport' }, q)).toBe(true);
+    expect(summaryMatchesAirport({ ...base, title: 'Some Field', extract: 'An airport (IATA: BCK) in Queensland.' }, q)).toBe(true);
+  });
+
+  it('reads only English Wikipedia links, the same way on server and client', () => {
+    const links = [
+      'https://en.wikipedia.org/wiki/Heraklion_International_Airport_%22Nikos_Kazantzakis%22',
+      'https://en.m.wikipedia.org/wiki/Manchester_Airport',
+      'https://de.wikipedia.org/wiki/Flughafen_Bolzano',
+      'https://www.wikidata.org/wiki/Q123',
+      undefined,
+    ];
+    expect(links.map((l) => titleFromWikipediaLink(l))).toEqual([
+      'Heraklion International Airport "Nikos Kazantzakis"',
+      'Manchester Airport',
+      null,
+      null,
+      null,
+    ]);
+    expect(links.map((l) => englishWikiTitle(l))).toEqual(links.map((l) => titleFromWikipediaLink(l)));
   });
 });

@@ -4,6 +4,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { resolveAirportLore, titleFromWikipediaLink } from '../shared/wikiLore.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -17,28 +18,27 @@ const SEED_AIRPORTS = [HUB, ...(CONNECTIONS[HUB] || [])];
 const PKG = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
 const USER_AGENT = `ZachRoute/${PKG.version} (${PKG.homepage})`;
 
+// Airport details (linked article, name, position) from the ETL output when it exists, so the
+// lookup can use the linked article and check search hits. Without it only the code is searched.
+const AIRPORTS_PATH = path.join(ROOT, 'public', 'data', 'airports.json');
+const AIRPORTS = fs.existsSync(AIRPORTS_PATH) ? JSON.parse(fs.readFileSync(AIRPORTS_PATH, 'utf8')) : {};
+
+function airportFor(code) {
+  let a = AIRPORTS[code];
+  if (typeof a === 'string') a = AIRPORTS[a];
+  return a && typeof a === 'object' ? a : null;
+}
+
 async function fetchLore(iata) {
+  const a = airportFor(iata);
   try {
-    const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(iata + ' airport')}&format=json&origin=*`;
-    const searchRes = await fetch(searchUrl, {
-      headers: { 'User-Agent': USER_AGENT }
-    });
-    const searchJson = await searchRes.json();
-    const pageTitle = searchJson.query?.search?.[0]?.title;
-    if (!pageTitle) return null;
-
-    const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(pageTitle)}`;
-    const summaryRes = await fetch(summaryUrl, {
-      headers: {
-        'Accept': 'application/json',
-        'User-Agent': USER_AGENT
-      }
-    });
-    if (!summaryRes.ok) return null;
-    const summary = await summaryRes.json();
-
+    const found = await resolveAirportLore(
+      { iata, title: titleFromWikipediaLink(a?.wikipediaLink), name: a?.name, lat: a?.lat, lon: a?.lon },
+      { userAgent: USER_AGENT }
+    );
+    if (!found) return null;
     return {
-      lore: summary.extract || undefined,
+      lore: found.extract || undefined,
       type: 'regional',
       primaryOperator: undefined
     };

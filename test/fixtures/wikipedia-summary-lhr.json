@@ -1,0 +1,53 @@
+{
+  "type": "standard",
+  "title": "Heathrow Airport",
+  "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Heathrow Airport</span></span>",
+  "namespace": {
+    "id": 0,
+    "text": ""
+  },
+  "wikibase_item": "Q8691",
+  "titles": {
+    "canonical": "Heathrow_Airport",
+    "normalized": "Heathrow Airport",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Heathrow Airport</span></span>"
+  },
+  "pageid": 13595,
+  "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0d/London_-_Heathrow_%28LHR_-_EGLL%29_AN1572653.jpg/330px-London_-_Heathrow_%28LHR_-_EGLL%29_AN1572653.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 220
+  },
+  "originalimage": {
+    "source": "https://upload.wikimedia.org/wikipedia/commons/0/0d/London_-_Heathrow_%28LHR_-_EGLL%29_AN1572653.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "width": 1024,
+    "height": 683
+  },
+  "lang": "en",
+  "dir": "ltr",
+  "revision": "1381006820",
+  "tid": "2f651885-cbb1-11f1-8701-5589aac383fc",
+  "timestamp": "2026-10-19T11:35:29Z",
+  "description": "Main airport serving London, England",
+  "description_source": "local",
+  "coordinates": {
+    "lat": 51.4775,
+    "lon": -0.46138889
+  },
+  "content_urls": {
+    "desktop": {
+      "page": "https://en.wikipedia.org/wiki/Heathrow_Airport",
+      "revisions": "https://en.wikipedia.org/wiki/Heathrow_Airport?action=history",
+      "edit": "https://en.wikipedia.org/wiki/Heathrow_Airport?action=edit",
+      "talk": "https://en.wikipedia.org/wiki/Talk:Heathrow_Airport"
+    },
+    "mobile": {
+      "page": "https://en.wikipedia.org/wiki/Heathrow_Airport",
+      "revisions": "https://en.wikipedia.org/wiki/Special:History/Heathrow_Airport",
+      "edit": "https://en.wikipedia.org/wiki/Heathrow_Airport?action=edit",
+      "talk": "https://en.wikipedia.org/wiki/Talk:Heathrow_Airport"
+    }
+  },
+  "extract": "London Heathrow Airport \u2013 named London Airport until 1966 \u2013 is the primary and largest international airport serving London, the capital of England and the United Kingdom. It is the largest of the six international airports in the London airport system.",
+  "extract_html": "<p><b>London Heathrow Airport</b> \u2013 named <i>London Airport</i> until 1966 \u2013 is the primary and largest international airport serving London, the capital of England and the United Kingdom. It is the largest of the six international airports in the London airport system.</p>"
+}
