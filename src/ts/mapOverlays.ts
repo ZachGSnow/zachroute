@@ -1,6 +1,7 @@
 import type { Airport, RunwayDetail } from './geoMath';
 import { formatDistance, clockOptions, UNITS_CHANGED } from './units';
 import { stationTemp } from './stationTemp';
+import { fetchTfrs, tfrsCrossed, tfrTypeLabel, tfrPlace, type Tfr } from './tfr';
 import { gridFor, fetchFreezingGrid, freezingColor, freezingLabel } from './freezingLayer';
 import { satelliteTileUrl, satellitesForRange, satelliteCovers, cloudPixel, viewCos, viewWeight, SATELLITE_MAX_NATIVE_ZOOM, type Satellite } from './satelliteTiles';
 import { bearingBetween, destinationPoint, haversineDistanceLatLon } from './geoMath';
@@ -584,6 +585,7 @@ export interface RouteHazardResult {
   advisories: Advisory[];
   pireps: RawPirep[];
   cyclones: StormOnRoute[];
+  tfrs: Tfr[];
 }
 
 const ROUTE_PIREP_RADIUS_MI = 50;
@@ -593,15 +595,16 @@ const ROUTE_PIREP_RADIUS_MI = 50;
  * within ~50 mi of it. `points` is the route sampled densely as [lat, lon].
  */
 export async function analyzeRoute(points: Array<[number, number]>): Promise<RouteHazardResult> {
-  if (points.length === 0) return { advisories: [], pireps: [], cyclones: [] };
+  if (points.length === 0) return { advisories: [], pireps: [], cyclones: [], tfrs: [] };
 
   const lats = points.map((p) => p[0]);
   const lons = points.map((p) => p[1]);
   const pad = 1;
-  const [advisories, boxReports, storms] = await Promise.all([
+  const [advisories, boxReports, storms, tfrs] = await Promise.all([
     fetchAdvisories(),
     fetchPirepBox(Math.min(...lats) - pad, Math.min(...lons) - pad, Math.max(...lats) + pad, Math.max(...lons) + pad),
     fetchCyclones(),
+    fetchTfrs(),
   ]);
 
   const crossed = advisories.filter((adv) => points.some(([lat, lon]) => pointInPolygon(lat, lon, adv.coords)));
@@ -611,7 +614,7 @@ export async function analyzeRoute(points: Array<[number, number]>): Promise<Rou
     return points.some(([lat, lon]) => haversineDistanceLatLon(lat, lon, p.lat, p.lon) <= ROUTE_PIREP_RADIUS_MI);
   });
 
-  return { advisories: crossed, pireps: nearby, cyclones: stormsAlongRoute(points, storms) };
+  return { advisories: crossed, pireps: nearby, cyclones: stormsAlongRoute(points, storms), tfrs: tfrsCrossed(points, tfrs) };
 }
 
 const ASH_RADIUS_MI = 100;
@@ -657,6 +660,56 @@ export function drawRouteHazards(result: RouteHazardResult) {
     if (m) routeHazardLayer.addLayer(m);
   }
   for (const hit of result.cyclones) for (const layer of stormLayers(hit.storm, true)) routeHazardLayer.addLayer(layer);
+  for (const t of result.tfrs) for (const poly of tfrPolygons(t, true)) routeHazardLayer.addLayer(poly);
+}
+
+// ---------------------------------------------------------------------------
+// US temporary flight restrictions (FAA)
+// ---------------------------------------------------------------------------
+
+const TFR_COLOR = '#f43f5e';
+let tfrLayer: L.LayerGroup | null = null;
+let tfrsOn = false;
+let tfrTimer: number | undefined;
+
+function tfrPolygons(t: Tfr, strong: boolean): L.Polygon[] {
+  return t.rings.map((ring) => {
+    const poly = L.polygon(ring, {
+      pane: 'hazards',
+      color: TFR_COLOR,
+      weight: strong ? 3 : 2,
+      fillColor: TFR_COLOR,
+      fillOpacity: strong ? 0.22 : 0.12,
+    });
+    poly.bindPopup(
+      `<strong>Flight restriction: ${esc(tfrTypeLabel(t.type))}</strong><br>${esc(tfrPlace(t.description))}` +
+        `<br><a href="${esc(t.url)}" target="_blank" rel="noopener">FAA details (altitudes, times)</a>`
+    );
+    return poly;
+  });
+}
+
+export function setTfrs(on: boolean) {
+  tfrsOn = on;
+  window.clearInterval(tfrTimer);
+  if (!map) return;
+  if (!on) {
+    tfrLayer?.clearLayers();
+    return;
+  }
+  void refreshTfrs(true);
+  tfrTimer = window.setInterval(() => void refreshTfrs(false), 10 * 60 * 1000);
+}
+
+async function refreshTfrs(announce: boolean) {
+  if (!map || !tfrsOn) return;
+  const list = await fetchTfrs();
+  if (!map || !tfrsOn) return;
+  if (!tfrLayer) tfrLayer = L.layerGroup();
+  tfrLayer.clearLayers();
+  for (const t of list) for (const poly of tfrPolygons(t, false)) tfrLayer.addLayer(poly);
+  if (!map.hasLayer(tfrLayer)) tfrLayer.addTo(map);
+  if (announce) setHint(list.length ? 'US flight restrictions (TFRs): most reach only a few thousand feet' : 'No active US flight restrictions', 4000);
 }
 
 // ---------------------------------------------------------------------------

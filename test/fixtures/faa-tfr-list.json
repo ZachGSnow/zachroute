@@ -1,0 +1,26 @@
+[
+  {
+    "notam_id": "6/9169",
+    "type": "SECURITY",
+    "facility": "ZDC",
+    "state": "NC",
+    "description": "RALEIGH, NC, Thursday, October 15, 2026 through Sunday, October 25, 2026 Local",
+    "creation_date": "10/13/2026"
+  },
+  {
+    "notam_id": "6/4348",
+    "type": "SECURITY",
+    "facility": "ZMP",
+    "state": "ND",
+    "description": "GRAND FORKS AFB, ND, Sunday, March 8, 2026 through Sunday, November 1, 2026 Local",
+    "creation_date": "03/05/2026"
+  },
+  {
+    "notam_id": "9/2934",
+    "type": "VIP",
+    "facility": "ZFW",
+    "state": "TX",
+    "description": "DALLAS, TX",
+    "creation_date": "10/08/2015"
+  }
+]

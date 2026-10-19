@@ -80,6 +80,7 @@ trims the response to what the client renders, and caches it in the `LORE_KV` na
 | `/api/faa-status` | FAA NAS status XML (closures ignored: the feed mixes partial NOTAM closures with real ones) | 5 min |
 | `/api/cyclones` | GDACS event list plus one geometry request per current tropical cyclone, trimmed to position, track and a thinned forecast cone | 30 min |
 | `/api/fires?bbox=` | NASA FIRMS MODIS global 24-hour CSV (about 1 MB, cached at the Cloudflare edge); scanned line by line keeping only the rectangle and confidence >= 50, so it stays within a function's CPU budget | 30 min |
+| `/api/tfr` | FAA TFR map service (shapes) joined with the FAA TFR list (only active TFRs; several shapes of one TFR merged) | 10 min |
 | `/api/lore?iata=&title=&name=&lat=&lon=` | Wikipedia page summary: the article Wikidata or OurAirports links to, else a search by name, then by code, keeping only a hit that is an airport article near the airport (`shared/wikiLore.js`); 404 when none is | 7 days |
 
 Upstream failures return `{available: false}` or an empty list, and the card simply omits that

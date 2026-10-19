@@ -58,8 +58,8 @@ companion to a FlightWall display: see a plane overhead, look up where it is goi
   next 12 hours.
 - Satellite fire and heat detections within 50 miles in the last 24 hours, with the most intense
   one's distance and direction.
-- US only: FAA ground stops, ground delay programs and departure/arrival delays, and active
-  National Weather Service alerts.
+- US only: FAA ground stops, ground delay programs and departure/arrival delays, active
+  National Weather Service alerts, and temporary flight restrictions (TFRs) within 30 miles.
 
 **Airports near me**: the location button lists the 5 closest airports with scheduled-service codes,
 with distance, direction and current flight category, and shows them on the map. The position is
@@ -82,6 +82,8 @@ used once and not stored; denying permission just shows a message.
   advisories (short-notice warnings from an air traffic control center, valid up to 2 hours). Volcanic ash gets its
   own warning at the top, since flights avoid it at every altitude.
 - Tropical cyclones the route passes within 150 miles of, or through the forecast cone of.
+- US temporary flight restrictions the route crosses, with a link to the FAA's details. Most reach
+  only a few thousand feet, so they matter near the airports rather than at cruise.
 - Pilot reports of turbulence or icing near the route.
 
 **Map layers** (settings menu): nonstop connections, airport size layers, weather stations
@@ -89,7 +91,7 @@ used once and not stored; denying permission just shows a message.
 marked where it is at or below freezing and where temperature and dewpoint are close enough for
 fog), the forecast freezing level (shaded dark blue where it is low, with values in thousands of
 feet; from zoom 3), pilot reports, weather hazards,
-tropical cyclones (track, forecast track and uncertainty cone), fires detected by satellite in the
+tropical cyclones (track, forecast track and uncertainty cone), US flight restrictions (TFRs), fires detected by satellite in the
 last 24 hours, dust and smoke from space (the latest daily pass), satellite clouds (infrared, the newest
 image, every 10 minutes: white is cloud, color is cold storm tops; the Americas, the Pacific, Asia
 and Australia, with no coverage of Europe, Africa or the Middle East in this source), day/night shading, approach
@@ -218,6 +220,7 @@ can add on top of the source's age.
 | AIRMETs, SIGMETs, international SIGMETs, center weather advisories | Aviation Weather Center | AIRMETs every 6 hours; SIGMETs when issued, valid up to 4 hours (6 for ash and cyclones); CWAs when issued, valid up to 2 hours | Up to 9 min; the map layer redraws every 5 min | Public domain (US government) |
 | Delay programs (US) | [FAA NAS Status](https://nasstatus.faa.gov) | Continuously | Up to 10 min | Public domain (US government) |
 | Weather alerts (US) | [National Weather Service](https://www.weather.gov) | Real time | Up to 5 min | Public domain (US government) |
+| Temporary flight restrictions (US) | [FAA TFR list and map service](https://tfr.faa.gov) | As issued | Up to 15 min | Public domain (US government) |
 | Tropical cyclones (from NHC, JTWC and other agencies) | [GDACS](https://www.gdacs.org), the UN / European Commission Global Disaster Alert and Coordination System | Each storm's advisory every 6 hours, republished by GDACS 1-6 hours later (storms were 5-14 hours past their advisory time when measured) | Up to 40 min | No published license; GDACS provides its data as is, for information only (credited in the app) |
 | Air quality (Copernicus CAMS models) | [Open-Meteo](https://open-meteo.com) | Hourly model values from model runs twice a day: estimates, not station measurements | Up to 30 min | CC BY 4.0, free for non-commercial use; contains Copernicus Atmosphere Monitoring Service information |
 | Winds aloft and freezing level | Open-Meteo | Hourly model values (the freezing level on the airport card every 15 minutes) | Up to 15 min (30 min for the freezing level map layer) | CC BY 4.0, free for non-commercial use |

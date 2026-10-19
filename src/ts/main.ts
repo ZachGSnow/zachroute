@@ -3,7 +3,7 @@ import { formatDistance, getDistanceUnit, getClockFormat, getWeatherUnits, setDi
 import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
 import { haversineDistance } from './geoMath';
-import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, highlightRunway } from './mapOverlays';
+import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, highlightRunway } from './mapOverlays';
 import { parseQuery, loadAirports, suggest, type SearchIntent } from './searchParser';
 import { createSuggestList, type SuggestItem } from './suggestList';
 import { loadRecent, addRecent, clearRecent, loadFavorites, FAVORITES_CHANGED } from './history';
@@ -452,6 +452,9 @@ async function init() {
   const cycloneToggle = document.getElementById('cyclones-toggle') as HTMLInputElement | null;
   const CYCLONE_KEY = 'zachroute:show-cyclones';
   restoreAirportToggle(cycloneToggle, CYCLONE_KEY, setCyclones);
+  const tfrToggle = document.getElementById('tfr-toggle') as HTMLInputElement | null;
+  const TFR_KEY = 'zachroute:show-tfrs';
+  restoreAirportToggle(tfrToggle, TFR_KEY, setTfrs);
   const fireToggle = document.getElementById('fires-toggle') as HTMLInputElement | null;
   const FIRE_KEY = 'zachroute:show-fires';
   restoreAirportToggle(fireToggle, FIRE_KEY, setFires);
@@ -506,6 +509,7 @@ async function init() {
   wireOverlayToggle(nightToggle, NIGHT_KEY, setDayNight);
   wireOverlayToggle(pirepToggle, PIREP_KEY, setPireps);
   wireOverlayToggle(cycloneToggle, CYCLONE_KEY, setCyclones);
+  wireOverlayToggle(tfrToggle, TFR_KEY, setTfrs);
   wireOverlayToggle(fireToggle, FIRE_KEY, setFires);
   wireOverlayToggle(aerosolToggle, AEROSOL_KEY, setAerosol);
   wireOverlayToggle(freezingToggle, FREEZING_KEY, setFreezingLevel);
