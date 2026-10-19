@@ -35,6 +35,8 @@ export interface Cyclone {
   /** Forecast uncertainty cone as [lat, lon], longitudes kept continuous across the antimeridian. */
   cone?: [number, number][];
   report?: string;
+  /** Strongest wind so far, km/h (GDACS). */
+  peakWindKmh?: number;
 }
 
 const CACHE_KEY = 'cyclones:v1';
@@ -98,6 +100,17 @@ function toLatLonRing(ring: number[][], maxPoints: number): [number, number][] {
 
 const near = (a: number[], b: number[]) => Math.abs(a[0] - b[0]) < 0.05 && Math.abs(a[1] - b[1]) < 0.05;
 
+/** Strongest wind the storm has reached so far, km/h, from GDACS's severity data. */
+export function peakWind(severity: any): number | undefined {
+  const v = Number(severity?.severity);
+  if (!Number.isFinite(v) || v <= 0) return undefined;
+  const unit = String(severity?.severityunit || '').toLowerCase();
+  if (unit === 'km/h') return Math.round(v);
+  if (unit === 'kt' || unit === 'knots') return Math.round(v * 1.852);
+  if (unit === 'mph') return Math.round(v * 1.609344);
+  return undefined;
+}
+
 /** One storm from its event-list entry and its GDACS geometry collection. */
 export function parseStorm(event: any, geometry: any): Cyclone {
   const p = event.properties;
@@ -137,6 +150,7 @@ export function parseStorm(event: any, geometry: any): Cyclone {
     track,
     cone: cone && cone.length >= 3 ? cone : undefined,
     report: p.url?.report || undefined,
+    peakWindKmh: peakWind(p.severitydata),
   };
 }
 

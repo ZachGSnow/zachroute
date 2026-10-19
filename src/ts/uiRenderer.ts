@@ -26,6 +26,7 @@ import { fetchCruiseWind } from './windsAloft';
 import { fetchFreezingLevel, describeFreezingLevel, routeFreezingSummary } from './freezingLevel';
 import { tfrChips, describeTfr } from './tfr';
 import { severityBadge } from './severityBadge';
+import { advisorySeverity, cycloneSeverity, tfrSeverity, chipLevel } from './severity';
 import { fetchForecasterNotes, forecasterNotesLabel } from './forecasterNotes';
 import { fetchAirportPhoto, englishWikiTitle, airportWikiLink } from './wikiPhoto';
 import { carriersFor, carrierNames, carrierDataNote } from './carriers';
@@ -531,7 +532,8 @@ async function cycloneChips(airport: Airport): Promise<Chip[]> {
     const where = miles < 30 ? 'over the airport' : `${formatDistance(miles)} ${compassPoint(bearing)}`;
     const path = inCone && miles >= 30 ? ', airport in forecast path' : '';
     return {
-      level: miles <= 150 || (inCone && storm.category === 'HU') ? 'alert' : 'warn',
+      // Close or in its path: as urgent as the storm is strong. Farther off: a caution.
+      level: miles <= 150 || inCone ? chipLevel(cycloneSeverity(storm.category, storm.peakWindKmh)) : 'warn',
       text: `🌀 ${stormTitle(storm)} ${where}${path}`,
       title: `As of ${new Date(storm.asOf).toUTCString().replace(':00 GMT', ' UTC')}${storm.source ? `, ${storm.source} via GDACS` : ''}`,
     };
@@ -942,20 +944,21 @@ async function wireRouteHazards(points: Array<[number, number]>) {
     const rows = result.cyclones
       .map(({ storm, miles, crossesCone }) => {
         const how = crossesCone ? 'passes through its forecast cone' : `passes ${formatDistance(miles)} from its center`;
-        return `<div class="route-hazard-row">${stormTitle(storm)}: the route ${how}</div>`;
+        return `<div class="route-hazard-row">${severityBadge(cycloneSeverity(storm.category, storm.peakWindKmh))}${stormTitle(storm)}: the route ${how}</div>`;
       })
       .join('');
     parts.push(`<div class="route-hazard-head">🌀 Tropical cyclone${result.cyclones.length === 1 ? '' : 's'} near the route (drawn on the map)</div>${rows}`);
   }
   if (result.advisories.length > 0) {
-    // Ash first: it is the one advisory flights do not fly through at any altitude.
-    const ordered = [...ash, ...result.advisories.filter((a) => a.hazard !== 'ASH')];
-    const rows = ordered.map((a) => `<div class="route-hazard-row">${describeAdvisory(a)}</div>`).join('');
+    // Worst first (ash is always Extreme: flights do not fly through it at any altitude).
+    const ordered = [...result.advisories].sort((a, b) => advisorySeverity(b) - advisorySeverity(a));
+    const rows = ordered.map((a) => `<div class="route-hazard-row">${severityBadge(advisorySeverity(a))}${describeAdvisory(a)}</div>`).join('');
     parts.push(`<div class="route-hazard-head">⚠️ Route passes through ${result.advisories.length} weather advisor${result.advisories.length === 1 ? 'y' : 'ies'} (outlined on the map)</div>${rows}`);
   }
   if (result.tfrs.length > 0) {
-    const rows = result.tfrs
-      .map((t) => `<div class="route-hazard-row">${describeTfr(t)} (<a href="${t.url}" target="_blank" rel="noopener">details</a>)</div>`)
+    const rows = [...result.tfrs]
+      .sort((a, b) => tfrSeverity(b.type) - tfrSeverity(a.type))
+      .map((t) => `<div class="route-hazard-row">${severityBadge(tfrSeverity(t.type))}${describeTfr(t)} (<a href="${t.url}" target="_blank" rel="noopener">details</a>)</div>`)
       .join('');
     parts.push(
       `<div class="route-hazard-head">🚫 Route crosses ${result.tfrs.length} US flight restriction${result.tfrs.length === 1 ? '' : 's'} (outlined on the map). Most reach only a few thousand feet, well below cruise; they matter near the airports.</div>${rows}`

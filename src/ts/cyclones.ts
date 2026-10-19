@@ -24,6 +24,8 @@ export interface Cyclone {
   track: TrackPoint[];
   cone?: [number, number][];
   report?: string;
+  /** Strongest wind so far, km/h (GDACS). */
+  peakWindKmh?: number;
 }
 
 /** Storm center within this distance of an airport gets a chip on its card. */

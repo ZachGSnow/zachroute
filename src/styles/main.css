@@ -759,6 +759,26 @@ body {
   border-radius: 2px;
 }
 
+/* Hazard type glyph in the middle of an advisory shape (its color is the severity) */
+.hazard-glyph {
+  background: none;
+  border: none;
+}
+
+.hazard-glyph span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--c);
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.85);
+  color: var(--c);
+  font-size: 0.72rem;
+  line-height: 1;
+}
+
 /* Severity badge in cards and lists: Light, Moderate, Severe, Extreme */
 .sev-badge {
   display: inline-block;

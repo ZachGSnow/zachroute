@@ -6,6 +6,7 @@ import type { Airport } from './geoMath';
 import { pointInPolygon, distanceToPolygonMi } from './hazardGeo';
 import type { Chip } from './advisories';
 import { formatDistance } from './units';
+import { tfrSeverity, chipLevel, severityName } from './severity';
 
 export interface Tfr {
   id: string;
@@ -86,8 +87,8 @@ export async function tfrChips(airport: Airport): Promise<Chip[]> {
   if (airport.country !== 'US') return [];
   const near = tfrsNear(airport.lat, airport.lon, await fetchTfrs());
   return near.slice(0, 3).map(({ tfr, miles }) => ({
-    level: 'warn' as const,
-    text: `\u{1F6AB} TFR ${miles < 1 ? 'over the airport' : `${formatDistance(miles)} away`}: ${tfrTypeLabel(tfr.type)}`,
+    level: chipLevel(tfrSeverity(tfr.type)),
+    text: `\u{1F6AB} TFR ${miles < 1 ? 'over the airport' : `${formatDistance(miles)} away`}: ${tfrTypeLabel(tfr.type)} (${severityName(tfrSeverity(tfr.type)).toLowerCase()})`,
     title: `${tfrPlace(tfr.description)} (NOTAM ${tfr.id}). Details: ${tfr.url}`,
   }));
 }

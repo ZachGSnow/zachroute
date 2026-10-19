@@ -148,3 +148,60 @@ export function fireLegend(): LegendSpec {
     note: 'Satellite detections in the last 24 hours',
   };
 }
+
+/** Glyph drawn in the middle of each advisory shape for its hazard. */
+export const HAZARD_GLYPH: Record<string, string> = {
+  CONVECTIVE: '\u26a1',
+  TURB: '\u2248',
+  ICE: '\u2744',
+  IFR: '\u2601',
+  'MTN OBSCN': '\u25b2',
+  ASH: '\u{1f30b}',
+  TC: '\u{1f300}',
+  PCPN: '\u2602',
+};
+
+export function hazardLegend(): LegendSpec {
+  return {
+    kind: 'items',
+    title: 'Weather hazards (AIRMET, SIGMET, CWA)',
+    items: [
+      ...severityLegendItems([1, 2, 3, 4], 'line'),
+      { color: '#e2e8f0', label: 'thunderstorms', mark: 'glyph', glyph: HAZARD_GLYPH.CONVECTIVE },
+      { color: '#e2e8f0', label: 'turbulence', mark: 'glyph', glyph: HAZARD_GLYPH.TURB },
+      { color: '#e2e8f0', label: 'icing', mark: 'glyph', glyph: HAZARD_GLYPH.ICE },
+      { color: '#e2e8f0', label: 'low cloud', mark: 'glyph', glyph: HAZARD_GLYPH.IFR },
+      { color: '#e2e8f0', label: 'volcanic ash', mark: 'glyph', glyph: HAZARD_GLYPH.ASH },
+    ],
+    note: 'Dashed: AIRMET (moderate, forecast area). Solid: SIGMET or center weather advisory',
+  };
+}
+
+export function cycloneLegend(): LegendSpec {
+  const [light, moderate, severe, extreme] = severityLegendItems([1, 2, 3, 4], 'line');
+  return {
+    kind: 'items',
+    title: 'Tropical cyclones',
+    items: [
+      { ...light, label: 'Light: depression' },
+      { ...moderate, label: 'Moderate: tropical storm' },
+      { ...severe, label: 'Severe: hurricane / typhoon' },
+      { ...extreme, label: 'Extreme: has reached Category 3+' },
+    ],
+    note: 'Shaded: forecast cone. Dashed: forecast track',
+  };
+}
+
+export function tfrLegend(): LegendSpec {
+  const [light, moderate, severe] = severityLegendItems([1, 2, 3], 'line');
+  return {
+    kind: 'items',
+    title: 'US flight restrictions (TFRs)',
+    items: [
+      { ...light, label: 'Light: drones, to 400 ft' },
+      { ...moderate, label: 'Moderate: hazards, air shows, stadiums' },
+      { ...severe, label: 'Severe: security, VIP, space launch' },
+    ],
+    note: 'Most reach only a few thousand feet, well below cruise',
+  };
+}

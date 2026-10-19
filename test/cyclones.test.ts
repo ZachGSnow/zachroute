@@ -33,6 +33,7 @@ describe('GDACS tropical cyclones -> /api/cyclones', () => {
     expect([storm.lat, storm.lon]).toEqual([11.4, 151.4]);
     expect(storm.asOf).toBe('2026-10-16T12:00:00.000Z');
     expect(storm.category).toBe('HU');
+    expect(storm.peakWindKmh).toBe(250); // GDACS severity data: strongest wind so far
 
     // 17 track points from 14 Oct 12:00 to 21 Oct 12:00, in order; after the advisory they are forecasts
     expect(storm.track).toHaveLength(17);

@@ -105,7 +105,10 @@ distance ticks, and runway outlines with runway numbers when zoomed in.
 scales and marks, in your units). On a phone it starts as a small "Legend" chip; tap it to open.
 Hazards share one severity scale: yellow Light, orange Moderate, red Severe, magenta Extreme. Pilot
 reports are colored by how bad the turbulence or icing was (their shape says which), and fires by
-their radiative power.
+their radiative power. Weather advisories are colored by severity with a symbol for the hazard
+(AIRMETs moderate, SIGMETs severe, embedded or line thunderstorms and volcanic ash extreme),
+tropical cyclones by strength, and US flight restrictions by how restrictive they are. Cards and
+route lists show the same level as a badge, worst first.
 
 **Phone layout**: the results panel is a bottom sheet. Drag its handle between a one-line peek
 (map almost full screen), half (the default for a new result) and full; a tap toggles peek and half.
