@@ -815,6 +815,23 @@ body {
   color: #cbd5e1;
 }
 
+/* Freezing level layer: a smooth wash plus each sample's value in thousands of feet */
+.freezing-image {
+  image-rendering: auto;
+}
+
+.freezing-label {
+  background: none;
+  border: none;
+  color: #e0f2fe;
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-align: center;
+  line-height: 14px;
+  opacity: 0.85;
+  text-shadow: 0 0 3px #020617, 0 0 3px #020617;
+}
+
 .select-label.sub-setting {
   padding-left: 28px;
   color: var(--text-muted);
