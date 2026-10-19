@@ -46,6 +46,9 @@ describe('NWS forecast discussion -> /api/afd', () => {
     ].join('\n');
     expect(aviationSection(text)).toEqual({ heading: '', paragraphs: ['VFR through the evening.', 'MVFR ceilings late tonight with light rain.'] });
     expect(aviationSection('.SYNOPSIS...\nQuiet.')).toBeNull();
+    // Miami's layout: the TAF time and issue time on lines of their own, no blank line before the text.
+    const miami = '.AVIATION...\n(18Z TAFS)\nIssued at 107 PM EDT Mon Oct 19 2026\nGenerally VFR through the period.\n\n&&';
+    expect(aviationSection(miami)!.paragraphs).toEqual(['Generally VFR through the period.']);
   });
 
   it('finds the office for the airport and returns its aviation notes', async () => {

@@ -32,6 +32,8 @@ export function aviationSection(text: string): { heading: string; paragraphs: st
   for (let i = start + 1; i < lines.length; i++) {
     const l = lines[i];
     if (/^&&/.test(l.trim()) || /^\.[A-Z][A-Z /]+\.{3}/.test(l.trim()) || /^\$\$/.test(l.trim())) break;
+    // Offices differ: some put "(18Z TAFS)" or "Issued at ..." on lines of their own inside the first paragraph.
+    if (/^\s*Issued at /i.test(l) || /^\s*\(\s*\d{2}Z TAFS?\s*\)\s*$/i.test(l)) continue;
     body.push(l);
   }
   const paragraphs = body
@@ -63,11 +65,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   try {
     // 1. Forecast office for the position (outside the US, weather.gov answers 404).
     let office: { id: string; name?: string } | null = null;
-    const officeKey = `afd:office:${point}`;
+    const officeKey = `afd:office:v2:${point}`;
     if (kv) office = await kv.get(officeKey, { type: 'json' });
     if (!office) {
       const p = await getJson(`https://api.weather.gov/points/${point}`);
-      const id = p?.properties?.gridId || p?.properties?.cwa;
+      // cwa is the office that writes the discussion; gridId can differ (Alaska's grids are AER/ALU).
+      const id = p?.properties?.cwa || p?.properties?.gridId;
       if (!id) return json({ available: false });
       const city = p?.properties?.relativeLocation?.properties?.city;
       office = { id, name: undefined };
@@ -77,7 +80,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     }
 
     // 2. That office's latest discussion, cut to the aviation section.
-    const afdKey = `afd:text:${office.id}`;
+    const afdKey = `afd:text:v2:${office.id}`;
     const cached = kv ? await kv.get(afdKey, { type: 'json' }) : null;
     if (cached) return json(cached);
 
