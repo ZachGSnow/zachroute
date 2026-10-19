@@ -343,6 +343,8 @@ const HAZARD_LABEL: Record<string, string> = {
   ASH: 'Volcanic ash',
   TC: 'Tropical cyclone',
   PCPN: 'Heavy precipitation',
+  'SFC WND': 'Strong surface wind',
+  LLWS: 'Low-level wind shear',
 };
 
 /** Who issued it: "Miami Center" for a CWA, "Oakland Oceanic FIR" for an international SIGMET. */

@@ -163,6 +163,8 @@ export const HAZARD_GLYPH: Record<string, string> = {
   ASH: '\u{1f30b}',
   TC: '\u{1f300}',
   PCPN: '\u2602',
+  'SFC WND': '\u219d',
+  LLWS: '\u21af',
 };
 
 export function hazardLegend(): LegendSpec {
@@ -176,6 +178,9 @@ export function hazardLegend(): LegendSpec {
       { color: '#e2e8f0', label: 'icing', mark: 'glyph', glyph: HAZARD_GLYPH.ICE },
       { color: '#e2e8f0', label: 'low cloud', mark: 'glyph', glyph: HAZARD_GLYPH.IFR },
       { color: '#e2e8f0', label: 'volcanic ash', mark: 'glyph', glyph: HAZARD_GLYPH.ASH },
+      { color: '#e2e8f0', label: 'mountains in cloud', mark: 'glyph', glyph: HAZARD_GLYPH['MTN OBSCN'] },
+      { color: '#e2e8f0', label: 'strong surface wind', mark: 'glyph', glyph: HAZARD_GLYPH['SFC WND'] },
+      { color: '#e2e8f0', label: 'low-level wind shear', mark: 'glyph', glyph: HAZARD_GLYPH.LLWS },
     ],
     note: 'Dashed: AIRMET (moderate, forecast area). Solid: SIGMET or center weather advisory',
   };

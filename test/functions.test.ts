@@ -6,7 +6,7 @@ import { onRequest as weather } from '../functions/api/weather';
 import { onRequest as taf } from '../functions/api/taf';
 import { onRequest as pireps } from '../functions/api/pireps';
 import { onRequest as metarBbox } from '../functions/api/metar-bbox';
-import { onRequest as airsigmet, readQualifier, unwrapRing, fromCwaFeed, readCwaQualifier } from '../functions/api/airsigmet';
+import { onRequest as airsigmet, readQualifier, unwrapRing, fromCwaFeed, readCwaQualifier, fromGairmetFeed, nearestGairmetSnapshot, gairmetLevel } from '../functions/api/airsigmet';
 import { onRequest as faaStatus } from '../functions/api/faa-status';
 import { onRequest as lore } from '../functions/api/lore';
 import { summaryMatchesAirport, titleFromWikipediaLink } from '../shared/wikiLore.js';
@@ -169,6 +169,62 @@ describe('aviationweather.gov Center Weather Advisories -> /api/airsigmet', () =
     ]);
     const out = await json(await airsigmet(pagesContext('https://x/api/airsigmet')));
     expect(out.advisories.map((a: any) => a.type)).toEqual(['CWA', 'CWA']);
+  });
+});
+
+describe('aviationweather.gov G-AIRMETs -> /api/airsigmet', () => {
+  // Real snapshots from the 21Z issuance on 19 Oct: the 21:00 picture (f00) and the 00:00 one (f03),
+  // one or two of each hazard, with the freezing level contours the app leaves out.
+  const f00 = jsonFixture<any[]>('awc-gairmet-f00.json');
+  const f03 = jsonFixture<any[]>('awc-gairmet-f03.json');
+  const at2130 = Date.parse('2026-10-19T21:30:00Z') / 1000;
+  const at2300 = Date.parse('2026-10-19T23:00:00Z') / 1000;
+
+  it('reads levels in hundreds of feet', () => {
+    expect(gairmetLevel('080')).toBe(8000);
+    expect(gairmetLevel('380')).toBe(38000);
+    expect(gairmetLevel('SFC')).toBe(0);
+    expect(gairmetLevel('FZL')).toBeUndefined();
+    expect(gairmetLevel(null)).toBeUndefined();
+  });
+
+  it('keeps the snapshot nearest now', () => {
+    expect(new Set(nearestGairmetSnapshot([...f00, ...f03], at2130).map((r) => r.forecastHour))).toEqual(new Set([0]));
+    expect(new Set(nearestGairmetSnapshot([...f00, ...f03], at2300).map((r) => r.forecastHour))).toEqual(new Set([3]));
+    expect(nearestGairmetSnapshot([], at2300)).toEqual([]);
+  });
+
+  it('turns areas into AIRMETs with the hazard names the map uses, dropping freezing level lines', () => {
+    const out = fromGairmetFeed(f00, at2130);
+    expect(out.every((a) => a.type === 'AIRMET' && a.coords.length >= 3)).toBe(true);
+    expect(out.map((a) => a.hazard).sort()).toEqual(['ICE', 'IFR', 'MTN OBSCN', 'SFC WND', 'TURB', 'TURB']);
+    const wave = out.find((a) => a.detail === 'moderate mountain wave')!;
+    expect([wave.altLow, wave.altHigh]).toEqual([0, 11000]);
+    const ifr = out.find((a) => a.hazard === 'IFR')!;
+    expect(ifr.raw).toBe('G-AIRMET SIERRA 5E: CIG BLW 010 VIS BLW 3SM PCPN BR');
+    expect(ifr.coords[0]).toEqual([parseFloat(f00[1].coords[0].lat), parseFloat(f00[1].coords[0].lon)]);
+    // the 21:00 snapshot stands for 19:30 to 22:30
+    expect(ifr.validTo).toBe(Date.parse('2026-10-19T22:30:00Z') / 1000);
+  });
+
+  it('drops a snapshot once its time has passed', () => {
+    expect(fromGairmetFeed(f00, Date.parse('2026-10-19T22:31:00Z') / 1000)).toHaveLength(0);
+  });
+
+  it('adds the current snapshot to the other feeds', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(at2300 * 1000));
+    stubFetch([
+      ['/airsigmet', []],
+      ['/isigmet', []],
+      ['/cwa', []],
+      ['/gairmet?format=json&fore=0', f00],
+      ['/gairmet?format=json&fore=3', f03],
+      ['/gairmet?format=json&fore=6', []],
+    ]);
+    const out = await json(await airsigmet(pagesContext('https://x/api/airsigmet')));
+    expect(out.advisories).toHaveLength(f03.filter((r) => r.hazard !== 'FZLVL').length);
+    expect(out.advisories.every((a: any) => a.type === 'AIRMET')).toBe(true);
   });
 });
 
