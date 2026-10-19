@@ -95,7 +95,9 @@ used once and not stored; denying permission just shows a message.
 (wind arrows, with a ring only when conditions are below VFR; or temperatures colored cold to hot,
 marked where it is at or below freezing and where temperature and dewpoint are close enough for
 fog), the forecast freezing level (shaded dark blue where it is low, with values in thousands of
-feet; from zoom 3), pilot reports, weather hazards, the US thunderstorm forecast (the Aviation
+feet; from zoom 3), weather radar (the US from NEXRAD via the Iowa Environmental Mesonet, about
+1 km detail; elsewhere RainViewer, coarser, from countries that share their radar), pilot reports,
+weather hazards, the US thunderstorm forecast (the Aviation
 Weather Center's TFM Convective Forecast for 4, 6 or 8 hours ahead: where storms are expected, how
 much of each area they cover, the forecasters' confidence and the storm tops),
 tropical cyclones (track, forecast track and uncertainty cone), US flight restrictions (TFRs), fires detected by satellite in the
@@ -107,7 +109,9 @@ distance ticks, and runway outlines with runway numbers when zoomed in.
 
 **Map legend**: a panel at the bottom left explains each layer that is switched on (colors,
 scales and marks, in your units). On a phone it starts as a small "Legend" chip; tap it to open.
-Hazards share one severity scale: yellow Light, orange Moderate, red Severe, magenta Extreme. Pilot
+Hazards share one severity scale: yellow Light, orange Moderate, red Severe, magenta Extreme. Radar
+is redrawn on it from the radar strength (plain rain 20-30 dBZ soft blue, then Light 30-40,
+Moderate 40-45, Severe 45-50, Extreme 50 and up), so both radar sources look the same. Pilot
 reports are colored by how bad the turbulence or icing was (their shape says which), and fires by
 their radiative power. Weather advisories are colored by severity with a symbol for the hazard
 (AIRMETs moderate, SIGMETs severe, embedded or line thunderstorms and volcanic ash extreme),
@@ -197,6 +201,9 @@ for the design and the reasoning behind the main decisions.
 - An airport card loads its data when you search and does not refresh while it is open; search
   again for newer data.
 - Delays and weather alerts are US only; there is no free equivalent for other countries.
+- Radar outside the US covers only countries that share their radar with RainViewer, at zoom 7
+  detail at most; some networks (Mexico's, for one) report in coarse steps, so strong cells can
+  show as solid blocks of one level.
 - The map UI has no automated browser tests; it is checked by hand and through the screenshots.
 
 ## Testing
@@ -240,6 +247,8 @@ can add on top of the source's age.
 | Delay programs (US) | [FAA NAS Status](https://nasstatus.faa.gov) | Continuously | Up to 10 min | Public domain (US government) |
 | Weather alerts (US) | [National Weather Service](https://www.weather.gov) | Real time | Up to 5 min | Public domain (US government) |
 | Forecaster aviation notes (US) | National Weather Service forecast discussions (api.weather.gov) | About 4 times a day per office, plus updates | Up to 45 min | Public domain (US government) |
+| Weather radar (US) | NEXRAD composite from the [Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu) | Every 5 minutes | Up to 10 min (tiles cached 5 min; the layer redraws every 5 min) | Free for any lawful use; credit appreciated (credited in the app) |
+| Weather radar (outside the US) | [RainViewer](https://www.rainviewer.com) | Every 10 minutes | Up to 10 min | Free for personal and educational use; credit requested (credited in the app). Zoom 7 at most, 100 requests a minute per viewer, latest frame only |
 | Thunderstorm forecast (US, TCF) | Aviation Weather Center | Every 2 hours, for 4, 6 and 8 hours ahead | Up to 15 min | Public domain (US government) |
 | Temporary flight restrictions (US) | [FAA TFR list and map service](https://tfr.faa.gov) | As issued | Up to 15 min | Public domain (US government) |
 | Tropical cyclones (from NHC, JTWC and other agencies) | [GDACS](https://www.gdacs.org), the UN / European Commission Global Disaster Alert and Coordination System | Each storm's advisory every 6 hours, republished by GDACS 1-6 hours later (storms were 5-14 hours past their advisory time when measured) | Up to 40 min | No published license; GDACS provides its data as is, for information only (credited in the app) |

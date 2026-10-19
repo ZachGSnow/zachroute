@@ -2,7 +2,23 @@ import type { Airport, RunwayDetail } from './geoMath';
 import { formatDistance, clockOptions, UNITS_CHANGED } from './units';
 import { stationTemp } from './stationTemp';
 import { setLegend } from './legend';
-import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend, pirepLegend, fireLegend, hazardLegend, cycloneLegend, tfrLegend, tcfLegend, HAZARD_GLYPH } from './legends';
+import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend, pirepLegend, fireLegend, hazardLegend, cycloneLegend, tfrLegend, tcfLegend, radarLegend, HAZARD_GLYPH } from './legends';
+import {
+  IEM_REFLECTIVITY_URL,
+  IEM_REFLECTIVITY_TIME_URL,
+  RAINVIEWER_MAPS_URL,
+  IEM_MAX_NATIVE_ZOOM,
+  RAINVIEWER_MAX_NATIVE_ZOOM,
+  US_RADAR_BOX,
+  inUsRadarBox,
+  tileInsideUsBox,
+  tileTouchesUsBox,
+  recolorTile,
+  iemReflectivityLevel,
+  rainviewerLevel,
+  rainviewerFrame,
+  iemTime,
+} from './radarTiles';
 import { fetchTcf, tcfForStep, tcfSeverity, tcfCoverageLabel, TCF_STEP_HOURS, type TcfArea, type TcfStep } from './tcf';
 import { severityColor, severityName, fireSeverity, advisorySeverity, cycloneSeverity, tfrSeverity } from './severity';
 import { fetchTfrs, tfrsCrossed, tfrTypeLabel, tfrPlace, type Tfr } from './tfr';
@@ -88,6 +104,8 @@ export function initOverlays(m: L.Map) {
   map.createPane('satellite').style.zIndex = '240';
   map.getPane('satellite')!.style.pointerEvents = 'none';
   map.createPane('night').style.zIndex = '250';
+  map.createPane('radar').style.zIndex = '260';
+  map.getPane('radar')!.style.pointerEvents = 'none';
   map.createPane('hazards').style.zIndex = '380';
   map.getPane('night')!.style.pointerEvents = 'none';
 
@@ -1222,6 +1240,151 @@ export function setSatellite(on: boolean) {
   } else {
     noteSatelliteGap();
   }
+}
+
+// ---------------------------------------------------------------------------
+// Weather radar (US: NEXRAD via IEM; elsewhere: RainViewer), redrawn on the severity ladder
+// ---------------------------------------------------------------------------
+
+let radarOn = false;
+let radarTimer: number | undefined;
+let usRadarLayer: L.GridLayer | null = null;
+let worldRadarLayer: L.GridLayer | null = null;
+/** Newest RainViewer frame; null until known (or when the index could not be read). */
+let rainviewer: { url: string; time: number } | null = null;
+let usRadarTime: number | null = null;
+
+/** One remote tile's pixels, or null when it could not be loaded. */
+function loadPixels(url: string): Promise<ImageData | null> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = c.height = 256;
+      const ctx = c.getContext('2d', { willReadFrequently: true });
+      if (!ctx) return resolve(null);
+      ctx.drawImage(img, 0, 0, 256, 256);
+      resolve(ctx.getImageData(0, 0, 256, 256));
+    };
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
+}
+
+/** Edges of a tile: south, west, north, east. */
+function tileEdges(c: L.Coords): [number, number, number, number] {
+  return [tileLat(c.y + 1, c.z), tileLon(c.x, c.z), tileLat(c.y, c.z), tileLon(c.x + 1, c.z)];
+}
+
+/** Whether pixel (x, y) of a tile lies inside the US radar box. */
+function pixelInUsBox(c: L.Coords): (x: number, y: number) => boolean {
+  const [, west, , east] = tileEdges(c);
+  const lats = Float64Array.from({ length: 256 }, (_, y) => tileLat(c.y + (y + 0.5) / 256, c.z));
+  return (x, y) => inUsRadarBox(lats[y], west + ((east - west) * (x + 0.5)) / 256);
+}
+
+/** A grid layer whose tiles are a source tile read back and redrawn by `draw`. */
+function radarGridLayer(
+  options: L.GridLayerOptions,
+  source: (c: L.Coords) => string | null,
+  draw: (rgba: Uint8ClampedArray, c: L.Coords) => void
+): L.GridLayer {
+  const Layer = L.GridLayer.extend({
+    createTile(coords: L.Coords, done: L.DoneCallback) {
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 256;
+      const url = source(coords);
+      if (!url) {
+        window.setTimeout(() => done(undefined, canvas));
+        return canvas;
+      }
+      void loadPixels(L.Util.template(url, { x: coords.x, y: coords.y, z: coords.z })).then((px) => {
+        const ctx = canvas.getContext('2d');
+        if (px && ctx) {
+          draw(px.data, coords);
+          ctx.putImageData(px, 0, 0);
+        }
+        done(undefined, canvas);
+      });
+      return canvas;
+    },
+  }) as new (options: L.GridLayerOptions) => L.GridLayer;
+  return new Layer({ pane: 'radar', tileSize: 256, opacity: 0.85, updateWhenZooming: false, ...options });
+}
+
+function createUsRadarLayer(): L.GridLayer {
+  const [s, w, n, e] = US_RADAR_BOX;
+  return radarGridLayer(
+    {
+      maxNativeZoom: IEM_MAX_NATIVE_ZOOM,
+      bounds: L.latLngBounds([s, w], [n, e]),
+      attribution: 'Radar: NEXRAD via <a href="https://mesonet.agron.iastate.edu/" target="_blank" rel="noopener">Iowa Environmental Mesonet</a>',
+    },
+    (c) => (tileTouchesUsBox(...tileEdges(c)) ? IEM_REFLECTIVITY_URL : null),
+    (rgba, c) => recolorTile(rgba, iemReflectivityLevel, pixelInUsBox(c))
+  );
+}
+
+function createWorldRadarLayer(): L.GridLayer {
+  return radarGridLayer(
+    {
+      maxNativeZoom: RAINVIEWER_MAX_NATIVE_ZOOM,
+      // Few spare tiles: RainViewer allows 100 requests a minute per viewer.
+      keepBuffer: 1,
+      attribution: 'Radar outside the US: <a href="https://www.rainviewer.com/" target="_blank" rel="noopener">RainViewer</a>',
+    },
+    (c) => (rainviewer && !tileInsideUsBox(...tileEdges(c)) ? rainviewer.url : null),
+    (rgba, c) => {
+      const inUs = pixelInUsBox(c);
+      recolorTile(rgba, rainviewerLevel, (x, y) => !inUs(x, y));
+    }
+  );
+}
+
+async function fetchJson(url: string): Promise<any | null> {
+  try {
+    const res = await fetch(url);
+    return res.ok ? await res.json() : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Learns the newest radar times (and RainViewer's newest frame), then redraws. */
+async function refreshRadar(announce: boolean) {
+  if (!map || !radarOn) return;
+  const [maps, iem] = await Promise.all([fetchJson(RAINVIEWER_MAPS_URL), fetchJson(IEM_REFLECTIVITY_TIME_URL)]);
+  if (!map || !radarOn) return;
+  const frame = rainviewerFrame(maps);
+  const changed = frame?.url !== rainviewer?.url;
+  if (frame) rainviewer = frame;
+  usRadarTime = iemTime(iem) ?? usRadarTime;
+  if (!usRadarLayer) usRadarLayer = createUsRadarLayer();
+  if (!worldRadarLayer) worldRadarLayer = createWorldRadarLayer();
+  if (!map.hasLayer(usRadarLayer)) usRadarLayer.addTo(map);
+  if (!map.hasLayer(worldRadarLayer)) worldRadarLayer.addTo(map);
+  if (!announce) usRadarLayer.redraw();
+  if (changed || !announce) worldRadarLayer.redraw();
+  if (announce) {
+    const c = map.getCenter().wrap();
+    const t = inUsRadarBox(c.lat, c.lng) ? usRadarTime : rainviewer?.time;
+    setHint(`Radar${t ? ` as of ${timeLabel(t)}` : ''}: blue is rain, yellow to magenta is light to extreme`, 5000);
+  }
+}
+
+export function setRadar(on: boolean) {
+  radarOn = on;
+  setLegend('radar', on ? radarLegend() : null);
+  window.clearInterval(radarTimer);
+  if (!map) return;
+  if (!on) {
+    for (const layer of [usRadarLayer, worldRadarLayer]) if (layer && map.hasLayer(layer)) map.removeLayer(layer);
+    return;
+  }
+  void refreshRadar(true);
+  // US composite every 5 minutes, RainViewer every 10.
+  radarTimer = window.setInterval(() => void refreshRadar(false), 5 * 60 * 1000);
 }
 
 // ---------------------------------------------------------------------------

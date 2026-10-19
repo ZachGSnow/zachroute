@@ -3,7 +3,7 @@ import { formatDistance, getDistanceUnit, getClockFormat, getWeatherUnits, setDi
 import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
 import { haversineDistance } from './geoMath';
-import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, highlightRunway } from './mapOverlays';
+import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, setRadar, highlightRunway } from './mapOverlays';
 import type { TcfStep } from './tcf';
 import { parseQuery, loadAirports, suggest, type SearchIntent } from './searchParser';
 import { createSuggestList, type SuggestItem } from './suggestList';
@@ -491,6 +491,9 @@ async function init() {
   const freezingToggle = document.getElementById('freezing-toggle') as HTMLInputElement | null;
   const FREEZING_KEY = 'zachroute:show-freezing';
   restoreAirportToggle(freezingToggle, FREEZING_KEY, setFreezingLevel);
+  const radarToggle = document.getElementById('radar-toggle') as HTMLInputElement | null;
+  const RADAR_KEY = 'zachroute:show-radar';
+  restoreAirportToggle(radarToggle, RADAR_KEY, setRadar);
   const satelliteToggle = document.getElementById('satellite-toggle') as HTMLInputElement | null;
   const SATELLITE_KEY = 'zachroute:show-satellite';
   restoreAirportToggle(satelliteToggle, SATELLITE_KEY, setSatellite);
@@ -541,6 +544,7 @@ async function init() {
   wireOverlayToggle(fireToggle, FIRE_KEY, setFires);
   wireOverlayToggle(aerosolToggle, AEROSOL_KEY, setAerosol);
   wireOverlayToggle(freezingToggle, FREEZING_KEY, setFreezingLevel);
+  wireOverlayToggle(radarToggle, RADAR_KEY, setRadar);
   wireOverlayToggle(satelliteToggle, SATELLITE_KEY, setSatellite);
   wireOverlayToggle(approachToggle, APPROACH_KEY, setApproachTicks);
 
