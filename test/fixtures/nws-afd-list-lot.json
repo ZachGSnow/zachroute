@@ -1,0 +1,22 @@
+{
+  "@graph": [
+    {
+      "@id": "https://api.weather.gov/products/4d96c1a0-3bbd-44f0-aca4-3b6a0e5c3a72",
+      "id": "4d96c1a0-3bbd-44f0-aca4-3b6a0e5c3a72",
+      "wmoCollectiveId": "FXUS63",
+      "issuingOffice": "KLOT",
+      "issuanceTime": "2026-10-19T17:23:00+00:00",
+      "productCode": "AFD",
+      "productName": "Area Forecast Discussion"
+    },
+    {
+      "@id": "https://api.weather.gov/products/873c2f4e-cb57-499e-9454-5053cf4af613",
+      "id": "873c2f4e-cb57-499e-9454-5053cf4af613",
+      "wmoCollectiveId": "FXUS63",
+      "issuingOffice": "KLOT",
+      "issuanceTime": "2026-10-19T17:14:00+00:00",
+      "productCode": "AFD",
+      "productName": "Area Forecast Discussion"
+    }
+  ]
+}

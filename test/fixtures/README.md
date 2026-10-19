@@ -16,6 +16,7 @@ structure left untouched. They contain only public aviation, weather and geograp
 | `gdacs-events.json` | GDACS current events list: the four active tropical cyclones and one earthquake |
 | `gdacs-tc-geometry.json` | GDACS geometry for Typhoon Champi (JTWC, 16 Oct 12:00 UTC): track points, track segments and forecast cone; wind-swath polygons dropped and track-point circles thinned to every 8th vertex |
 | `firms-modis-24h.csv` | NASA FIRMS MODIS global 24-hour file: header plus 20 confident and 4 low-confidence detections around Palembang, Indonesia, and 5 elsewhere |
+| `nws-points-ord.json`, `nws-office-lot.json`, `nws-afd-list-lot.json`, `nws-afd-lot.json` | api.weather.gov point lookup for ORD (trimmed to the office fields), the Chicago office, its forecast discussion list (first two) and the latest discussion, captured 2026-10-19 |
 | `nws-alerts.json` | api.weather.gov active alerts, trimmed to the fields the app reads (event, severity, headline, expires) |
 | `open-meteo-aq-del.json`, `-pek.json`, `-syd.json` | air-quality-api.open-meteo.com current and hourly air quality for Delhi (unhealthy, hazy), Beijing (hazy, worse later) and Sydney (good), 18:00 UTC |
 | `open-meteo-250hpa-7pts.json` | api.open-meteo.com winds at 250 hPa for seven points between ORD and DEN |

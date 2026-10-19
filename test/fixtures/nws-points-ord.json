@@ -1,0 +1,12 @@
+{
+  "properties": {
+    "gridId": "LOT",
+    "cwa": "LOT",
+    "relativeLocation": {
+      "properties": {
+        "city": "Chicago",
+        "state": "IL"
+      }
+    }
+  }
+}
