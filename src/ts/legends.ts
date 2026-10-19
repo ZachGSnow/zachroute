@@ -95,14 +95,18 @@ const CLOUD_TOPS: Array<[string, number]> = [
   ['#d946ef', -75],
 ];
 
+/**
+ * Labeled by storm strength rather than temperature: the colors run from mild to very cold tops,
+ * and in degrees the red end read as "hot". The temperatures go in the note.
+ */
 export function satelliteLegend(units: WeatherUnits = getWeatherUnits()): LegendSpec {
-  const t = (c: number) => `${Math.round(units === 'metric' ? c : cToF(c))}${DEG}`;
+  const t = (c: number) => `${Math.round(units === 'metric' ? c : cToF(c))}${DEG}${units === 'metric' ? 'C' : 'F'}`;
   return {
     kind: 'gradient',
-    title: `Satellite clouds: cloud-top temperature (${DEG}${units === 'metric' ? 'C' : 'F'})`,
+    title: 'Satellite clouds: storm strength',
     colors: CLOUD_TOPS.map(([c]) => c),
-    labels: ['cloud', t(-40), t(-55), t(-65), `${t(-75)} and colder`],
-    note: 'Colder tops are taller, stronger storms; magenta marks the strongest cores',
+    labels: ['cloud', 'tall', 'strong', 'very strong', 'extreme'],
+    note: `Measured from cloud-top temperature: the colder the top, the higher and stronger the storm (about ${t(-40)} to ${t(-75)} and colder)`,
   };
 }
 
