@@ -8,7 +8,7 @@ import { parseQuery, loadAirports, suggest, type SearchIntent } from './searchPa
 import { createSuggestList, type SuggestItem } from './suggestList';
 import { loadRecent, addRecent, clearRecent, loadFavorites, FAVORITES_CHANGED } from './history';
 import type { Airport } from './geoMath';
-import { renderSingle, renderRoute, renderError, enrichLore, renderNearby } from './uiRenderer';
+import { renderSingle, renderRoute, renderError, enrichLore, getCachedLore, renderNearby } from './uiRenderer';
 import { findConnectingRoutes, isKnownDirect } from './connections';
 
 async function init() {
@@ -552,9 +552,9 @@ async function init() {
     addResultActions(null);
     drawAirportRunways([airport]);
     // Optionally auto-fetch lore if none exists
-    const hasLore = airport.lore || localStorage.getItem(`zachroute:lore:${airport.iata}`);
+    const hasLore = airport.lore || getCachedLore(airport.iata);
     if (!hasLore && navigator.onLine) {
-      setTimeout(() => enrichLore(airport.iata), 300);
+      setTimeout(() => enrichLore(airport), 300);
     }
 
     // Handle connections based on toggle state

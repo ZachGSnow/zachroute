@@ -1,0 +1,53 @@
+{
+  "type": "standard",
+  "title": "Heraklion International Airport \"Nikos Kazantzakis\"",
+  "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Heraklion International Airport &quot;Nikos Kazantzakis&quot;</span></span>",
+  "namespace": {
+    "id": 0,
+    "text": ""
+  },
+  "wikibase_item": "Q1142384",
+  "titles": {
+    "canonical": "Heraklion_International_Airport_\"Nikos_Kazantzakis\"",
+    "normalized": "Heraklion International Airport \"Nikos Kazantzakis\"",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Heraklion International Airport &quot;Nikos Kazantzakis&quot;</span></span>"
+  },
+  "pageid": 2448512,
+  "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bd/Heraklion_airport%2C_main_building.jpg/330px-Heraklion_airport%2C_main_building.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 186
+  },
+  "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bd/Heraklion_airport%2C_main_building.jpg/3840px-Heraklion_airport%2C_main_building.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 4608,
+    "height": 2592
+  },
+  "lang": "en",
+  "dir": "ltr",
+  "revision": "1379745067",
+  "tid": "beb26ea7-c5a0-11f1-9f08-dd6e97e2d0ad",
+  "timestamp": "2026-10-11T18:22:41Z",
+  "description": "International airport serving Heraklion, Crete, Greece",
+  "description_source": "local",
+  "coordinates": {
+    "lat": 35.33972222,
+    "lon": 25.18027778
+  },
+  "content_urls": {
+    "desktop": {
+      "page": "https://en.wikipedia.org/wiki/Heraklion_International_Airport_%22Nikos_Kazantzakis%22",
+      "revisions": "https://en.wikipedia.org/wiki/Heraklion_International_Airport_%22Nikos_Kazantzakis%22?action=history",
+      "edit": "https://en.wikipedia.org/wiki/Heraklion_International_Airport_%22Nikos_Kazantzakis%22?action=edit",
+      "talk": "https://en.wikipedia.org/wiki/Talk:Heraklion_International_Airport_%22Nikos_Kazantzakis%22"
+    },
+    "mobile": {
+      "page": "https://en.wikipedia.org/wiki/Heraklion_International_Airport_%22Nikos_Kazantzakis%22",
+      "revisions": "https://en.wikipedia.org/wiki/Special:History/Heraklion_International_Airport_%22Nikos_Kazantzakis%22",
+      "edit": "https://en.wikipedia.org/wiki/Heraklion_International_Airport_%22Nikos_Kazantzakis%22?action=edit",
+      "talk": "https://en.wikipedia.org/wiki/Talk:Heraklion_International_Airport_%22Nikos_Kazantzakis%22"
+    }
+  },
+  "extract": "Heraklion International Airport \"Nikos Kazantzakis\" is the primary airport on the island of Crete, Greece, and the country's second busiest airport after Athens International Airport. It is located about 5\u00a0km (3.1\u00a0mi) east of the main city centre of Heraklion, near the municipality of Nea Alikarnassos. It is a shared civil/military facility. The airport is named after Heraklion native Nikos Kazantzakis, a Greek writer and philosopher. Nikos Kazantzakis Airport is Crete's main and busiest airport, serving Heraklion (\u0397\u03c1\u03ac\u03ba\u03bb\u03b5\u03b9\u03bf), Aghios Nikolaos, Malia (M\u03ac\u03bb\u03bb\u03b9\u03b1), Hersonissos (\u03a7\u03b5\u03c1\u03c3\u03cc\u03bd\u03b7\u03c3\u03bf\u03c2), Stalida (\u03a3\u03c4\u03b1\u03bb\u03af\u03b4\u03b1), Sisi (\u03a3\u03af\u03c3\u03b9) Elounda (\u0395\u03bb\u03bf\u03cd\u03bd\u03c4\u03b1) and other resorts.",
+  "extract_html": "<p><b>Heraklion International Airport \"Nikos Kazantzakis\"</b> is the primary airport on the island of Crete, Greece, and the country's second busiest airport after Athens International Airport. It is located about 5\u00a0km (3.1\u00a0mi) east of the main city centre of Heraklion, near the municipality of Nea Alikarnassos. It is a shared civil/military facility. The airport is named after Heraklion native Nikos Kazantzakis, a Greek writer and philosopher. Nikos Kazantzakis Airport is Crete's main and busiest airport, serving Heraklion (\u0397\u03c1\u03ac\u03ba\u03bb\u03b5\u03b9\u03bf), Aghios Nikolaos, Malia (M\u03ac\u03bb\u03bb\u03b9\u03b1), Hersonissos (\u03a7\u03b5\u03c1\u03c3\u03cc\u03bd\u03b7\u03c3\u03bf\u03c2), Stalida (\u03a3\u03c4\u03b1\u03bb\u03af\u03b4\u03b1), Sisi (\u03a3\u03af\u03c3\u03b9) Elounda (\u0395\u03bb\u03bf\u03cd\u03bd\u03c4\u03b1) and other resorts.</p>"
+}

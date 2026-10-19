@@ -23,7 +23,7 @@ import { fetchCyclones, stormsNearPoint, stormTitle } from './cyclones';
 import { fetchAirQuality, aqiScaleFor, aqiCategory, aqiValue, hazeNote, worseningAhead } from './airQuality';
 import { fetchFires, boxAround, summarizeFiresNear, AIRPORT_FIRE_RADIUS_MI } from './fires';
 import { fetchCruiseWind } from './windsAloft';
-import { fetchAirportPhoto } from './wikiPhoto';
+import { fetchAirportPhoto, englishWikiTitle } from './wikiPhoto';
 import { carriersFor, carrierNames, carrierDataNote } from './carriers';
 import { isFavorite, toggleFavorite } from './history';
 import { analyzeRoute, drawRouteHazards, describeAdvisory, describeRoutePirep, ashNear, advisoryAltitude, type Advisory } from './mapOverlays';
@@ -39,17 +39,44 @@ import {
 const resultsContent = document.getElementById('results-content')!;
 const BULLET = '\u00b7';
 
-const LORE_CACHE_KEY = (iata: string) => `zachroute:lore:${iata}`;
+// v2: entries from before the lookup checked it had found the airport's article (HER showed
+// the article on the pronoun "her") are ignored and cleared.
+const LORE_CACHE_KEY = (iata: string) => `zachroute:lore:v2:${iata}`;
+const LEGACY_LORE_CACHE_KEY = (iata: string) => `zachroute:lore:${iata}`;
 
-function getCachedLore(iata: string): string | null {
-  return localStorage.getItem(LORE_CACHE_KEY(iata));
+export function getCachedLore(iata: string): string | null {
+  try {
+    const v = localStorage.getItem(LORE_CACHE_KEY(iata));
+    if (v === null) localStorage.removeItem(LEGACY_LORE_CACHE_KEY(iata));
+    return v;
+  } catch {
+    return null;
+  }
 }
 
 function setCachedLore(iata: string, lore: string) {
-  localStorage.setItem(LORE_CACHE_KEY(iata), lore);
+  try {
+    localStorage.setItem(LORE_CACHE_KEY(iata), lore);
+  } catch {
+    /* storage full or blocked: just skip caching */
+  }
 }
 
-export async function enrichLore(iata: string, cardElement?: HTMLElement) {
+/** Query string for /api/lore: the linked article plus name and position to check search hits against. */
+export function loreQuery(airport: Airport): string {
+  const params = new URLSearchParams({ iata: airport.iata });
+  const title = englishWikiTitle(airport.wikipediaLink);
+  if (title) params.set('title', title);
+  if (airport.name) params.set('name', airport.name);
+  if (Number.isFinite(airport.lat) && Number.isFinite(airport.lon)) {
+    params.set('lat', airport.lat.toFixed(4));
+    params.set('lon', airport.lon.toFixed(4));
+  }
+  return params.toString();
+}
+
+export async function enrichLore(airport: Airport, cardElement?: HTMLElement) {
+  const iata = airport.iata;
   const target = cardElement || resultsContent;
 
   const cached = getCachedLore(iata);
@@ -66,7 +93,12 @@ export async function enrichLore(iata: string, cardElement?: HTMLElement) {
   }
 
   try {
-    const res = await fetch(`/api/lore?iata=${iata}`);
+    const res = await fetch(`/api/lore?${loreQuery(airport)}`);
+    if (res.status === 404) {
+      const loreDiv = target.querySelector('.lore');
+      if (loreDiv) loreDiv.innerHTML = '<em class="muted">No Wikipedia article found for this airport</em>';
+      return;
+    }
     if (!res.ok) throw new Error('Lore fetch failed');
     const data = await res.json();
     if (data.extract) {
@@ -441,7 +473,7 @@ function wireLoreButton(cardEl: HTMLElement, airport: Airport) {
     btn.disabled = true;
     btn.textContent = 'Fetching\u2026';
     btn.classList.add('is-loading');
-    await enrichLore(airport.iata, cardEl);
+    await enrichLore(airport, cardEl);
     btn.textContent = 'Updated';
     btn.classList.remove('is-loading');
     btn.classList.add('is-success');

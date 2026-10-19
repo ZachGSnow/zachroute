@@ -1,0 +1,59 @@
+{
+  "batchcomplete": "",
+  "continue": {
+    "sroffset": 5,
+    "continue": "-||"
+  },
+  "query": {
+    "searchinfo": {
+      "totalhits": 43
+    },
+    "search": [
+      {
+        "ns": 0,
+        "title": "Heraklion International Airport \"Nikos Kazantzakis\"",
+        "pageid": 2448512,
+        "size": 80269,
+        "wordcount": 4357,
+        "snippet": "<span class=\"searchmatch\">Heraklion</span> <span class=\"searchmatch\">International</span> <span class=\"searchmatch\">Airport</span> &quot;<span class=\"searchmatch\">Nikos</span> <span class=\"searchmatch\">Kazantzakis</span>&quot; (IATA: HER, ICAO: LGIR) is the primary <span class=\"searchmatch\">airport</span> on the island of Crete, Greece, and the country&#039;s second",
+        "timestamp": "2026-10-11T18:22:41Z"
+      },
+      {
+        "ns": 0,
+        "title": "Heraklion",
+        "pageid": 59741,
+        "size": 63818,
+        "wordcount": 4447,
+        "snippet": "The port of <span class=\"searchmatch\">Heraklion</span> was built by Sir Robert McAlpine and completed in 1928. <span class=\"searchmatch\">Heraklion</span> <span class=\"searchmatch\">International</span> <span class=\"searchmatch\">Airport</span>, or <span class=\"searchmatch\">Nikos</span> <span class=\"searchmatch\">Kazantzakis</span> <span class=\"searchmatch\">Airport</span> is located",
+        "timestamp": "2026-09-20T17:52:10Z"
+      },
+      {
+        "ns": 0,
+        "title": "Nikos Kazantzakis (disambiguation)",
+        "pageid": 71589984,
+        "size": 375,
+        "wordcount": 75,
+        "snippet": "municipality in the <span class=\"searchmatch\">Heraklion</span> regional unit, Crete, Greece <span class=\"searchmatch\">Heraklion</span> <span class=\"searchmatch\">International</span> <span class=\"searchmatch\">Airport</span> &quot;<span class=\"searchmatch\">Nikos</span> <span class=\"searchmatch\">Kazantzakis</span>&quot; (IATA: HER, ICAO: LGIR), primary <span class=\"searchmatch\">airport</span> on the island",
+        "timestamp": "2022-08-24T07:58:24Z"
+      },
+      {
+        "ns": 0,
+        "title": "Heraklion (regional unit)",
+        "pageid": 2326722,
+        "size": 8356,
+        "wordcount": 643,
+        "snippet": "(Born 1541, Fodele, <span class=\"searchmatch\">Heraklion</span> and died on April 7, 1614, Toledo, Spain), a world-famous painter, sculptor and architect <span class=\"searchmatch\">Nikos</span> <span class=\"searchmatch\">Kazantzakis</span> was born in the",
+        "timestamp": "2026-09-20T03:46:45Z"
+      },
+      {
+        "ns": 0,
+        "title": "Kazantzakis",
+        "pageid": 77785,
+        "size": 512,
+        "wordcount": 90,
+        "snippet": "film directed by Yannis Smaragdis <span class=\"searchmatch\">Heraklion</span> <span class=\"searchmatch\">International</span> <span class=\"searchmatch\">Airport</span> &quot;<span class=\"searchmatch\">Nikos</span> <span class=\"searchmatch\">Kazantzakis</span>&quot;, on Crete, Greece <span class=\"searchmatch\">Nikos</span> <span class=\"searchmatch\">Kazantzakis</span> (municipality), a former administrative",
+        "timestamp": "2021-06-13T14:08:08Z"
+      }
+    ]
+  }
+}

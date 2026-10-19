@@ -1,0 +1,59 @@
+{
+  "batchcomplete": "",
+  "continue": {
+    "sroffset": 5,
+    "continue": "-||"
+  },
+  "query": {
+    "searchinfo": {
+      "totalhits": 31539
+    },
+    "search": [
+      {
+        "ns": 0,
+        "title": "Her",
+        "pageid": 839716,
+        "size": 2924,
+        "wordcount": 360,
+        "snippet": "a journal Helper (Amtrak station) (station code <span class=\"searchmatch\">HER</span>) Heraklion International <span class=\"searchmatch\">Airport</span> (IATA code <span class=\"searchmatch\">HER</span>) Khoy, Armenia (historical name) Hydrogen evolution",
+        "timestamp": "2026-10-06T09:22:44Z"
+      },
+      {
+        "ns": 0,
+        "title": "Gouri G. Kishan",
+        "pageid": 63380980,
+        "size": 22878,
+        "wordcount": 1270,
+        "snippet": " &quot;#Lifeinthelockdown: &#039;96&#039; fame Gouri G Kishan is all set to finish <span class=\"searchmatch\">her</span> &#039;<span class=\"searchmatch\">airport</span> books&#039; during the lockdown&quot;. The Times of India. Mathews, Anna (20 July",
+        "timestamp": "2026-10-11T15:48:02Z"
+      },
+      {
+        "ns": 0,
+        "title": "Airport 1975",
+        "pageid": 2159529,
+        "size": 18447,
+        "wordcount": 2059,
+        "snippet": "<span class=\"searchmatch\">Airport</span> 75 (also known as <span class=\"searchmatch\">Airport</span> 1975) is a 1974 American disaster film, and the second installment in the <span class=\"searchmatch\">Airport</span> film series. It is directed by Jack",
+        "timestamp": "2026-10-08T02:09:19Z"
+      },
+      {
+        "ns": 0,
+        "title": "Heathrow Airport",
+        "pageid": 13595,
+        "size": 253463,
+        "wordcount": 17517,
+        "snippet": "London Heathrow <span class=\"searchmatch\">Airport</span> (IATA: LHR, ICAO: EGLL) \u2013 named London <span class=\"searchmatch\">Airport</span> until 1966 \u2013 is the primary and largest international <span class=\"searchmatch\">airport</span> serving London, the",
+        "timestamp": "2026-10-19T11:35:29Z"
+      },
+      {
+        "ns": 0,
+        "title": "Airport (1970 film)",
+        "pageid": 99459,
+        "size": 35582,
+        "wordcount": 3532,
+        "snippet": "<span class=\"searchmatch\">Airport</span> is a 1970 American disaster film written and directed by George Seaton, and distributed by Universal Pictures. Based on Arthur Hailey&#039;s 1968 novel",
+        "timestamp": "2026-09-07T05:22:51Z"
+      }
+    ]
+  }
+}
