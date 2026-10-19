@@ -2,10 +2,10 @@ import type { Airport, RunwayDetail } from './geoMath';
 import { formatDistance, clockOptions, UNITS_CHANGED } from './units';
 import { stationTemp } from './stationTemp';
 import { setLegend } from './legend';
-import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend } from './legends';
+import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend } from './legends';
 import { fetchTfrs, tfrsCrossed, tfrTypeLabel, tfrPlace, type Tfr } from './tfr';
 import { gridFor, fetchFreezingGrid, freezingColor, freezingLabel } from './freezingLayer';
-import { satelliteTileUrl, satellitesForRange, satelliteCovers, cloudPixel, viewCos, viewWeight, SATELLITE_MAX_NATIVE_ZOOM, type Satellite } from './satelliteTiles';
+import { satelliteTileUrl, satellitesForRange, satelliteCovers, cloudPixel, coldCoreMask, COLD_CORE_RGBA, viewCos, viewWeight, SATELLITE_MAX_NATIVE_ZOOM, type Satellite } from './satelliteTiles';
 import { bearingBetween, destinationPoint, haversineDistanceLatLon } from './geoMath';
 import { resolveCode } from './searchParser';
 import { pointInPolygon, advisoriesNear } from './hazardGeo';
@@ -303,6 +303,7 @@ function drawStations() {
 
 // Temperatures follow the weather units setting.
 window.addEventListener(UNITS_CHANGED, () => {
+  if (satelliteOn) setLegend('satellite', satelliteLegend());
   if (stationMode === 'temp') {
     showStationLegend();
     drawStations();
@@ -1026,6 +1027,8 @@ function satelliteTile(coords: L.Coords, done: L.DoneCallback): HTMLElement {
       const out = ctx.createImageData(256, 256);
       const list = [...loaded.keys()];
       const data = list.map((sat) => loaded.get(sat)!.data);
+      // The coldest storm tops share NASA's gray ramp with warm ground; find them by their surroundings.
+      const cores = data.map((d) => coldCoreMask(d));
       // cos(view angle) = cos(lat) * cos(longitude from the satellite): the longitude part per
       // column and satellite once, the latitude part per row.
       const cosLon = list.map((sat) =>
@@ -1051,7 +1054,7 @@ function satelliteTile(coords: L.Coords, done: L.DoneCallback): HTMLElement {
               used++;
               continue;
             }
-            const [r, g, b, a] = cloudPixel(d[i], d[i + 1], d[i + 2], d[i + 3]);
+            const [r, g, b, a] = cores[best][i / 4] ? COLD_CORE_RGBA : cloudPixel(d[i], d[i + 1], d[i + 2], d[i + 3]);
             out.data[i] = r;
             out.data[i + 1] = g;
             out.data[i + 2] = b;
@@ -1078,6 +1081,7 @@ function noteSatelliteGap() {
 
 export function setSatellite(on: boolean) {
   satelliteOn = on;
+  setLegend('satellite', on ? satelliteLegend() : null);
   if (!map) return;
   window.clearInterval(satelliteTimer);
   if (!on) {
@@ -1090,7 +1094,7 @@ export function setSatellite(on: boolean) {
   satelliteTimer = window.setInterval(() => satelliteLayer?.redraw(), 10 * 60 * 1000);
   const c = map.getCenter().wrap();
   if (satelliteCovers(c.lat, c.lng)) {
-    setHint('Satellite clouds (infrared, latest image): white is cloud, color is cold storm tops', 5000);
+    setHint('Satellite clouds (infrared, latest image): the colder the cloud top, the stronger the storm', 5000);
   } else {
     noteSatelliteGap();
   }

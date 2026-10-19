@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   SATELLITES,
   cloudPixel,
+  coldCoreMask,
+  isPinkBand,
+  isRedBand,
   lonDistance,
   satelliteCovers,
   satelliteTileUrl,
@@ -10,6 +13,7 @@ import {
   viewCos,
   viewWeight,
 } from '../src/ts/satelliteTiles';
+import { satelliteLegend } from '../src/ts/legends';
 
 const byName = (name: string) => SATELLITES.find((s) => s.name === name)!;
 
@@ -64,5 +68,58 @@ describe('cloud pixels', () => {
     expect(cloudPixel(240, 240, 240, 255)[3]).toBeGreaterThan(cloud[3]);
     expect(cloudPixel(0, 200, 40, 255)).toEqual([0, 200, 40, 220]);
     expect(cloudPixel(200, 200, 200, 0)[3]).toBe(0);
+  });
+});
+
+describe('cold storm cores', () => {
+  const SIZE = 32;
+  /** A tile painted by a function of (x, y) -> [r, g, b]. */
+  const paint = (fn: (x: number, y: number) => [number, number, number]) => {
+    const d = new Uint8ClampedArray(SIZE * SIZE * 4);
+    for (let y = 0; y < SIZE; y++)
+      for (let x = 0; x < SIZE; x++) {
+        const [r, g, b] = fn(x, y);
+        d.set([r, g, b, 255], (y * SIZE + x) * 4);
+      }
+    return d;
+  };
+  const dist = (x: number, y: number) => Math.hypot(x - 16, y - 16);
+
+  // A storm as NASA draws it: gray ground, a yellow ring (-52 C), a red ring (-62 C), then the
+  // coldest core in gray, from near-black at the red edge to lighter in the middle.
+  const storm = paint((x, y) => {
+    const r = dist(x, y);
+    if (r > 12) return [130, 130, 130];
+    if (r > 9) return [255, 230, 0];
+    if (r > 7) return [230, 0, 0];
+    const v = Math.round(20 + (7 - r) * 25);
+    return [v, v, v];
+  });
+
+  it('finds the gray core inside the red ring and leaves the ground alone', () => {
+    const mask = coldCoreMask(storm, SIZE);
+    expect(mask[16 * SIZE + 16]).toBe(1); // center
+    expect(mask[0]).toBe(0); // ground in the corner
+    expect(mask[16 * SIZE + 2]).toBe(0);
+  });
+
+  it('does not spread from red straight onto mid-gray ground (downscaled low-zoom tiles)', () => {
+    const touching = paint((x) => (x < 16 ? [230, 0, 0] : [130, 130, 130]));
+    expect(coldCoreMask(touching, SIZE).reduce((a, b) => a + b, 0)).toBe(0);
+  });
+
+  it('tells red and pink storm bands from other colors', () => {
+    expect(isRedBand(230, 0, 0)).toBe(true);
+    expect(isRedBand(51, 0, 0)).toBe(true);
+    expect(isRedBand(255, 230, 0)).toBe(false);
+    expect(isPinkBand(242, 114, 195)).toBe(true);
+    expect(isPinkBand(26, 255, 0)).toBe(false);
+  });
+
+  it('labels the satellite legend in the chosen units', () => {
+    const c = satelliteLegend('metric');
+    expect(c.kind === 'gradient' && c.labels).toEqual(['cloud', '-40°', '-55°', '-65°', '-75° and colder']);
+    expect(c.title).toContain('°C');
+    expect(satelliteLegend('us').title).toContain('°F');
   });
 });
