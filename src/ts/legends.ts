@@ -203,6 +203,21 @@ export function radarLegend(): LegendSpec {
   };
 }
 
+export function stormTopsLegend(): LegendSpec {
+  const [light, moderate, severe, extreme] = severityLegendItems([1, 2, 3, 4], 'dot');
+  return {
+    kind: 'items',
+    title: 'Storm tops (US radar)',
+    items: [
+      { ...light, label: 'Light: 20,000-30,000 ft' },
+      { ...moderate, label: 'Moderate: 30,000-40,000 ft' },
+      { ...severe, label: 'Severe: 40,000-50,000 ft' },
+      { ...extreme, label: 'Extreme: above 50,000 ft' },
+    ],
+    note: 'Highest radar echo (NEXRAD echo tops). Tops above your cruise altitude cannot be flown over',
+  };
+}
+
 export function tcfLegend(): LegendSpec {
   const [, moderate, severe, extreme] = severityLegendItems([1, 2, 3, 4], 'line');
   return {

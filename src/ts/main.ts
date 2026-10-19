@@ -3,7 +3,8 @@ import { formatDistance, getDistanceUnit, getClockFormat, getWeatherUnits, setDi
 import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
 import { haversineDistance } from './geoMath';
-import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, setRadar, highlightRunway } from './mapOverlays';
+import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, setRadar, setRadarMode, highlightRunway } from './mapOverlays';
+import type { RadarMode } from './radarTiles';
 import type { TcfStep } from './tcf';
 import { parseQuery, loadAirports, suggest, type SearchIntent } from './searchParser';
 import { createSuggestList, type SuggestItem } from './suggestList';
@@ -493,6 +494,29 @@ async function init() {
   restoreAirportToggle(freezingToggle, FREEZING_KEY, setFreezingLevel);
   const radarToggle = document.getElementById('radar-toggle') as HTMLInputElement | null;
   const RADAR_KEY = 'zachroute:show-radar';
+  // What radar shows, restored before the layer turns on.
+  const radarModeSelect = document.getElementById('radar-mode') as HTMLSelectElement | null;
+  const RADAR_MODE_KEY = 'zachroute:radar-mode';
+  if (radarModeSelect) {
+    let savedMode: string | null = null;
+    try {
+      savedMode = localStorage.getItem(RADAR_MODE_KEY);
+    } catch {
+      /* convenience only */
+    }
+    if (savedMode === 'tops') {
+      radarModeSelect.value = 'tops';
+      setRadarMode('tops');
+    }
+    radarModeSelect.addEventListener('change', () => {
+      try {
+        localStorage.setItem(RADAR_MODE_KEY, radarModeSelect.value);
+      } catch {
+        /* convenience only */
+      }
+      setRadarMode(radarModeSelect.value as RadarMode);
+    });
+  }
   restoreAirportToggle(radarToggle, RADAR_KEY, setRadar);
   const satelliteToggle = document.getElementById('satellite-toggle') as HTMLInputElement | null;
   const SATELLITE_KEY = 'zachroute:show-satellite';

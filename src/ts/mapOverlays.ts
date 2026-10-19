@@ -2,10 +2,14 @@ import type { Airport, RunwayDetail } from './geoMath';
 import { formatDistance, clockOptions, UNITS_CHANGED } from './units';
 import { stationTemp } from './stationTemp';
 import { setLegend } from './legend';
-import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend, pirepLegend, fireLegend, hazardLegend, cycloneLegend, tfrLegend, tcfLegend, radarLegend, HAZARD_GLYPH } from './legends';
+import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend, pirepLegend, fireLegend, hazardLegend, cycloneLegend, tfrLegend, tcfLegend, radarLegend, stormTopsLegend, HAZARD_GLYPH } from './legends';
 import {
   IEM_REFLECTIVITY_URL,
   IEM_REFLECTIVITY_TIME_URL,
+  IEM_ECHO_TOPS_URL,
+  IEM_ECHO_TOPS_TIME_URL,
+  iemTopsLevel,
+  type RadarMode,
   RAINVIEWER_MAPS_URL,
   IEM_MAX_NATIVE_ZOOM,
   RAINVIEWER_MAX_NATIVE_ZOOM,
@@ -1247,6 +1251,7 @@ export function setSatellite(on: boolean) {
 // ---------------------------------------------------------------------------
 
 let radarOn = false;
+let radarMode: RadarMode = 'precip';
 let radarTimer: number | undefined;
 let usRadarLayer: L.GridLayer | null = null;
 let worldRadarLayer: L.GridLayer | null = null;
@@ -1321,8 +1326,8 @@ function createUsRadarLayer(): L.GridLayer {
       bounds: L.latLngBounds([s, w], [n, e]),
       attribution: 'Radar: NEXRAD via <a href="https://mesonet.agron.iastate.edu/" target="_blank" rel="noopener">Iowa Environmental Mesonet</a>',
     },
-    (c) => (tileTouchesUsBox(...tileEdges(c)) ? IEM_REFLECTIVITY_URL : null),
-    (rgba, c) => recolorTile(rgba, iemReflectivityLevel, pixelInUsBox(c))
+    (c) => (tileTouchesUsBox(...tileEdges(c)) ? (radarMode === 'tops' ? IEM_ECHO_TOPS_URL : IEM_REFLECTIVITY_URL) : null),
+    (rgba, c) => recolorTile(rgba, radarMode === 'tops' ? iemTopsLevel : iemReflectivityLevel, pixelInUsBox(c))
   );
 }
 
@@ -1351,40 +1356,65 @@ async function fetchJson(url: string): Promise<any | null> {
   }
 }
 
-/** Learns the newest radar times (and RainViewer's newest frame), then redraws. */
-async function refreshRadar(announce: boolean) {
+/**
+ * Learns the newest radar times (and RainViewer's newest frame), then redraws. Storm tops are US
+ * only, so RainViewer is left off for them. `redrawUs` forces new US tiles (a mode change).
+ */
+async function refreshRadar(announce: boolean, redrawUs = !announce) {
   if (!map || !radarOn) return;
-  const [maps, iem] = await Promise.all([fetchJson(RAINVIEWER_MAPS_URL), fetchJson(IEM_REFLECTIVITY_TIME_URL)]);
-  if (!map || !radarOn) return;
+  const tops = radarMode === 'tops';
+  const [maps, iem] = await Promise.all([
+    tops ? null : fetchJson(RAINVIEWER_MAPS_URL),
+    fetchJson(tops ? IEM_ECHO_TOPS_TIME_URL : IEM_REFLECTIVITY_TIME_URL),
+  ]);
+  if (!map || !radarOn || tops !== (radarMode === 'tops')) return;
   const frame = rainviewerFrame(maps);
-  const changed = frame?.url !== rainviewer?.url;
+  const changed = !!frame && frame.url !== rainviewer?.url;
   if (frame) rainviewer = frame;
-  usRadarTime = iemTime(iem) ?? usRadarTime;
+  usRadarTime = iemTime(iem) ?? (redrawUs ? null : usRadarTime);
   if (!usRadarLayer) usRadarLayer = createUsRadarLayer();
   if (!worldRadarLayer) worldRadarLayer = createWorldRadarLayer();
   if (!map.hasLayer(usRadarLayer)) usRadarLayer.addTo(map);
-  if (!map.hasLayer(worldRadarLayer)) worldRadarLayer.addTo(map);
-  if (!announce) usRadarLayer.redraw();
-  if (changed || !announce) worldRadarLayer.redraw();
+  else if (redrawUs) usRadarLayer.redraw();
+  if (tops) {
+    if (map.hasLayer(worldRadarLayer)) map.removeLayer(worldRadarLayer);
+  } else if (!map.hasLayer(worldRadarLayer)) worldRadarLayer.addTo(map);
+  else if (changed || !announce) worldRadarLayer.redraw();
   if (announce) {
     const c = map.getCenter().wrap();
-    const t = inUsRadarBox(c.lat, c.lng) ? usRadarTime : rainviewer?.time;
-    setHint(`Radar${t ? ` as of ${timeLabel(t)}` : ''}: blue is rain, yellow to magenta is light to extreme`, 5000);
+    const inUs = inUsRadarBox(c.lat, c.lng);
+    const t = inUs || tops ? usRadarTime : rainviewer?.time;
+    const at = t ? ` as of ${timeLabel(t)}` : '';
+    setHint(
+      tops
+        ? `Storm tops (US)${at}: yellow from 20,000 ft to magenta above 50,000 ft${inUs ? '' : '. Pan to the US to see them'}`
+        : `Radar${at}: blue is rain, yellow to magenta is light to extreme`,
+      5000
+    );
   }
 }
 
 export function setRadar(on: boolean) {
   radarOn = on;
-  setLegend('radar', on ? radarLegend() : null);
+  setLegend('radar', on ? (radarMode === 'tops' ? stormTopsLegend() : radarLegend()) : null);
   window.clearInterval(radarTimer);
   if (!map) return;
   if (!on) {
     for (const layer of [usRadarLayer, worldRadarLayer]) if (layer && map.hasLayer(layer)) map.removeLayer(layer);
     return;
   }
-  void refreshRadar(true);
-  // US composite every 5 minutes, RainViewer every 10.
+  void refreshRadar(true, false);
+  // US composites every 5 minutes, RainViewer every 10.
   radarTimer = window.setInterval(() => void refreshRadar(false), 5 * 60 * 1000);
+}
+
+/** What the radar layer shows: precipitation (worldwide) or storm tops (US). */
+export function setRadarMode(mode: RadarMode) {
+  if (mode === radarMode) return;
+  radarMode = mode;
+  if (!radarOn) return;
+  setLegend('radar', mode === 'tops' ? stormTopsLegend() : radarLegend());
+  void refreshRadar(true, true);
 }
 
 // ---------------------------------------------------------------------------

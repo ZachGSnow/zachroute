@@ -10,6 +10,7 @@ import {
   levelRgba,
   iemReflectivityLevel,
   rainviewerLevel,
+  iemTopsLevel,
   rainviewerFrame,
   iemTime,
   inUsRadarBox,
@@ -18,7 +19,7 @@ import {
   RAIN_RGBA,
 } from '../src/ts/radarTiles';
 import { severityColor } from '../src/ts/severity';
-import { radarLegend } from '../src/ts/legends';
+import { radarLegend, stormTopsLegend } from '../src/ts/legends';
 
 // Real tiles captured 19 Oct 2026 around 23:30 UTC: IEM NEXRAD reflectivity and echo tops over the
 // storms in New Mexico (zoom 5, x 6, y 12), and RainViewer over Europe (zoom 5, x 15, y 11).
@@ -144,5 +145,26 @@ describe('radar sources', () => {
   it('has a legend in the same colors', () => {
     const l = radarLegend();
     expect(l.kind === 'items' && l.items.slice(1).map((i) => i.color)).toEqual([1, 2, 3, 4].map((s) => severityColor(s as 1)));
+  });
+});
+
+describe('storm tops (US)', () => {
+  it('finds tops at every level over the New Mexico storms', () => {
+    const out = levels('iem-eet-5-6-12.png', iemTopsLevel);
+    // "null" is tops under 20,000 ft, which are not drawn.
+    expect(Object.keys(out).sort()).toEqual(['1', '2', '3', '4', 'null']);
+    expect(out['1']).toBeGreaterThan(out['4']);
+  });
+
+  it('reads the echo tops composite time', () => {
+    const meta = jsonFixture('iem-eet-0.json');
+    expect(meta.meta.product).toBe('EET');
+    expect(iemTime(meta)).toBe(Date.parse(meta.meta.valid) / 1000);
+  });
+
+  it('has a legend in the same colors', () => {
+    const l = stormTopsLegend();
+    expect(l.kind === 'items' && l.items.map((i) => i.color)).toEqual([1, 2, 3, 4].map((s) => severityColor(s as 1)));
+    expect(l.kind === 'items' && l.items[3].label).toBe('Extreme: above 50,000 ft');
   });
 });
