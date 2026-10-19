@@ -3,6 +3,7 @@ import { formatDistance } from './units';
 import { haversineDistanceLatLon, bearingBetween } from './geoMath';
 import { compassPoint } from './forecast';
 import { summarizePirep, pirepAgeLabel, pirepAltitudeLabel, type RawPirep } from './pirepText';
+import type { Severity } from './severity';
 
 // ---------------------------------------------------------------------------
 // FAA delay programs (US only), via /api/faa-status
@@ -157,6 +158,7 @@ export async function nwsAlertChips(airport: Airport): Promise<Chip[]> {
 export interface PirepLine {
   text: string;
   severe: boolean;
+  severity: Severity | null;
 }
 
 /** Notable recent pilot reports within ~75nm, in plain English. */
@@ -177,9 +179,10 @@ export async function fetchPirepLines(airport: Airport): Promise<PirepLine[]> {
       const dir = compassPoint(bearingBetween(airport.lat, airport.lon, p.lat, p.lon));
       const where = miles < 3 ? 'at the airport' : `${formatDistance(miles)} ${dir} of here`;
       const meta = [pirepAltitudeLabel(p), where, p.acType, pirepAgeLabel(p.obsTime)].filter(Boolean).join(' - ');
-      lines.push({ text: `${summary.headline} <span class="muted">(${meta})</span>`, severe: summary.severe });
+      lines.push({ text: `${summary.headline} <span class="muted">(${meta})</span>`, severe: summary.severe, severity: summary.severity });
     }
-    return lines.slice(0, 8);
+    // Worst first; the feed's own order (newest first) breaks ties.
+    return lines.map((l, i) => ({ l, i })).sort((a, b) => (b.l.severity ?? 0) - (a.l.severity ?? 0) || a.i - b.i).map((x) => x.l).slice(0, 8);
   } catch {
     return [];
   }

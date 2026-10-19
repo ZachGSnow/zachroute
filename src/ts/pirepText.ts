@@ -1,6 +1,7 @@
 // Plain-English translation of pilot reports (PIREPs) for the card and the map.
 
 import { formatVisibility } from './units';
+import { pirepCodeSeverity, type Severity } from './severity';
 
 export interface RawPirep {
   obsTime: number;
@@ -22,7 +23,9 @@ export type PirepKind = 'turb' | 'ice' | 'both' | 'vis';
 export interface PirepSummary {
   headline: string; // e.g. "Moderate turbulence (rough ride)"
   kind: PirepKind;
-  severe: boolean; // moderate or worse
+  /** Turbulence or icing on the severity ladder (the worse of the two); null for low visibility only. */
+  severity: Severity | null;
+  severe: boolean; // severe or worse
 }
 
 const TURB_WORDS: Record<string, string> = {
@@ -67,9 +70,12 @@ export function summarizePirep(p: RawPirep): PirepSummary | null {
   else if (lowVis) parts.push(`low visibility (${formatVisibility(p.visib!)})`);
 
   const kind: PirepKind = hasTurb && hasIce ? 'both' : hasTurb ? 'turb' : hasIce ? 'ice' : 'vis';
-  const severe = !!p.urgent || /MOD|SEV|EXTRM|HVY/.test(turb) || /MOD|SEV|HVY/.test(ice);
+  const levels = [hasTurb ? pirepCodeSeverity(turb) : null, hasIce ? pirepCodeSeverity(ice) : null].filter((s): s is Severity => s !== null);
+  let severity: Severity | null = levels.length ? (Math.max(...levels) as Severity) : hasTurb || hasIce ? 1 : null;
+  // An urgent report (UUA) is severe by definition.
+  if (p.urgent && (severity === null || severity < 3)) severity = 3;
   const headline = parts.join('; ');
-  return { headline: headline.charAt(0).toUpperCase() + headline.slice(1), kind, severe };
+  return { headline: headline.charAt(0).toUpperCase() + headline.slice(1), kind, severity, severe: (severity ?? 0) >= 3 };
 }
 
 export function pirepAgeLabel(obsTime: number): string {
