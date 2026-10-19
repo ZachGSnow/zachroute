@@ -49,6 +49,8 @@ export interface Airport {
   frequencies?: FrequencyDetail[];
   timeZone?: string;
   wikipediaLink?: string;
+  /** English Wikipedia article title from Wikidata (ETL), preferred over the link. */
+  wikiTitle?: string;
   homeLink?: string;
   localCode?: string; // FAA LID when different from IATA/ICAO
   regionCode?: string; // local part of the ISO region, e.g. "KY" for US-KY

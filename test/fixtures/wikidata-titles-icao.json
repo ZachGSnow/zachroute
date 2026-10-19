@@ -1,0 +1,67 @@
+{
+  "head": {
+    "vars": [
+      "code",
+      "title"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "code": {
+          "type": "literal",
+          "value": "EGLL"
+        },
+        "title": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Heathrow Airport"
+        }
+      },
+      {
+        "code": {
+          "type": "literal",
+          "value": "KMDW"
+        },
+        "title": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Midway International Airport"
+        }
+      },
+      {
+        "code": {
+          "type": "literal",
+          "value": "LGIR"
+        },
+        "title": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Heraklion International Airport \"Nikos Kazantzakis\""
+        }
+      },
+      {
+        "code": {
+          "type": "literal",
+          "value": "KORD"
+        },
+        "title": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "O'Hare International Airport"
+        }
+      },
+      {
+        "code": {
+          "type": "literal",
+          "value": "KDEN"
+        },
+        "title": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Denver International Airport"
+        }
+      }
+    ]
+  }
+}

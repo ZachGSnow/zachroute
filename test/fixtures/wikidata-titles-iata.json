@@ -1,0 +1,78 @@
+{
+  "head": {
+    "vars": [
+      "code",
+      "title"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "code": {
+          "type": "literal",
+          "value": "YTO"
+        },
+        "title": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Toronto"
+        }
+      },
+      {
+        "code": {
+          "type": "literal",
+          "value": "MDW"
+        },
+        "title": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Midway International Airport"
+        }
+      },
+      {
+        "code": {
+          "type": "literal",
+          "value": "HER"
+        },
+        "title": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Heraklion International Airport \"Nikos Kazantzakis\""
+        }
+      },
+      {
+        "code": {
+          "type": "literal",
+          "value": "DEN"
+        },
+        "title": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Denver International Airport"
+        }
+      },
+      {
+        "code": {
+          "type": "literal",
+          "value": "ORD"
+        },
+        "title": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "O'Hare International Airport"
+        }
+      },
+      {
+        "code": {
+          "type": "literal",
+          "value": "LHR"
+        },
+        "title": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Heathrow Airport"
+        }
+      }
+    ]
+  }
+}

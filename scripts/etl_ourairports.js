@@ -1,12 +1,14 @@
 // ETL: Downloads OurAirports CSVs, filters large/medium + force-include from seed_lore.json,
 // maps to Airport schema, joins runway/frequency/region/country detail, resolves timezone
-// offline from lat/lon, and writes src/data/airports.json
+// offline from lat/lon, adds each airport's English Wikipedia title from Wikidata, and writes
+// public/data/airports.json
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { find as findTimeZone } from 'geo-tz';
 import geomagnetism from 'geomagnetism';
+import { fetchWikidataTitles, addWikiTitles } from './wikidata_titles.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -82,6 +84,21 @@ async function main() {
     { airportsText, runwaysText, freqText, countriesText, regionsText, navaidsText },
     seed
   );
+
+  // Exact Wikipedia titles for the history and photo. Optional: without Wikidata the app falls
+  // back to the OurAirports link and a checked search.
+  try {
+    const PKG = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+    const userAgent = `ZachRoute/${PKG.version} (${PKG.homepage})`;
+    const airports = Object.values(records).filter((r) => r && typeof r === 'object');
+    const byIcao = (await fetchWikidataTitles(airports.map((a) => a.icao).filter(Boolean), [], { userAgent, log: console.log })).icao;
+    // IATA lookups are slower, so only for airports the ICAO lookup did not match.
+    const rest = airports.filter((a) => a.iata && !byIcao.has(a.icao)).map((a) => a.iata);
+    const byIata = (await fetchWikidataTitles([], rest, { userAgent, log: console.log })).iata;
+    console.log(`Wikipedia titles from Wikidata: ${addWikiTitles(records, byIcao, byIata)} airports.`);
+  } catch (err) {
+    console.warn(`Skipping Wikidata titles: ${err.message}`);
+  }
 
   fs.mkdirSync(path.dirname(OUT_PATH), { recursive: true });
   fs.writeFileSync(OUT_PATH, JSON.stringify(records));

@@ -43,6 +43,16 @@ function writeCache(title: string, url: string | null) {
 }
 
 /** Returns the article's thumbnail URL (~320px) for the airport's Wikipedia article, or null. */
+/** Path form of an article title, as it appears after /wiki/ in a link. */
+export function wikiPath(title: string): string {
+  return encodeURIComponent(title.replace(/ /g, '_'));
+}
+
+/** Link to the airport's English Wikipedia article: the Wikidata title when there is one, else the OurAirports link. */
+export function airportWikiLink(airport: { wikiTitle?: string; wikipediaLink?: string }): string | undefined {
+  return airport.wikiTitle ? `https://en.wikipedia.org/wiki/${wikiPath(airport.wikiTitle)}` : airport.wikipediaLink;
+}
+
 export async function fetchAirportPhoto(wikipediaLink?: string): Promise<string | null> {
   const title = titleFromLink(wikipediaLink);
   if (!title) return null;

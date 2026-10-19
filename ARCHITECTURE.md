@@ -49,7 +49,9 @@ browser (src/ts) <--------------------------------------+
    Each airport is stored once under its IATA code (else ICAO); ICAO and FAA codes are string
    aliases resolved at load time. It joins runways (with end coordinates and true headings),
    frequencies, navaids, region and country names, an IANA time zone (offline, `geo-tz`) and the
-   magnetic declination (World Magnetic Model, `geomagnetism`). About 8 MB, fetched at runtime
+   magnetic declination (World Magnetic Model, `geomagnetism`), and the airport's English Wikipedia
+   title from Wikidata (`scripts/wikidata_titles.js`: ICAO code first, then IATA, looked up in
+   batches of 300; skipped with a warning if Wikidata is down). About 8 MB, fetched at runtime
    rather than bundled so the JS stays small, and precached for offline use.
 2. `scripts/build_us_routes.js` downloads four months of US DOT on-time data (spread across
    seasons), keeps each route and airline with at least 8 flights in a month, and writes
@@ -78,7 +80,7 @@ trims the response to what the client renders, and caches it in the `LORE_KV` na
 | `/api/faa-status` | FAA NAS status XML (closures ignored: the feed mixes partial NOTAM closures with real ones) | 5 min |
 | `/api/cyclones` | GDACS event list plus one geometry request per current tropical cyclone, trimmed to position, track and a thinned forecast cone | 30 min |
 | `/api/fires?bbox=` | NASA FIRMS MODIS global 24-hour CSV (about 1 MB, cached at the Cloudflare edge); scanned line by line keeping only the rectangle and confidence >= 50, so it stays within a function's CPU budget | 30 min |
-| `/api/lore?iata=&title=&name=&lat=&lon=` | Wikipedia page summary: the article OurAirports links to, else a search by name, then by code, keeping only a hit that is an airport article near the airport (`shared/wikiLore.js`); 404 when none is | 7 days |
+| `/api/lore?iata=&title=&name=&lat=&lon=` | Wikipedia page summary: the article Wikidata or OurAirports links to, else a search by name, then by code, keeping only a hit that is an airport article near the airport (`shared/wikiLore.js`); 404 when none is | 7 days |
 
 Upstream failures return `{available: false}` or an empty list, and the card simply omits that
 section. NWS alerts, Open-Meteo and Wikipedia photos send CORS headers, so the browser calls them
