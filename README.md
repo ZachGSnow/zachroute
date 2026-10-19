@@ -81,7 +81,9 @@ used once and not stored; denying permission just shows a message.
 - Pilot reports of turbulence or icing near the route.
 
 **Map layers** (settings menu): nonstop connections, airport size layers, weather stations
-(wind arrows, with a ring only when conditions are below VFR), pilot reports, weather hazards,
+(wind arrows, with a ring only when conditions are below VFR; or temperatures colored cold to hot,
+marked where it is at or below freezing and where temperature and dewpoint are close enough for
+fog), pilot reports, weather hazards,
 tropical cyclones (track, forecast track and uncertainty cone), fires detected by satellite in the
 last 24 hours, dust and smoke from space (the latest daily pass), day/night shading, approach
 distance ticks, and runway outlines with runway numbers when zoomed in.

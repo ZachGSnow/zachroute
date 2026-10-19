@@ -73,7 +73,7 @@ trims the response to what the client renders, and caches it in the `LORE_KV` na
 | `/api/weather?icao=` | aviationweather.gov METAR | 10 min |
 | `/api/taf?icao=` | aviationweather.gov TAF | 15 min |
 | `/api/pireps?icao=` or `?bbox=` | aviationweather.gov PIREP (bbox mode keeps only notable reports) | 5 min |
-| `/api/metar-bbox?bbox=` | aviationweather.gov METAR by area | 5 min |
+| `/api/metar-bbox?bbox=` | aviationweather.gov METAR by area (category, wind, temperature and dewpoint per station) | 5 min |
 | `/api/airsigmet` | aviationweather.gov US AIRMET/SIGMET and international SIGMET, merged (multi-area SIGMETs split into one polygon each; rings unwrapped across the antimeridian) | 5 min |
 | `/api/faa-status` | FAA NAS status XML (closures ignored: the feed mixes partial NOTAM closures with real ones) | 5 min |
 | `/api/cyclones` | GDACS event list plus one geometry request per current tropical cyclone, trimmed to position, track and a thinned forecast cone | 30 min |
