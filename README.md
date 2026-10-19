@@ -78,7 +78,8 @@ used once and not stored; denying permission just shows a message.
   schedules) are drawn and listed; the selected itinerary shows per-leg distance and time.
 - Weather advisories the route passes through are listed and drawn: US AIRMETs and SIGMETs, and
   international SIGMETs worldwide (thunderstorms, turbulence, icing, volcanic ash, tropical
-  cyclones), each with the flight information region (FIR) that issued it. Volcanic ash gets its
+  cyclones), each with the flight information region (FIR) that issued it, and US center weather
+  advisories (short-notice warnings from an air traffic control center, valid up to 2 hours). Volcanic ash gets its
   own warning at the top, since flights avoid it at every altitude.
 - Tropical cyclones the route passes within 150 miles of, or through the forecast cone of.
 - Pilot reports of turbulence or icing near the route.
@@ -214,7 +215,7 @@ can add on top of the source's age.
 | Current weather (METAR) | [Aviation Weather Center](https://aviationweather.gov) | Hourly, plus special reports when conditions change | Up to 15 min | Public domain (US government) |
 | Forecasts (TAF) | Aviation Weather Center | Every 6 hours (3 in some countries), plus amendments | Up to 25 min | Public domain (US government) |
 | Pilot reports | Aviation Weather Center | As pilots file them; the last 3 hours are shown | Up to 7 min | Public domain (US government) |
-| AIRMETs, SIGMETs, international SIGMETs | Aviation Weather Center | AIRMETs every 6 hours; SIGMETs when issued, valid up to 4 hours (6 for ash and cyclones) | Up to 9 min; the map layer redraws every 5 min | Public domain (US government) |
+| AIRMETs, SIGMETs, international SIGMETs, center weather advisories | Aviation Weather Center | AIRMETs every 6 hours; SIGMETs when issued, valid up to 4 hours (6 for ash and cyclones); CWAs when issued, valid up to 2 hours | Up to 9 min; the map layer redraws every 5 min | Public domain (US government) |
 | Delay programs (US) | [FAA NAS Status](https://nasstatus.faa.gov) | Continuously | Up to 10 min | Public domain (US government) |
 | Weather alerts (US) | [National Weather Service](https://www.weather.gov) | Real time | Up to 5 min | Public domain (US government) |
 | Tropical cyclones (from NHC, JTWC and other agencies) | [GDACS](https://www.gdacs.org), the UN / European Commission Global Disaster Alert and Coordination System | Each storm's advisory every 6 hours, republished by GDACS 1-6 hours later (storms were 5-14 hours past their advisory time when measured) | Up to 40 min | No published license; GDACS provides its data as is, for information only (credited in the app) |
