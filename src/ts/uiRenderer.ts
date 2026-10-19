@@ -832,6 +832,15 @@ async function wireWindAdjustedBlockTime(origin: Airport, destination: Airport, 
   // Preferred: forecast winds at cruise level along the route. Fallback: origin surface wind.
   const cruise = await fetchCruiseWind(origin, destination, distanceMiles);
   if (!valueEl.isConnected) return;
+
+  // The freezing level along the route comes with the cruise winds; without them, drop the row.
+  const freezingEl = resultsContent.querySelector('.freezing-level-value');
+  if (freezingEl) {
+    const summary = cruise ? routeFreezingSummary(cruise.freezingLevelsFt, origin, destination) : null;
+    if (summary) freezingEl.textContent = summary;
+    else freezingEl.closest('.stats-row')?.remove();
+  }
+
   if (cruise) {
     const minutes = blockTimeWithHeadwind(distanceMiles, cruise.headwindKt);
     const kt = Math.round(Math.abs(cruise.headwindKt));
@@ -955,6 +964,7 @@ export function renderRoute(origin: Airport, destination: Airport) {
       <div class="stats-row"><span class="stats-label">📏 Distance</span><span class="stats-value">${formatDistance(dist)}</span></div>
       <div class="stats-row"><span class="stats-label">\u23f1️ Block time</span><span class="stats-value">${formatBlockTime(block)}</span></div>
       ${direct ? `<div class="stats-row"><span class="stats-label">🌬️ Wind-adjusted</span><span class="stats-value wind-adjusted-value">\u2026</span></div>` : ''}
+      ${direct ? `<div class="stats-row"><span class="stats-label">🧊 Freezing level</span><span class="stats-value freezing-level-value">\u2026</span></div>` : ''}
       <div class="stats-row"><span class="stats-label">✅ Known direct route</span><span class="stats-value">${direct ? 'Yes' : 'No'}</span></div>
       ${directAirlines ? `<div class="stats-row"><span class="stats-label">✈️ Airlines</span><span class="stats-value" title="${carrierDataNote()}">${directAirlines}</span></div>` : ''}
       ${viaResult ? viaConnectionsHtml(origin, destination, viaResult.options, viaResult.totalFound, selectedKey, viaResult.depth) : ''}
