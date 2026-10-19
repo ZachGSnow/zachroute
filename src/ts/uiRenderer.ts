@@ -24,7 +24,7 @@ import { fetchAirQuality, aqiScaleFor, aqiCategory, aqiValue, hazeNote, worsenin
 import { fetchFires, boxAround, summarizeFiresNear, AIRPORT_FIRE_RADIUS_MI } from './fires';
 import { fetchCruiseWind } from './windsAloft';
 import { fetchFreezingLevel, describeFreezingLevel, routeFreezingSummary } from './freezingLevel';
-import { fetchAirportPhoto, englishWikiTitle } from './wikiPhoto';
+import { fetchAirportPhoto, englishWikiTitle, airportWikiLink } from './wikiPhoto';
 import { carriersFor, carrierNames, carrierDataNote } from './carriers';
 import { isFavorite, toggleFavorite } from './history';
 import { analyzeRoute, drawRouteHazards, describeAdvisory, describeRoutePirep, ashNear, advisoryAltitude, type Advisory } from './mapOverlays';
@@ -66,7 +66,7 @@ function setCachedLore(iata: string, lore: string) {
 /** Query string for /api/lore: the linked article plus name and position to check search hits against. */
 export function loreQuery(airport: Airport): string {
   const params = new URLSearchParams({ iata: airport.iata });
-  const title = englishWikiTitle(airport.wikipediaLink);
+  const title = airport.wikiTitle || englishWikiTitle(airport.wikipediaLink);
   if (title) params.set('title', title);
   if (airport.name) params.set('name', airport.name);
   if (Number.isFinite(airport.lat) && Number.isFinite(airport.lon)) {
@@ -415,8 +415,9 @@ function linksRowHtml(airport: Airport): string {
       `<a href="https://skyvector.com/airport/${airport.icao}" target="_blank" rel="noopener">🗺 Airport diagram</a>`
     );
   }
-  if (airport.wikipediaLink) {
-    links.push(`<a href="${airport.wikipediaLink}" target="_blank" rel="noopener">Wikipedia \u2197</a>`);
+  const wikiLink = airportWikiLink(airport);
+  if (wikiLink) {
+    links.push(`<a href="${wikiLink}" target="_blank" rel="noopener">Wikipedia \u2197</a>`);
   }
   if (links.length === 0) return '';
   return `<div class="links-row">${links.join('')}</div>`;
@@ -545,8 +546,9 @@ async function fillAlerts(cardEl: HTMLElement, airport: Airport) {
 
 async function fillPhoto(cardEl: HTMLElement, airport: Airport) {
   const el = cardEl.querySelector('.photo-block') as HTMLElement | null;
-  if (!el || !airport.wikipediaLink) return;
-  const url = await fetchAirportPhoto(airport.wikipediaLink);
+  const link = airportWikiLink(airport);
+  if (!el || !link) return;
+  const url = await fetchAirportPhoto(link);
   if (!url || !el.isConnected) return;
   el.innerHTML = `<img class="airport-photo" src="${url}" alt="${airport.name}" loading="lazy" referrerpolicy="no-referrer" /><div class="photo-credit muted">Photo via Wikipedia</div>`;
   const img = el.querySelector('img');
