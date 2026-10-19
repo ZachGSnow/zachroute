@@ -832,6 +832,14 @@ body {
   text-shadow: 0 0 3px #020617, 0 0 3px #020617;
 }
 
+/* NWS forecaster notes on the airport card */
+.afd-paragraph {
+  margin: 6px 0;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--text);
+}
+
 .select-label.sub-setting {
   padding-left: 28px;
   color: var(--text-muted);
