@@ -12,6 +12,7 @@ structure left untouched. They contain only public aviation, weather and geograp
 | `awc-isigmet.json` | aviationweather.gov international SIGMET: volcanic ash, tropical cyclone, thunderstorm, turbulence, icing, one multi-area record and two without a usable polygon |
 | `faa-status-delays.xml` | nasstatus.faa.gov airport status, captured 2026-10-16 01:00 UTC while delay programs were active |
 | `faa-status-closures.xml` | the same feed later that morning (closures only) |
+| `faa-tfr-shapes.json`, `faa-tfr-list.json` | FAA TFR map service (WFS GeoJSON) and TFR list, captured 2026-10-19, trimmed to four TFRs (one with two shapes); the hazards TFR is left off the list to stand in for one no longer active |
 | `gdacs-events.json` | GDACS current events list: the four active tropical cyclones and one earthquake |
 | `gdacs-tc-geometry.json` | GDACS geometry for Typhoon Champi (JTWC, 16 Oct 12:00 UTC): track points, track segments and forecast cone; wind-swath polygons dropped and track-point circles thinned to every 8th vertex |
 | `firms-modis-24h.csv` | NASA FIRMS MODIS global 24-hour file: header plus 20 confident and 4 low-confidence detections around Palembang, Indonesia, and 5 elsewhere |
