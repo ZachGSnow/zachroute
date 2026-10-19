@@ -1000,7 +1000,7 @@ function noteSatelliteGap() {
   if (!map || !satelliteOn) return;
   const c = map.getCenter().wrap();
   if (!satelliteCovers(c.lat, c.lng)) {
-    setHint('No satellite cloud images for Europe, Africa, the Middle East or India in this source', 5000);
+    setHint('No satellite cloud images for Europe, Africa or the Middle East in this source', 5000);
   }
 }
 

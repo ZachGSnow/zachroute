@@ -1,7 +1,8 @@
 // Satellite clouds: NASA GIBS infrared (band 13, "clean" longwave window) from the three
 // geostationary satellites GIBS carries, newest image (every 10 minutes). Each pixel comes from
 // the satellite nearest overhead, and ground is cleared so only cloud shows over the base map.
-// There is no satellite here for Europe, Africa, the Middle East or India (GIBS has no Meteosat).
+// There is no satellite here for Europe, Africa or the Middle East, and only the faded edge of
+// Himawari's view over India (GIBS has no Meteosat).
 // No Leaflet here; mapOverlays.ts draws it.
 
 export interface Satellite {
