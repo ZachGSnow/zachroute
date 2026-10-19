@@ -96,7 +96,8 @@ fog), the forecast freezing level (shaded dark blue where it is low, with values
 feet; from zoom 3), pilot reports, weather hazards,
 tropical cyclones (track, forecast track and uncertainty cone), US flight restrictions (TFRs), fires detected by satellite in the
 last 24 hours, dust and smoke from space (the latest daily pass), satellite clouds (infrared, the newest
-image, every 10 minutes: white is cloud, color is cold storm tops; the Americas, the Pacific, Asia
+image, every 10 minutes: white is cloud, colors are colder, taller storm tops up to magenta for
+the strongest cores; the Americas, the Pacific, Asia
 and Australia, with no coverage of Europe, Africa or the Middle East in this source), day/night shading, approach
 distance ticks, and runway outlines with runway numbers when zoomed in.
 
