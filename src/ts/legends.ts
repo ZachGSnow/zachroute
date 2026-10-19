@@ -81,6 +81,30 @@ export function freezingLevelLegend(): LegendSpec {
   };
 }
 
+/**
+ * Cloud-top colors of the satellite layer, from NASA's band 13 colormap, with the temperatures
+ * they stand for (C). The coldest cores, which NASA draws in gray, are recolored magenta.
+ */
+const CLOUD_TOPS: Array<[string, number]> = [
+  ['#ffffff', -15],
+  ['#00cce3', -25],
+  ['#1aff00', -42],
+  ['#ffe600', -52],
+  ['#e60000', -62],
+  ['#d946ef', -75],
+];
+
+export function satelliteLegend(units: WeatherUnits = getWeatherUnits()): LegendSpec {
+  const t = (c: number) => `${Math.round(units === 'metric' ? c : cToF(c))}${DEG}`;
+  return {
+    kind: 'gradient',
+    title: `Satellite clouds: cloud-top temperature (${DEG}${units === 'metric' ? 'C' : 'F'})`,
+    colors: CLOUD_TOPS.map(([c]) => c),
+    labels: ['cloud', t(-40), t(-55), t(-65), `${t(-75)} and colder`],
+    note: 'Colder tops are taller, stronger storms; magenta marks the strongest cores',
+  };
+}
+
 /** NASA's OMPS aerosol index colors (GIBS colormap) at 1, 2, 3, 4 and 5; below about 1 is not drawn. */
 export const AEROSOL_LEGEND_COLORS = ['rgb(230, 230, 77)', 'rgb(234, 232, 0)', 'rgb(228, 115, 0)', 'rgb(225, 9, 0)', 'rgb(170, 0, 29)'];
 
