@@ -11,6 +11,10 @@ import { severityColor, type Severity } from './severity';
 export const IEM_REFLECTIVITY_URL = 'https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0q-900913/{z}/{x}/{y}.png';
 export const IEM_ECHO_TOPS_URL = 'https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-eet-900913/{z}/{x}/{y}.png';
 export const IEM_REFLECTIVITY_TIME_URL = 'https://mesonet.agron.iastate.edu/data/gis/images/4326/USCOMP/n0q_0.json';
+export const IEM_ECHO_TOPS_TIME_URL = 'https://mesonet.agron.iastate.edu/data/gis/images/4326/USCOMP/eet_0.json';
+
+/** What the radar layer shows: precipitation (worldwide) or storm tops (US). */
+export type RadarMode = 'precip' | 'tops';
 export const RAINVIEWER_MAPS_URL = 'https://api.rainviewer.com/public/weather-maps.json';
 /** The IEM composite is about 1 km per pixel; past zoom 8 the map just enlarges its tiles. */
 export const IEM_MAX_NATIVE_ZOOM = 8;

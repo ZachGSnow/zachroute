@@ -11,7 +11,7 @@ structure left untouched. They contain only public aviation, weather and geograp
 | `awc-cwa.json` | aviationweather.gov `/api/data/cwa`: two Center Weather Advisories from Miami Center for thunderstorms, captured 2026-10-19 |
 | `awc-gairmet-f00.json`, `awc-gairmet-f03.json` | aviationweather.gov `/api/data/gairmet` with `fore=0` and `fore=3`: the 21:00 and 00:00 UTC snapshots of the 19 Oct 21Z issuance, trimmed to one or two areas of each hazard plus freezing level lines |
 | `awc-tcf.json` | aviationweather.gov `/api/data/tcf?format=geojson`: the 19 Oct 23Z TFM Convective Forecast, five sparse, high-confidence areas for 03Z, 05Z and 07Z |
-| `iem-n0q-5-6-12.png`, `iem-eet-5-6-12.png`, `iem-n0q-0.json` | Iowa Environmental Mesonet NEXRAD tiles (zoom 5, x 6, y 12: storms over New Mexico), base reflectivity and echo tops, and the composite's time sidecar, captured 2026-10-19 23:30 UTC |
+| `iem-n0q-5-6-12.png`, `iem-eet-5-6-12.png`, `iem-n0q-0.json`, `iem-eet-0.json` | Iowa Environmental Mesonet NEXRAD tiles (zoom 5, x 6, y 12: storms over New Mexico), base reflectivity and echo tops, and the reflectivity composite's time sidecar (`iem-eet-0.json` is the echo tops one), captured 2026-10-19 23:30 UTC |
 | `rainviewer-5-15-11.png`, `rainviewer-weather-maps.json` | RainViewer radar tile over Europe (zoom 5, Universal Blue, no smoothing) and its frame index, captured 2026-10-19 |
 | `awc-isigmet.json` | aviationweather.gov international SIGMET: volcanic ash, tropical cyclone, thunderstorm, turbulence, icing, one multi-area record and two without a usable polygon |
 | `faa-status-delays.xml` | nasstatus.faa.gov airport status, captured 2026-10-16 01:00 UTC while delay programs were active |
