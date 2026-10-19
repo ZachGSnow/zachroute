@@ -2,7 +2,8 @@ import type { Airport, RunwayDetail } from './geoMath';
 import { formatDistance, clockOptions, UNITS_CHANGED } from './units';
 import { stationTemp } from './stationTemp';
 import { setLegend } from './legend';
-import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend, pirepLegend, fireLegend, hazardLegend, cycloneLegend, tfrLegend, HAZARD_GLYPH } from './legends';
+import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend, pirepLegend, fireLegend, hazardLegend, cycloneLegend, tfrLegend, tcfLegend, HAZARD_GLYPH } from './legends';
+import { fetchTcf, tcfForStep, tcfSeverity, tcfCoverageLabel, TCF_STEP_HOURS, type TcfArea, type TcfStep } from './tcf';
 import { severityColor, severityName, fireSeverity, advisorySeverity, cycloneSeverity, tfrSeverity } from './severity';
 import { fetchTfrs, tfrsCrossed, tfrTypeLabel, tfrPlace, type Tfr } from './tfr';
 import { gridFor, fetchFreezingGrid, freezingColor, freezingLabel } from './freezingLayer';
@@ -756,6 +757,89 @@ async function refreshTfrs(announce: boolean) {
   for (const t of list) for (const poly of tfrPolygons(t, false)) tfrLayer.addLayer(poly);
   if (!map.hasLayer(tfrLayer)) tfrLayer.addTo(map);
   if (announce) setHint(list.length ? 'US flight restrictions (TFRs): most reach only a few thousand feet' : 'No active US flight restrictions', 4000);
+}
+
+// ---------------------------------------------------------------------------
+// Thunderstorm forecast (AWC TFM Convective Forecast, US, 4/6/8 hours ahead)
+// ---------------------------------------------------------------------------
+
+let tcfLayer: L.LayerGroup | null = null;
+let tcfOn = false;
+let tcfStep: TcfStep = 0;
+let tcfTimer: number | undefined;
+
+/** "FL340" for storm tops. */
+function topsLabel(feet?: number): string {
+  return feet === undefined ? '' : feet >= 18000 ? `FL${Math.round(feet / 100)}` : `${feet.toLocaleString()} ft`;
+}
+
+function tcfLayers(a: TcfArea): L.Layer[] {
+  const level = tcfSeverity(a);
+  const color = severityColor(level);
+  const low = a.confidence === 'low';
+  const popup =
+    `<strong>${esc(severityName(level))}: thunderstorms forecast</strong>` +
+    `<br>Coverage: ${esc(tcfCoverageLabel(a))}` +
+    `<br>Confidence: ${esc(a.confidence || 'not given')}` +
+    (a.tops ? `<br>Tops to ${esc(topsLabel(a.tops))}` : '') +
+    `<br>For ${esc(timeLabel(a.validTime))}` +
+    `<br><small style="color:#64748b">TFM Convective Forecast, Aviation Weather Center</small>`;
+  const shape =
+    a.kind === 'line'
+      ? L.polyline(a.coords, { pane: 'hazards', color, weight: 5, dashArray: low ? '8, 6' : undefined })
+      : L.polygon(a.coords, {
+          pane: 'hazards',
+          color,
+          weight: 2,
+          dashArray: low ? '6, 5' : undefined,
+          fillColor: color,
+          fillOpacity: a.coverage === 'sparse' ? 0.12 : 0.22,
+        });
+  shape.bindPopup(popup);
+  if (!a.tops || a.kind === 'line') return [shape];
+  const [lat, lon] = ringMiddle(a.coords);
+  const label = L.marker([lat, lon], {
+    pane: 'hazards',
+    icon: L.divIcon({ className: 'tcf-tops', html: `<span style="--c:${color}">${Math.round(a.tops / 1000)}</span>`, iconSize: [26, 16], iconAnchor: [13, 8] }),
+    keyboard: false,
+  }).bindPopup(popup);
+  return [shape, label];
+}
+
+export function setTcf(on: boolean) {
+  tcfOn = on;
+  setLegend('tcf', on ? tcfLegend() : null);
+  window.clearInterval(tcfTimer);
+  if (!map) return;
+  if (!on) {
+    tcfLayer?.clearLayers();
+    return;
+  }
+  void refreshTcf(true);
+  // Issued every 2 hours; the server caches 10 minutes.
+  tcfTimer = window.setInterval(() => void refreshTcf(false), 10 * 60 * 1000);
+}
+
+/** Which forecast to show: 0, 1, 2 for about 4, 6, 8 hours ahead. */
+export function setTcfStep(step: TcfStep) {
+  tcfStep = step;
+  if (tcfOn) void refreshTcf(true);
+}
+
+async function refreshTcf(announce: boolean) {
+  if (!map || !tcfOn) return;
+  const { time, areas } = tcfForStep(await fetchTcf(), tcfStep);
+  if (!map || !tcfOn) return;
+  if (!tcfLayer) tcfLayer = L.layerGroup();
+  tcfLayer.clearLayers();
+  for (const a of areas) for (const layer of tcfLayers(a)) tcfLayer.addLayer(layer);
+  if (!map.hasLayer(tcfLayer)) tcfLayer.addTo(map);
+  if (announce) {
+    setHint(
+      time ? `Thunderstorms forecast for ${timeLabel(time)} (about ${TCF_STEP_HOURS[tcfStep]} hours ahead)` : 'No thunderstorms forecast over the US',
+      4000
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------

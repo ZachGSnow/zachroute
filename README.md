@@ -95,7 +95,9 @@ used once and not stored; denying permission just shows a message.
 (wind arrows, with a ring only when conditions are below VFR; or temperatures colored cold to hot,
 marked where it is at or below freezing and where temperature and dewpoint are close enough for
 fog), the forecast freezing level (shaded dark blue where it is low, with values in thousands of
-feet; from zoom 3), pilot reports, weather hazards,
+feet; from zoom 3), pilot reports, weather hazards, the US thunderstorm forecast (the Aviation
+Weather Center's TFM Convective Forecast for 4, 6 or 8 hours ahead: where storms are expected, how
+much of each area they cover, the forecasters' confidence and the storm tops),
 tropical cyclones (track, forecast track and uncertainty cone), US flight restrictions (TFRs), fires detected by satellite in the
 last 24 hours, dust and smoke from space (the latest daily pass), satellite clouds (infrared, the newest
 image, every 10 minutes: white is cloud, colors are colder, taller storm tops up to magenta for
@@ -109,7 +111,9 @@ Hazards share one severity scale: yellow Light, orange Moderate, red Severe, mag
 reports are colored by how bad the turbulence or icing was (their shape says which), and fires by
 their radiative power. Weather advisories are colored by severity with a symbol for the hazard
 (AIRMETs moderate, SIGMETs severe, embedded or line thunderstorms and volcanic ash extreme),
-tropical cyclones by strength, and US flight restrictions by how restrictive they are. Cards and
+the thunderstorm forecast by how much of the area storms will cover (sparse moderate, medium
+severe, solid or a line extreme; dashed when confidence is low), tropical cyclones by strength,
+and US flight restrictions by how restrictive they are. Cards and
 route lists show the same level as a badge, worst first.
 
 **Phone layout**: the results panel is a bottom sheet. Drag its handle between a one-line peek
@@ -204,7 +208,7 @@ npm run typecheck
 
 Every integration that parses an upstream response is tested against a real response captured from
 the source on 2026-10-16 (`test/fixtures/`): aviationweather.gov METAR, TAF, PIREP (by airport and
-by area), METAR by area, AIRMET/SIGMET, G-AIRMET and international SIGMET; the FAA NAS status XML; NWS
+by area), METAR by area, AIRMET/SIGMET, G-AIRMET, international SIGMET and the convective forecast (TCF); the FAA NAS status XML; NWS
 alerts; GDACS tropical cyclones; NASA FIRMS fire detections; Open-Meteo winds aloft and air quality;
 Wikipedia search and summaries; OurAirports CSVs; OpenFlights `routes.dat`; and the US DOT on-time
 CSV. The dust layer's pixel filter is tested on sample pixels; the NASA GIBS tiles themselves are
@@ -236,6 +240,7 @@ can add on top of the source's age.
 | Delay programs (US) | [FAA NAS Status](https://nasstatus.faa.gov) | Continuously | Up to 10 min | Public domain (US government) |
 | Weather alerts (US) | [National Weather Service](https://www.weather.gov) | Real time | Up to 5 min | Public domain (US government) |
 | Forecaster aviation notes (US) | National Weather Service forecast discussions (api.weather.gov) | About 4 times a day per office, plus updates | Up to 45 min | Public domain (US government) |
+| Thunderstorm forecast (US, TCF) | Aviation Weather Center | Every 2 hours, for 4, 6 and 8 hours ahead | Up to 15 min | Public domain (US government) |
 | Temporary flight restrictions (US) | [FAA TFR list and map service](https://tfr.faa.gov) | As issued | Up to 15 min | Public domain (US government) |
 | Tropical cyclones (from NHC, JTWC and other agencies) | [GDACS](https://www.gdacs.org), the UN / European Commission Global Disaster Alert and Coordination System | Each storm's advisory every 6 hours, republished by GDACS 1-6 hours later (storms were 5-14 hours past their advisory time when measured) | Up to 40 min | No published license; GDACS provides its data as is, for information only (credited in the app) |
 | Air quality (Copernicus CAMS models) | [Open-Meteo](https://open-meteo.com) | Hourly model values from model runs twice a day: estimates, not station measurements | Up to 30 min | CC BY 4.0, free for non-commercial use; contains Copernicus Atmosphere Monitoring Service information |
