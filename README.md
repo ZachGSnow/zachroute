@@ -40,7 +40,8 @@ companion to a FlightWall display: see a plane overhead, look up where it is goi
 
 **Airport card**
 - Current conditions from the latest METAR in plain English, with a "More details" section
-  (dewpoint and fog risk, ceiling, altimeter or QNH, density altitude, wind as the tower states it).
+  (dewpoint and fog risk, ceiling, altimeter or QNH, density altitude, wind as the tower states it,
+  and the forecast freezing level).
 - Forecast (TAF) decoded into an outlook ("Conditions drop to MVFR around Fri 6 AM") and a period list.
 - Recent pilot reports of turbulence or icing nearby, in plain English.
 - Runways with dimensions and surface, the wind-favored runway with headwind/crosswind
@@ -71,6 +72,8 @@ used once and not stored; denying permission just shows a message.
   wind-favored runway and a 10 nm final approach, and colored by the forecast headwind or tailwind
   along it. It is not an airway or air traffic control routing, and the winds do not change its
   shape.
+- The forecast freezing level at both airports, and the lowest along the way when it dips well below
+  them.
 - When there is no nonstop, one-stop and two-stop connections from the route data (not live
   schedules) are drawn and listed; the selected itinerary shows per-leg distance and time.
 - Weather advisories the route passes through are listed and drawn: US AIRMETs and SIGMETs, and
@@ -213,7 +216,7 @@ can add on top of the source's age.
 | Weather alerts (US) | [National Weather Service](https://www.weather.gov) | Real time | Up to 5 min | Public domain (US government) |
 | Tropical cyclones (from NHC, JTWC and other agencies) | [GDACS](https://www.gdacs.org), the UN / European Commission Global Disaster Alert and Coordination System | Each storm's advisory every 6 hours, republished by GDACS 1-6 hours later (storms were 5-14 hours past their advisory time when measured) | Up to 40 min | No published license; GDACS provides its data as is, for information only (credited in the app) |
 | Air quality (Copernicus CAMS models) | [Open-Meteo](https://open-meteo.com) | Hourly model values from model runs twice a day: estimates, not station measurements | Up to 30 min | CC BY 4.0, free for non-commercial use; contains Copernicus Atmosphere Monitoring Service information |
-| Winds aloft | Open-Meteo | Hourly model values | Up to 15 min | CC BY 4.0, free for non-commercial use |
+| Winds aloft and freezing level | Open-Meteo | Hourly model values (the freezing level on the airport card every 15 minutes) | Up to 15 min | CC BY 4.0, free for non-commercial use |
 | Fire and heat detections (MODIS) | [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov) | A few satellite passes per place per day, published about 3 hours later; the app keeps the last 24 hours | Up to 75 min (the source file, the result and the browser are each cached) | Free and open (NASA); credited in the app |
 | Dust and smoke layer (OMPS aerosol index, NOAA-20) | [NASA GIBS](https://nasa-gibs.github.io/gibs-api-docs/) | One pass per place per day, around 13:30 local time; the app shows today's pass where it has happened and yesterday's elsewhere | Redraws hourly | Free and open (NASA); credited on the map |
 | Airport history text and photos | [Wikipedia](https://en.wikipedia.org) | As edited | Up to 7 days | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
