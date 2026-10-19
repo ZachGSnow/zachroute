@@ -8,6 +8,7 @@ structure left untouched. They contain only public aviation, weather and geograp
 | `awc-metar-kord.json`, `awc-taf-kord.json` | aviationweather.gov `/api/data/metar`, `/taf` for KORD |
 | `awc-pirep-kord.json`, `awc-pirep-bbox.json` | aviationweather.gov `/api/data/pirep` by airport and by area |
 | `awc-metar-bbox.json`, `awc-airsigmet.json` | aviationweather.gov METAR by area, AIRMET/SIGMET |
+| `awc-cwa.json` | aviationweather.gov `/api/data/cwa`: two Center Weather Advisories from Miami Center for thunderstorms, captured 2026-10-19 |
 | `awc-isigmet.json` | aviationweather.gov international SIGMET: volcanic ash, tropical cyclone, thunderstorm, turbulence, icing, one multi-area record and two without a usable polygon |
 | `faa-status-delays.xml` | nasstatus.faa.gov airport status, captured 2026-10-16 01:00 UTC while delay programs were active |
 | `faa-status-closures.xml` | the same feed later that morning (closures only) |
