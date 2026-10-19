@@ -1,7 +1,10 @@
 import { USER_AGENT } from '../../shared/userAgent';
 // Cloudflare Pages Function: /api/airsigmet
 // Active weather advisories as polygons from aviationweather.gov (free, no key):
-//   - US AIRMETs/SIGMETs (turbulence, icing, IFR, mountain obscuration, convection)
+//   - US SIGMETs (convection, severe turbulence and icing)
+//   - US G-AIRMETs (graphical AIRMETs: turbulence, icing, low ceilings, mountain obscuration,
+//     strong surface wind, low-level wind shear), which replaced the text AIRMETs the US feed
+//     used to carry
 //   - international SIGMETs issued for FIRs worldwide, including US oceanic FIRs
 //     (thunderstorms, turbulence, icing, volcanic ash, tropical cyclones)
 //   - US Center Weather Advisories: short-notice (up to 2 hours) warnings from an air route
@@ -30,12 +33,15 @@ export interface Advisory {
   coords: [number, number][];
 }
 
-const CACHE_KEY = 'airsigmet:v3'; // v3: includes Center Weather Advisories
+const CACHE_KEY = 'airsigmet:v4'; // v4: includes G-AIRMETs
 const CACHE_TTL_SECONDS = 300;
 
 const US_URL = 'https://aviationweather.gov/api/data/airsigmet?format=json';
 const INTL_URL = 'https://aviationweather.gov/api/data/isigmet?format=json';
 const CWA_URL = 'https://aviationweather.gov/api/data/cwa?format=json';
+// G-AIRMETs are snapshots every 3 hours from issuance; one of these three is nearest now.
+const GAIRMET_URL = 'https://aviationweather.gov/api/data/gairmet?format=json&fore=';
+const GAIRMET_HOURS = [0, 3, 6];
 
 const json = (body: unknown) =>
   new Response(JSON.stringify(body), {
@@ -226,6 +232,73 @@ export function fromCwaFeed(data: any[], now: number): Advisory[] {
     });
 }
 
+// G-AIRMET hazard codes, mapped onto the names the map styles use. Freezing level contours
+// (FZLVL, M_FZLVL) are left out: they are lines, and the freezing level layer covers them.
+const GAIRMET_HAZARD: Record<string, string> = {
+  'TURB-HI': 'TURB',
+  'TURB-LO': 'TURB',
+  ICE: 'ICE',
+  IFR: 'IFR',
+  MT_OBSC: 'MTN OBSCN',
+  SFC_WND: 'SFC WND',
+  LLWS: 'LLWS',
+};
+
+/** A G-AIRMET level in hundreds of feet ("080" -> 8000, "SFC" -> 0); "FZL" (the freezing level) and blanks -> undefined. */
+export function gairmetLevel(value: unknown): number | undefined {
+  const v = typeof value === 'string' ? value.trim().toUpperCase() : typeof value === 'number' ? String(value) : '';
+  if (v === 'SFC') return 0;
+  return /^\d{1,3}$/.test(v) ? parseInt(v, 10) * 100 : undefined;
+}
+
+const validAt = (r: any) => (typeof r?.validTime === 'string' ? Date.parse(r.validTime) / 1000 : NaN);
+
+/**
+ * The G-AIRMET snapshot nearest now. Each snapshot shows the hazards at one moment (issuance, +3h,
+ * +6h, ...), so the records whose valid time is closest to now are kept.
+ */
+export function nearestGairmetSnapshot(records: any[], now: number): any[] {
+  let best = NaN;
+  for (const r of records) {
+    const t = validAt(r);
+    if (Number.isFinite(t) && (!Number.isFinite(best) || Math.abs(t - now) < Math.abs(best - now))) best = t;
+  }
+  return Number.isFinite(best) ? records.filter((r) => validAt(r) === best) : [];
+}
+
+const SNAPSHOT_HALF_SPAN = 90 * 60; // a snapshot stands for the 1.5 hours either side of it
+
+/** G-AIRMET records (one snapshot) -> advisories, drawn and ranked as AIRMETs. */
+export function fromGairmetFeed(data: any[], now: number): Advisory[] {
+  return data.flatMap((a): Advisory[] => {
+    const hazard = a && GAIRMET_HAZARD[a.hazard];
+    const at = validAt(a);
+    if (!hazard || !Number.isFinite(at)) return [];
+    const expires = typeof a.expireTime === 'number' ? a.expireTime : Infinity;
+    const validTo = Math.min(at + SNAPSHOT_HALF_SPAN, expires);
+    if (validTo <= now) return [];
+    const coords = toRing(a.coords);
+    if (!coords) return [];
+    const dueTo = typeof a.due_to === 'string' ? a.due_to.trim().toUpperCase() : '';
+    const detail = [a.severity === 'MOD' ? 'moderate' : '', dueTo === 'MTN WAVE' ? 'mountain wave' : ''].filter(Boolean).join(' ');
+    return [
+      {
+        type: 'AIRMET',
+        hazard,
+        detail: detail || undefined,
+        validFrom: at - SNAPSHOT_HALF_SPAN,
+        validTo,
+        altLow: gairmetLevel(a.base),
+        altHigh: gairmetLevel(a.top),
+        raw: [`G-AIRMET ${a.product || ''} ${a.tag || ''}`.replace(/\s+/g, ' ').trim(), dueTo && dueTo !== 'MTN WAVE' && dueTo !== 'ICE' ? dueTo : '']
+          .filter(Boolean)
+          .join(': '),
+        coords,
+      },
+    ];
+  });
+}
+
 /** The international feed sometimes lists the same SIGMET twice; keep one of each. */
 export function dedupe(list: Advisory[]): Advisory[] {
   const seen = new Set<string>();
@@ -254,13 +327,19 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     if (cached) return json(cached);
   }
 
-  const [us, intl, cwa] = await Promise.all([getFeed(US_URL), getFeed(INTL_URL), getFeed(CWA_URL)]);
+  const [us, intl, cwa, ...gairmets] = await Promise.all([
+    getFeed(US_URL),
+    getFeed(INTL_URL),
+    getFeed(CWA_URL),
+    ...GAIRMET_HOURS.map((h) => getFeed(GAIRMET_URL + h)),
+  ]);
   const now = Math.floor(Date.now() / 1000);
-  const advisories = dedupe([...fromUsFeed(us || [], now), ...fromIntlFeed(intl || [], now), ...fromCwaFeed(cwa || [], now)]);
+  const gairmet = fromGairmetFeed(nearestGairmetSnapshot(gairmets.flatMap((g) => g || []), now), now);
+  const advisories = dedupe([...fromUsFeed(us || [], now), ...gairmet, ...fromIntlFeed(intl || [], now), ...fromCwaFeed(cwa || [], now)]);
   const result = { advisories };
 
   // Only cache a complete answer, so one feed being down does not hide it for five minutes.
-  if (us && intl && cwa && context.env.LORE_KV) {
+  if (us && intl && cwa && gairmets.every(Boolean) && context.env.LORE_KV) {
     await context.env.LORE_KV.put(CACHE_KEY, JSON.stringify(result), { expirationTtl: CACHE_TTL_SECONDS });
   }
   return json(result);

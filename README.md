@@ -79,7 +79,9 @@ used once and not stored; denying permission just shows a message.
   them.
 - When there is no nonstop, one-stop and two-stop connections from the route data (not live
   schedules) are drawn and listed; the selected itinerary shows per-leg distance and time.
-- Weather advisories the route passes through are listed and drawn: US AIRMETs and SIGMETs, and
+- Weather advisories the route passes through are listed and drawn: US G-AIRMETs (the graphical
+  AIRMETs that replaced the text ones: turbulence, icing, low ceilings, mountains in cloud, strong
+  surface wind, low-level wind shear, shown as the 3-hourly snapshot nearest now) and SIGMETs, and
   international SIGMETs worldwide (thunderstorms, turbulence, icing, volcanic ash, tropical
   cyclones), each with the flight information region (FIR) that issued it, and US center weather
   advisories (short-notice warnings from an air traffic control center, valid up to 2 hours). Volcanic ash gets its
@@ -202,7 +204,7 @@ npm run typecheck
 
 Every integration that parses an upstream response is tested against a real response captured from
 the source on 2026-10-16 (`test/fixtures/`): aviationweather.gov METAR, TAF, PIREP (by airport and
-by area), METAR by area, AIRMET/SIGMET and international SIGMET; the FAA NAS status XML; NWS
+by area), METAR by area, AIRMET/SIGMET, G-AIRMET and international SIGMET; the FAA NAS status XML; NWS
 alerts; GDACS tropical cyclones; NASA FIRMS fire detections; Open-Meteo winds aloft and air quality;
 Wikipedia search and summaries; OurAirports CSVs; OpenFlights `routes.dat`; and the US DOT on-time
 CSV. The dust layer's pixel filter is tested on sample pixels; the NASA GIBS tiles themselves are
@@ -230,7 +232,7 @@ can add on top of the source's age.
 | Current weather (METAR) | [Aviation Weather Center](https://aviationweather.gov) | Hourly, plus special reports when conditions change | Up to 15 min | Public domain (US government) |
 | Forecasts (TAF) | Aviation Weather Center | Every 6 hours (3 in some countries), plus amendments | Up to 25 min | Public domain (US government) |
 | Pilot reports | Aviation Weather Center | As pilots file them; the last 3 hours are shown | Up to 7 min | Public domain (US government) |
-| AIRMETs, SIGMETs, international SIGMETs, center weather advisories | Aviation Weather Center | AIRMETs every 6 hours; SIGMETs when issued, valid up to 4 hours (6 for ash and cyclones); CWAs when issued, valid up to 2 hours | Up to 9 min; the map layer redraws every 5 min | Public domain (US government) |
+| G-AIRMETs, SIGMETs, international SIGMETs, center weather advisories | Aviation Weather Center | G-AIRMETs every 6 hours, as snapshots 3 hours apart; SIGMETs when issued, valid up to 4 hours (6 for ash and cyclones); CWAs when issued, valid up to 2 hours | Up to 9 min; the map layer redraws every 5 min | Public domain (US government) |
 | Delay programs (US) | [FAA NAS Status](https://nasstatus.faa.gov) | Continuously | Up to 10 min | Public domain (US government) |
 | Weather alerts (US) | [National Weather Service](https://www.weather.gov) | Real time | Up to 5 min | Public domain (US government) |
 | Forecaster aviation notes (US) | National Weather Service forecast discussions (api.weather.gov) | About 4 times a day per office, plus updates | Up to 45 min | Public domain (US government) |
