@@ -102,10 +102,10 @@ weather hazards, the US thunderstorm forecast (the Aviation
 Weather Center's TFM Convective Forecast for 4, 6 or 8 hours ahead: where storms are expected, how
 much of each area they cover, the forecasters' confidence and the storm tops),
 tropical cyclones (track, forecast track and uncertainty cone), US flight restrictions (TFRs), fires detected by satellite in the
-last 24 hours, dust and smoke from space (the latest daily pass), satellite clouds (infrared, the newest
-image, every 10 minutes: white is cloud, colors are colder, taller storm tops up to magenta for
-the strongest cores; the Americas, the Pacific, Asia
-and Australia, with no coverage of Europe, Africa or the Middle East in this source), day/night shading, approach
+last 24 hours, dust and smoke from space (the latest daily pass), satellite clouds (infrared: white is cloud, colors are colder, taller storm tops up to magenta for
+the strongest cores; worldwide except near the poles: the Americas, the Pacific, Asia and Australia
+from NASA, the newest image every 10 minutes, and Europe, Africa, the Middle East and India from
+Meteosat, the newest top-of-the-hour image), day/night shading, approach
 distance ticks, and runway outlines with runway numbers when zoomed in.
 
 **Map legend**: a panel at the bottom left explains each layer that is switched on (colors,
@@ -203,6 +203,10 @@ for the design and the reasoning behind the main decisions.
 - An airport card loads its data when you search and does not refresh while it is open; search
   again for newer data.
 - Delays and weather alerts are US only; there is no free equivalent for other countries.
+- Meteosat images come without a temperature scale, so they are matched to NASA's satellites where
+  both see the same clouds (see `src/ts/meteosatCalibration.ts`): expect a band's edge to be a few
+  degrees off. They also stop at about -65 C, so their strongest storms show as solid red, never
+  the magenta cold cores the NASA satellites show.
 - Radar outside the US covers only countries that share their radar with RainViewer, at zoom 7
   detail at most; some networks (Mexico's, for one) report in coarse steps, so strong cells can
   show as solid blocks of one level.
@@ -258,6 +262,7 @@ can add on top of the source's age.
 | Winds aloft and freezing level | Open-Meteo | Hourly model values (the freezing level on the airport card every 15 minutes) | Up to 15 min (30 min for the freezing level map layer) | CC BY 4.0, free for non-commercial use |
 | Fire and heat detections (MODIS) | [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov) | A few satellite passes per place per day, published about 3 hours later; the app keeps the last 24 hours | Up to 75 min (the source file, the result and the browser are each cached) | Free and open (NASA); credited in the app |
 | Satellite clouds (GOES-East and GOES-West from NOAA, Himawari from JMA; infrared band 13) | NASA GIBS | Every 10 minutes | Redraws every 10 min | Free and open (NASA); credited on the map |
+| Satellite clouds (Meteosat-12 over Europe and Africa, Meteosat-9 over the Middle East and India; infrared 10.5 / 10.8 um) | [EUMETSAT](https://view.eumetsat.int) | Hourly images used (newer ones exist, but only hourly images are free at once) | Up to 1 hour plus EUMETSAT's 20-50 min delay; redraws every 10 min | Free and unrestricted for hourly images (EUMETSAT data policy, "Essential" data); credited on the map |
 | Dust and smoke layer (OMPS aerosol index, NOAA-20) | [NASA GIBS](https://nasa-gibs.github.io/gibs-api-docs/) | One pass per place per day, around 13:30 local time; the app shows today's pass where it has happened and yesterday's elsewhere | Redraws hourly | Free and open (NASA); credited on the map |
 | Airport history text and photos | [Wikipedia](https://en.wikipedia.org) | As edited | Up to 7 days | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
 | Airports, runways, frequencies, navaids | [OurAirports](https://ourairports.com/data/) | Nightly | Until you run `npm run data` | Public domain |
