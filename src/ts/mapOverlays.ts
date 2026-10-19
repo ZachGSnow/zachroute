@@ -2,8 +2,8 @@ import type { Airport, RunwayDetail } from './geoMath';
 import { formatDistance, clockOptions, UNITS_CHANGED } from './units';
 import { stationTemp } from './stationTemp';
 import { setLegend } from './legend';
-import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend, pirepLegend, fireLegend } from './legends';
-import { severityColor, severityName, fireSeverity } from './severity';
+import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend, pirepLegend, fireLegend, hazardLegend, cycloneLegend, tfrLegend, HAZARD_GLYPH } from './legends';
+import { severityColor, severityName, fireSeverity, advisorySeverity, cycloneSeverity, tfrSeverity } from './severity';
 import { fetchTfrs, tfrsCrossed, tfrTypeLabel, tfrPlace, type Tfr } from './tfr';
 import { gridFor, fetchFreezingGrid, freezingColor, freezingLabel } from './freezingLayer';
 import { satelliteTileUrl, satellitesForRange, satelliteCovers, cloudPixel, coldCoreMask, COLD_CORE_RGBA, viewCos, viewWeight, SATELLITE_MAX_NATIVE_ZOOM, type Satellite } from './satelliteTiles';
@@ -333,15 +333,16 @@ interface Advisory {
   coords: [number, number][];
 }
 
-const HAZARD_STYLE: Record<string, { color: string; label: string }> = {
-  TURB: { color: '#f59e0b', label: 'Turbulence' },
-  ICE: { color: '#67e8f9', label: 'Icing' },
-  IFR: { color: '#94a3b8', label: 'Low ceilings / visibility' },
-  'MTN OBSCN': { color: '#c4b5fd', label: 'Mountain obscuration' },
-  CONVECTIVE: { color: '#ef4444', label: 'Thunderstorms' },
-  ASH: { color: '#a8a29e', label: 'Volcanic ash' },
-  TC: { color: '#f472b6', label: 'Tropical cyclone' },
-  PCPN: { color: '#60a5fa', label: 'Heavy precipitation' },
+/** Plain-English hazard names; the color of a hazard shape is its severity (severity.ts). */
+const HAZARD_LABEL: Record<string, string> = {
+  TURB: 'Turbulence',
+  ICE: 'Icing',
+  IFR: 'Low ceilings / visibility',
+  'MTN OBSCN': 'Mountain obscuration',
+  CONVECTIVE: 'Thunderstorms',
+  ASH: 'Volcanic ash',
+  TC: 'Tropical cyclone',
+  PCPN: 'Heavy precipitation',
 };
 
 /** Who issued it: "Miami Center" for a CWA, "Oakland Oceanic FIR" for an international SIGMET. */
@@ -355,13 +356,13 @@ function typeLabel(adv: Advisory): string {
   return adv.type === 'CWA' ? 'Center weather advisory' : adv.type;
 }
 
-function hazardStyle(hazard: string) {
-  return HAZARD_STYLE[hazard] || { color: '#e2e8f0', label: hazard };
+function hazardLabel(hazard: string): string {
+  return HAZARD_LABEL[hazard] || hazard;
 }
 
 /** "Severe turbulence", "Embedded thunderstorms", "Volcanic ash (Mt Ibu)". */
 function advisoryTitle(adv: Advisory): string {
-  const label = hazardStyle(adv.hazard).label;
+  const label = hazardLabel(adv.hazard);
   const base = adv.detail ? `${adv.detail[0].toUpperCase()}${adv.detail.slice(1)} ${label.toLowerCase()}` : label;
   return adv.name ? `${base} (${adv.name})` : base;
 }
@@ -391,6 +392,7 @@ let hazardTimer: number | undefined;
 
 export function setHazards(on: boolean) {
   hazardsOn = on;
+  setLegend('hazards', on ? hazardLegend() : null);
   window.clearInterval(hazardTimer);
   if (!map) return;
   if (!on) {
@@ -414,26 +416,48 @@ function altitudeLabel(low?: number, high?: number): string {
   return `above ${fmt(low as number)}`;
 }
 
-function advisoryPolygon(adv: Advisory, strong: boolean): L.Polygon {
-  const style = hazardStyle(adv.hazard);
+/**
+ * An advisory's shape (color = severity; dashed = AIRMET) and a small glyph for its hazard at the
+ * middle of the shape, since the color no longer says what kind it is.
+ */
+function advisoryLayers(adv: Advisory, strong: boolean): L.Layer[] {
+  const level = advisorySeverity(adv);
+  const color = severityColor(level);
   const sigmet = adv.type === 'SIGMET' || adv.type === 'CWA'; // both drawn solid: short-lived, significant
   const poly = L.polygon(adv.coords, {
     pane: 'hazards',
-    color: style.color,
+    color,
     weight: strong ? 3 : sigmet ? 2.5 : 1.5,
     dashArray: sigmet || strong ? undefined : '5, 5',
-    fillColor: style.color,
+    fillColor: color,
     fillOpacity: strong ? 0.24 : sigmet ? 0.18 : 0.1,
   });
   const alt = advisoryAltitude(adv);
-  poly.bindPopup(
-    `<strong>${esc(typeLabel(adv))}: ${esc(advisoryTitle(adv))}</strong>` +
+  const popup =
+    `<strong>${esc(severityName(level))}: ${esc(typeLabel(adv))}: ${esc(advisoryTitle(adv))}</strong>` +
       (adv.region ? `<br>${esc(issuerLabel(adv))}` : '') +
       (alt ? `<br>${esc(alt)}` : '') +
       (adv.validTo ? `<br>Until ${esc(timeLabel(adv.validTo))}` : '') +
-      (adv.raw ? `<br><small style="color:#64748b">${esc(String(adv.raw).replace(/\s+/g, ' ').slice(0, 320))}</small>` : '')
-  );
-  return poly;
+      (adv.raw ? `<br><small style="color:#64748b">${esc(String(adv.raw).replace(/\s+/g, ' ').slice(0, 320))}</small>` : '');
+  poly.bindPopup(popup);
+  const [lat, lon] = ringMiddle(adv.coords);
+  const glyph = L.marker([lat, lon], {
+    pane: 'hazards',
+    icon: L.divIcon({
+      className: 'hazard-glyph',
+      html: `<span style="--c:${color}">${HAZARD_GLYPH[adv.hazard] || '!'}</span>`,
+      iconSize: [20, 20],
+      iconAnchor: [10, 10],
+    }),
+    keyboard: false,
+  }).bindPopup(popup);
+  return [poly, glyph];
+}
+
+/** Average of a ring's points: good enough to place a label inside the small, convex shapes advisories mostly are. */
+function ringMiddle(ring: [number, number][]): [number, number] {
+  const n = ring.length || 1;
+  return [ring.reduce((a, p) => a + p[0], 0) / n, ring.reduce((a, p) => a + p[1], 0) / n];
 }
 
 async function refreshHazards(announce: boolean) {
@@ -444,7 +468,7 @@ async function refreshHazards(announce: boolean) {
 
   if (!hazardLayer) hazardLayer = L.layerGroup();
   hazardLayer.clearLayers();
-  for (const adv of list) hazardLayer.addLayer(advisoryPolygon(adv, false));
+  for (const adv of list) for (const layer of advisoryLayers(adv, false)) hazardLayer.addLayer(layer);
   if (!map.hasLayer(hazardLayer)) hazardLayer.addTo(map);
   if (announce && list.length === 0) setHint('No active AIRMETs, SIGMETs or center weather advisories', 3500);
 }
@@ -672,7 +696,7 @@ export function drawRouteHazards(result: RouteHazardResult) {
   if (!map) return;
   if (!routeHazardLayer) routeHazardLayer = L.layerGroup().addTo(map);
   routeHazardLayer.clearLayers();
-  for (const adv of result.advisories) routeHazardLayer.addLayer(advisoryPolygon(adv, true));
+  for (const adv of result.advisories) for (const layer of advisoryLayers(adv, true)) routeHazardLayer.addLayer(layer);
   for (const p of result.pireps) {
     const m = pirepMarker(p);
     if (m) routeHazardLayer.addLayer(m);
@@ -685,22 +709,23 @@ export function drawRouteHazards(result: RouteHazardResult) {
 // US temporary flight restrictions (FAA)
 // ---------------------------------------------------------------------------
 
-const TFR_COLOR = '#f43f5e';
 let tfrLayer: L.LayerGroup | null = null;
 let tfrsOn = false;
 let tfrTimer: number | undefined;
 
 function tfrPolygons(t: Tfr, strong: boolean): L.Polygon[] {
+  const level = tfrSeverity(t.type);
+  const color = severityColor(level);
   return t.rings.map((ring) => {
     const poly = L.polygon(ring, {
       pane: 'hazards',
-      color: TFR_COLOR,
+      color,
       weight: strong ? 3 : 2,
-      fillColor: TFR_COLOR,
+      fillColor: color,
       fillOpacity: strong ? 0.22 : 0.12,
     });
     poly.bindPopup(
-      `<strong>Flight restriction: ${esc(tfrTypeLabel(t.type))}</strong><br>${esc(tfrPlace(t.description))}` +
+      `<strong>${esc(severityName(level))}: flight restriction (${esc(tfrTypeLabel(t.type))})</strong><br>${esc(tfrPlace(t.description))}` +
         `<br><a href="${esc(t.url)}" target="_blank" rel="noopener">FAA details (altitudes, times)</a>`
     );
     return poly;
@@ -709,6 +734,7 @@ function tfrPolygons(t: Tfr, strong: boolean): L.Polygon[] {
 
 export function setTfrs(on: boolean) {
   tfrsOn = on;
+  setLegend('tfrs', on ? tfrLegend() : null);
   window.clearInterval(tfrTimer);
   if (!map) return;
   if (!on) {
@@ -745,7 +771,8 @@ function stormPopup(storm: Cyclone): string {
   const source = storm.source ? `${esc(storm.source)} advisory via GDACS` : 'via GDACS';
   const link = storm.report ? `<br><a href="${esc(storm.report)}" target="_blank" rel="noopener">GDACS report</a>` : '';
   return (
-    `<strong>${esc(stormTitle(storm))}</strong>` +
+    `<strong>${esc(severityName(cycloneSeverity(storm.category, storm.peakWindKmh)))}: ${esc(stormTitle(storm))}</strong>` +
+    (storm.peakWindKmh ? `<br>Strongest winds so far: ${storm.peakWindKmh} km/h (${Math.round(storm.peakWindKmh / 1.852)} kt)` : '') +
     `<br>As of ${esc(stormTimeLabel(storm.asOf))} (${source})` +
     `<br>Impact alert: ${esc(storm.alert)}` +
     (storm.cone ? '<br><small>Shaded: forecast uncertainty cone. Dashed: forecast track.</small>' : '') +
@@ -758,23 +785,24 @@ function stormPopup(storm: Cyclone): string {
 function stormLayers(storm: Cyclone, strong: boolean): L.Layer[] {
   const layers: L.Layer[] = [];
   const popup = stormPopup(storm);
+  const color = severityColor(cycloneSeverity(storm.category, storm.peakWindKmh));
   if (storm.cone) {
     layers.push(
       L.polygon(storm.cone, {
         pane: 'hazards',
-        color: STORM_COLOR,
+        color: color,
         weight: strong ? 2 : 1,
         dashArray: '4, 4',
-        fillColor: STORM_COLOR,
+        fillColor: color,
         fillOpacity: strong ? 0.18 : 0.1,
       }).bindPopup(popup)
     );
   }
   const past = storm.track.filter((t) => !t.forecast).map((t) => [t.lat, t.lon] as [number, number]);
   const ahead = storm.track.filter((t) => t.forecast).map((t) => [t.lat, t.lon] as [number, number]);
-  if (past.length > 1) layers.push(L.polyline(past, { pane: 'hazards', color: STORM_COLOR, weight: 2, opacity: 0.9 }));
+  if (past.length > 1) layers.push(L.polyline(past, { pane: 'hazards', color: color, weight: 2, opacity: 0.9 }));
   if (ahead.length > 0) {
-    layers.push(L.polyline([[storm.lat, storm.lon], ...ahead], { pane: 'hazards', color: STORM_COLOR, weight: 2, dashArray: '6, 6', opacity: 0.9 }));
+    layers.push(L.polyline([[storm.lat, storm.lon], ...ahead], { pane: 'hazards', color: color, weight: 2, dashArray: '6, 6', opacity: 0.9 }));
   }
   layers.push(
     L.marker([storm.lat, storm.lon], {
@@ -790,6 +818,7 @@ let cyclonesOn = false;
 let cycloneTimer: number | undefined;
 
 export function setCyclones(on: boolean) {
+  setLegend('cyclones', on ? cycloneLegend() : null);
   cyclonesOn = on;
   window.clearInterval(cycloneTimer);
   if (!map) return;
