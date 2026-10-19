@@ -44,6 +44,9 @@ companion to a FlightWall display: see a plane overhead, look up where it is goi
   and the forecast freezing level).
 - Forecast (TAF) decoded into an outlook ("Conditions drop to MVFR around Fri 6 AM") and a period list.
 - Recent pilot reports of turbulence or icing nearby, in plain English.
+- US airports: the National Weather Service forecaster's aviation notes from the local forecast
+  discussion, in the forecaster's own words (for example, a heads-up about shallow ground fog
+  around ORD and MDW the next morning).
 - Runways with dimensions and surface, the wind-favored runway with headwind/crosswind
   components, frequencies, navaids, local time, sunrise or sunset, airport photo and history.
 - Nonstop destinations from route data, with the airlines that fly them on US routes (US DOT data,
@@ -220,6 +223,7 @@ can add on top of the source's age.
 | AIRMETs, SIGMETs, international SIGMETs, center weather advisories | Aviation Weather Center | AIRMETs every 6 hours; SIGMETs when issued, valid up to 4 hours (6 for ash and cyclones); CWAs when issued, valid up to 2 hours | Up to 9 min; the map layer redraws every 5 min | Public domain (US government) |
 | Delay programs (US) | [FAA NAS Status](https://nasstatus.faa.gov) | Continuously | Up to 10 min | Public domain (US government) |
 | Weather alerts (US) | [National Weather Service](https://www.weather.gov) | Real time | Up to 5 min | Public domain (US government) |
+| Forecaster aviation notes (US) | National Weather Service forecast discussions (api.weather.gov) | About 4 times a day per office, plus updates | Up to 45 min | Public domain (US government) |
 | Temporary flight restrictions (US) | [FAA TFR list and map service](https://tfr.faa.gov) | As issued | Up to 15 min | Public domain (US government) |
 | Tropical cyclones (from NHC, JTWC and other agencies) | [GDACS](https://www.gdacs.org), the UN / European Commission Global Disaster Alert and Coordination System | Each storm's advisory every 6 hours, republished by GDACS 1-6 hours later (storms were 5-14 hours past their advisory time when measured) | Up to 40 min | No published license; GDACS provides its data as is, for information only (credited in the app) |
 | Air quality (Copernicus CAMS models) | [Open-Meteo](https://open-meteo.com) | Hourly model values from model runs twice a day: estimates, not station measurements | Up to 30 min | CC BY 4.0, free for non-commercial use; contains Copernicus Atmosphere Monitoring Service information |

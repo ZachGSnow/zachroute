@@ -25,6 +25,7 @@ import { fetchFires, boxAround, summarizeFiresNear, AIRPORT_FIRE_RADIUS_MI } fro
 import { fetchCruiseWind } from './windsAloft';
 import { fetchFreezingLevel, describeFreezingLevel, routeFreezingSummary } from './freezingLevel';
 import { tfrChips, describeTfr } from './tfr';
+import { fetchForecasterNotes, forecasterNotesLabel } from './forecasterNotes';
 import { fetchAirportPhoto, englishWikiTitle, airportWikiLink } from './wikiPhoto';
 import { carriersFor, carrierNames, carrierDataNote } from './carriers';
 import { isFavorite, toggleFavorite } from './history';
@@ -457,6 +458,7 @@ function buildFacilityCard(airport: Airport): string {
       ${timeLineHtml(airport)}
       <div class="forecast-block"></div>
       <div class="pirep-block"></div>
+      <div class="afd-block"></div>
 
       <div class="runways-block">${buildRunwaysHtml(airport, null)}</div>
       ${buildFrequenciesHtml(airport)}
@@ -589,6 +591,18 @@ async function fillPireps(cardEl: HTMLElement, airport: Airport) {
   wireExpandables(el);
 }
 
+const escapeHtml = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+async function fillForecasterNotes(cardEl: HTMLElement, airport: Airport) {
+  const el = cardEl.querySelector('.afd-block') as HTMLElement | null;
+  if (!el) return;
+  const notes = await fetchForecasterNotes(airport);
+  if (!notes || !el.isConnected) return;
+  const rows = notes.paragraphs.map((p) => `<p class="afd-paragraph">${escapeHtml(p)}</p>`).join('');
+  el.innerHTML = expandableSection(`🗒️ ${forecasterNotesLabel(notes, airport.timeZone)}`, rows);
+  wireExpandables(el);
+}
+
 function favButtonHtml(airport: Airport): string {
   const on = isFavorite(airport.iata || airport.icao);
   const label = on ? 'Remove from favorites' : 'Add to favorites';
@@ -663,6 +677,7 @@ async function wireFacilityCard(cardEl: HTMLElement, airport: Airport) {
   void fillPhoto(cardEl, airport);
   void fillForecast(cardEl, airport);
   void fillPireps(cardEl, airport);
+  void fillForecasterNotes(cardEl, airport);
   void fillAirQuality(cardEl, airport);
   void fillFires(cardEl, airport);
 
