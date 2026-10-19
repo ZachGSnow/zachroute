@@ -4,7 +4,9 @@ import { USER_AGENT } from '../../shared/userAgent';
 //   - US AIRMETs/SIGMETs (turbulence, icing, IFR, mountain obscuration, convection)
 //   - international SIGMETs issued for FIRs worldwide, including US oceanic FIRs
 //     (thunderstorms, turbulence, icing, volcanic ash, tropical cyclones)
-// Both feeds are merged into one list. Trimmed, KV-cached 5 minutes.
+//   - US Center Weather Advisories: short-notice (up to 2 hours) warnings from an air route
+//     traffic control center's weather unit, often ahead of a SIGMET
+// The feeds are merged into one list. Trimmed, KV-cached 5 minutes.
 
 interface Env {
   LORE_KV?: KVNamespace;
@@ -18,7 +20,7 @@ export interface Advisory {
   detail?: string;
   /** Volcano or tropical cyclone name. */
   name?: string;
-  /** FIR (flight information region) that issued an international SIGMET. */
+  /** FIR (flight information region) that issued an international SIGMET, or the center ("Miami Center") that issued a CWA. */
   region?: string;
   validFrom?: number;
   validTo?: number;
@@ -28,11 +30,12 @@ export interface Advisory {
   coords: [number, number][];
 }
 
-const CACHE_KEY = 'airsigmet:v2';
+const CACHE_KEY = 'airsigmet:v3'; // v3: includes Center Weather Advisories
 const CACHE_TTL_SECONDS = 300;
 
 const US_URL = 'https://aviationweather.gov/api/data/airsigmet?format=json';
 const INTL_URL = 'https://aviationweather.gov/api/data/isigmet?format=json';
+const CWA_URL = 'https://aviationweather.gov/api/data/cwa?format=json';
 
 const json = (body: unknown) =>
   new Response(JSON.stringify(body), {
@@ -98,11 +101,14 @@ export function unwrapRing(ring: [number, number][]): [number, number][] {
   return out;
 }
 
+// Coordinates come as numbers in the AIRMET/SIGMET feeds and as strings in the CWA feed.
+const num = (v: unknown) => (typeof v === 'number' ? v : typeof v === 'string' ? parseFloat(v) : NaN);
+
 function toRing(points: unknown): [number, number][] | null {
   if (!Array.isArray(points)) return null;
   const ring = points
-    .filter((c: any) => c && Number.isFinite(c.lat) && Number.isFinite(c.lon))
-    .map((c: any) => [c.lat, c.lon] as [number, number]);
+    .filter((c: any) => c && Number.isFinite(num(c.lat)) && Number.isFinite(num(c.lon)))
+    .map((c: any) => [num(c.lat), num(c.lon)] as [number, number]);
   return ring.length >= 3 ? unwrapRing(ring) : null;
 }
 
@@ -162,6 +168,64 @@ export function fromIntlFeed(data: any[], now: number): Advisory[] {
     });
 }
 
+// CWA hazard codes, mapped onto the names the map styles use.
+const CWA_HAZARD: Record<string, string> = {
+  TS: 'CONVECTIVE',
+  TURB: 'TURB',
+  ICE: 'ICE',
+  IFR: 'IFR',
+  PCPN: 'PCPN',
+};
+
+// Words a CWA qualifier uses for how widespread or how far along the hazard is.
+const CWA_WORDS: Record<string, string> = {
+  DVLPG: 'developing',
+  ISOL: 'isolated',
+  SCT: 'scattered',
+  NMRS: 'numerous',
+  EMBD: 'embedded',
+  OCNL: 'occasional',
+  FRQ: 'frequent',
+  LN: 'line of',
+  SEV: 'severe',
+  MOD: 'moderate',
+};
+
+/** "DVLPG TSRA" -> "developing". The hazard itself (TS, TSRA, ...) is left to the hazard label. */
+export function readCwaQualifier(qualifier: unknown): string | undefined {
+  const words = (typeof qualifier === 'string' ? qualifier : '')
+    .trim()
+    .toUpperCase()
+    .split(/\s+/)
+    .filter((w) => w && !/^(TS|TSRA|TSGR|TSRAGR|CB|AREA)$/.test(w));
+  if (!words.length || !words.every((w) => w in CWA_WORDS)) return undefined;
+  return words.map((w) => CWA_WORDS[w]).join(' ');
+}
+
+/** Center Weather Advisory records -> advisories. */
+export function fromCwaFeed(data: any[], now: number): Advisory[] {
+  return data
+    .filter((a) => a && a.hazard && (!a.validTimeTo || a.validTimeTo > now))
+    .flatMap((a): Advisory[] => {
+      const coords = toRing(a.coords);
+      if (!coords) return [];
+      return [
+        {
+          type: 'CWA',
+          hazard: CWA_HAZARD[a.hazard] || a.hazard,
+          detail: readCwaQualifier(a.qualifier),
+          region: a.name ? `${titleCase(String(a.name))} Center` : a.cwsu || undefined,
+          validFrom: a.validTimeFrom,
+          validTo: a.validTimeTo,
+          altLow: typeof a.base === 'number' ? a.base : undefined,
+          altHigh: typeof a.top === 'number' ? a.top : undefined,
+          raw: a.rawText || undefined,
+          coords,
+        },
+      ];
+    });
+}
+
 /** The international feed sometimes lists the same SIGMET twice; keep one of each. */
 export function dedupe(list: Advisory[]): Advisory[] {
   const seen = new Set<string>();
@@ -190,13 +254,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     if (cached) return json(cached);
   }
 
-  const [us, intl] = await Promise.all([getFeed(US_URL), getFeed(INTL_URL)]);
+  const [us, intl, cwa] = await Promise.all([getFeed(US_URL), getFeed(INTL_URL), getFeed(CWA_URL)]);
   const now = Math.floor(Date.now() / 1000);
-  const advisories = dedupe([...fromUsFeed(us || [], now), ...fromIntlFeed(intl || [], now)]);
+  const advisories = dedupe([...fromUsFeed(us || [], now), ...fromIntlFeed(intl || [], now), ...fromCwaFeed(cwa || [], now)]);
   const result = { advisories };
 
   // Only cache a complete answer, so one feed being down does not hide it for five minutes.
-  if (us && intl && context.env.LORE_KV) {
+  if (us && intl && cwa && context.env.LORE_KV) {
     await context.env.LORE_KV.put(CACHE_KEY, JSON.stringify(result), { expirationTtl: CACHE_TTL_SECONDS });
   }
   return json(result);
