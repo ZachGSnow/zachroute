@@ -23,6 +23,7 @@ import { fetchCyclones, stormsNearPoint, stormTitle } from './cyclones';
 import { fetchAirQuality, aqiScaleFor, aqiCategory, aqiValue, hazeNote, worseningAhead } from './airQuality';
 import { fetchFires, boxAround, summarizeFiresNear, AIRPORT_FIRE_RADIUS_MI } from './fires';
 import { fetchCruiseWind } from './windsAloft';
+import { fetchFreezingLevel, describeFreezingLevel, routeFreezingSummary } from './freezingLevel';
 import { fetchAirportPhoto, englishWikiTitle } from './wikiPhoto';
 import { carriersFor, carrierNames, carrierDataNote } from './carriers';
 import { isFavorite, toggleFavorite } from './history';
@@ -307,7 +308,7 @@ function weatherPlaceholderHtml(): string {
   return `<span class="muted">Checking current conditions\u2026</span>`;
 }
 
-function weatherContentHtml(wx: WeatherSnapshot, elevationFt: number, daytime: boolean, magVarDeg?: number): string {
+function weatherContentHtml(wx: WeatherSnapshot, elevationFt: number, daytime: boolean, magVarDeg?: number, freezingLevelFt?: number | null): string {
   if (!wx.available) {
     return `<div class="muted">Current conditions: n/a</div>`;
   }
@@ -367,6 +368,12 @@ function weatherContentHtml(wx: WeatherSnapshot, elevationFt: number, daytime: b
   if (wx.tempF !== undefined) {
     const da = densityAltitudeFt(elevationFt, wx.tempF);
     moreRows.push(`<div class="detail-row"><span>⛰️ Density altitude \u2248 ${da.toLocaleString()} ft</span></div>`);
+  }
+  const freezing = freezingLevelFt != null ? describeFreezingLevel(freezingLevelFt, elevationFt) : null;
+  if (freezing) {
+    moreRows.push(
+      `<div class="detail-row"><span>🧊 Freezing level ${freezing}${freezing.startsWith('about') ? ' above sea level' : ''} (forecast model)</span></div>`
+    );
   }
 
   const moreHtml = moreRows.length ? expandableSection(`More details (${moreRows.length})`, moreRows.join('')) : '';
@@ -653,11 +660,13 @@ async function wireFacilityCard(cardEl: HTMLElement, airport: Airport) {
   const weatherEl = cardEl.querySelector('.weather-block');
   if (!weatherEl || !airport.icao) return;
 
-  const wx = await fetchWeather(airport.icao);
+  // The freezing level comes from a separate model request; it gives up after a few seconds so it
+  // never holds up the observed weather for long.
+  const [wx, freezingFt] = await Promise.all([fetchWeather(airport.icao), fetchFreezingLevel(airport)]);
   if (!weatherEl.isConnected) return; // panel was replaced by a newer search while we waited
 
   const daytime = isDaytime(airport.lat, airport.lon);
-  weatherEl.innerHTML = weatherContentHtml(wx, airport.elevation, daytime, airport.magVarDeg);
+  weatherEl.innerHTML = weatherContentHtml(wx, airport.elevation, daytime, airport.magVarDeg, freezingFt);
   wireExpandables(weatherEl as HTMLElement);
 
   const windIsMeaningful = wx.windSpeedKt !== undefined && wx.windSpeedKt >= 3;
