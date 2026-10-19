@@ -898,36 +898,128 @@ body {
   text-decoration: underline;
 }
 
-.route-legend {
+/* Map legend: one row per active layer (src/ts/legend.ts) */
+.map-legend {
   position: absolute;
   left: 12px;
   bottom: 28px;
   z-index: 500;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 10px;
+  max-width: min(300px, calc(100% - 24px));
+  max-height: 55%;
+  overflow-y: auto;
   background: rgba(15, 23, 42, 0.92);
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: 12px;
   font-size: 0.72rem;
   color: var(--text);
-  pointer-events: none;
 }
 
-.route-legend[hidden] {
+.map-legend[hidden] {
   display: none;
 }
 
-.route-legend small {
+.map-legend:not(.is-open) {
+  border-radius: 999px;
+}
+
+.lg-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 5px 10px;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+
+.lg-chev {
+  margin-left: auto;
   color: var(--text-muted);
 }
 
-.route-legend-bar {
-  width: 70px;
-  height: 6px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, #f87171, #e2e8f0, #4ade80);
+.lg-body {
+  padding: 0 10px 8px;
+}
+
+.lg-row + .lg-row {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.lg-title {
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.lg-bar {
+  height: 7px;
+  border-radius: 4px;
+}
+
+.lg-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  margin-top: 2px;
+  color: var(--text-muted);
+}
+
+.lg-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 4px;
+}
+
+.lg-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.lg-swatch {
+  flex: 0 0 auto;
+  width: 10px;
+  height: 10px;
+}
+
+.lg-dot {
+  border-radius: 50%;
+  background: var(--c);
+}
+
+.lg-ring {
+  border: 2px solid var(--c);
+  border-radius: 50%;
+}
+
+.lg-line,
+.lg-dash {
+  width: 16px;
+  height: 0;
+  border-top: 3px solid var(--c);
+}
+
+.lg-dash {
+  border-top-style: dashed;
+}
+
+.lg-glyph {
+  flex: 0 0 auto;
+  min-width: 10px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.lg-note {
+  margin-top: 4px;
+  color: var(--text-muted);
 }
 
 .aq-block,
@@ -1295,12 +1387,13 @@ body {
     text-overflow: ellipsis;
   }
 
-  /* Above the sheet, and clear of the map credits in the corner below it. */
-  .route-legend {
-    bottom: calc(var(--sheet-h) + 28px);
+  /* Above the sheet, and clear of the map credits below it (two lines at phone width). */
+  .map-legend {
+    bottom: calc(var(--sheet-h) + 52px);
+    max-height: 45%;
   }
 
-  .main-content[data-sheet='full'] .route-legend,
+  .main-content[data-sheet='full'] .map-legend,
   .main-content[data-sheet='full'] .map-hint,
   .main-content[data-sheet='full'] .route-summary {
     display: none;

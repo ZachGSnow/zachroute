@@ -1,4 +1,6 @@
 import type { Airport } from './geoMath';
+import { setLegend } from './legend';
+import { windColor, routeWindLegend } from './legends';
 import { formatDistance } from './units';
 import { slerpArc, bearingBetween, haversineDistance, blockTimeMiles } from './geoMath';
 import connectionsData from '../data/connections.json';
@@ -126,8 +128,7 @@ export function clearLayers() {
   singleEnds.clear();
   clearAirportRunways();
   clearRouteHazards();
-  const legend = document.getElementById('route-legend');
-  if (legend) legend.hidden = true;
+  setLegend('route', null);
 }
 
 /** Draws runway lines for the given airports; optionally zooms in so the runways fill the view. */
@@ -384,15 +385,6 @@ function drawApproachTicks(end: RunwayEnd, refLon: number, bucket: L.Layer[]) {
   }
 }
 
-function windColor(headwindKt: number): string {
-  const t = Math.max(-1, Math.min(1, headwindKt / 30)); // +1 strong headwind, -1 strong tailwind
-  const base = [226, 232, 240]; // light gray = little or no wind; distinct from the plain cyan route
-  const target = t > 0 ? [248, 113, 113] : [74, 222, 128];
-  const k = Math.abs(t);
-  const rgb = base.map((c, i) => Math.round(c + (target[i] - c) * k));
-  return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
-}
-
 function headwindAt(samples: WindSample[], frac: number): number {
   if (frac <= samples[0].frac) return samples[0].headwindKt;
   for (let i = 1; i < samples.length; i++) {
@@ -407,21 +399,16 @@ function headwindAt(samples: WindSample[], frac: number): number {
 }
 
 function applyWindColors(ctx: RouteCtx) {
-  const legend = document.getElementById('route-legend');
   if (!ctx.windSamples) {
-    if (legend) legend.hidden = true;
+    setLegend('route', null);
     return;
   }
   const samples = ctx.windSamples;
   ctx.segments.forEach((seg, i) => {
     seg.setStyle({ color: windColor(headwindAt(samples, ctx.segmentFracs[i])) });
   });
-  if (legend) {
-    const avg = samples.reduce((sum, p) => sum + p.headwindKt, 0) / samples.length;
-    const note = legend.querySelector('small');
-    if (note) note.textContent = `avg ${Math.round(Math.abs(avg))}kt ${avg >= 0 ? 'headwind' : 'tailwind'}`;
-    legend.hidden = false;
-  }
+  const avg = samples.reduce((sum, p) => sum + p.headwindKt, 0) / samples.length;
+  setLegend('route', routeWindLegend(avg));
 }
 
 function buildRoutePath(ctx: RouteCtx): LatLon[] {

@@ -1,6 +1,8 @@
 import type { Airport, RunwayDetail } from './geoMath';
 import { formatDistance, clockOptions, UNITS_CHANGED } from './units';
 import { stationTemp } from './stationTemp';
+import { setLegend } from './legend';
+import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend } from './legends';
 import { fetchTfrs, tfrsCrossed, tfrTypeLabel, tfrPlace, type Tfr } from './tfr';
 import { gridFor, fetchFreezingGrid, freezingColor, freezingLabel } from './freezingLayer';
 import { satelliteTileUrl, satellitesForRange, satelliteCovers, cloudPixel, viewCos, viewWeight, SATELLITE_MAX_NATIVE_ZOOM, type Satellite } from './satelliteTiles';
@@ -26,12 +28,7 @@ let map: L.Map | null = null;
 let airports: Airport[] = []; // airports with runway coordinates
 let places: Airport[] = []; // airports used to say "12 mi SW of Cincinnati"
 
-const WX_COLOR: Record<string, string> = {
-  VFR: '#4ade80',
-  MVFR: '#38bdf8',
-  IFR: '#f87171',
-  LIFR: '#e879f9',
-};
+const WX_COLOR = FLIGHT_CATEGORY_COLOR;
 
 function hasCoords(r: RunwayDetail): boolean {
   return [r.leLat, r.leLon, r.heLat, r.heLon].every((v) => typeof v === 'number' && Number.isFinite(v));
@@ -167,13 +164,19 @@ let lastStations: Station[] = [];
 /** Switches what each station shows, redrawing from the last response without a new request. */
 export function setStationMode(mode: StationMode) {
   stationMode = mode;
+  showStationLegend();
   drawStations();
+}
+
+function showStationLegend() {
+  setLegend('stations', stationsOn ? (stationMode === 'temp' ? stationTempLegend() : stationWindLegend()) : null);
 }
 
 const MAX_STATIONS = 500;
 
 export function setWeatherStations(on: boolean) {
   stationsOn = on;
+  showStationLegend();
   if (!map) return;
   if (!on) {
     stationGen += 1;
@@ -300,7 +303,10 @@ function drawStations() {
 
 // Temperatures follow the weather units setting.
 window.addEventListener(UNITS_CHANGED, () => {
-  if (stationMode === 'temp') drawStations();
+  if (stationMode === 'temp') {
+    showStationLegend();
+    drawStations();
+  }
 });
 
 // ---------------------------------------------------------------------------
@@ -850,6 +856,7 @@ function aerosolTile(coords: L.Coords, done: L.DoneCallback): HTMLElement {
 let aerosolTimer: number | undefined;
 
 export function setAerosol(on: boolean) {
+  setLegend('aerosol', on ? aerosolLegend() : null);
   if (!map) return;
   window.clearInterval(aerosolTimer);
   if (!on) {
@@ -874,6 +881,7 @@ let freezingTimer: number | undefined;
 
 export function setFreezingLevel(on: boolean) {
   freezingOn = on;
+  setLegend('freezing', on ? freezingLevelLegend() : null);
   if (!map) return;
   window.clearInterval(freezingTimer);
   if (!on) {
