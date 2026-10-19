@@ -1387,9 +1387,9 @@ body {
     text-overflow: ellipsis;
   }
 
-  /* Above the sheet, and clear of the map credits in the corner below it. */
+  /* Above the sheet, and clear of the map credits below it (two lines at phone width). */
   .map-legend {
-    bottom: calc(var(--sheet-h) + 28px);
+    bottom: calc(var(--sheet-h) + 52px);
     max-height: 45%;
   }
 
