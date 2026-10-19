@@ -10,6 +10,7 @@ structure left untouched. They contain only public aviation, weather and geograp
 | `awc-metar-bbox.json`, `awc-airsigmet.json` | aviationweather.gov METAR by area, AIRMET/SIGMET |
 | `awc-cwa.json` | aviationweather.gov `/api/data/cwa`: two Center Weather Advisories from Miami Center for thunderstorms, captured 2026-10-19 |
 | `awc-gairmet-f00.json`, `awc-gairmet-f03.json` | aviationweather.gov `/api/data/gairmet` with `fore=0` and `fore=3`: the 21:00 and 00:00 UTC snapshots of the 19 Oct 21Z issuance, trimmed to one or two areas of each hazard plus freezing level lines |
+| `awc-tcf.json` | aviationweather.gov `/api/data/tcf?format=geojson`: the 19 Oct 23Z TFM Convective Forecast, five sparse, high-confidence areas for 03Z, 05Z and 07Z |
 | `awc-isigmet.json` | aviationweather.gov international SIGMET: volcanic ash, tropical cyclone, thunderstorm, turbulence, icing, one multi-area record and two without a usable polygon |
 | `faa-status-delays.xml` | nasstatus.faa.gov airport status, captured 2026-10-16 01:00 UTC while delay programs were active |
 | `faa-status-closures.xml` | the same feed later that morning (closures only) |

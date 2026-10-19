@@ -186,6 +186,21 @@ export function hazardLegend(): LegendSpec {
   };
 }
 
+export function tcfLegend(): LegendSpec {
+  const [, moderate, severe, extreme] = severityLegendItems([1, 2, 3, 4], 'line');
+  return {
+    kind: 'items',
+    title: 'Thunderstorm forecast (US, TCF)',
+    items: [
+      { ...moderate, label: 'Moderate: sparse (25-39% of the area)' },
+      { ...severe, label: 'Severe: medium (40-74%)' },
+      { ...extreme, label: 'Extreme: solid (75%+) or a line of storms' },
+      { color: '#e2e8f0', label: 'low confidence', mark: 'dash' },
+    ],
+    note: 'Where storms are expected 4, 6 or 8 hours ahead. Numbers: storm tops in thousands of feet',
+  };
+}
+
 export function cycloneLegend(): LegendSpec {
   const [light, moderate, severe, extreme] = severityLegendItems([1, 2, 3, 4], 'line');
   return {

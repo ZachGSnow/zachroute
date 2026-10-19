@@ -779,6 +779,26 @@ body {
   line-height: 1;
 }
 
+/* Storm tops (thousands of feet) in the middle of a thunderstorm forecast area */
+.tcf-tops {
+  background: none;
+  border: none;
+}
+
+.tcf-tops span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 16px;
+  border: 1px solid var(--c);
+  border-radius: 4px;
+  background: rgba(15, 23, 42, 0.85);
+  color: var(--c);
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
 /* Severity badge in cards and lists: Light, Moderate, Severe, Extreme */
 .sev-badge {
   display: inline-block;

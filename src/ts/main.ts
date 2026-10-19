@@ -3,7 +3,8 @@ import { formatDistance, getDistanceUnit, getClockFormat, getWeatherUnits, setDi
 import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
 import { haversineDistance } from './geoMath';
-import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, highlightRunway } from './mapOverlays';
+import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, highlightRunway } from './mapOverlays';
+import type { TcfStep } from './tcf';
 import { parseQuery, loadAirports, suggest, type SearchIntent } from './searchParser';
 import { createSuggestList, type SuggestItem } from './suggestList';
 import { loadRecent, addRecent, clearRecent, loadFavorites, FAVORITES_CHANGED } from './history';
@@ -455,6 +456,32 @@ async function init() {
   const tfrToggle = document.getElementById('tfr-toggle') as HTMLInputElement | null;
   const TFR_KEY = 'zachroute:show-tfrs';
   restoreAirportToggle(tfrToggle, TFR_KEY, setTfrs);
+  // Thunderstorm forecast: which step (4, 6 or 8 hours ahead) is restored before the layer turns on.
+  const tcfToggle = document.getElementById('tcf-toggle') as HTMLInputElement | null;
+  const TCF_KEY = 'zachroute:show-tcf';
+  const tcfStepSelect = document.getElementById('tcf-step') as HTMLSelectElement | null;
+  const TCF_STEP_KEY = 'zachroute:tcf-step';
+  if (tcfStepSelect) {
+    let savedStep: string | null = null;
+    try {
+      savedStep = localStorage.getItem(TCF_STEP_KEY);
+    } catch {
+      /* convenience only */
+    }
+    if (savedStep === '1' || savedStep === '2') {
+      tcfStepSelect.value = savedStep;
+      setTcfStep(Number(savedStep) as TcfStep);
+    }
+    tcfStepSelect.addEventListener('change', () => {
+      try {
+        localStorage.setItem(TCF_STEP_KEY, tcfStepSelect.value);
+      } catch {
+        /* convenience only */
+      }
+      setTcfStep(Number(tcfStepSelect.value) as TcfStep);
+    });
+  }
+  restoreAirportToggle(tcfToggle, TCF_KEY, setTcf);
   const fireToggle = document.getElementById('fires-toggle') as HTMLInputElement | null;
   const FIRE_KEY = 'zachroute:show-fires';
   restoreAirportToggle(fireToggle, FIRE_KEY, setFires);
@@ -510,6 +537,7 @@ async function init() {
   wireOverlayToggle(pirepToggle, PIREP_KEY, setPireps);
   wireOverlayToggle(cycloneToggle, CYCLONE_KEY, setCyclones);
   wireOverlayToggle(tfrToggle, TFR_KEY, setTfrs);
+  wireOverlayToggle(tcfToggle, TCF_KEY, setTcf);
   wireOverlayToggle(fireToggle, FIRE_KEY, setFires);
   wireOverlayToggle(aerosolToggle, AEROSOL_KEY, setAerosol);
   wireOverlayToggle(freezingToggle, FREEZING_KEY, setFreezingLevel);
