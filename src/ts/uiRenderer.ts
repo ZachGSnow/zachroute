@@ -24,6 +24,7 @@ import { fetchAirQuality, aqiScaleFor, aqiCategory, aqiValue, hazeNote, worsenin
 import { fetchFires, boxAround, summarizeFiresNear, AIRPORT_FIRE_RADIUS_MI } from './fires';
 import { fetchCruiseWind } from './windsAloft';
 import { fetchFreezingLevel, describeFreezingLevel, routeFreezingSummary } from './freezingLevel';
+import { tfrChips, describeTfr } from './tfr';
 import { fetchAirportPhoto, englishWikiTitle, airportWikiLink } from './wikiPhoto';
 import { carriersFor, carrierNames, carrierDataNote } from './carriers';
 import { isFavorite, toggleFavorite } from './history';
@@ -537,9 +538,15 @@ async function cycloneChips(airport: Airport): Promise<Chip[]> {
 async function fillAlerts(cardEl: HTMLElement, airport: Airport) {
   const el = cardEl.querySelector('.alerts-block') as HTMLElement | null;
   if (!el) return;
-  const [ash, storms, delays, alerts] = await Promise.all([ashChips(airport), cycloneChips(airport), faaDelayChips(airport), nwsAlertChips(airport)]);
+  const [ash, storms, delays, alerts, tfrs] = await Promise.all([
+    ashChips(airport),
+    cycloneChips(airport),
+    faaDelayChips(airport),
+    nwsAlertChips(airport),
+    tfrChips(airport),
+  ]);
   if (!el.isConnected) return;
-  const chips = [...ash, ...storms, ...delays, ...alerts];
+  const chips = [...ash, ...storms, ...delays, ...alerts, ...tfrs];
   if (chips.length === 0) return;
   el.innerHTML = `<div class="chips">${chipsHtml(chips)}</div>`;
 }
@@ -907,8 +914,8 @@ async function wireRouteHazards(points: Array<[number, number]>) {
   if (gen !== routeHazardGen || !el.isConnected) return;
   drawRouteHazards(result);
 
-  if (result.advisories.length === 0 && result.pireps.length === 0 && result.cyclones.length === 0) {
-    el.innerHTML = '<div class="route-hazard-ok">✅ No current AIRMETs, SIGMETs, center weather advisories, tropical cyclones or notable pilot reports along the route</div>';
+  if (result.advisories.length === 0 && result.pireps.length === 0 && result.cyclones.length === 0 && result.tfrs.length === 0) {
+    el.innerHTML = '<div class="route-hazard-ok">✅ No current AIRMETs, SIGMETs, center weather advisories, tropical cyclones, flight restrictions or notable pilot reports along the route</div>';
     return;
   }
 
@@ -929,6 +936,14 @@ async function wireRouteHazards(points: Array<[number, number]>) {
     const ordered = [...ash, ...result.advisories.filter((a) => a.hazard !== 'ASH')];
     const rows = ordered.map((a) => `<div class="route-hazard-row">${describeAdvisory(a)}</div>`).join('');
     parts.push(`<div class="route-hazard-head">⚠️ Route passes through ${result.advisories.length} weather advisor${result.advisories.length === 1 ? 'y' : 'ies'} (outlined on the map)</div>${rows}`);
+  }
+  if (result.tfrs.length > 0) {
+    const rows = result.tfrs
+      .map((t) => `<div class="route-hazard-row">${describeTfr(t)} (<a href="${t.url}" target="_blank" rel="noopener">details</a>)</div>`)
+      .join('');
+    parts.push(
+      `<div class="route-hazard-head">🚫 Route crosses ${result.tfrs.length} US flight restriction${result.tfrs.length === 1 ? '' : 's'} (outlined on the map). Most reach only a few thousand feet, well below cruise; they matter near the airports.</div>${rows}`
+    );
   }
   const pirepLines = result.pireps
     .map(describeRoutePirep)
