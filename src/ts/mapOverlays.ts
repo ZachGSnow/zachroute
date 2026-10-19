@@ -27,7 +27,23 @@ import { fetchTcf, tcfForStep, tcfSeverity, tcfCoverageLabel, TCF_STEP_HOURS, ty
 import { severityColor, severityName, fireSeverity, advisorySeverity, cycloneSeverity, tfrSeverity } from './severity';
 import { fetchTfrs, tfrsCrossed, tfrTypeLabel, tfrPlace, type Tfr } from './tfr';
 import { gridFor, fetchFreezingGrid, freezingColor, freezingLabel } from './freezingLayer';
-import { satelliteTileUrl, satellitesForRange, satelliteCovers, cloudPixel, coldCoreMask, COLD_CORE_RGBA, viewCos, viewWeight, SATELLITE_MAX_NATIVE_ZOOM, type Satellite } from './satelliteTiles';
+import {
+  satelliteTileUrl,
+  satellitesForRange,
+  satelliteCovers,
+  cloudPixel,
+  coldCoreMask,
+  COLD_CORE_RGBA,
+  viewCos,
+  viewWeight,
+  SATELLITE_MAX_NATIVE_ZOOM,
+  SATELLITES,
+  eumetsatTileUrl,
+  eumetsatCapabilitiesUrl,
+  latestHourlyTime,
+  meteosatPixel,
+  type Satellite,
+} from './satelliteTiles';
 import { bearingBetween, destinationPoint, haversineDistanceLatLon } from './geoMath';
 import { resolveCode } from './searchParser';
 import { pointInPolygon, advisoriesNear } from './hazardGeo';
@@ -1115,12 +1131,34 @@ async function refreshFreezing() {
 }
 
 // ---------------------------------------------------------------------------
-// Satellite clouds (NASA GIBS geostationary infrared, newest image), ground cleared
+// Satellite clouds (NASA GIBS and EUMETSAT geostationary infrared), ground cleared
 // ---------------------------------------------------------------------------
 
 let satelliteLayer: L.GridLayer | null = null;
 let satelliteTimer: number | undefined;
 let satelliteOn = false;
+/** Newest top-of-the-hour image time of each Meteosat; until known, its area falls to the others. */
+const eumetsatTimes = new Map<Satellite, string>();
+
+/** Learns each Meteosat's newest hourly image time; true when any changed. */
+async function refreshEumetsatTimes(): Promise<boolean> {
+  let changed = false;
+  await Promise.all(
+    SATELLITES.filter((s) => s.eumetsat).map(async (sat) => {
+      try {
+        const res = await fetch(eumetsatCapabilitiesUrl(sat.eumetsat!));
+        const time = res.ok ? latestHourlyTime(await res.text()) : null;
+        if (time && time !== eumetsatTimes.get(sat)) {
+          eumetsatTimes.set(sat, time);
+          changed = true;
+        }
+      } catch {
+        /* keep the time we had */
+      }
+    })
+  );
+  return changed;
+}
 
 function createSatelliteLayer(): L.GridLayer {
   const SatelliteLayer = L.GridLayer.extend({ createTile: satelliteTile }) as new (options: L.GridLayerOptions) => L.GridLayer;
@@ -1129,7 +1167,7 @@ function createSatelliteLayer(): L.GridLayer {
     tileSize: 256,
     maxNativeZoom: SATELLITE_MAX_NATIVE_ZOOM,
     opacity: 0.9,
-    attribution: 'Clouds: NASA GIBS, GOES (NOAA) and Himawari (JMA)',
+    attribution: 'Clouds: NASA GIBS, GOES (NOAA) and Himawari (JMA); contains EUMETSAT Meteosat data',
   });
 }
 
@@ -1146,7 +1184,13 @@ function loadSatellitePixels(sat: Satellite, coords: L.Coords): Promise<ImageDat
       resolve(ctx.getImageData(0, 0, 256, 256));
     };
     img.onerror = () => resolve(null);
-    img.src = L.Util.template(satelliteTileUrl(sat), { x: coords.x, y: coords.y, z: coords.z });
+    if (sat.eumetsat) {
+      const time = eumetsatTimes.get(sat);
+      if (!time) return resolve(null);
+      img.src = eumetsatTileUrl(sat.eumetsat, coords.x, coords.y, coords.z, time);
+    } else {
+      img.src = L.Util.template(satelliteTileUrl(sat), { x: coords.x, y: coords.y, z: coords.z });
+    }
   });
 }
 
@@ -1173,8 +1217,10 @@ function satelliteTile(coords: L.Coords, done: L.DoneCallback): HTMLElement {
       const out = ctx.createImageData(256, 256);
       const list = [...loaded.keys()];
       const data = list.map((sat) => loaded.get(sat)!.data);
-      // The coldest storm tops share NASA's gray ramp with warm ground; find them by their surroundings.
-      const cores = data.map((d) => coldCoreMask(d));
+      // The coldest storm tops share NASA's gray ramp with warm ground; find them by their
+      // surroundings. Meteosat pixels carry their temperature, so they need no such search.
+      const cores = list.map((sat, k) => (sat.eumetsat ? null : coldCoreMask(data[k])));
+      const pixelLon = Float64Array.from({ length: 256 }, (_, x) => west + ((east - west) * (x + 0.5)) / 256);
       // cos(view angle) = cos(lat) * cos(longitude from the satellite): the longitude part per
       // column and satellite once, the latitude part per row.
       const cosLon = list.map((sat) =>
@@ -1200,7 +1246,13 @@ function satelliteTile(coords: L.Coords, done: L.DoneCallback): HTMLElement {
               used++;
               continue;
             }
-            const [r, g, b, a] = cores[best][i / 4] ? COLD_CORE_RGBA : cloudPixel(d[i], d[i + 1], d[i + 2], d[i + 3]);
+            const src = list[best].eumetsat;
+            const core = cores[best];
+            const [r, g, b, a] = src
+              ? meteosatPixel(src, d[i], d[i + 3], pixelLon[x])
+              : core && core[i / 4]
+                ? COLD_CORE_RGBA
+                : cloudPixel(d[i], d[i + 1], d[i + 2], d[i + 3]);
             out.data[i] = r;
             out.data[i + 1] = g;
             out.data[i + 2] = b;
@@ -1221,7 +1273,7 @@ function noteSatelliteGap() {
   if (!map || !satelliteOn) return;
   const c = map.getCenter().wrap();
   if (!satelliteCovers(c.lat, c.lng)) {
-    setHint('No satellite cloud images for Europe, Africa or the Middle East in this source', 5000);
+    setHint('No satellite cloud images this far toward the poles', 5000);
   }
 }
 
@@ -1235,9 +1287,15 @@ export function setSatellite(on: boolean) {
     return;
   }
   if (!satelliteLayer) satelliteLayer = createSatelliteLayer();
+  // Meteosat tiles wait for their hourly time; GIBS tiles draw at once and are redrawn with it.
+  void refreshEumetsatTimes().then((changed) => {
+    if (changed && satelliteOn) satelliteLayer?.redraw();
+  });
   if (!map.hasLayer(satelliteLayer)) satelliteLayer.addTo(map);
-  // A new image every 10 minutes.
-  satelliteTimer = window.setInterval(() => satelliteLayer?.redraw(), 10 * 60 * 1000);
+  // A new GIBS image every 10 minutes, a new Meteosat one every hour.
+  satelliteTimer = window.setInterval(() => {
+    void refreshEumetsatTimes().finally(() => satelliteLayer?.redraw());
+  }, 10 * 60 * 1000);
   const c = map.getCenter().wrap();
   if (satelliteCovers(c.lat, c.lng)) {
     setHint('Satellite clouds (infrared, latest image): the colder the cloud top, the stronger the storm', 5000);
