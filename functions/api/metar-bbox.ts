@@ -1,6 +1,6 @@
 import { USER_AGENT } from '../../shared/userAgent';
 // Cloudflare Pages Function: /api/metar-bbox?bbox=minLat,minLon,maxLat,maxLon
-// Every METAR station in a map rectangle in one request (flight category + wind),
+// Every METAR station in a map rectangle in one request (flight category, wind, temperature),
 // for the map's weather layer. Trimmed and KV-cached 5 minutes per rounded box.
 
 interface Env {
@@ -32,7 +32,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   }
 
   const key = `${minLat},${minLon},${maxLat},${maxLon}`;
-  const cacheKey = `metarbox:${key}`;
+  const cacheKey = `metarbox:v2:${key}`; // v2: stations carry temperature and dewpoint
   if (context.env.LORE_KV) {
     const cached = await context.env.LORE_KV.get(cacheKey, { type: 'json' });
     if (cached) return json(cached);
@@ -55,6 +55,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         wd: typeof m.wdir === 'number' ? m.wdir : undefined,
         ws: typeof m.wspd === 'number' ? m.wspd : undefined,
         wg: typeof m.wgst === 'number' ? m.wgst : undefined,
+        t: typeof m.temp === 'number' ? m.temp : undefined, // degrees C
+        d: typeof m.dewp === 'number' ? m.dewp : undefined, // degrees C
       }));
 
     const result = { stations };

@@ -116,6 +116,18 @@ describe('aviationweather.gov METAR bbox -> /api/metar-bbox', () => {
     expect(out.stations[0].id).toBe(raw[0].icaoId);
     expect(out.stations[0].cat).toBe(raw[0].fltCat);
   });
+
+  it('keeps temperature and dewpoint in degrees C, and leaves them out when not reported', async () => {
+    const raw = jsonFixture<any[]>('awc-metar-bbox.json');
+    stubFetch([['metar?bbox=', raw]]);
+    const out = await json(await metarBbox(pagesContext('https://x/api/metar-bbox?bbox=41,-89,43,-87')));
+    expect(out.stations[0].t).toBe(raw[0].temp);
+    expect(out.stations[0].d).toBe(raw[0].dewp);
+    const missing = raw.findIndex((m) => typeof m.temp !== 'number');
+    expect(missing).toBeGreaterThan(-1);
+    expect(out.stations[missing].t).toBeUndefined();
+    expect(out.stations[missing].d).toBeUndefined();
+  });
 });
 
 describe('aviationweather.gov AIRMET/SIGMET + international SIGMET -> /api/airsigmet', () => {
