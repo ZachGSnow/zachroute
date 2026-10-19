@@ -17,8 +17,15 @@ export const SATELLITES: Satellite[] = [
   { name: 'Himawari', layer: 'Himawari_AHI_Band13_Clean_Infrared', lon: 140.7 },
 ];
 
-/** Past this distance from the point below a satellite, its view is too slanted to use. */
+/** Longitude reach used to decide which satellites' tiles to load for a map tile. */
 export const MAX_VIEW_DEG = 75;
+/**
+ * Angle (degrees, measured at the Earth's center) from the point below the satellite. Past about
+ * 62 degrees the view is so slanted that ordinary cloud reads as cold storm tops, so pixels fade
+ * out from there and are dropped past 70.
+ */
+export const FADE_START_DEG = 62;
+export const FADE_END_DEG = 70;
 export const SATELLITE_MAX_NATIVE_ZOOM = 6;
 
 /** "default" asks GIBS for the newest image it has. */
@@ -48,9 +55,25 @@ export function satellitesForRange(west: number, east: number): Satellite[] {
   return SATELLITES.filter((s) => out.has(s));
 }
 
-/** Whether any satellite here covers this longitude. */
-export function satelliteCovers(lon: number): boolean {
-  return satellitesFor(lon).length > 0;
+/** Cosine of the angle between a point and the point below the satellite (on the equator). */
+export function viewCos(lat: number, lon: number, sat: Satellite): number {
+  const rad = Math.PI / 180;
+  return Math.cos(lat * rad) * Math.cos(lonDistance(lon, sat.lon) * rad);
+}
+
+const COS_FADE_START = Math.cos((FADE_START_DEG * Math.PI) / 180);
+const COS_FADE_END = Math.cos((FADE_END_DEG * Math.PI) / 180);
+
+/** 1 where the view is fine, fading to 0 toward the edge of the satellite's view. */
+export function viewWeight(cos: number): number {
+  if (cos >= COS_FADE_START) return 1;
+  if (cos <= COS_FADE_END) return 0;
+  return (cos - COS_FADE_END) / (COS_FADE_START - COS_FADE_END);
+}
+
+/** Whether any satellite here sees this point well enough to draw. */
+export function satelliteCovers(lat: number, lon: number): boolean {
+  return SATELLITES.some((sat) => viewWeight(viewCos(lat, lon, sat)) > 0);
 }
 
 /**

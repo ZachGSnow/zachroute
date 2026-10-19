@@ -3,7 +3,7 @@ import { formatDistance, getDistanceUnit, getClockFormat, getWeatherUnits, setDi
 import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
 import { haversineDistance } from './geoMath';
-import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, highlightRunway } from './mapOverlays';
+import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, highlightRunway } from './mapOverlays';
 import { parseQuery, loadAirports, suggest, type SearchIntent } from './searchParser';
 import { createSuggestList, type SuggestItem } from './suggestList';
 import { loadRecent, addRecent, clearRecent, loadFavorites, FAVORITES_CHANGED } from './history';
@@ -461,6 +461,9 @@ async function init() {
   const freezingToggle = document.getElementById('freezing-toggle') as HTMLInputElement | null;
   const FREEZING_KEY = 'zachroute:show-freezing';
   restoreAirportToggle(freezingToggle, FREEZING_KEY, setFreezingLevel);
+  const satelliteToggle = document.getElementById('satellite-toggle') as HTMLInputElement | null;
+  const SATELLITE_KEY = 'zachroute:show-satellite';
+  restoreAirportToggle(satelliteToggle, SATELLITE_KEY, setSatellite);
 
   restoreAirportToggle(wxToggle, WX_KEY, setWeatherStations);
   restoreAirportToggle(hazardToggle, HAZARD_KEY, setHazards);
@@ -506,6 +509,7 @@ async function init() {
   wireOverlayToggle(fireToggle, FIRE_KEY, setFires);
   wireOverlayToggle(aerosolToggle, AEROSOL_KEY, setAerosol);
   wireOverlayToggle(freezingToggle, FREEZING_KEY, setFreezingLevel);
+  wireOverlayToggle(satelliteToggle, SATELLITE_KEY, setSatellite);
   wireOverlayToggle(approachToggle, APPROACH_KEY, setApproachTicks);
 
   // Units (settings menu). Changing one re-renders the current result in the new units.
