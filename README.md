@@ -89,7 +89,9 @@ marked where it is at or below freezing and where temperature and dewpoint are c
 fog), the forecast freezing level (shaded dark blue where it is low, with values in thousands of
 feet; from zoom 3), pilot reports, weather hazards,
 tropical cyclones (track, forecast track and uncertainty cone), fires detected by satellite in the
-last 24 hours, dust and smoke from space (the latest daily pass), day/night shading, approach
+last 24 hours, dust and smoke from space (the latest daily pass), satellite clouds (infrared, the newest
+image, every 10 minutes: white is cloud, color is cold storm tops; the Americas, the Pacific, Asia
+and Australia, with no coverage of Europe, Africa or the Middle East in this source), day/night shading, approach
 distance ticks, and runway outlines with runway numbers when zoomed in.
 
 **Phone layout**: the results panel is a bottom sheet. Drag its handle between a one-line peek
@@ -219,6 +221,7 @@ can add on top of the source's age.
 | Air quality (Copernicus CAMS models) | [Open-Meteo](https://open-meteo.com) | Hourly model values from model runs twice a day: estimates, not station measurements | Up to 30 min | CC BY 4.0, free for non-commercial use; contains Copernicus Atmosphere Monitoring Service information |
 | Winds aloft and freezing level | Open-Meteo | Hourly model values (the freezing level on the airport card every 15 minutes) | Up to 15 min (30 min for the freezing level map layer) | CC BY 4.0, free for non-commercial use |
 | Fire and heat detections (MODIS) | [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov) | A few satellite passes per place per day, published about 3 hours later; the app keeps the last 24 hours | Up to 75 min (the source file, the result and the browser are each cached) | Free and open (NASA); credited in the app |
+| Satellite clouds (GOES-East and GOES-West from NOAA, Himawari from JMA; infrared band 13) | NASA GIBS | Every 10 minutes | Redraws every 10 min | Free and open (NASA); credited on the map |
 | Dust and smoke layer (OMPS aerosol index, NOAA-20) | [NASA GIBS](https://nasa-gibs.github.io/gibs-api-docs/) | One pass per place per day, around 13:30 local time; the app shows today's pass where it has happened and yesterday's elsewhere | Redraws hourly | Free and open (NASA); credited on the map |
 | Airport history text and photos | [Wikipedia](https://en.wikipedia.org) | As edited | Up to 7 days | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
 | Airports, runways, frequencies, navaids | [OurAirports](https://ourairports.com/data/) | Nightly | Until you run `npm run data` | Public domain |

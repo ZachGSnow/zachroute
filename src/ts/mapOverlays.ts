@@ -2,6 +2,7 @@ import type { Airport, RunwayDetail } from './geoMath';
 import { formatDistance, clockOptions, UNITS_CHANGED } from './units';
 import { stationTemp } from './stationTemp';
 import { gridFor, fetchFreezingGrid, freezingColor, freezingLabel } from './freezingLayer';
+import { satelliteTileUrl, satellitesForRange, satelliteCovers, cloudPixel, viewCos, viewWeight, SATELLITE_MAX_NATIVE_ZOOM, type Satellite } from './satelliteTiles';
 import { bearingBetween, destinationPoint, haversineDistanceLatLon } from './geoMath';
 import { resolveCode } from './searchParser';
 import { pointInPolygon, advisoriesNear } from './hazardGeo';
@@ -84,6 +85,8 @@ export function initOverlays(m: L.Map) {
   map = m;
 
   // Night shading sits just above the base tiles; hazards sit under the airport markers.
+  map.createPane('satellite').style.zIndex = '240';
+  map.getPane('satellite')!.style.pointerEvents = 'none';
   map.createPane('night').style.zIndex = '250';
   map.createPane('hazards').style.zIndex = '380';
   map.getPane('night')!.style.pointerEvents = 'none';
@@ -107,6 +110,7 @@ export function initOverlays(m: L.Map) {
       void refreshPireps();
       void refreshFires();
       void refreshFreezing();
+      noteSatelliteGap();
       refreshViewRunways();
     }, 500);
   });
@@ -889,6 +893,135 @@ async function refreshFreezing() {
       );
     })
   );
+}
+
+// ---------------------------------------------------------------------------
+// Satellite clouds (NASA GIBS geostationary infrared, newest image), ground cleared
+// ---------------------------------------------------------------------------
+
+let satelliteLayer: L.GridLayer | null = null;
+let satelliteTimer: number | undefined;
+let satelliteOn = false;
+
+function createSatelliteLayer(): L.GridLayer {
+  const SatelliteLayer = L.GridLayer.extend({ createTile: satelliteTile }) as new (options: L.GridLayerOptions) => L.GridLayer;
+  return new SatelliteLayer({
+    pane: 'satellite',
+    tileSize: 256,
+    maxNativeZoom: SATELLITE_MAX_NATIVE_ZOOM,
+    opacity: 0.9,
+    attribution: 'Clouds: NASA GIBS, GOES (NOAA) and Himawari (JMA)',
+  });
+}
+
+function loadSatellitePixels(sat: Satellite, coords: L.Coords): Promise<ImageData | null> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = c.height = 256;
+      const ctx = c.getContext('2d', { willReadFrequently: true });
+      if (!ctx) return resolve(null);
+      ctx.drawImage(img, 0, 0, 256, 256);
+      resolve(ctx.getImageData(0, 0, 256, 256));
+    };
+    img.onerror = () => resolve(null);
+    img.src = L.Util.template(satelliteTileUrl(sat), { x: coords.x, y: coords.y, z: coords.z });
+  });
+}
+
+/** Longitude of the left edge of tile column x at zoom z. */
+const tileLon = (x: number, z: number) => (x / 2 ** z) * 360 - 180;
+/** Latitude of the top edge of tile row y at zoom z (Web Mercator). */
+const tileLat = (y: number, z: number) => (Math.atan(Math.sinh(Math.PI * (1 - (2 * y) / 2 ** z))) * 180) / Math.PI;
+
+/**
+ * Each pixel from the satellite with the most direct view that has data there, faded toward the
+ * edge of that view; ground cleared.
+ */
+function satelliteTile(coords: L.Coords, done: L.DoneCallback): HTMLElement {
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 256;
+  const west = tileLon(coords.x, coords.z);
+  const east = tileLon(coords.x + 1, coords.z);
+  const sats = satellitesForRange(west, east);
+  void Promise.all(sats.map((sat) => loadSatellitePixels(sat, coords))).then((tiles) => {
+    const ctx = canvas.getContext('2d');
+    const loaded = new Map<Satellite, ImageData>();
+    sats.forEach((sat, i) => tiles[i] && loaded.set(sat, tiles[i]!));
+    if (ctx && loaded.size) {
+      const out = ctx.createImageData(256, 256);
+      const list = [...loaded.keys()];
+      const data = list.map((sat) => loaded.get(sat)!.data);
+      // cos(view angle) = cos(lat) * cos(longitude from the satellite): the longitude part per
+      // column and satellite once, the latitude part per row.
+      const cosLon = list.map((sat) =>
+        Float64Array.from({ length: 256 }, (_, x) => viewCos(0, west + ((east - west) * (x + 0.5)) / 256, sat))
+      );
+      const cosView = new Float64Array(list.length);
+      for (let y = 0; y < 256; y++) {
+        const cosLat = Math.cos((tileLat(coords.y + (y + 0.5) / 256, coords.z) * Math.PI) / 180);
+        for (let x = 0; x < 256; x++) {
+          const i = (y * 256 + x) * 4;
+          for (let k = 0; k < list.length; k++) cosView[k] = cosLat * cosLon[k][x];
+          // Most direct view first; a satellite with no data at this pixel hands over to the next.
+          let used = 0;
+          while (used < list.length) {
+            let best = -1;
+            for (let k = 0; k < list.length; k++) if (cosView[k] > -2 && (best < 0 || cosView[k] > cosView[best])) best = k;
+            if (best < 0) break;
+            const weight = viewWeight(cosView[best]);
+            if (weight <= 0) break;
+            const d = data[best];
+            if (d[i + 3] === 0) {
+              cosView[best] = -3; // skip it next round
+              used++;
+              continue;
+            }
+            const [r, g, b, a] = cloudPixel(d[i], d[i + 1], d[i + 2], d[i + 3]);
+            out.data[i] = r;
+            out.data[i + 1] = g;
+            out.data[i + 2] = b;
+            out.data[i + 3] = Math.round(a * weight);
+            break;
+          }
+        }
+      }
+      ctx.putImageData(out, 0, 0);
+    }
+    done(undefined, canvas);
+  });
+  return canvas;
+}
+
+/** Says so when the middle of the view has no satellite in this source. */
+function noteSatelliteGap() {
+  if (!map || !satelliteOn) return;
+  const c = map.getCenter().wrap();
+  if (!satelliteCovers(c.lat, c.lng)) {
+    setHint('No satellite cloud images for Europe, Africa or the Middle East in this source', 5000);
+  }
+}
+
+export function setSatellite(on: boolean) {
+  satelliteOn = on;
+  if (!map) return;
+  window.clearInterval(satelliteTimer);
+  if (!on) {
+    if (satelliteLayer && map.hasLayer(satelliteLayer)) map.removeLayer(satelliteLayer);
+    return;
+  }
+  if (!satelliteLayer) satelliteLayer = createSatelliteLayer();
+  if (!map.hasLayer(satelliteLayer)) satelliteLayer.addTo(map);
+  // A new image every 10 minutes.
+  satelliteTimer = window.setInterval(() => satelliteLayer?.redraw(), 10 * 60 * 1000);
+  const c = map.getCenter().wrap();
+  if (satelliteCovers(c.lat, c.lng)) {
+    setHint('Satellite clouds (infrared, latest image): white is cloud, color is cold storm tops', 5000);
+  } else {
+    noteSatelliteGap();
+  }
 }
 
 // ---------------------------------------------------------------------------
