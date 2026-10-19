@@ -1,0 +1,19 @@
+{
+  "latitude": 61.195076,
+  "longitude": -150.0,
+  "generationtime_ms": 0.7207393646240234,
+  "utc_offset_seconds": 0,
+  "timezone": "GMT",
+  "timezone_abbreviation": "GMT",
+  "elevation": 33.0,
+  "current_units": {
+    "time": "iso8601",
+    "interval": "seconds",
+    "freezing_level_height": "m"
+  },
+  "current": {
+    "time": "2026-10-19T17:30",
+    "interval": 900,
+    "freezing_level_height": 860.0
+  }
+}
