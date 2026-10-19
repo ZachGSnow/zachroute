@@ -3,7 +3,7 @@ import { formatDistance, getDistanceUnit, getClockFormat, getWeatherUnits, setDi
 import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
 import { haversineDistance } from './geoMath';
-import { setWeatherStations, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, highlightRunway } from './mapOverlays';
+import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, highlightRunway } from './mapOverlays';
 import { parseQuery, loadAirports, suggest, type SearchIntent } from './searchParser';
 import { createSuggestList, type SuggestItem } from './suggestList';
 import { loadRecent, addRecent, clearRecent, loadFavorites, FAVORITES_CHANGED } from './history';
@@ -471,6 +471,31 @@ async function init() {
     });
   }
   wireOverlayToggle(wxToggle, WX_KEY, setWeatherStations);
+
+  // What the weather stations show: wind (default) or temperature
+  const wxModeSelect = document.getElementById('wxstations-mode') as HTMLSelectElement | null;
+  const WX_MODE_KEY = 'zachroute:wxstations-mode';
+  if (wxModeSelect) {
+    let savedMode: string | null = null;
+    try {
+      savedMode = localStorage.getItem(WX_MODE_KEY);
+    } catch {
+      /* convenience only */
+    }
+    if (savedMode === 'temp') {
+      wxModeSelect.value = 'temp';
+      setStationMode('temp');
+    }
+    wxModeSelect.addEventListener('change', () => {
+      const mode = wxModeSelect.value as StationMode;
+      try {
+        localStorage.setItem(WX_MODE_KEY, mode);
+      } catch {
+        /* convenience only */
+      }
+      setStationMode(mode);
+    });
+  }
   wireOverlayToggle(hazardToggle, HAZARD_KEY, setHazards);
   wireOverlayToggle(nightToggle, NIGHT_KEY, setDayNight);
   wireOverlayToggle(pirepToggle, PIREP_KEY, setPireps);

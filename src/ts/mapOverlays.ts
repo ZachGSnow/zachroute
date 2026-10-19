@@ -1,5 +1,6 @@
 import type { Airport, RunwayDetail } from './geoMath';
-import { formatDistance, clockOptions } from './units';
+import { formatDistance, clockOptions, UNITS_CHANGED } from './units';
+import { stationTemp } from './stationTemp';
 import { bearingBetween, destinationPoint, haversineDistanceLatLon } from './geoMath';
 import { resolveCode } from './searchParser';
 import { pointInPolygon, advisoriesNear } from './hazardGeo';
@@ -142,12 +143,23 @@ function placeNear(lat: number, lon: number): string {
 }
 
 // ---------------------------------------------------------------------------
-// Weather stations layer: wind arrows, with a ring only when conditions are not VFR
+// Weather stations layer: wind arrows, with a ring only when conditions are not VFR, or
+// temperatures colored cold to hot, with freezing and fog-risk marks
 // ---------------------------------------------------------------------------
 
 let stationLayer: L.LayerGroup | null = null;
 let stationsOn = false;
 let stationGen = 0;
+
+export type StationMode = 'wind' | 'temp';
+let stationMode: StationMode = 'wind';
+let lastStations: Station[] = [];
+
+/** Switches what each station shows, redrawing from the last response without a new request. */
+export function setStationMode(mode: StationMode) {
+  stationMode = mode;
+  drawStations();
+}
 
 const MAX_STATIONS = 500;
 
@@ -171,6 +183,8 @@ interface Station {
   wd?: number;
   ws?: number;
   wg?: number;
+  t?: number; // degrees C
+  d?: number; // dewpoint, degrees C
 }
 
 function stationIcon(s: Station): L.DivIcon {
@@ -200,6 +214,20 @@ function stationIcon(s: Station): L.DivIcon {
   });
 }
 
+function tempIcon(s: Station): L.DivIcon | null {
+  const t = stationTemp(s.t, s.d);
+  if (!t) return null;
+  const marks =
+    (t.freezing ? '<span class="wx-mark wx-freezing" title="At or below freezing">\u2744</span>' : '') +
+    (t.fogRisk ? '<span class="wx-mark wx-fog" title="Fog risk">fog</span>' : '');
+  return L.divIcon({
+    className: 'wx-station wx-temp',
+    html: `<span class="wx-temp-pill" style="background:${t.color}">${t.label}</span>${marks}`,
+    iconSize: [40, 34],
+    iconAnchor: [20, 17],
+  });
+}
+
 async function refreshStations() {
   updateZoomHint();
   if (!map || !stationsOn) return;
@@ -220,30 +248,51 @@ async function refreshStations() {
     const json = await res.json();
     if (gen !== stationGen || !map || !stationsOn) return;
 
-    if (!stationLayer) stationLayer = L.layerGroup();
-    stationLayer.clearLayers();
-
-    let shown = 0;
-    for (const s of (json.stations || []) as Station[]) {
-      const airport = resolveCode(s.id);
-      // Declutter when zoomed out: major airports only (their ring still shows when not VFR).
-      const major = !!airport && ['large_airport', 'medium_airport', 'regional'].includes(airport.type);
-      if (zoom < 8 && !major) continue;
-      if (++shown > MAX_STATIONS) break;
-
-      const wind = s.ws !== undefined && s.ws >= 1 ? `${s.wd !== undefined ? s.wd + '\u00b0 ' : ''}@ ${s.ws}kt${s.wg ? ' G' + s.wg : ''}` : 'calm';
-      const marker = L.marker([s.lat, s.lon], { icon: stationIcon(s), keyboard: false });
-      marker.bindTooltip(`${s.id}${s.cat ? ' ' + s.cat : ''} - ${wind}`, { direction: 'top', offset: [0, -10] });
-      marker.on('click', () => {
-        if (airport) (window as any).renderSingleAirport?.(airport);
-      });
-      stationLayer.addLayer(marker);
-    }
-    if (!map.hasLayer(stationLayer)) stationLayer.addTo(map);
+    lastStations = (json.stations || []) as Station[];
+    drawStations();
   } catch {
     /* offline or upstream hiccup: keep whatever is drawn */
   }
 }
+
+function drawStations() {
+  if (!map || !stationsOn) return;
+  const zoom = map.getZoom();
+  if (zoom < MIN_STATION_ZOOM) return;
+  if (!stationLayer) stationLayer = L.layerGroup();
+  stationLayer.clearLayers();
+
+  let shown = 0;
+  for (const s of lastStations) {
+    const airport = resolveCode(s.id);
+    // Declutter when zoomed out: major airports only (their ring still shows when not VFR).
+    const major = !!airport && ['large_airport', 'medium_airport', 'regional'].includes(airport.type);
+    if (zoom < 8 && !major) continue;
+
+    const temp = stationTemp(s.t, s.d);
+    const icon = stationMode === 'temp' ? tempIcon(s) : stationIcon(s);
+    if (!icon) continue; // temperature view: station sent no temperature
+    if (++shown > MAX_STATIONS) break;
+
+    const wind = s.ws !== undefined && s.ws >= 1 ? `${s.wd !== undefined ? s.wd + '\u00b0 ' : ''}@ ${s.ws}kt${s.wg ? ' G' + s.wg : ''}` : 'calm';
+    const tip =
+      stationMode === 'temp' && temp
+        ? `${s.id} - ${temp.detail}${temp.freezing ? ', freezing' : ''}${temp.fogRisk ? ', fog risk' : ''}`
+        : `${s.id}${s.cat ? ' ' + s.cat : ''} - ${wind}${temp ? `, ${temp.detail}` : ''}`;
+    const marker = L.marker([s.lat, s.lon], { icon, keyboard: false });
+    marker.bindTooltip(tip, { direction: 'top', offset: [0, -10] });
+    marker.on('click', () => {
+      if (airport) (window as any).renderSingleAirport?.(airport);
+    });
+    stationLayer.addLayer(marker);
+  }
+  if (!map.hasLayer(stationLayer)) stationLayer.addTo(map);
+}
+
+// Temperatures follow the weather units setting.
+window.addEventListener(UNITS_CHANGED, () => {
+  if (stationMode === 'temp') drawStations();
+});
 
 // ---------------------------------------------------------------------------
 // AIRMET / SIGMET hazards
