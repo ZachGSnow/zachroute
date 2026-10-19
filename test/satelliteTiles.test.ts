@@ -118,8 +118,9 @@ describe('cold storm cores', () => {
 
   it('labels the satellite legend in the chosen units', () => {
     const c = satelliteLegend('metric');
-    expect(c.kind === 'gradient' && c.labels).toEqual(['cloud', '-40°', '-55°', '-65°', '-75° and colder']);
-    expect(c.title).toContain('°C');
-    expect(satelliteLegend('us').title).toContain('°F');
+    expect(c.title).toBe('Satellite clouds: storm strength');
+    expect(c.kind === 'gradient' && c.labels).toEqual(['cloud', 'tall', 'strong', 'very strong', 'extreme']);
+    expect(c.note).toContain('-40\u00b0C to -75\u00b0C and colder');
+    expect(satelliteLegend('us').note).toContain('-40\u00b0F to -103\u00b0F and colder');
   });
 });
