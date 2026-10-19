@@ -186,6 +186,23 @@ export function hazardLegend(): LegendSpec {
   };
 }
 
+/** Radar on the ladder; rain under 30 dBZ in soft blue (radarTiles.ts RAIN_RGBA). */
+export function radarLegend(): LegendSpec {
+  const [light, moderate, severe, extreme] = severityLegendItems([1, 2, 3, 4], 'dot');
+  return {
+    kind: 'items',
+    title: 'Radar',
+    items: [
+      { color: 'rgb(96, 165, 250)', label: 'rain (20-30 dBZ)', mark: 'dot' },
+      { ...light, label: 'Light: 30-40 dBZ' },
+      { ...moderate, label: 'Moderate: 40-45' },
+      { ...severe, label: 'Severe: 45-50' },
+      { ...extreme, label: 'Extreme: 50+ (hail possible)' },
+    ],
+    note: 'US: NEXRAD, about 1 km detail. Elsewhere: RainViewer, coarser (zoom 7). Airliners keep about 20 nm from 40+',
+  };
+}
+
 export function tcfLegend(): LegendSpec {
   const [, moderate, severe, extreme] = severityLegendItems([1, 2, 3, 4], 'line');
   return {
