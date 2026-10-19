@@ -2,7 +2,8 @@ import type { Airport, RunwayDetail } from './geoMath';
 import { formatDistance, clockOptions, UNITS_CHANGED } from './units';
 import { stationTemp } from './stationTemp';
 import { setLegend } from './legend';
-import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend } from './legends';
+import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend, pirepLegend, fireLegend } from './legends';
+import { severityColor, severityName, fireSeverity } from './severity';
 import { fetchTfrs, tfrsCrossed, tfrTypeLabel, tfrPlace, type Tfr } from './tfr';
 import { gridFor, fetchFreezingGrid, freezingColor, freezingLabel } from './freezingLayer';
 import { satelliteTileUrl, satellitesForRange, satelliteCovers, cloudPixel, coldCoreMask, COLD_CORE_RGBA, viewCos, viewWeight, SATELLITE_MAX_NATIVE_ZOOM, type Satellite } from './satelliteTiles';
@@ -452,26 +453,32 @@ async function refreshHazards(announce: boolean) {
 // Pilot reports on the map, in plain English
 // ---------------------------------------------------------------------------
 
-const PIREP_COLOR: Record<PirepKind, string> = {
-  turb: '#f59e0b',
-  ice: '#67e8f9',
-  both: '#f87171',
-  vis: '#94a3b8',
+/** Marker shape for each kind of pilot report; the color is its severity. */
+export const PIREP_SHAPE: Record<PirepKind, string> = {
+  turb: 'diamond',
+  ice: 'dot',
+  both: 'square',
+  vis: 'dot',
 };
+const LOW_VIS_COLOR = '#94a3b8';
 
-function pirepMarker(p: RawPirep): L.CircleMarker | null {
+function pirepMarker(p: RawPirep): L.Marker | null {
   const summary = summarizePirep(p);
   if (!summary) return null;
-  const color = summary.severe ? '#ef4444' : PIREP_COLOR[summary.kind];
-  const marker = L.circleMarker([p.lat, p.lon], {
-    radius: summary.severe ? 7 : 5,
-    color: '#0f172a',
-    weight: 1.5,
-    fillColor: color,
-    fillOpacity: 0.95,
+  const color = summary.severity ? severityColor(summary.severity) : LOW_VIS_COLOR;
+  const size = summary.severity ? 8 + summary.severity * 2 : 8;
+  const marker = L.marker([p.lat, p.lon], {
+    icon: L.divIcon({
+      className: 'pirep-icon',
+      html: `<span class="pirep-mark pirep-${PIREP_SHAPE[summary.kind]}" style="--c:${color};--s:${size}px"></span>`,
+      iconSize: [size + 4, size + 4],
+      iconAnchor: [(size + 4) / 2, (size + 4) / 2],
+    }),
+    keyboard: false,
   });
+  const level = summary.severity ? `${severityName(summary.severity)}: ` : '';
   const meta = [pirepAltitudeLabel(p), placeNear(p.lat, p.lon), p.acType, pirepAgeLabel(p.obsTime)].filter(Boolean).join(' &middot; ');
-  marker.bindPopup(`<strong>${esc(summary.headline)}</strong><br><small>${meta}</small><br><small style="color:#64748b">Reported by a pilot</small>`);
+  marker.bindPopup(`<strong>${esc(level + summary.headline)}</strong><br><small>${meta}</small><br><small style="color:#64748b">Reported by a pilot</small>`);
   return marker;
 }
 
@@ -493,6 +500,7 @@ let pirepsOn = false;
 let pirepGen = 0;
 
 export function setPireps(on: boolean) {
+  setLegend('pireps', on ? pirepLegend() : null);
   pirepsOn = on;
   if (!map) return;
   if (!on) {
@@ -529,20 +537,22 @@ async function refreshPireps() {
 // Fire and heat detections (NASA FIRMS, last 24 hours)
 // ---------------------------------------------------------------------------
 
+const FIRE_RADIUS = [0, 3.5, 4.5, 6, 7.5];
+
 function fireMarker(f: Fire): L.CircleMarker {
-  const strong = f.frp >= 100;
+  const level = fireSeverity(f.frp);
   const marker = L.circleMarker([f.lat, f.lon], {
     pane: 'hazards',
-    radius: strong ? 6 : f.frp >= 30 ? 4.5 : 3.5,
-    color: '#7c2d12',
+    radius: FIRE_RADIUS[level],
+    color: '#1c1917',
     weight: 1,
-    fillColor: strong ? '#ef4444' : '#fb923c',
+    fillColor: severityColor(level),
     fillOpacity: 0.9,
   });
   const when = new Date(f.time);
   const label = `${when.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })} ${f.time.slice(11, 16)} UTC`;
   marker.bindPopup(
-    `<strong>Fire or heat source</strong><br>${Math.round(f.frp)} MW, seen by satellite ${esc(label)}` +
+    `<strong>Fire or heat source: ${esc(severityName(level).toLowerCase())}</strong><br>${Math.round(f.frp)} MW, seen by satellite ${esc(label)}` +
       `<br><small>${esc(placeNear(f.lat, f.lon))}</small>` +
       '<br><small style="color:#64748b">NASA FIRMS (MODIS). Includes wildfires, field burning and gas flares.</small>'
   );
@@ -554,6 +564,7 @@ let firesOn = false;
 let fireGen = 0;
 
 export function setFires(on: boolean) {
+  setLegend('fires', on ? fireLegend() : null);
   firesOn = on;
   if (!map) return;
   if (!on) {

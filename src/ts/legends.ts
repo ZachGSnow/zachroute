@@ -5,6 +5,7 @@ import type { LegendSpec } from './legend';
 import { tempColor } from './stationTemp';
 import { freezingColor } from './freezingLayer';
 import { getWeatherUnits, type WeatherUnits } from './units';
+import { severityLegendItems } from './severity';
 
 /** Flight category colors, the usual aviation convention. */
 export const FLIGHT_CATEGORY_COLOR: Record<string, string> = {
@@ -115,5 +116,35 @@ export function aerosolLegend(): LegendSpec {
     colors: AEROSOL_LEGEND_COLORS,
     labels: ['1 haze', '2', '3 thick', '4+ very thick'],
     note: 'Latest daily satellite pass',
+  };
+}
+
+export function pirepLegend(): LegendSpec {
+  return {
+    kind: 'items',
+    title: 'Pilot reports',
+    items: [
+      ...severityLegendItems(),
+      { color: '#cbd5e1', label: 'turbulence', mark: 'diamond' },
+      { color: '#cbd5e1', label: 'icing', mark: 'dot' },
+      { color: '#cbd5e1', label: 'both', mark: 'square' },
+      { color: '#94a3b8', label: 'low visibility', mark: 'dot' },
+    ],
+    note: 'Color is how bad it was; shape is what the pilot reported',
+  };
+}
+
+export function fireLegend(): LegendSpec {
+  const [light, moderate, severe, extreme] = severityLegendItems();
+  return {
+    kind: 'items',
+    title: 'Fires and heat (fire radiative power)',
+    items: [
+      { ...light, label: 'Light, under 30 MW' },
+      { ...moderate, label: 'Moderate, 30-100 MW' },
+      { ...severe, label: 'Severe, 100-500 MW' },
+      { ...extreme, label: 'Extreme, 500 MW+' },
+    ],
+    note: 'Satellite detections in the last 24 hours',
   };
 }

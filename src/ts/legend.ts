@@ -6,7 +6,7 @@ export interface LegendItem {
   color: string;
   label: string;
   /** How the swatch is drawn: a filled dot (default), a ring, a solid or dashed line, or a text glyph. */
-  mark?: 'dot' | 'ring' | 'line' | 'dash' | 'glyph';
+  mark?: 'dot' | 'ring' | 'line' | 'dash' | 'glyph' | 'diamond' | 'square';
   glyph?: string;
 }
 
