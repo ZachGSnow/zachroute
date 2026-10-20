@@ -1,12 +1,19 @@
 import carrierData from '../data/carriers.json';
 import type { Airport } from './geoMath';
 
-// Which airlines fly a US domestic route, from the U.S. DOT Bureau of Transportation
-// Statistics on-time data (scripts/build_us_routes.js) plus hand-kept overrides
-// (scripts/route_overrides.json). Non-US routes have no airline data.
+// Which airlines fly a route touching the US: US domestic routes from the U.S. DOT Bureau of
+// Transportation Statistics on-time data (scripts/build_us_routes.js), routes between US and foreign
+// airports from DOT T-100 (scripts/build_t100.js), plus hand-kept overrides
+// (scripts/route_overrides.json). Routes between two foreign airports have no airline data.
 
 interface CarrierFile {
-  meta: { generated: string | null; months: string[] };
+  meta: {
+    generated: string | null;
+    months: string[];
+    /** T-100 months behind the US-international routes, and US DOT names for their airlines. */
+    intlMonths?: { from: string; to: string };
+    names?: Record<string, string>;
+  };
   routes: Record<string, Record<string, string>>;
 }
 
@@ -45,9 +52,20 @@ const CARRIERS: Record<string, CarrierInfo> = {
   C5: { name: 'CommuteAir', note: 'regional, flies for United' },
 };
 
-/** The app's short name for an airline code, or the code itself when it has none. */
+/** "Japan Air Lines Co. Ltd." -> "Japan Air Lines" (company suffixes can stack). */
+export function shortCarrierName(name: string): string {
+  let out = name.replace(/\s+d\/b\/a.*$/i, '').trim();
+  for (let prev = ''; prev !== out; ) {
+    prev = out;
+    out = out.replace(/,?\s+(Inc|Co|Corp|Corporation|Ltd|LLC|S\.?A|plc|AG|N\.?V)\.?$/i, '').trim();
+  }
+  return out;
+}
+
+/** The app's short name for an airline code, then the US DOT name, or the code itself. */
 export function airlineName(code: string): string {
-  return CARRIERS[code]?.name || code;
+  const dot = DATA.meta.names?.[code];
+  return CARRIERS[code]?.name || (dot ? shortCarrierName(dot) : code);
 }
 
 export interface RouteCarrier {
@@ -66,7 +84,7 @@ export function carriersFor(a: Airport, b: Airport): RouteCarrier[] {
     const seasonal = token.endsWith('*');
     const code = seasonal ? token.slice(0, -1) : token;
     const info = CARRIERS[code];
-    return { code, name: info?.name || code, note: info?.note, seasonal };
+    return { code, name: airlineName(code), note: info?.note, seasonal };
   });
 }
 
@@ -80,6 +98,8 @@ export function carrierNames(list: RouteCarrier[], max = 4): string {
 /** Where the airline data comes from, for tooltips and footnotes. */
 export function carrierDataNote(): string {
   const months = DATA.meta.months;
-  if (months.length === 0) return 'Airline data: U.S. DOT';
-  return `Airline data: U.S. DOT schedules sampled ${months[months.length - 1].replace('_', '/')} to ${months[0].replace('_', '/')}`;
+  const intl = DATA.meta.intlMonths;
+  const intlNote = intl ? `; international: U.S. DOT T-100 ${intl.from} to ${intl.to}` : '';
+  if (months.length === 0) return `Airline data: U.S. DOT${intlNote}`;
+  return `Airline data: U.S. DOT schedules sampled ${months[months.length - 1].replace('_', '/')} to ${months[0].replace('_', '/')}${intlNote}`;
 }

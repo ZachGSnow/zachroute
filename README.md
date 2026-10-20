@@ -50,7 +50,9 @@ companion to a FlightWall display: see a plane overhead, look up where it is goi
 - Runways with dimensions and surface, the wind-favored runway with headwind/crosswind
   components, frequencies, navaids, local time, sunrise or sunset, airport photo and history.
 - Nonstop destinations from route data, with the airlines that fly them on US routes (US DOT data,
-  about three months behind). Other routes come from OpenFlights (2017) and list no airlines.
+  about three months behind). Routes between US and foreign airports come from DOT T-100 (scheduled
+  service in the last 12 months, with the airlines, foreign ones included). Routes between two
+  foreign airports come from OpenFlights (2017) and list no airlines.
 
 **Hazards and air near an airport** (worldwide unless noted)
 - Volcanic ash over or within 100 miles of the airport, from international SIGMETs.
@@ -231,7 +233,7 @@ for the design and the reasoning behind the main decisions.
 ## Limitations
 
 - Routes are great circles, not airways or air traffic routing, and connections come from route
-  data, not live schedules. International routes use OpenFlights data from 2017.
+  data, not live schedules. Routes between two foreign airports use OpenFlights data from 2017.
 - Air quality is a model estimate (Copernicus CAMS). A measured PM2.5 reading is added only where a
   ground station within 25 km reported in the last 3 hours (with the OpenAQ key); low-cost sensors
   are named as such. The measured line rates PM2.5 alone, while the model AQI takes the worst of
@@ -317,7 +319,8 @@ can add on top of the source's age.
 | Airports, runways, frequencies, navaids | [OurAirports](https://ourairports.com/data/) | Nightly | Until you run `npm run data` | Public domain |
 | Which Wikipedia article belongs to each airport | [Wikidata](https://www.wikidata.org) | As edited | Until you run `npm run data` | CC0 |
 | Current US routes and airlines | [US DOT Bureau of Transportation Statistics](https://www.transtats.bts.gov) on-time data | Monthly, about 3 months behind | Until you run `npm run data` | Public domain (US government) |
-| International routes | [OpenFlights](https://openflights.org/data.php) `routes.dat` | Not updated since 2017 | Until you run `npm run data` | [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/); `src/data/connections.json` is shared under the same license (see [`src/data/README.md`](src/data/README.md)) |
+| Routes between US and foreign airports | US DOT T-100 Segment (all carriers), `npm run etl:t100` | Monthly, about 3 months behind | Until you run `npm run data` | Public domain (US government) |
+| Routes between two foreign airports | [OpenFlights](https://openflights.org/data.php) `routes.dat` | Not updated since 2017 | Until you run `npm run data` | [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/); `src/data/connections.json` is shared under the same license (see [`src/data/README.md`](src/data/README.md)) |
 | Map tiles | [Stadia Maps](https://stadiamaps.com), OpenMapTiles, OpenStreetMap | Per provider | Not cached by the app | Per provider terms; credited on the map |
 
 The last weather and history seen for an airport stay available offline. For information only:

@@ -96,4 +96,29 @@ describe('OpenFlights routes.dat + BTS + overrides -> mergeRoutes', () => {
     expect(carriers.routes.DEN.ORD).toBe('UA,WN');
     expect(carriers.routes.ORD.GRB).toBe('MX');
   });
+
+  it('takes US-international pairs from T-100 instead of OpenFlights', () => {
+    const usAirports = new Set(['ORD', 'DEN', 'JFK']);
+    const usIntlRoutes = {
+      months: { from: '2025-08', to: '2026-07' },
+      names: { BA: 'British Airways Plc' },
+      routes: { JFK: { LHR: ['AA', 'BA'] }, LHR: { JFK: ['AA', 'BA'] } },
+    };
+    const before = mergeRoutes({ routeLines, usRoutes: null, overrides: null, usAirports });
+    const after = mergeRoutes({ routeLines, usRoutes: null, usIntlRoutes, overrides: null, usAirports });
+    // an OpenFlights pair from a US airport to a foreign one is dropped unless T-100 has it
+    const ofIntl = Object.entries(before.connections).flatMap(([o, ds]) =>
+      (ds as string[]).filter((d) => usAirports.has(o) !== usAirports.has(d)).map((d) => `${o}-${d}`)
+    );
+    expect(ofIntl.length).toBeGreaterThan(0);
+    expect(after.skippedIntl).toBeGreaterThan(0);
+    const left = Object.entries(after.connections).flatMap(([o, ds]) =>
+      (ds as string[]).filter((d) => usAirports.has(o) !== usAirports.has(d)).map((d) => `${o}-${d}`)
+    );
+    expect(left.sort()).toEqual(['JFK-LHR', 'LHR-JFK']);
+    // pairs between two foreign airports still come from OpenFlights
+    expect(after.connections.LHR).toContain('CGN');
+    expect(after.carriers.routes.JFK.LHR).toBe('AA,BA');
+    expect(after.carriers.meta.names).toEqual({ BA: 'British Airways Plc' });
+  });
 });

@@ -14,7 +14,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
-import { parseT100, aggregatePairs, airportFiles, internationalNonstops, windows } from '../shared/t100.js';
+import { parseT100, aggregatePairs, airportFiles, internationalNonstops, windows, usTestFromRows } from '../shared/t100.js';
 import { usAirportSet } from './build_connections.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -24,7 +24,7 @@ const INTL_PATH = path.join(ROOT, 'src', 'data', 'us-intl-routes.json');
 const AIRPORTS_PATH = path.join(ROOT, 'public', 'data', 'airports.json');
 const FORM = 'https://www.transtats.bts.gov/DL_SelectFields.aspx?gnoyr_VQ=FMG&QO_fu146_anzr=Nv4%20Pn44vr45';
 const LOOKUP = 'https://www.transtats.bts.gov/Download_Lookup.asp?Y11x72=';
-const FIELDS = ['DEPARTURES_PERFORMED', 'SEATS', 'PASSENGERS', 'UNIQUE_CARRIER', 'ORIGIN', 'DEST', 'AIRCRAFT_TYPE', 'YEAR', 'MONTH', 'CLASS'];
+const FIELDS = ['DEPARTURES_PERFORMED', 'SEATS', 'PASSENGERS', 'UNIQUE_CARRIER', 'ORIGIN', 'ORIGIN_COUNTRY', 'DEST', 'DEST_COUNTRY', 'AIRCRAFT_TYPE', 'YEAR', 'MONTH', 'CLASS'];
 const UA = 'Mozilla/5.0 (ZachRoute data build; https://github.com/ZachGSnow/zachroute)';
 
 /** The file named `want` from a zip, using the central directory (no external tools). */
@@ -126,7 +126,7 @@ async function main() {
   fs.writeFileSync(path.join(OUT_DIR, 'index.json'), JSON.stringify({ months: { from: last[0], to: last[11] }, airports: [...files.keys()].sort(), airlines }));
 
   const us = usAirportSet(JSON.parse(fs.readFileSync(AIRPORTS_PATH, 'utf8')));
-  const intl = internationalNonstops(pairs, (code) => us.has(code));
+  const intl = internationalNonstops(pairs, usTestFromRows(rows, (code) => us.has(code)));
   fs.writeFileSync(INTL_PATH, JSON.stringify({ generated: new Date().toISOString().slice(0, 10), months: { from: last[0], to: last[11] }, names: airlines, routes: intl }));
   const intlPairs = Object.values(intl).reduce((n, d) => n + Object.keys(d).length, 0) / 2;
   console.log(
