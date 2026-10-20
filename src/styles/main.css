@@ -1733,3 +1733,19 @@ body {
     border: none;
   }
 }
+
+/* Base map styles: on the light and satellite maps, routes, airports and hazard shapes get a dark
+   halo so the app's bright colors stay readable. One filter per SVG layer keeps it cheap. */
+.map-container.base-light,
+.map-container.base-light .leaflet-tile-pane {
+  background: #e5e7eb;
+}
+
+.base-light .leaflet-overlay-pane svg,
+.base-light .leaflet-hazards-pane svg,
+.base-light .leaflet-airspace-pane svg,
+.base-satellite .leaflet-overlay-pane svg,
+.base-satellite .leaflet-hazards-pane svg,
+.base-satellite .leaflet-airspace-pane svg {
+  filter: drop-shadow(0 0 1px rgba(15, 23, 42, 0.95)) drop-shadow(0 0 2px rgba(15, 23, 42, 0.6));
+}

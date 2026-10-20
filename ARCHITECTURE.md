@@ -27,7 +27,8 @@ browser (src/ts) <--------------------------------------+
 | `src/ts/units.ts` | Display units: distance, 12/24-hour clock, and US or metric weather (temperature, pressure, visibility; default from the device region) |
 | `src/ts/searchParser.ts` | Code / name / route parsing and ranking |
 | `src/ts/uiRenderer.ts` | Airport card and route panel |
-| `src/ts/mapRenderer.ts` | Leaflet map: routes, connections, connecting itineraries, airport layers |
+| `src/ts/mapRenderer.ts` | Leaflet map: base map style, routes, connections, connecting itineraries, airport layers |
+| `src/ts/baseMap.ts` | Base map tile sources and credits: Stadia dark and light, EOX Sentinel-2 cloudless satellite with Stadia labels |
 | `src/ts/mapOverlays.ts` | Weather stations, AIRMET/SIGMET, pilot reports, day/night, runway outlines, hazards along a route, volcanic ash near an airport |
 | `src/ts/cyclones.ts` | Tropical cyclones near an airport (center within 300 mi or inside the forecast cone) and along a route (150 mi or through the cone) |
 | `src/ts/hazardGeo.ts` | Advisory polygon geometry without Leaflet: point in polygon (antimeridian-aware), distance to a polygon, advisories near a point |

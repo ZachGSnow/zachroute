@@ -48,6 +48,21 @@ const sw = (input: string, option?: FeatureOption) => ({ kind: 'switch' as const
 
 export const FEATURES: Feature[] = [
   // Map
+  {
+    id: 'basemap',
+    section: 'map',
+    label: 'Base map',
+    desc: 'Satellite imagery is a cloud-free mosaic, not live',
+    control: {
+      kind: 'choice',
+      input: 'base-map',
+      choices: [
+        { value: 'dark', label: 'Dark' },
+        { value: 'light', label: 'Light' },
+        { value: 'satellite', label: 'Satellite' },
+      ],
+    },
+  },
   { id: 'terrain', section: 'map', label: 'Terrain shading', desc: 'Shaded relief, with high ground tinted', control: sw('terrain-toggle') },
   { id: 'daynight', section: 'map', label: 'Day and night', desc: 'Shades where it is night right now', control: sw('daynight-toggle') },
 
@@ -200,6 +215,6 @@ export function isSettingKey(key: string): boolean {
   const name = key.slice('zachroute:'.length);
   return (
     name.startsWith('show-') ||
-    ['tcf-step', 'spc-day', 'charts-kind', 'radar-mode', 'wxstations-mode', 'distance-unit', 'clock', 'weather-units', 'legend-open', 'settings-open'].includes(name)
+    ['base-map', 'tcf-step', 'spc-day', 'charts-kind', 'radar-mode', 'wxstations-mode', 'distance-unit', 'clock', 'weather-units', 'legend-open', 'settings-open'].includes(name)
   );
 }

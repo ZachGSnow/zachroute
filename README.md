@@ -109,7 +109,7 @@ used once and not stored; denying permission just shows a message.
   up; polar flights may be rerouted), a radio blackout (R2 and up) or a geomagnetic storm (G2 and
   up), both of which degrade HF radio, from NOAA's space weather scales.
 
-**Map layers** (the gear button opens Settings, where layers are on/off switches grouped into folding sections: Map, Airports and routes, Weather, Flight hazards, Natural hazards, Airspace and charts; each section shows how many are on, and "Turn off all layers" and "Reset all settings" are at hand): nonstop connections, airport size layers, weather stations
+**Map layers** (the gear button opens Settings, where layers are on/off switches grouped into folding sections: Map, Airports and routes, Weather, Flight hazards, Natural hazards, Airspace and charts; each section shows how many are on, and "Turn off all layers" and "Reset all settings" are at hand): a dark, light or satellite base map (satellite is a cloud-free mosaic, not live imagery), nonstop connections, airport size layers, weather stations
 (wind arrows, with a ring only when conditions are below VFR; or temperatures colored cold to hot,
 marked where it is at or below freezing and where temperature and dewpoint are close enough for
 fog), the forecast freezing level (shaded dark blue where it is low, with values in thousands of
@@ -327,7 +327,8 @@ can add on top of the source's age.
 | Current US routes and airlines | [US DOT Bureau of Transportation Statistics](https://www.transtats.bts.gov) on-time data | Monthly, about 3 months behind | Until you run `npm run data` | Public domain (US government) |
 | Routes between US and foreign airports | US DOT T-100 Segment (all carriers), `npm run etl:t100` | Monthly, about 3 months behind | Until you run `npm run data` | Public domain (US government) |
 | Routes between two foreign airports | [OpenFlights](https://openflights.org/data.php) `routes.dat` | Not updated since 2017 | Until you run `npm run data` | [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/); `src/data/connections.json` is shared under the same license (see [`src/data/README.md`](src/data/README.md)) |
-| Map tiles | [Stadia Maps](https://stadiamaps.com), OpenMapTiles, OpenStreetMap | Per provider | Not cached by the app | Per provider terms; credited on the map |
+| Map tiles (dark and light base maps, place names on the satellite map) | [Stadia Maps](https://stadiamaps.com) (Alidade Smooth, Alidade Smooth Dark, Stamen Toner labels), OpenMapTiles, OpenStreetMap | Per provider | Not cached by the app | Per provider terms; credited on the map. Stadia's own satellite style needs a paid plan (403 on the free plan), so it is not used |
+| Satellite base map | [EOxCloudless](https://cloudless.eox.at) 2025 by EOX IT Services GmbH, a cloud-free Sentinel-2 mosaic (contains modified Copernicus Sentinel data 2025) | Yearly mosaic | Not cached by the app | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): non-commercial use with credit (credited on the map) |
 
 The last weather and history seen for an airport stay available offline. For information only:
 this app is not for navigation or flight planning.

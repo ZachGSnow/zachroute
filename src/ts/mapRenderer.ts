@@ -1,3 +1,4 @@
+import { baseLayerSpecs, type BaseStyle } from './baseMap';
 import type { Airport } from './geoMath';
 import { setLegend } from './legend';
 import { windColor, routeWindLegend } from './legends';
@@ -107,15 +108,10 @@ export function initMap(containerId: string): L.Map {
   wxHalo.style.zIndex = '350';
   initOverlays(map);
 
-  // Stadia Maps Alidade Smooth Dark. No API key: Stadia authenticates browser
-  // requests by domain (*.zachroute.pages.dev is registered in the Stadia
-  // dashboard; localhost works without registration). A fork deployed on another
-  // domain must register that domain with its own Stadia account.
-  L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
-    maxZoom: 20,
-    attribution:
-      '&copy; <a href="https://stadiamaps.com/" target="_blank" rel="noopener">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
-  }).addTo(map);
+  // Labels for the satellite map sit above the weather layers and below airspace and hazards.
+  map.createPane('baseLabels').style.zIndex = '265';
+  map.getPane('baseLabels')!.style.pointerEvents = 'none';
+  setBaseStyle(baseStyle);
 
   return map;
 }
@@ -910,3 +906,23 @@ export function showRegionalAirports(show: boolean) {
 }
 
 // Note: airport background layers persist across resetView() unless the user unchecks the toggles.
+
+// ---------------------------------------------------------------------------
+// Base map style: dark (default), light or satellite (sources in baseMap.ts)
+// ---------------------------------------------------------------------------
+
+let baseStyle: BaseStyle = 'dark';
+let baseLayers: L.TileLayer[] = [];
+
+/** Swaps the base map. Routes and overlays stay; the map container gets a style class for contrast. */
+export type { BaseStyle };
+
+export function setBaseStyle(style: BaseStyle) {
+  baseStyle = style;
+  if (!map) return;
+  for (const layer of baseLayers) map.removeLayer(layer);
+  baseLayers = baseLayerSpecs(style).map((spec) => L.tileLayer(spec.url, spec.options).addTo(map!));
+  const el = map.getContainer();
+  el.classList.remove('base-dark', 'base-light', 'base-satellite');
+  el.classList.add(`base-${style}`);
+}
