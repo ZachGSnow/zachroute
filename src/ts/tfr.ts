@@ -88,6 +88,7 @@ export async function tfrChips(airport: Airport): Promise<Chip[]> {
   const near = tfrsNear(airport.lat, airport.lon, await fetchTfrs());
   return near.slice(0, 3).map(({ tfr, miles }) => ({
     level: chipLevel(tfrSeverity(tfr.type)),
+    severity: tfrSeverity(tfr.type),
     text: `\u{1F6AB} TFR ${miles < 1 ? 'over the airport' : `${formatDistance(miles)} away`}: ${tfrTypeLabel(tfr.type)} (${severityName(tfrSeverity(tfr.type)).toLowerCase()})`,
     title: `${tfrPlace(tfr.description)} (NOTAM ${tfr.id}). Details: ${tfr.url}`,
   }));

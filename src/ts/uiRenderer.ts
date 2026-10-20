@@ -18,7 +18,7 @@ import {
 import { localTimeLabel, nextDaylightEventLabel, moonPhaseLabel, isDaytime, utcOffsetMinutes } from './timeUtils';
 import { resolveCode } from './searchParser';
 import { fetchTaf, decodeTaf, compassPoint } from './forecast';
-import { faaDelayChips, nwsAlertChips, fetchPirepLines, type Chip } from './advisories';
+import { faaDelayChips, nwsAlertChips, fetchPirepLines, alertsSummary, type Chip } from './advisories';
 import { fetchCyclones, stormsNearPoint, stormTitle } from './cyclones';
 import { fetchAirQuality, aqiScaleFor, aqiCategory, aqiValue, hazeNote, worseningAhead } from './airQuality';
 import { fetchFires, boxAround, summarizeFiresNear, AIRPORT_FIRE_RADIUS_MI } from './fires';
@@ -31,12 +31,13 @@ import { fetchAirportTraffic, trafficAirlineName, compactCount, yearChange, mont
 import { fetchSpaceWeather, polarConcerns, maxAbsLat, scaleSeverity, POLAR_LAT } from './spaceWeather';
 import { fetchTerrainProfile, profileSvg, highestPoint, frozenTerrainMiles, type ElevationProfile } from './terrainProfile';
 import { severityBadge } from './severityBadge';
-import { advisorySeverity, cycloneSeverity, tfrSeverity, chipLevel } from './severity';
+import { alertsStartOpen, readFlag, routeDraw, sectionStartsOpen } from './prefs';
+import { advisorySeverity, cycloneSeverity, tfrSeverity, chipLevel, type Severity } from './severity';
 import { fetchForecasterNotes, forecasterNotesLabel } from './forecasterNotes';
 import { fetchAirportPhoto, englishWikiTitle, airportWikiLink } from './wikiPhoto';
 import { carriersFor, carrierNames, carrierDataNote } from './carriers';
 import { isFavorite, toggleFavorite } from './history';
-import { analyzeRoute, drawRouteHazards, describeAdvisory, describeRoutePirep, ashNear, advisoryAltitude, type Advisory } from './mapOverlays';
+import { analyzeRoute, drawRouteHazards, setRouteFocus, describeAdvisory, describeRoutePirep, ashNear, advisoryAltitude, type Advisory } from './mapOverlays';
 import {
   airportCode,
   destinationCodesFor,
@@ -128,12 +129,14 @@ export async function enrichLore(airport: Airport, cardElement?: HTMLElement) {
 
 let expandableIdCounter = 0;
 
-function expandableSection(label: string, innerHtml: string): string {
+/** A folding section. `section` names its "start open" setting (Settings, Airport cards); `open` overrides it. */
+function expandableSection(label: string, innerHtml: string, section?: string, open?: boolean): string {
   const id = `exp-${expandableIdCounter++}`;
+  const isOpen = open ?? (section ? sectionStartsOpen(section) : false);
   return `
-    <div class="expandable">
-      <button type="button" class="expandable-toggle" data-target="${id}">${label}</button>
-      <div class="expandable-content" id="${id}" hidden>${innerHtml}</div>
+    <div class="expandable"${section ? ` data-section="${section}"` : ''}>
+      <button type="button" class="expandable-toggle${isOpen ? ' is-open' : ''}" data-target="${id}" aria-expanded="${isOpen}">${label}</button>
+      <div class="expandable-content" id="${id}"${isOpen ? '' : ' hidden'}>${innerHtml}</div>
     </div>
   `;
 }
@@ -150,6 +153,7 @@ function wireExpandables(root: ParentNode) {
       const willShow = Boolean(content.hidden);
       content.hidden = !willShow;
       btn.classList.toggle('is-open', willShow);
+      btn.setAttribute('aria-expanded', String(willShow));
     };
   });
 }
@@ -195,7 +199,7 @@ function buildRunwaysHtml(
     : '';
 
   if (runways.length > 4) {
-    return expandableSection(`Runways (${runways.length})`, rows + footnote);
+    return expandableSection(`Runways (${runways.length})`, rows + footnote, 'runways');
   }
 
   return `<div class="detail-block"><div class="detail-heading">Runways</div>${rows}${footnote}</div>`;
@@ -237,7 +241,7 @@ function buildFrequenciesHtml(airport: Airport): string {
     )
     .join('');
 
-  return expandableSection(`Frequencies (${freqs.length})`, rows);
+  return expandableSection(`Frequencies (${freqs.length})`, rows, 'frequencies');
 }
 
 // ---------------------------------------------------------------------------
@@ -260,7 +264,7 @@ function buildNavaidsHtml(airport: Airport): string {
       return `<div class="detail-row"><span>${n.ident} - ${n.name} (${n.type})</span><span class="mono">${freq}</span></div>`;
     })
     .join('');
-  return expandableSection(`Navaids (${navaids.length})`, rows);
+  return expandableSection(`Navaids (${navaids.length})`, rows, 'navaids');
 }
 
 // ---------------------------------------------------------------------------
@@ -292,7 +296,7 @@ function buildDestinationsHtml(airport: Airport): string {
     .join('');
 
   const label = `${codes.length} direct destination${codes.length === 1 ? '' : 's'}`;
-  return expandableSection(label, `<div class="destinations-list">${rows}</div>`);
+  return expandableSection(label, `<div class="destinations-list">${rows}</div>`, 'destinations');
 }
 
 function wireDestinationsList(cardEl: HTMLElement, airport: Airport) {
@@ -385,7 +389,7 @@ function weatherContentHtml(wx: WeatherSnapshot, elevationFt: number, daytime: b
     );
   }
 
-  const moreHtml = moreRows.length ? expandableSection(`More details (${moreRows.length})`, moreRows.join('')) : '';
+  const moreHtml = moreRows.length ? expandableSection(`More details (${moreRows.length})`, moreRows.join(''), 'weather-more') : '';
 
   return `<div class="weather-line">${catHtml}</div>${detailLine}${updatedLine}${moreHtml}`;
 }
@@ -524,6 +528,7 @@ async function ashChips(airport: Airport): Promise<Chip[]> {
     const alt = advisoryAltitude(advisory);
     return {
       level: 'alert',
+      severity: 4,
       text: `🌋 Volcanic ash ${where}${advisory.name ? ` (${advisory.name})` : ''}`,
       title: [alt && `Ash cloud ${alt}`, advisory.region && `${advisory.region} FIR`].filter(Boolean).join(', ') || undefined,
     };
@@ -540,6 +545,7 @@ async function cycloneChips(airport: Airport): Promise<Chip[]> {
     return {
       // Close or in its path: as urgent as the storm is strong. Farther off: a caution.
       level: miles <= 150 || inCone ? chipLevel(cycloneSeverity(storm.category, storm.peakWindKmh)) : 'warn',
+      severity: cycloneSeverity(storm.category, storm.peakWindKmh),
       text: `🌀 ${stormTitle(storm)} ${where}${path}`,
       title: `As of ${new Date(storm.asOf).toUTCString().replace(':00 GMT', ' UTC')}${storm.source ? `, ${storm.source} via GDACS` : ''}`,
     };
@@ -560,10 +566,13 @@ async function fillAlerts(cardEl: HTMLElement, airport: Airport) {
   if (!el.isConnected) return;
   const chips = [...ash, ...volcanoes, ...storms, ...delays, ...alerts, ...tfrs];
   if (chips.length === 0) return;
-  el.innerHTML = `<div class="chips">${chipsHtml(chips)}</div>`;
+  el.innerHTML = expandableSection(alertsSummary(chips), `<div class="chips">${chipsHtml(chips)}</div>`, undefined, alertsStartOpen(chips.some((c) => c.level === 'alert')));
+  el.querySelector('.expandable')?.classList.add('alerts-fold');
+  wireExpandables(el);
 }
 
 async function fillPhoto(cardEl: HTMLElement, airport: Airport) {
+  if (!readFlag('card-photo', true)) return;
   const el = cardEl.querySelector('.photo-block') as HTMLElement | null;
   const link = airportWikiLink(airport);
   if (!el || !link) return;
@@ -584,7 +593,7 @@ async function fillForecast(cardEl: HTMLElement, airport: Airport) {
   const decoded = decodeTaf(taf, airport.timeZone);
   if (!decoded) return;
   const headline = decoded.headline ? `<div class="forecast-headline">${decoded.headline}</div>` : '';
-  const body = expandableSection(`Forecast (${decoded.count} periods)`, decoded.rows.join(''));
+  const body = expandableSection(`Forecast (${decoded.count} periods)`, decoded.rows.join(''), 'forecast');
   el.innerHTML = `${headline}${body}`;
   wireExpandables(el);
 }
@@ -597,7 +606,7 @@ async function fillPireps(cardEl: HTMLElement, airport: Airport) {
   const rows = lines
     .map((l) => `<div class="detail-row${l.severe ? ' pirep-severe' : ''}"><span>${l.severity ? severityBadge(l.severity) : ''}${l.text}</span></div>`)
     .join('');
-  el.innerHTML = expandableSection(`Pilot reports (${lines.length})`, rows);
+  el.innerHTML = expandableSection(`Pilot reports (${lines.length})`, rows, 'pireps');
   wireExpandables(el);
 }
 
@@ -609,7 +618,7 @@ async function fillForecasterNotes(cardEl: HTMLElement, airport: Airport) {
   const notes = await fetchForecasterNotes(airport);
   if (!notes || !el.isConnected) return;
   const rows = notes.paragraphs.map((p) => `<p class="afd-paragraph">${escapeHtml(p)}</p>`).join('');
-  el.innerHTML = expandableSection(`🗒️ ${forecasterNotesLabel(notes, airport.timeZone)}`, rows);
+  el.innerHTML = expandableSection(`🗒️ ${forecasterNotesLabel(notes, airport.timeZone)}`, rows, 'afd');
   wireExpandables(el);
 }
 
@@ -1023,7 +1032,10 @@ async function wireRouteHazards(points: Array<[number, number]>) {
   const polar = maxAbsLat(points) >= POLAR_LAT;
   const [result, space] = await Promise.all([analyzeRoute(points), polar ? fetchSpaceWeather() : Promise.resolve(null)]);
   if (gen !== routeHazardGen || !el.isConnected) return;
-  drawRouteHazards(result);
+  const show = routeDraw();
+  drawRouteHazards(result, show);
+  setRouteFocus(show.focus);
+  const onMap = (drawn: boolean, what: string) => (drawn ? what : 'not drawn on the map; Settings, On a route');
   const spaceConcerns = space ? polarConcerns(space.now) : [];
 
   if (result.advisories.length === 0 && result.pireps.length === 0 && result.cyclones.length === 0 && result.tfrs.length === 0 && spaceConcerns.length === 0) {
@@ -1033,7 +1045,8 @@ async function wireRouteHazards(points: Array<[number, number]>) {
 
   const parts: string[] = [];
   const ash = result.advisories.filter((a) => a.hazard === 'ASH');
-  if (ash.length > 0) parts.push(`<div class="route-hazard-ash">${ashBanner(ash)}</div>`);
+  // Ash stays above the fold: flights do not fly through it at any altitude.
+  const ashHtml = ash.length > 0 ? `<div class="route-hazard-ash">${ashBanner(ash)}</div>` : '';
   if (spaceConcerns.length > 0) {
     const rows = spaceConcerns
       .map((c) => `<div class="route-hazard-row">${severityBadge(scaleSeverity(c.level))}${c.code}: ${c.text}</div>`)
@@ -1047,13 +1060,13 @@ async function wireRouteHazards(points: Array<[number, number]>) {
         return `<div class="route-hazard-row">${severityBadge(cycloneSeverity(storm.category, storm.peakWindKmh))}${stormTitle(storm)}: the route ${how}</div>`;
       })
       .join('');
-    parts.push(`<div class="route-hazard-head">🌀 Tropical cyclone${result.cyclones.length === 1 ? '' : 's'} near the route (drawn on the map)</div>${rows}`);
+    parts.push(`<div class="route-hazard-head">🌀 Tropical cyclone${result.cyclones.length === 1 ? '' : 's'} near the route (${onMap(show.cyclones, 'drawn on the map')})</div>${rows}`);
   }
   if (result.advisories.length > 0) {
     // Worst first (ash is always Extreme: flights do not fly through it at any altitude).
     const ordered = [...result.advisories].sort((a, b) => advisorySeverity(b) - advisorySeverity(a));
     const rows = ordered.map((a) => `<div class="route-hazard-row">${severityBadge(advisorySeverity(a))}${describeAdvisory(a)}</div>`).join('');
-    parts.push(`<div class="route-hazard-head">⚠️ Route passes through ${result.advisories.length} weather advisor${result.advisories.length === 1 ? 'y' : 'ies'} (outlined on the map)</div>${rows}`);
+    parts.push(`<div class="route-hazard-head">⚠️ Route passes through ${result.advisories.length} weather advisor${result.advisories.length === 1 ? 'y' : 'ies'} (${onMap(show.advisories, 'outlined on the map')})</div>${rows}`);
   }
   if (result.tfrs.length > 0) {
     const rows = [...result.tfrs]
@@ -1061,7 +1074,7 @@ async function wireRouteHazards(points: Array<[number, number]>) {
       .map((t) => `<div class="route-hazard-row">${severityBadge(tfrSeverity(t.type))}${describeTfr(t)} (<a href="${t.url}" target="_blank" rel="noopener">details</a>)</div>`)
       .join('');
     parts.push(
-      `<div class="route-hazard-head">🚫 Route crosses ${result.tfrs.length} US flight restriction${result.tfrs.length === 1 ? '' : 's'} (outlined on the map). Most reach only a few thousand feet, well below cruise; they matter near the airports.</div>${rows}`
+      `<div class="route-hazard-head">🚫 Route crosses ${result.tfrs.length} US flight restriction${result.tfrs.length === 1 ? '' : 's'} (${onMap(show.tfrs, 'outlined on the map')}). Most reach only a few thousand feet, well below cruise; they matter near the airports.</div>${rows}`
     );
   }
   const pirepLines = result.pireps
@@ -1070,9 +1083,32 @@ async function wireRouteHazards(points: Array<[number, number]>) {
     .slice(0, 5);
   if (pirepLines.length > 0) {
     const rows = pirepLines.map((t) => `<div class="route-hazard-row">${t}</div>`).join('');
-    parts.push(`<div class="route-hazard-head">📣 Pilot reports near the route (${result.pireps.length}, dots on the map)</div>${rows}`);
+    parts.push(`<div class="route-hazard-head">📣 Pilot reports near the route (${result.pireps.length}, ${onMap(show.pireps, 'dots on the map')})</div>${rows}`);
   }
-  el.innerHTML = parts.join('');
+  // Fold the list behind a one-line summary; Settings, Airport cards, Alerts decides how it starts.
+  const grades = [
+    ...result.advisories.map(advisorySeverity),
+    ...result.cyclones.map(({ storm }) => cycloneSeverity(storm.category, storm.peakWindKmh)),
+    ...result.tfrs.map((t) => tfrSeverity(t.type)),
+    ...spaceConcerns.map((c) => scaleSeverity(c.level)),
+  ];
+  const worst = grades.length ? (Math.max(...grades) as Severity) : null;
+  const counts = [
+    [result.advisories.length, 'advisory', 'advisories'],
+    [result.cyclones.length, 'cyclone', 'cyclones'],
+    [result.tfrs.length, 'TFR', 'TFRs'],
+    [pirepLines.length, 'pilot report', 'pilot reports'],
+    [spaceConcerns.length, 'space weather alert', 'space weather alerts'],
+  ] as const;
+  const what = counts
+    .filter(([n]) => n > 0)
+    .map(([n, one, many]) => `${n} ${n === 1 ? one : many}`)
+    .join(', ');
+  const urgent = ash.length > 0 || (worst != null && worst >= 3);
+  const label = `\u26a0\ufe0f Along the route: ${what}${worst ? ` ${severityBadge(worst)}` : ''}`;
+  el.innerHTML = ashHtml + expandableSection(label, parts.join(''), undefined, alertsStartOpen(urgent));
+  el.querySelector('.expandable')?.classList.add('alerts-fold');
+  wireExpandables(el);
 }
 
 // ---------------------------------------------------------------------------

@@ -1,3 +1,4 @@
+import type { RouteDraw } from './prefs';
 import type { Airport, RunwayDetail } from './geoMath';
 import { formatDistance, clockOptions, UNITS_CHANGED } from './units';
 import { stationTemp } from './stationTemp';
@@ -534,7 +535,7 @@ async function refreshHazards(announce: boolean) {
   if (!hazardLayer) hazardLayer = L.layerGroup();
   hazardLayer.clearLayers();
   for (const adv of list) for (const layer of advisoryLayers(adv, false)) hazardLayer.addLayer(layer);
-  if (!map.hasLayer(hazardLayer)) hazardLayer.addTo(map);
+  showUnlessFocused(hazardLayer);
   if (announce && list.length === 0) setHint('No active AIRMETs, SIGMETs or center weather advisories', 3500);
 }
 
@@ -619,7 +620,7 @@ async function refreshPireps() {
     const m = pirepMarker(p);
     if (m) pirepLayer.addLayer(m);
   }
-  if (!map.hasLayer(pirepLayer)) pirepLayer.addTo(map);
+  showUnlessFocused(pirepLayer);
 }
 
 // ---------------------------------------------------------------------------
@@ -754,21 +755,44 @@ export function describeRoutePirep(p: RawPirep): string | null {
 
 let routeHazardLayer: L.LayerGroup | null = null;
 
+// Route focus (Settings, On a route): while a route is shown, the full advisory, pilot report,
+// TFR and cyclone layers leave the map (they keep refreshing off it), so only what lies along
+// the route stays drawn. Clearing the route brings them back as the user set them.
+let routeFocus = false;
+
+function showUnlessFocused(layer: L.LayerGroup) {
+  if (!map) return;
+  if (routeFocus) map.removeLayer(layer);
+  else if (!map.hasLayer(layer)) layer.addTo(map);
+}
+
+export function setRouteFocus(on: boolean) {
+  routeFocus = on;
+  for (const layer of [hazardLayer, pirepLayer, tfrLayer, cycloneLayer]) if (layer) showUnlessFocused(layer);
+}
+
 export function clearRouteHazards() {
+  setRouteFocus(false);
   routeHazardLayer?.clearLayers();
 }
 
-export function drawRouteHazards(result: RouteHazardResult) {
+/** Draws what lies along the route, the kinds the user chose (Settings, On a route). Ash is always drawn. */
+export function drawRouteHazards(result: RouteHazardResult, show: RouteDraw) {
   if (!map) return;
   if (!routeHazardLayer) routeHazardLayer = L.layerGroup().addTo(map);
   routeHazardLayer.clearLayers();
-  for (const adv of result.advisories) for (const layer of advisoryLayers(adv, true)) routeHazardLayer.addLayer(layer);
-  for (const p of result.pireps) {
-    const m = pirepMarker(p);
-    if (m) routeHazardLayer.addLayer(m);
+  for (const adv of result.advisories) {
+    if (!show.advisories && adv.hazard !== 'ASH') continue;
+    for (const layer of advisoryLayers(adv, true)) routeHazardLayer.addLayer(layer);
   }
-  for (const hit of result.cyclones) for (const layer of stormLayers(hit.storm, true)) routeHazardLayer.addLayer(layer);
-  for (const t of result.tfrs) for (const poly of tfrPolygons(t, true)) routeHazardLayer.addLayer(poly);
+  if (show.pireps) {
+    for (const p of result.pireps) {
+      const m = pirepMarker(p);
+      if (m) routeHazardLayer.addLayer(m);
+    }
+  }
+  if (show.cyclones) for (const hit of result.cyclones) for (const layer of stormLayers(hit.storm, true)) routeHazardLayer.addLayer(layer);
+  if (show.tfrs) for (const t of result.tfrs) for (const poly of tfrPolygons(t, true)) routeHazardLayer.addLayer(poly);
 }
 
 // ---------------------------------------------------------------------------
@@ -818,7 +842,7 @@ async function refreshTfrs(announce: boolean) {
   if (!tfrLayer) tfrLayer = L.layerGroup();
   tfrLayer.clearLayers();
   for (const t of list) for (const poly of tfrPolygons(t, false)) tfrLayer.addLayer(poly);
-  if (!map.hasLayer(tfrLayer)) tfrLayer.addTo(map);
+  showUnlessFocused(tfrLayer);
   if (announce) setHint(list.length ? 'US flight restrictions (TFRs): most reach only a few thousand feet' : 'No active US flight restrictions', 4000);
 }
 
@@ -1133,7 +1157,7 @@ async function refreshCyclones(announce: boolean) {
   if (!cycloneLayer) cycloneLayer = L.layerGroup();
   cycloneLayer.clearLayers();
   for (const storm of storms) for (const layer of stormLayers(storm, false)) cycloneLayer.addLayer(layer);
-  if (!map.hasLayer(cycloneLayer)) cycloneLayer.addTo(map);
+  showUnlessFocused(cycloneLayer);
   if (announce && storms.length === 0) setHint('No active tropical cyclones', 3500);
 }
 

@@ -19,6 +19,7 @@ browser (src/ts) <--------------------------------------+
 | Path | Role |
 |---|---|
 | `src/ts/main.ts` | Boot, search box, history and shareable links (`runSearch` is the single entry point), wiring of every setting |
+| `src/ts/prefs.ts` | Route drawing and airport card choices stored by the settings window: what to draw along a route, route focus, how alerts and card sections start |
 | `src/ts/features.ts`, `settingsPanel.ts` | Every setting the app offers (section, label, one-line description, input ids) and the settings window built from it: folding sections, on/off switches, segmented sub-options over hidden selects, turn off all, reset |
 | `src/ts/suggestList.ts` | Suggestion dropdown (keyboard, tap, utility rows) |
 | `src/ts/history.ts` | Recent searches and favorite airports (device-only `localStorage`) |

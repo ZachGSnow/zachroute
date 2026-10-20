@@ -17,7 +17,10 @@ describe('settings window', () => {
   it('builds every input main.ts wires, and only those', () => {
     const inHtml = new Set(ids(html, /<(?:input|select)[^>]* id="([a-z0-9-]+)"/g));
     const settingsInputs = wired.filter((id) => !inHtml.has(id));
-    expect(new Set(builtInputs)).toEqual(new Set(settingsInputs));
+    // Inputs with a stored pref are wired by the settings window itself (prefs.ts)
+    const own = new Set(FEATURES.filter((f) => f.pref).map((f) => f.control.input));
+    expect(new Set(builtInputs.filter((id) => !own.has(id)))).toEqual(new Set(settingsInputs));
+    for (const id of own) expect(id.startsWith('pref-')).toBe(true);
     expect(builtInputs).toContain('radar-toggle');
     expect(builtInputs).toContain('distance-unit');
   });
@@ -44,7 +47,7 @@ describe('settings window', () => {
   });
 
   it('keeps the storage keys of earlier versions, and reset leaves favorites and history', () => {
-    for (const key of ['show-radar', 'show-large', 'radar-mode', 'tcf-step', 'distance-unit', 'clock', 'weather-units', 'settings-open']) {
+    for (const key of ['show-radar', 'show-large', 'base-map', 'route-focus', 'card-alerts', 'card-open-runways', 'radar-mode', 'tcf-step', 'distance-unit', 'clock', 'weather-units', 'settings-open']) {
       expect(isSettingKey(`zachroute:${key}`)).toBe(true);
     }
     for (const key of ['favorites', 'recent-searches', 'sheet-state']) expect(isSettingKey(`zachroute:${key}`)).toBe(false);
