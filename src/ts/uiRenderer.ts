@@ -26,6 +26,7 @@ import { fetchCruiseWind } from './windsAloft';
 import { fetchFreezingLevel, describeFreezingLevel, routeFreezingSummary } from './freezingLevel';
 import { tfrChips, describeTfr } from './tfr';
 import { volcanoChips } from './geohazards';
+import { fetchSpaceWeather, polarConcerns, maxAbsLat, scaleSeverity, POLAR_LAT } from './spaceWeather';
 import { severityBadge } from './severityBadge';
 import { advisorySeverity, cycloneSeverity, tfrSeverity, chipLevel } from './severity';
 import { fetchForecasterNotes, forecasterNotesLabel } from './forecasterNotes';
@@ -930,11 +931,14 @@ async function wireRouteHazards(points: Array<[number, number]>) {
   }
   el.innerHTML = '<span class="muted">Checking hazards along the route\u2026</span>';
 
-  const result = await analyzeRoute(points);
+  // Space weather only matters to routes that reach polar latitudes.
+  const polar = maxAbsLat(points) >= POLAR_LAT;
+  const [result, space] = await Promise.all([analyzeRoute(points), polar ? fetchSpaceWeather() : Promise.resolve(null)]);
   if (gen !== routeHazardGen || !el.isConnected) return;
   drawRouteHazards(result);
+  const spaceConcerns = space ? polarConcerns(space.now) : [];
 
-  if (result.advisories.length === 0 && result.pireps.length === 0 && result.cyclones.length === 0 && result.tfrs.length === 0) {
+  if (result.advisories.length === 0 && result.pireps.length === 0 && result.cyclones.length === 0 && result.tfrs.length === 0 && spaceConcerns.length === 0) {
     el.innerHTML = '<div class="route-hazard-ok">✅ No current AIRMETs, SIGMETs, center weather advisories, tropical cyclones, flight restrictions or notable pilot reports along the route</div>';
     return;
   }
@@ -942,6 +946,12 @@ async function wireRouteHazards(points: Array<[number, number]>) {
   const parts: string[] = [];
   const ash = result.advisories.filter((a) => a.hazard === 'ASH');
   if (ash.length > 0) parts.push(`<div class="route-hazard-ash">${ashBanner(ash)}</div>`);
+  if (spaceConcerns.length > 0) {
+    const rows = spaceConcerns
+      .map((c) => `<div class="route-hazard-row">${severityBadge(scaleSeverity(c.level))}${c.code}: ${c.text}</div>`)
+      .join('');
+    parts.push(`<div class="route-hazard-head">\u2600\ufe0f Space weather on a polar route (NOAA)</div>${rows}`);
+  }
   if (result.cyclones.length > 0) {
     const rows = result.cyclones
       .map(({ storm, miles, crossesCone }) => {

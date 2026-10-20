@@ -91,6 +91,9 @@ used once and not stored; denying permission just shows a message.
 - US temporary flight restrictions the route crosses, with a link to the FAA's details. Most reach
   only a few thousand feet, so they matter near the airports rather than at cruise.
 - Pilot reports of turbulence or icing near the route.
+- Space weather, on routes that reach 60 degrees north or south: a solar radiation storm (S1 and
+  up; polar flights may be rerouted), a radio blackout (R2 and up) or a geomagnetic storm (G2 and
+  up), both of which degrade HF radio, from NOAA's space weather scales.
 
 **Map layers** (settings menu): nonstop connections, airport size layers, weather stations
 (wind arrows, with a ring only when conditions are below VFR; or temperatures colored cold to hot,
@@ -109,7 +112,8 @@ the last day) and US volcanoes at an elevated alert, US flight restrictions (TFR
 last 24 hours, dust and smoke from space (the latest daily pass), satellite clouds (infrared: white is cloud, colors are colder, taller storm tops up to magenta for
 the strongest cores; worldwide except near the poles: the Americas, the Pacific, Asia and Australia
 from NASA, the newest image every 10 minutes, and Europe, Africa, the Middle East and India from
-Meteosat, the newest top-of-the-hour image), day/night shading, approach
+Meteosat, the newest top-of-the-hour image), the aurora forecast with NOAA's current space weather
+levels, day/night shading, approach
 distance ticks, and runway outlines with runway numbers when zoomed in.
 
 **Map legend**: a panel at the bottom left explains each layer that is switched on (colors,
@@ -267,6 +271,7 @@ can add on top of the source's age.
 | Severe storm outlook (US) | [NOAA Storm Prediction Center](https://www.spc.noaa.gov) | Day 1 five times a day, day 2 twice | Up to 25 min | Public domain (US government) |
 | Earthquakes (M4.5+, worldwide) | [USGS](https://earthquake.usgs.gov) earthquake feed | Within minutes of each quake | Up to 15 min | Public domain (US government) |
 | Volcano alerts (US) | [USGS Volcano Hazards Program](https://volcanoes.usgs.gov) notices | As observatories issue them | Up to 15 min | Public domain (US government) |
+| Space weather scales, Kp and aurora forecast | [NOAA Space Weather Prediction Center](https://www.swpc.noaa.gov) | Scales and Kp as conditions change; aurora (OVATION) every few minutes, about 30-90 min ahead | Up to 25 min | Public domain (US government) |
 | Temporary flight restrictions (US) | [FAA TFR list and map service](https://tfr.faa.gov) | As issued | Up to 15 min | Public domain (US government) |
 | Tropical cyclones elsewhere (from JTWC and other agencies) | [GDACS](https://www.gdacs.org), the UN / European Commission Global Disaster Alert and Coordination System | Each storm's advisory every 6 hours, republished by GDACS 1-6 hours later (storms were 5-14 hours past their advisory time when measured) | Up to 40 min | No published license; GDACS provides its data as is, for information only (credited in the app) |
 | Tropical cyclones, Atlantic and East and Central Pacific | [National Hurricane Center](https://www.nhc.noaa.gov) advisories (CurrentStorms.json; cone and track from NOAA's tropical map service) | Every 6 hours, plus intermediate advisories | Up to 40 min | Public domain (US government) |

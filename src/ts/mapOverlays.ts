@@ -2,9 +2,10 @@ import type { Airport, RunwayDetail } from './geoMath';
 import { formatDistance, clockOptions, UNITS_CHANGED } from './units';
 import { stationTemp } from './stationTemp';
 import { setLegend } from './legend';
-import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend, pirepLegend, fireLegend, hazardLegend, cycloneLegend, tfrLegend, tcfLegend, radarLegend, stormTopsLegend, spcLegend, geohazardsLegend, HAZARD_GLYPH } from './legends';
+import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend, pirepLegend, fireLegend, hazardLegend, cycloneLegend, tfrLegend, tcfLegend, radarLegend, stormTopsLegend, spcLegend, geohazardsLegend, auroraLegend, HAZARD_GLYPH } from './legends';
 import { fetchSpcOutlook, spcLevel, spcCategoryName, spcRiskWord, type SpcDay } from './spc';
 import { fetchGeohazards, quakeSeverity, quakeRadius, volcanoSeverity, colorCodeLabel } from './geohazards';
+import { fetchSpaceWeather, auroraLookup, auroraRgba, scalesLabel } from './spaceWeather';
 import {
   IEM_REFLECTIVITY_URL,
   IEM_REFLECTIVITY_TIME_URL,
@@ -1624,6 +1625,85 @@ export function setRadarMode(mode: RadarMode) {
   if (!radarOn) return;
   setLegend('radar', mode === 'tops' ? stormTopsLegend() : radarLegend());
   void refreshRadar(true, true);
+}
+
+// ---------------------------------------------------------------------------
+// Space weather and aurora (NOAA SWPC OVATION, 1-degree grid), drawn per pixel
+// ---------------------------------------------------------------------------
+
+let auroraOn = false;
+let auroraTimer: number | undefined;
+let auroraLayer: L.GridLayer | null = null;
+let auroraAt: ((lat: number, lon: number) => number) | null = null;
+
+function createAuroraLayer(): L.GridLayer {
+  const Layer = L.GridLayer.extend({
+    createTile(coords: L.Coords) {
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+      const lookup = auroraAt;
+      if (!ctx || !lookup) return canvas;
+      // Coarse grid: 64 x 64 samples per tile, each drawn 4 x 4, smooth enough for a 1-degree source.
+      const img = ctx.createImageData(64, 64);
+      const west = tileLon(coords.x, coords.z);
+      const east = tileLon(coords.x + 1, coords.z);
+      for (let y = 0; y < 64; y++) {
+        const lat = tileLat(coords.y + (y + 0.5) / 64, coords.z);
+        if (Math.abs(lat) < 35) continue; // no aurora this close to the equator
+        for (let x = 0; x < 64; x++) {
+          const [r, g, b, a] = auroraRgba(lookup(lat, west + ((east - west) * (x + 0.5)) / 64));
+          const i = (y * 64 + x) * 4;
+          img.data[i] = r;
+          img.data[i + 1] = g;
+          img.data[i + 2] = b;
+          img.data[i + 3] = a;
+        }
+      }
+      const small = document.createElement('canvas');
+      small.width = small.height = 64;
+      small.getContext('2d')?.putImageData(img, 0, 0);
+      ctx.imageSmoothingEnabled = true;
+      ctx.drawImage(small, 0, 0, 256, 256);
+      return canvas;
+    },
+  }) as new (options: L.GridLayerOptions) => L.GridLayer;
+  return new Layer({ pane: 'night', tileSize: 256, maxNativeZoom: 5, attribution: 'Aurora and space weather: NOAA SWPC' });
+}
+
+export function setAurora(on: boolean) {
+  auroraOn = on;
+  setLegend('aurora', on ? auroraLegend() : null);
+  window.clearInterval(auroraTimer);
+  if (!map) return;
+  if (!on) {
+    if (auroraLayer && map.hasLayer(auroraLayer)) map.removeLayer(auroraLayer);
+    return;
+  }
+  void refreshAurora(true);
+  // OVATION updates every few minutes; the server caches 15.
+  auroraTimer = window.setInterval(() => void refreshAurora(false), 15 * 60 * 1000);
+}
+
+async function refreshAurora(announce: boolean) {
+  if (!map || !auroraOn) return;
+  const sw = await fetchSpaceWeather();
+  if (!map || !auroraOn) return;
+  auroraAt = sw?.aurora ? auroraLookup(sw.aurora.cells) : null;
+  if (!auroraLayer) auroraLayer = createAuroraLayer();
+  if (!map.hasLayer(auroraLayer)) auroraLayer.addTo(map);
+  else auroraLayer.redraw();
+  const now = sw ? scalesLabel(sw.now) : undefined;
+  setLegend('aurora', auroraLegend(now ? `${now}${sw?.kp !== undefined ? ` (Kp ${sw.kp})` : ''}` : undefined));
+  if (announce) {
+    const g = sw?.tomorrow?.G ?? 0;
+    setHint(
+      !sw
+        ? 'Space weather unavailable right now'
+        : `Space weather now ${now}${g >= 1 ? `; G${g} geomagnetic storm forecast for tomorrow` : ''}. Green: where aurora is likely`,
+      5000
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------

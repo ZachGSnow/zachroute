@@ -3,7 +3,7 @@ import { formatDistance, getDistanceUnit, getClockFormat, getWeatherUnits, setDi
 import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
 import { haversineDistance } from './geoMath';
-import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, setRadar, setRadarMode, setSpc, setSpcDay, setGeohazards, highlightRunway } from './mapOverlays';
+import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, setRadar, setRadarMode, setSpc, setSpcDay, setGeohazards, setAurora, highlightRunway } from './mapOverlays';
 import type { RadarMode } from './radarTiles';
 import type { TcfStep } from './tcf';
 import { parseQuery, loadAirports, suggest, type SearchIntent } from './searchParser';
@@ -457,6 +457,9 @@ async function init() {
   const tfrToggle = document.getElementById('tfr-toggle') as HTMLInputElement | null;
   const TFR_KEY = 'zachroute:show-tfrs';
   restoreAirportToggle(tfrToggle, TFR_KEY, setTfrs);
+  const auroraToggle = document.getElementById('aurora-toggle') as HTMLInputElement | null;
+  const AURORA_KEY = 'zachroute:show-aurora';
+  restoreAirportToggle(auroraToggle, AURORA_KEY, setAurora);
   const geoToggle = document.getElementById('geohazards-toggle') as HTMLInputElement | null;
   const GEO_KEY = 'zachroute:show-geohazards';
   restoreAirportToggle(geoToggle, GEO_KEY, setGeohazards);
@@ -593,6 +596,7 @@ async function init() {
   wireOverlayToggle(pirepToggle, PIREP_KEY, setPireps);
   wireOverlayToggle(cycloneToggle, CYCLONE_KEY, setCyclones);
   wireOverlayToggle(tfrToggle, TFR_KEY, setTfrs);
+  wireOverlayToggle(auroraToggle, AURORA_KEY, setAurora);
   wireOverlayToggle(geoToggle, GEO_KEY, setGeohazards);
   wireOverlayToggle(tcfToggle, TCF_KEY, setTcf);
   wireOverlayToggle(spcToggle, SPC_KEY, setSpc);
