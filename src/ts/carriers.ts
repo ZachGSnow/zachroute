@@ -62,6 +62,13 @@ export function shortCarrierName(name: string): string {
   return out;
 }
 
+/**
+ * The app's own short name for a mainline airline code (Delta, United), or null. Regionals are left
+ * out (their app names are the brand they fly for, such as American Eagle), so callers can name
+ * the operator instead.
+ */
+export const shortAirlineName = (code: string): string | null => (CARRIERS[code] && !CARRIERS[code].note ? CARRIERS[code].name : null);
+
 /** The app's short name for an airline code, then the US DOT name, or the code itself. */
 export function airlineName(code: string): string {
   const dot = DATA.meta.names?.[code];
