@@ -25,6 +25,8 @@ const API = 'https://re-api.adsb.lol/';
 /** Barometric altitude can read a few hundred feet off true height; ask adsb.lol for this much lower. */
 const BARO_MARGIN_FT = 1000;
 const REUSE_MS = 8000;
+/** adsb.lol has taken 20 s to answer at busy times; give up sooner and let the app try again. */
+const UPSTREAM_TIMEOUT_MS = 12000;
 const EARTH_RADIUS_NM = 3440.065;
 export const LICENSE = 'Aircraft data (c) adsb.lol contributors, ODbL 1.0 (https://opendatacommons.org/licenses/odbl/1-0/)';
 
@@ -197,7 +199,7 @@ async function fetchArea(area: UpstreamArea, key: string): Promise<any> {
   const hit = reuse.get(id);
   if (hit && Date.now() - hit.at < REUSE_MS) return hit.data;
   if (Date.now() < blockedUntil) throw new Busy(Math.ceil((blockedUntil - Date.now()) / 1000));
-  const data = fetch(upstreamUrl(area), { headers: { 'User-Agent': USER_AGENT, 'x-api-key': key } }).then(async (res) => {
+  const data = fetch(upstreamUrl(area), { headers: { 'User-Agent': USER_AGENT, 'x-api-key': key }, signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS) }).then(async (res) => {
     if (res.status === 429) {
       const wait = retryAfterSeconds(res.headers.get('retry-after'));
       blockedUntil = Date.now() + wait * 1000;

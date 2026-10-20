@@ -136,6 +136,46 @@ export function routePlaces(route: LiveRoute, cityOf: (code: string) => string |
   return `${place(route.airports[0])} to ${place(route.airports[route.airports.length - 1])}`;
 }
 
+/** How far along its leg an aircraft is: nautical miles from the origin, to the destination, and in all. */
+export function routeProgress(leg: LiveRoute, pos: [number, number]): { flownNm: number; toGoNm: number; totalNm: number } {
+  const from = leg.airports[0];
+  const to = leg.airports[leg.airports.length - 1];
+  return {
+    flownNm: distanceNm([from.lat, from.lon], pos),
+    toGoNm: distanceNm(pos, [to.lat, to.lon]),
+    totalNm: distanceNm([from.lat, from.lon], [to.lat, to.lon]),
+  };
+}
+
+/**
+ * Rough time to go at the current ground speed: "about 1 h 35 min", "about 40 min" (to 5 minutes),
+ * "a few minutes" under 10, or null without a usable speed. Real arrivals add the approach and taxi.
+ * An aircraft still climbing (over 500 ft/min) more than 100 nm out has not reached cruise speed
+ * yet, so no estimate is given (ENY4100 climbing out of ORD at 190 kt read "about 3 h" to
+ * Allentown, a flight of under 2 hours).
+ */
+export function timeToGoLabel(toGoNm: number, gsKt: number, rate: number | null = null): string | null {
+  if (!(gsKt > 30) || !Number.isFinite(toGoNm)) return null;
+  if (rate != null && rate > 500 && toGoNm > 100) return null;
+  const minutes = (toGoNm / gsKt) * 60;
+  if (minutes < 10) return 'a few minutes';
+  const rounded = Math.round(minutes / 5) * 5;
+  const h = Math.floor(rounded / 60);
+  const m = rounded % 60;
+  return `about ${h ? `${h} h${m ? ` ${m} min` : ''}` : `${m} min`}`;
+}
+
+/** The box that frames a whole leg and the aircraft on it: [[south, west], [north, east]]. */
+export function overviewBounds(leg: LiveRoute, pos: [number, number]): [[number, number], [number, number]] {
+  const pts: Array<[number, number]> = [...leg.airports.map((a) => [a.lat, a.lon] as [number, number]), pos];
+  const lats = pts.map((p) => p[0]);
+  const lons = pts.map((p) => p[1]);
+  return [
+    [Math.min(...lats), Math.min(...lons)],
+    [Math.max(...lats), Math.max(...lons)],
+  ];
+}
+
 export type SpeedUnit = 'kt' | 'mph' | 'kmh';
 
 /** A speed given in knots, in the unit chosen for Live track: "164 kt", "189 mph", "304 km/h". */

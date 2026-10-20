@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { jsonFixture, pagesContext, stubFetch } from './helpers';
 import { onRequest as liveFn, parseLiveQuery, selectAircraft, upstreamArea, upstreamUrl, retryAfterSeconds, resetLiveState, MAX_AIRCRAFT, DEFAULT_AIRCRAFT, NM_PER_MI, type LiveQuery } from '../functions/api/live';
 import { onRequest as routeFn, parseRoute, cleanCallsign, resetRouteCache } from '../functions/api/live-route';
-import { routeFits, routeLeg, routeLabel, routePlaces, formatSpeed, speedUnitOf, verticalLabel, pointAhead, distanceNm, extendTrail, liveQuery, altitudeColor, liveLegend, ALTITUDE_BANDS, TRAIL_POINTS } from '../src/ts/liveTrack';
+import { routeFits, routeLeg, routeLabel, routePlaces, formatSpeed, speedUnitOf, routeProgress, timeToGoLabel, overviewBounds, verticalLabel, pointAhead, distanceNm, extendTrail, liveQuery, altitudeColor, liveLegend, ALTITUDE_BANDS, TRAIL_POINTS } from '../src/ts/liveTrack';
 import { aircraftTypeName } from '../src/ts/aircraftTypes';
 
 const point = jsonFixture('adsblol-point-ord-4nm.json');
@@ -314,5 +314,48 @@ describe('speed units', () => {
     expect(formatSpeed(164, 'kmh')).toBe('304 km/h');
     expect(formatSpeed(60, 'mph')).toBe('69 mph'); // the default lowest speed
     expect([speedUnitOf(null), speedUnitOf('mph'), speedUnitOf('kmh'), speedUnitOf('furlongs')]).toEqual(['kt', 'mph', 'kmh', 'kt']);
+  });
+});
+
+describe('route overview', () => {
+  // ACA506, ORD to Toronto, as captured climbing out of O'Hare
+  const leg = () => parseRoute('ACA506', aca506)!;
+  const pos: [number, number] = [41.988256, -87.886154];
+
+  it('splits the leg into flown and to go', () => {
+    const p = routeProgress(leg(), pos);
+    expect(p.flownNm).toBeGreaterThan(0.5);
+    expect(p.flownNm).toBeLessThan(2);
+    expect(p.totalNm).toBeGreaterThan(370); // ORD to YYZ is about 378 nm
+    expect(p.totalNm).toBeLessThan(390);
+    expect(p.flownNm + p.toGoNm).toBeGreaterThanOrEqual(p.totalNm - 0.01);
+    // halfway along, the two halves are equal
+    const mid = pointAhead([41.9786, -87.9048], 71, p.totalNm / 2);
+    const h = routeProgress(leg(), mid);
+    expect(Math.abs(h.flownNm - h.toGoNm)).toBeLessThan(15);
+  });
+
+  it('gives a rough time to go at the current speed', () => {
+    expect(timeToGoLabel(389, 245)).toBe('about 1 h 35 min');
+    expect(timeToGoLabel(120, 240)).toBe('about 30 min');
+    expect(timeToGoLabel(240, 240)).toBe('about 1 h');
+    expect(timeToGoLabel(20, 240)).toBe('a few minutes');
+    expect(timeToGoLabel(100, 0)).toBeNull();
+    expect(timeToGoLabel(100, 20)).toBeNull(); // taxiing speeds say nothing useful
+    // still climbing far from the destination: no estimate yet (ENY4100, ORD to ABE, 190 kt)
+    expect(timeToGoLabel(565, 190, 1900)).toBeNull();
+    expect(timeToGoLabel(80, 250, 1500)).toBe('about 20 min');
+    expect(timeToGoLabel(565, 450, 0)).toBe('about 1 h 15 min');
+  });
+
+  it('frames both airports and the aircraft', () => {
+    const [[s, w], [n, e]] = overviewBounds(leg(), pos);
+    expect(s).toBeCloseTo(41.9786, 3);
+    expect(n).toBeCloseTo(43.6772, 3);
+    expect(w).toBeCloseTo(-87.9048, 3);
+    expect(e).toBeCloseTo(-79.6306, 3);
+    const off: [number, number] = [41.5, -88.5];
+    const [[s2, w2]] = overviewBounds(leg(), off);
+    expect([s2, w2]).toEqual(off);
   });
 });

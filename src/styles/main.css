@@ -2172,3 +2172,84 @@ body {
   color: #fcd34d;
   font-size: 0.8rem;
 }
+
+/* Live track route line and Route overview */
+.live-route-line {
+  cursor: pointer;
+}
+
+.leaflet-tooltip.live-dest-label {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid var(--border);
+  color: #f8fafc;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 1px 6px;
+  box-shadow: none;
+}
+
+.leaflet-tooltip.live-dest-label::before {
+  display: none;
+}
+
+.live-overview-btn {
+  margin-left: 4px;
+  background: none;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 0.7rem;
+  padding: 1px 8px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.leaflet-popup .live-overview-btn {
+  margin: 6px 0 0;
+  font-size: 0.75rem;
+  padding: 3px 10px;
+}
+
+.live-overview {
+  position: absolute;
+  top: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 650;
+  width: min(560px, calc(100% - 24px));
+  padding: 10px 14px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  font-size: 0.85rem;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.live-overview[hidden] {
+  display: none;
+}
+
+.live-ov-facts {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin: 2px 0 8px;
+}
+
+.live-ov-out {
+  color: #fcd34d;
+  margin-left: 6px;
+}
+
+.live-ov-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.live-overview-on .live-plane:not(.live-plane--focus) {
+  opacity: 0.35;
+}
+
+.live-plane--focus svg {
+  filter: drop-shadow(0 0 4px #f8fafc);
+}
