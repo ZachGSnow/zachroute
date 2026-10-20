@@ -1,11 +1,14 @@
 import { USER_AGENT } from '../../shared/userAgent';
 // Cloudflare Pages Function: /api/live-route?callsign=AAL1696&lat=&lon=
-// Where a live-tracked flight is going: the route adsb.lol knows for a callsign (from the Virtual
-// Radar Server standing data, community maintained, ODbL 1.0 via adsb.lol). It is often missing
-// for private aircraft and sometimes wrong, so the app keeps it only when the aircraft's position
-// and track fit it (src/ts/liveTrack.ts routeFits). Answers are reused for 6 hours per callsign by
-// this isolate. The documented batch endpoint (/api/0/routeset) answered 201 with an empty body
-// when tried on 2026-10-20, so this uses the per-callsign one adsb.lol's own map uses.
+// Where a live-tracked flight is going: the route known for a callsign, from the Virtual Radar
+// Server standing data that adsb.lol publishes as one static file per callsign
+// (vrs-standing-data.adsb.lol/routes/AA/AAL1696.json; community maintained, ODbL 1.0). It is often
+// missing for private aircraft and sometimes wrong, so the app keeps only a leg that fits the
+// aircraft's position, track and climb (src/ts/liveTrack.ts routeLeg).
+// adsb.lol's route API answered 500 for every callsign tried from Cloudflare on 2026-10-20 (and its
+// batch endpoint 201 with an empty body), so the static files are used; they need no key. A route
+// or a definite "none" (404) is reused for 6 hours per callsign by this isolate; a failed request
+// only for 2 minutes, so a passing outage does not hide routes for hours.
 
 interface Env {
   ADSBLOL_API_KEY?: string;
@@ -27,7 +30,14 @@ export interface LiveRoute {
 }
 
 const REUSE_MS = 6 * 60 * 60 * 1000;
-const cache = new Map<string, { at: number; data: Promise<LiveRoute | null> }>();
+const RETRY_MS = 2 * 60 * 1000;
+const cache = new Map<string, { at: number; ttl: number; data: Promise<LiveRoute | null> }>();
+
+/** The static route file for a callsign: routes/<first 2 letters>/<callsign>.json. */
+export const routeFileUrl = (callsign: string) => `https://vrs-standing-data.adsb.lol/routes/${callsign.slice(0, 2)}/${callsign}.json`;
+
+/** For tests: forget cached routes. */
+export const resetRouteCache = () => cache.clear();
 
 /** A callsign as adsb.lol takes it: letters and digits, 2 to 8 long. */
 export const cleanCallsign = (v: string | null) => {
@@ -48,8 +58,8 @@ const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': status === 200 ? 'public, max-age=3600' : 'no-store' } });
 
 export const onRequest: PagesFunction<Env> = async (context) => {
-  const key = context.env.ADSBLOL_API_KEY;
-  if (!key) return json({ error: 'not configured' }, 503);
+  // Live track as a whole is off without the key, so this is too.
+  if (!context.env.ADSBLOL_API_KEY) return json({ error: 'not configured' }, 503);
   const params = new URL(context.request.url).searchParams;
   const callsign = cleanCallsign(params.get('callsign'));
   const lat = Math.round(Number(params.get('lat')) * 100) / 100;
@@ -57,12 +67,19 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   if (!callsign || !Number.isFinite(lat) || !Number.isFinite(lon)) return json({ error: 'callsign, lat and lon are required' }, 400);
 
   let hit = cache.get(callsign);
-  if (!hit || Date.now() - hit.at > REUSE_MS) {
-    const data = fetch(`https://api.adsb.lol/api/0/route/${callsign}/${lat}/${lon}`, { headers: { 'User-Agent': USER_AGENT, 'x-api-key': key } })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((body) => parseRoute(callsign, body))
-      .catch(() => null);
-    hit = { at: Date.now(), data };
+  if (!hit || Date.now() - hit.at > hit.ttl) {
+    const entry: { at: number; ttl: number; data: Promise<LiveRoute | null> } = { at: Date.now(), ttl: REUSE_MS, data: Promise.resolve(null) };
+    entry.data = fetch(routeFileUrl(callsign), { headers: { 'User-Agent': USER_AGENT } })
+      .then((res) => {
+        if (res.status === 404) return null; // no route for this callsign: a real answer
+        if (!res.ok) throw new Error(`route ${res.status}`);
+        return res.json().then((body) => parseRoute(callsign, body));
+      })
+      .catch(() => {
+        entry.ttl = RETRY_MS;
+        return null;
+      });
+    hit = entry;
     cache.set(callsign, hit);
     if (cache.size > 500) cache.delete(cache.keys().next().value as string);
   }

@@ -5,7 +5,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { jsonFixture, pagesContext, stubFetch } from './helpers';
 import { onRequest as liveFn, parseLiveQuery, selectAircraft, upstreamArea, upstreamUrl, retryAfterSeconds, resetLiveState, MAX_AIRCRAFT, DEFAULT_AIRCRAFT, NM_PER_MI, type LiveQuery } from '../functions/api/live';
-import { onRequest as routeFn, parseRoute, cleanCallsign } from '../functions/api/live-route';
+import { onRequest as routeFn, parseRoute, cleanCallsign, resetRouteCache } from '../functions/api/live-route';
 import { routeFits, routeLeg, routeLabel, routePlaces, verticalLabel, pointAhead, distanceNm, extendTrail, liveQuery, altitudeColor, liveLegend, ALTITUDE_BANDS, TRAIL_POINTS } from '../src/ts/liveTrack';
 import { aircraftTypeName } from '../src/ts/aircraftTypes';
 
@@ -13,6 +13,8 @@ const point = jsonFixture('adsblol-point-ord-4nm.json');
 const circle = jsonFixture('adsblol-reapi-circle-ord.json');
 const circleAbove = jsonFixture('adsblol-reapi-circle-ord-above1500.json');
 const route = jsonFixture('adsblol-route-aal1696.json');
+const aca506 = jsonFixture('vrs-route-aca506.json');
+const skw5719 = jsonFixture('vrs-route-skw5719.json');
 const ORD: [number, number] = [41.97, -87.9];
 const q = (over: Partial<LiveQuery> = {}): LiveQuery => ({ lat: ORD[0], lon: ORD[1], mi: 5, minFt: 0, minKt: 0, elevFt: 680, max: DEFAULT_AIRCRAFT, keep: [], ...over });
 const json = async (res: Response) => JSON.parse(await res.text());
@@ -176,18 +178,50 @@ describe('where a flight is going', () => {
     expect(routeFits(r, pointAhead(clt, 250, 20), 160)).toBe(true); // turning onto the approach
   });
 
-  it('asks adsb.lol once per callsign with the key', async () => {
-    const { calls, fn } = stubFetch([['api.adsb.lol/api/0/route/', route]]);
-    const ctx = () => {
-      const c = pagesContext('https://x/api/live-route?callsign=AAL1696&lat=41.96568&lon=-87.93719');
-      c.env.ADSBLOL_API_KEY = 'test-key';
-      return c;
-    };
-    const first = await json(await routeFn(ctx()));
-    await routeFn(ctx());
-    expect(first.route.airports.map((a: any) => a.iata)).toEqual(['DFW', 'CLT']);
-    expect(calls).toEqual(['https://api.adsb.lol/api/0/route/AAL1696/41.97/-87.94']);
-    expect((fn.mock.calls[0][1] as any).headers['x-api-key']).toBe('test-key');
+  const routeCtx = (callsign: string) => {
+    const c = pagesContext(`https://x/api/live-route?callsign=${callsign}&lat=41.97&lon=-87.9`);
+    c.env.ADSBLOL_API_KEY = 'test-key';
+    return c;
+  };
+
+  it('reads the static route file once per callsign, without the key', async () => {
+    resetRouteCache();
+    const { calls, fn } = stubFetch([['vrs-standing-data.adsb.lol/routes/AC/ACA506.json', aca506]]);
+    const first = await json(await routeFn(routeCtx('ACA506')));
+    await routeFn(routeCtx('ACA506'));
+    expect(first.route.airports.map((a: any) => a.iata)).toEqual(['ORD', 'YYZ']);
+    expect(calls).toEqual(['https://vrs-standing-data.adsb.lol/routes/AC/ACA506.json']);
+    expect((fn.mock.calls[0][1] as any).headers['x-api-key']).toBeUndefined();
+  });
+
+  it('remembers "no route" but retries soon after a failure', async () => {
+    resetRouteCache();
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-10-20T20:00:00Z'));
+    const failing = vi.fn(async () => new Response('Internal Server Error', { status: 500 }));
+    vi.stubGlobal('fetch', failing);
+    expect((await json(await routeFn(routeCtx('SKW5719')))).route).toBeNull();
+    vi.setSystemTime(new Date('2026-10-20T20:03:00Z')); // past the 2-minute retry
+    stubFetch([['routes/SK/SKW5719.json', skw5719]]);
+    expect((await json(await routeFn(routeCtx('SKW5719')))).route.airports.map((a: any) => a.iata)).toEqual(['ORD', 'MLI']);
+
+    const missing = vi.fn(async () => new Response('', { status: 404 }));
+    vi.stubGlobal('fetch', missing);
+    await routeFn(routeCtx('N170PT'));
+    vi.setSystemTime(new Date('2026-10-20T21:00:00Z'));
+    await routeFn(routeCtx('N170PT'));
+    expect(missing).toHaveBeenCalledTimes(1); // a 404 is an answer, kept for hours
+    vi.useRealTimers();
+  });
+
+  it('keeps real departures that are still turning onto their course', () => {
+    // Captured from /api/live on 2026-10-20 a few miles from O'Hare
+    const skw = parseRoute('SKW5719', skw5719)!; // ORD to Moline, heading south after takeoff
+    expect(routeLabel(routeLeg(skw, [41.907209, -87.826879], 175.73, 1433)!)).toBe('ORD to MLI');
+    const aca = parseRoute('ACA506', aca506)!; // ORD to Toronto, climbing out east
+    expect(routeLabel(routeLeg(aca, [41.988256, -87.886154], 90.38, 1984)!)).toBe('ORD to YYZ');
+    // a flight far from both airports and off the line is still rejected
+    expect(routeLeg(skw, [44.5, -84.0], 90, 0)).toBeNull();
   });
 });
 
@@ -265,9 +299,10 @@ describe('multi-leg routes', () => {
     expect(routeLabel(leg)).toBe('MSN to ORD');
   });
 
-  it('does not take the near-destination shortcut for a climbing aircraft heading away', () => {
+  it('counts an aircraft climbing out the other way as departing, not arriving', () => {
+    // Departures often fly runway heading before turning; it is the outbound leg, never the inbound one.
     const pos = pointAhead([ordAp.lat, ordAp.lon], (toMsn + 180) % 360, 10);
-    expect(routeLeg(outAndBack, pos, (toMsn + 180) % 360, 2000)).toBeNull();
+    expect(routeLabel(routeLeg(outAndBack, pos, (toMsn + 180) % 360, 2000)!)).toBe('ORD to MSN');
     expect(routeLeg({ callsign: 'X', airports: [ordAp, ordAp] }, [ordAp.lat, ordAp.lon], 0, -500)).toBeNull();
   });
 });

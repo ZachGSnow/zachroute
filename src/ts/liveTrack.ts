@@ -86,7 +86,9 @@ const sameAirport = (a: RouteAirport, b: RouteAirport) => distanceNm([a.lat, a.l
  *   - its two airports differ;
  *   - the aircraft is near the line between them (no more than 15% plus 30 nm out of the way);
  *   - it is heading roughly toward the leg's destination (within 60 degrees), or it is within
- *     40 nm of it and not climbing (approaches turn; a climbing aircraft there is departing).
+ *     40 nm of it and not climbing (approaches turn; a climbing aircraft there is departing), or
+ *     within 40 nm of the leg's origin and not descending (departures turn toward their course
+ *     after takeoff: SKW5719, Chicago to Moline, was heading south 3 nm from O'Hare).
  * Of the legs that fit, the one the aircraft is least out of the way on wins.
  */
 export function routeLeg(route: LiveRoute | null, pos: [number, number], track: number | null, rate: number | null = null): LiveRoute | null {
@@ -104,7 +106,8 @@ export function routeLeg(route: LiveRoute | null, pos: [number, number], track: 
     if (detour > direct * 0.15 + 30) continue;
     const heading = track == null || angleBetween(track, bearingDeg(pos, b)) <= 60;
     const arriving = toDest <= 40 && (rate == null || rate <= 300);
-    if (!heading && !arriving) continue;
+    const departing = distanceNm(a, pos) <= 40 && (rate == null || rate >= -300);
+    if (!heading && !arriving && !departing) continue;
     if (!best || detour < best.detour) best = { leg: { ...route, airports: [from, to] }, detour };
   }
   return best?.leg ?? null;

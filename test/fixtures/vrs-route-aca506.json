@@ -1,0 +1,31 @@
+{
+    "callsign": "ACA506",
+    "number": "506",
+    "airline_code": "ACA",
+    "airport_codes": "KORD-CYYZ",
+    "_airport_codes_iata": "ORD-YYZ",
+    "_airports": [
+        {
+            "name": "Chicago O'Hare International Airport",
+            "icao": "KORD",
+            "iata": "ORD",
+            "location": "Chicago",
+            "countryiso2": "US",
+            "lat": 41.9786,
+            "lon": -87.9048,
+            "alt_feet": 672.0,
+            "alt_meters": 204.83
+        },
+        {
+            "name": "Lester B. Pearson International Airport",
+            "icao": "CYYZ",
+            "iata": "YYZ",
+            "location": "Toronto",
+            "countryiso2": "CA",
+            "lat": 43.6772,
+            "lon": -79.6306,
+            "alt_feet": 569.0,
+            "alt_meters": 173.43
+        }
+    ]
+}
