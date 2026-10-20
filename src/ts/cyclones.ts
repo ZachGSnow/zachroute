@@ -2,6 +2,7 @@
 // forecast-cone checks the airport card and the route use. No Leaflet here; the map layer is in
 // mapOverlays.ts.
 
+import type { FocusTarget, LatLon } from './focusTarget';
 import { haversineDistanceLatLon, bearingBetween } from './geoMath';
 import { pointInPolygon } from './hazardGeo';
 
@@ -26,6 +27,12 @@ export interface Cyclone {
   report?: string;
   /** Strongest wind so far, km/h (GDACS). */
   peakWindKmh?: number;
+}
+
+/** A storm's center, forecast track and cone, for tap to focus. */
+export function stormFocus(storm: Cyclone, title: string): FocusTarget {
+  const track: LatLon[] = storm.track.map((p) => [p.lat, p.lon]);
+  return { title, shapes: storm.cone ? [storm.cone] : [], lines: track.length > 1 ? [track] : [], points: [[storm.lat, storm.lon]] };
 }
 
 /** Storm center within this distance of an airport gets a chip on its card. */

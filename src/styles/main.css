@@ -1770,3 +1770,64 @@ body {
 .alerts-fold > .expandable-content {
   margin-top: 4px;
 }
+
+/* Tap to focus: tappable chips and rows, the highlight and the way back */
+[data-focus] {
+  cursor: pointer;
+}
+
+[data-focus]::after {
+  content: " \2316";
+  color: var(--accent);
+  font-size: 0.85em;
+}
+
+.chip[data-focus]:hover,
+.route-hazard-row[data-focus]:hover,
+.detail-row[data-focus]:hover,
+.fires-line[data-focus]:hover,
+.route-hazard-ash[data-focus]:hover {
+  filter: brightness(1.2);
+  text-decoration: underline dotted;
+}
+
+[data-focus]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.focus-outline {
+  animation: focus-pulse 1.4s ease-in-out 3;
+}
+
+@keyframes focus-pulse {
+  0%, 100% { stroke-opacity: 1; stroke-width: 3; }
+  50% { stroke-opacity: 0.35; stroke-width: 7; }
+}
+
+.map-focus-back {
+  position: absolute;
+  top: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 600;
+  padding: 7px 14px;
+  background: var(--accent);
+  border: none;
+  border-radius: 999px;
+  color: #0f172a;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.map-focus-back[hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .focus-outline {
+    animation: none;
+  }
+}

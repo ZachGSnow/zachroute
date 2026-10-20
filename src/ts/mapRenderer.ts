@@ -8,7 +8,8 @@ import connectionsData from '../data/connections.json';
 import type { ConnectingDepth, ViaOption } from './connections';
 import { airportCode } from './connections';
 import { fetchWeather, type WeatherSnapshot } from './weather';
-import { initOverlays, setOverlayAirports, showAirportRunways, clearAirportRunways, clearRouteHazards } from './mapOverlays';
+import { initOverlays, setOverlayAirports, showAirportRunways, clearAirportRunways, clearRouteHazards, clearFocus } from './mapOverlays';
+import { clearFocusRegistry } from './focusTarget';
 import {
   approachLine,
   approachPoint,
@@ -124,6 +125,8 @@ export function clearLayers() {
   singleEnds.clear();
   clearAirportRunways();
   clearRouteHazards();
+  clearFocus();
+  clearFocusRegistry();
   setLegend('route', null);
 }
 

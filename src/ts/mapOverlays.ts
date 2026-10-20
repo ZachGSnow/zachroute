@@ -1,3 +1,4 @@
+import { focusBounds, resolveZones, type FocusTarget } from './focusTarget';
 import type { RouteDraw } from './prefs';
 import type { Airport, RunwayDetail } from './geoMath';
 import { formatDistance, clockOptions, UNITS_CHANGED } from './units';
@@ -151,6 +152,8 @@ export function initOverlays(m: L.Map) {
   map.getPane('radar')!.style.pointerEvents = 'none';
   map.createPane('airspace').style.zIndex = '370';
   map.createPane('hazards').style.zIndex = '380';
+  // A tapped chip's item is outlined above everything else on the map.
+  map.createPane('focus').style.zIndex = '390';
   map.getPane('night')!.style.pointerEvents = 'none';
 
   // Runway numbers and approach distance labels only appear when zoomed far enough to read.
@@ -2102,3 +2105,67 @@ function refreshViewRunways() {
     if (++count >= VIEW_RUNWAY_CAP) break;
   }
 }
+
+// ---------------------------------------------------------------------------
+// Tap to focus: frame a chip's or row's item on the map (focusTarget.ts), keep the route drawn
+// ---------------------------------------------------------------------------
+
+let focusLayer: L.LayerGroup | null = null;
+let focusReturn: { center: L.LatLng; zoom: number } | null = null;
+
+function focusBackButton(): HTMLButtonElement | null {
+  return document.getElementById('map-focus-back') as HTMLButtonElement | null;
+}
+
+/** Frames the item, outlines it, opens a popup with its title, and offers a way back to `backLabel`. */
+export async function focusOn(target: FocusTarget, backLabel: string) {
+  if (!map) return;
+  const t = await resolveZones(target);
+  const b = focusBounds(t);
+  if (!map || !b) return;
+  if (!focusReturn) focusReturn = { center: map.getCenter(), zoom: map.getZoom() };
+  if (!focusLayer) focusLayer = L.layerGroup().addTo(map);
+  focusLayer.clearLayers();
+
+  for (const shape of t.shapes) {
+    if (shape.length < 2) continue;
+    focusLayer.addLayer(L.polygon(shape, { pane: 'focus', color: '#ffffff', weight: 3, fill: false, className: 'focus-outline', interactive: false }));
+  }
+  for (const line of t.lines || []) {
+    if (line.length > 1) focusLayer.addLayer(L.polyline(line, { pane: 'focus', color: '#ffffff', weight: 3, className: 'focus-outline', interactive: false }));
+  }
+  for (const p of t.points) {
+    focusLayer.addLayer(L.circleMarker(p, { pane: 'focus', radius: 14, color: '#ffffff', weight: 3, fill: false, className: 'focus-outline', interactive: false }));
+  }
+  if (!t.shapes.length && !t.points.length && t.fallback) {
+    focusLayer.addLayer(L.circle(t.fallback, { pane: 'focus', radius: 40000, color: '#ffffff', weight: 2, dashArray: '6, 6', fill: false, interactive: false }));
+  }
+
+  const bounds = L.latLngBounds([b.south, b.west], [b.north, b.east]);
+  const single = b.south === b.north && b.west === b.east;
+  const popupAt = t.points.length === 1 ? L.latLng(t.points[0]) : bounds.getCenter();
+  map.once('moveend', () => {
+    if (!map || !focusLayer) return;
+    L.popup({ autoPan: false, className: 'focus-popup' }).setLatLng(popupAt).setContent(escapeText(t.title)).openOn(map);
+  });
+  if (single) map.flyTo(bounds.getCenter(), Math.max(map.getZoom(), 8), { duration: 0.8 });
+  else map.flyToBounds(bounds, { padding: [60, 60], maxZoom: 9, duration: 0.8 });
+
+  const back = focusBackButton();
+  if (back) {
+    back.textContent = backLabel;
+    back.hidden = false;
+  }
+}
+
+/** Removes the highlight; with `restore`, flies back to the view from before the first tap. */
+export function clearFocus(restore = false) {
+  focusLayer?.clearLayers();
+  map?.closePopup();
+  const back = focusBackButton();
+  if (back) back.hidden = true;
+  if (restore && map && focusReturn) map.flyTo(focusReturn.center, focusReturn.zoom, { duration: 0.8 });
+  focusReturn = null;
+}
+
+const escapeText = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
