@@ -16,6 +16,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { currentIata } from '../shared/iataRenames.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -67,8 +68,9 @@ export function mergeRoutes({ routeLines, usRoutes, usIntlRoutes = null, overrid
     // Format: Airline,AirlineID,Source,SourceID,Dest,DestID,Codeshare,Stops,Equipment
     const parts = line.split(',');
     if (parts.length < 6) continue;
-    const origin = parts[2].toUpperCase();
-    const dest = parts[4].toUpperCase();
+    // OpenFlights still has codes that have since changed (PBI for DJT).
+    const origin = currentIata(parts[2].toUpperCase());
+    const dest = currentIata(parts[4].toUpperCase());
     if (isUsPair(origin, dest)) {
       skippedUs++;
       continue; // superseded by current BTS data below
@@ -111,7 +113,10 @@ export function mergeRoutes({ routeLines, usRoutes, usIntlRoutes = null, overrid
   }
 
   if (overrides) {
-    for (const r of overrides.add || []) {
+    // Hand-kept entries may use an airport's former code.
+    const current = (r) => ({ ...r, from: currentIata(r.from), to: currentIata(r.to) });
+    overrides = { add: (overrides.add || []).map(current), remove: (overrides.remove || []).map(current) };
+    for (const r of overrides.add) {
       add(r.from, r.to);
       add(r.to, r.from);
       const list = (r.carriers || []).filter(Boolean);
@@ -120,7 +125,7 @@ export function mergeRoutes({ routeLines, usRoutes, usIntlRoutes = null, overrid
         setCarriers(a, b, Array.from(new Set([...list, ...existing])));
       }
     }
-    for (const r of overrides.remove || []) {
+    for (const r of overrides.remove) {
       connections[r.from]?.delete(r.to);
       connections[r.to]?.delete(r.from);
       if (carriers[r.from]) delete carriers[r.from][r.to];

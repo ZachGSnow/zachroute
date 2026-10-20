@@ -42,7 +42,9 @@ structure left untouched. They contain only public aviation, weather and geograp
 | `wikipedia-search-ord.json`, `wikipedia-summary-ord.json` | Wikipedia search API and REST page summary |
 | `wikipedia-search-her-*.json`, `wikipedia-summary-her*.json`, `wikipedia-summary-lhr.json` | The same for Heraklion (HER), captured 2026-10-19: searches by code and by name, the "Her" disambiguation page, the airport's article, and Heathrow's |
 | `wikidata-titles-icao.json`, `wikidata-titles-iata.json` | query.wikidata.org SPARQL: English Wikipedia titles for a few ICAO and IATA codes, captured 2026-10-19 |
-| `ourairports-*.csv` | OurAirports CSVs, header plus rows for KORD, KDEN, KMDW and EGLL |
-| `openflights-routes.dat` | OpenFlights `routes.dat`, a few rows each for ORD, DEN and LHR |
+| `ourairports-*.csv` | OurAirports CSVs, header plus rows for KORD, KDEN, KMDW and EGLL; KPBI (ident still KPBI, codes DJT/KDJT after the 2026 rename) with its runways, frequencies, navaids and the US-FL region, captured 2026-10-20 |
+| `openflights-routes.dat` | OpenFlights `routes.dat`, a few rows each for ORD, DEN and LHR, and two PBI rows (to ATL and NAS) under the old code |
 | `bts-ontime-sample.csv` | US DOT BTS on-time performance, July 2026, header plus ORD rows |
+| `bts-ontime-2026-07-pbi-sample.csv`, `bts-ontime-2026-08-djt-sample.csv` | The same files for July and August 2026, captured 2026-10-20: four Delta rows each way between ATL and Palm Beach, reported as PBI in July and DJT from August 1 (same BTS airport ID 14027) |
+| `bts-t100-segment-2026-07-pbi-sample.csv` | BTS T-100 Segment for July 2026 (the latest month on 2026-10-20), the Delta ATL-PBI rows both ways. T-100 has no DJT month yet, so the test relabels these rows as August DJT to stand in for it |
 | `airports-subset.json` | Output of `scripts/etl_ourairports.js` for the airports the search tests use |

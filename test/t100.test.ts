@@ -99,3 +99,22 @@ describe('route and airport summaries', () => {
     expect(['ANC', '7AK', 'SJU', 'SDQ', 'ORD', 'LHR'].map(isUs)).toEqual([true, true, true, false, true, false]);
   });
 });
+
+describe('airport code changes', () => {
+  // Real July 2026 Delta ATL-PBI rows. T-100 has no month after Palm Beach became DJT yet, so the
+  // same rows relabelled as August DJT stand in for the first month under the new code.
+  const july = readFixture('bts-t100-segment-2026-07-pbi-sample.csv');
+  const august = july.replace(/,PBI,/g, ',DJT,').replace(/,2026,7,/g, ',2026,8,');
+
+  it('adds months under the old and new code up to one airport', () => {
+    const rows = [...parseT100(july), ...parseT100(august)];
+    expect(rows.every((r) => r.origin !== 'PBI' && r.dest !== 'PBI')).toBe(true);
+    const pairs = aggregatePairs(rows, '2026-08');
+    expect([...pairs.keys()]).toEqual(['ATL|DJT']);
+    const p = pairs.get('ATL|DJT');
+    expect(p.pax).toBe(2 * (47830 + 50493));
+    expect(p.monthly.slice(-2)).toEqual([47830 + 50493, 47830 + 50493]);
+    const files = airportFiles(pairs, '2026-08', {});
+    expect([...files.keys()].sort()).toEqual(['ATL', 'DJT']);
+  });
+});

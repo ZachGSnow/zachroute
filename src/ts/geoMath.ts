@@ -53,6 +53,7 @@ export interface Airport {
   wikiTitle?: string;
   homeLink?: string;
   localCode?: string; // FAA LID when different from IATA/ICAO
+  formerIata?: string; // previous IATA code after a recent code change (shared/iataRenames.js)
   regionCode?: string; // local part of the ISO region, e.g. "KY" for US-KY
   keywords?: string; // OurAirports alternate names / nearby towns, comma separated
   navaids?: NavaidDetail[];

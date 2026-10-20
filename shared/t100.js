@@ -3,6 +3,8 @@
 // its tests: CSV rows -> per-airport traffic summaries and the list of US-international nonstops.
 // Public domain (US DOT Bureau of Transportation Statistics).
 
+import { currentIata } from './iataRenames.js';
+
 /**
  * Scheduled passenger service (class F) only. Class L is non-scheduled (charter) passenger service:
  * tour charters, sports teams and immigration removal flights, which nobody can book; G and P are
@@ -67,8 +69,10 @@ export function parseT100(csv) {
     if (!deps && !pax) continue;
     if (!c[i.origin] || !c[i.dest] || c[i.origin] === c[i.dest]) continue;
     rows.push({
-      origin: c[i.origin],
-      dest: c[i.dest],
+      // Months before an airport's code change report the old code (PBI for DJT); both add up
+      // to the current one.
+      origin: currentIata(c[i.origin]),
+      dest: currentIata(c[i.dest]),
       carrier: c[i.carrier],
       aircraft: c[i.aircraft],
       deps,

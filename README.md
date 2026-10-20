@@ -215,7 +215,13 @@ an Open-Meteo API plan.
 npm run data           # OurAirports ETL + world airspace + US DOT routes and traffic (downloads about 220 MB) + route merge
 npm run etl:airspace   # world airspace only (openAIP exports, about 72 MB, about 1.5 minutes)
 npm run etl:t100       # route and airport traffic only (BTS T-100, 24 months, about 1.5 minutes)
+npm run check:codes    # list BTS airport codes that do not match an airport's IATA code
 ```
+
+When an airport's code changes (Palm Beach went from PBI to DJT in 2026), BTS reports the old code
+for the months before the change and OurAirports keeps the old ident. Add the change to
+`shared/iataRenames.js` and every build script maps the old code to the new one; the old code
+stays searchable and the card shows "formerly ...".
 
 Airspace outside the US changes on the 28-day AIRAC cycle, so rebuild it at each release. The
 generated files (`public/data/airports.json`, `public/data/airspace/`) are gitignored. Run it every

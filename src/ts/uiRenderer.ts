@@ -451,7 +451,7 @@ function buildFacilityCard(airport: Airport): string {
   return `
     <div class="facility-card" data-iata="${airport.iata}" data-icao="${airport.icao}">
       <div class="card-title-row">
-        <h3>${airport.iata || airport.icao} \u2014 ${airport.name} ${typePill}</h3>
+        <h3>${airport.iata || airport.icao}${airport.formerIata ? ` <span class="muted">(formerly ${airport.formerIata})</span>` : ''} \u2014 ${airport.name} ${typePill}</h3>
         ${favButtonHtml(airport)}
       </div>
       <div class="subhead">${locationLine} \u2022 ${elevationText}</div>

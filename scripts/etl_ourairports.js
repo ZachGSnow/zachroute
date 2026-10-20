@@ -9,6 +9,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { find as findTimeZone } from 'geo-tz';
 import geomagnetism from 'geomagnetism';
 import { fetchWikidataTitles, addWikiTitles } from './wikidata_titles.js';
+import { currentIata, currentIcao, renameOf } from '../shared/iataRenames.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -110,12 +111,13 @@ async function main() {
  * it can be tested against real CSV samples. `date` picks the magnetic model epoch.
  */
 export function buildRecords({ airportsText, runwaysText, freqText, countriesText, regionsText, navaidsText }, seed, date = new Date()) {
-  const airportLines = airportsText.trim().split('\n');
-  const runwayLines = runwaysText.trim().split('\n');
-  const freqLines = freqText.trim().split('\n');
-  const countryLines = countriesText.trim().split('\n');
-  const regionLines = regionsText.trim().split('\n');
-  const navaidLines = navaidsText.trim().split('\n');
+  // CRLF-safe: a stray "\r" would stick to each row's last field (keywords, associated airport).
+  const airportLines = airportsText.trim().split(/\r?\n/);
+  const runwayLines = runwaysText.trim().split(/\r?\n/);
+  const freqLines = freqText.trim().split(/\r?\n/);
+  const countryLines = countriesText.trim().split(/\r?\n/);
+  const regionLines = regionsText.trim().split(/\r?\n/);
+  const navaidLines = navaidsText.trim().split(/\r?\n/);
 
   // countries.csv: id, code, name, continent, wikipedia_link, keywords
   const countryNames = {};
@@ -224,7 +226,10 @@ export function buildRecords({ airportsText, runwaysText, freqText, countriesTex
     if (!row || row.length < 18) continue;
 
     const type = row[2];
-    const icao = (row[1] || '').toUpperCase();
+    // OurAirports keys runways, frequencies and navaids by `ident`, which it keeps when an
+    // airport's ICAO code changes; the record itself carries the current codes.
+    const ident = (row[1] || '').toUpperCase();
+    const icao = currentIcao(ident);
     const name = row[3];
     const lat = parseFloat(row[4]);
     const lon = parseFloat(row[5]);
@@ -233,7 +238,8 @@ export function buildRecords({ airportsText, runwaysText, freqText, countriesTex
     const isoRegion = (row[9] || '').toUpperCase();
     const municipality = row[10] || '';
     const scheduled = row[11] === 'yes';
-    const iata = (row[13] || '').toUpperCase();
+    const iata = currentIata((row[13] || '').toUpperCase());
+    const rename = renameOf(iata);
     const homeLink = row[16] || undefined;
     const wikipediaLink = row[17] || undefined;
     const localCode = (row[15] || '').toUpperCase();
@@ -241,7 +247,7 @@ export function buildRecords({ airportsText, runwaysText, freqText, countriesTex
 
     const isLargeOrMedium = type === 'large_airport' || type === 'medium_airport';
     const hasIata = iata.length === 3;
-    const forced = forceInclude.has(iata) || forceInclude.has(icao);
+    const forced = [iata, icao, ident, rename?.iata.from].some((c) => c && forceInclude.has(c));
 
     if (!isLargeOrMedium && !hasIata && !forced) continue;
 
@@ -253,14 +259,16 @@ export function buildRecords({ airportsText, runwaysText, freqText, countriesTex
       airportType = 'Cargo airport';
     }
 
-    // Allow seed override
-    if (seed[iata]?.airportType) airportType = seed[iata].airportType;
-    if (seed[icao]?.airportType) airportType = seed[icao].airportType;
+    // Allow seed override (seed_lore.json may still use an airport's former code)
+    const seedIata = seed[iata] || (rename && seed[rename.iata.from]);
+    const seedIcao = seed[icao] || seed[ident];
+    if (seedIata?.airportType) airportType = seedIata.airportType;
+    if (seedIcao?.airportType) airportType = seedIcao.airportType;
 
-    const runways = runwaysByIdent[icao] || undefined;
+    const runways = runwaysByIdent[ident] || undefined;
     const runwayCount = runways?.length || undefined;
     const longestRunwayFeet = runways?.[0]?.lengthFt || undefined;
-    const frequencies = freqByIdent[icao] || undefined;
+    const frequencies = freqByIdent[ident] || undefined;
 
     // OurAirports puts places without a first-level division in a placeholder region named
     // "(unassigned)" (Guam, for one): treat that as no region rather than show it.
@@ -288,9 +296,9 @@ export function buildRecords({ airportsText, runwaysText, freqText, countriesTex
       lat: isNaN(lat) ? 0 : lat,
       lon: isNaN(lon) ? 0 : lon,
       elevation: elev,
-      type: seed[iata]?.type || seed[icao]?.type || type,
-      primaryOperator: seed[iata]?.primaryOperator || seed[icao]?.primaryOperator,
-      lore: seed[iata]?.lore || seed[icao]?.lore || undefined,
+      type: seedIata?.type || seedIcao?.type || type,
+      primaryOperator: seedIata?.primaryOperator || seedIcao?.primaryOperator,
+      lore: seedIata?.lore || seedIcao?.lore || undefined,
       airportType,
       runwayCount,
       longestRunwayFeet,
@@ -302,8 +310,10 @@ export function buildRecords({ airportsText, runwaysText, freqText, countriesTex
       localCode: localCode && localCode !== icao && localCode !== iata ? localCode : undefined,
       regionCode: !unassigned && isoRegion.includes('-') ? isoRegion.split('-')[1] : undefined,
       keywords,
-      navaids: navaidsByIdent[icao] || undefined,
+      navaids: navaidsByIdent[ident] || undefined,
       magVarDeg: magVar(magModel, lat, lon),
+      // Shown on the card ("formerly PBI") for airports whose code changed recently.
+      formerIata: rename && hasIata ? rename.iata.from : undefined,
     };
 
     // Index by IATA, ICAO and FAA local code. The primary key holds the record;
@@ -317,6 +327,10 @@ export function buildRecords({ airportsText, runwaysText, freqText, countriesTex
     if (entry.iata && entry.iata !== primary && !(entry.iata in records)) records[entry.iata] = primary;
     if (entry.icao && entry.icao !== primary && !(entry.icao in records)) records[entry.icao] = primary;
     if (entry.localCode && !(entry.localCode in records)) records[entry.localCode] = primary;
+    // Former codes stay searchable and keep old favorites and links working.
+    for (const old of [entry.formerIata, ident !== icao ? ident : undefined]) {
+      if (old && !(old in records)) records[old] = primary;
+    }
     kept++;
   }
 
