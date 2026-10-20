@@ -10,11 +10,12 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "etl": "node scripts/etl_ourairports.js",
+    "etl": "node scripts/etl_ourairports.js && node scripts/openaip_airspace.js",
+    "etl:airspace": "node scripts/openaip_airspace.js",
     "icons": "node scripts/generate-icons.mjs",
     "test": "vitest run",
     "typecheck": "tsc --noEmit -p .",
-    "data": "node scripts/etl_ourairports.js && node scripts/build_us_routes.js && node scripts/build_connections.js"
+    "data": "node scripts/etl_ourairports.js && node scripts/openaip_airspace.js && node scripts/build_us_routes.js && node scripts/build_connections.js"
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",

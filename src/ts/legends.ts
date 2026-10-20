@@ -287,8 +287,9 @@ export function airspaceLegend(): LegendSpec {
       { color: '#ef4444', label: 'prohibited, restricted', mark: 'line' },
       { color: '#fb923c', label: 'warning, danger, military operations', mark: 'line' },
       { color: '#facc15', label: 'alert area', mark: 'dash' },
+      { color: '#94a3b8', label: 'class A, E; other controlled', mark: 'dash' },
     ],
-    note: 'US: FAA. Tap an area for its floor, ceiling and times. Not for navigation',
+    note: 'US: FAA. Elsewhere: openAIP (CC BY-NC 4.0). Tap an area for its floor, ceiling and times. Not for navigation',
   };
 }
 

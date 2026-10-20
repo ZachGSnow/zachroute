@@ -1743,7 +1743,9 @@ function airspacePopup(a: AirspaceArea): string {
     `<strong>${esc(style.label)}: ${esc(a.name)}</strong>` +
     `<br>${esc(describeLimit(a.lower))} to ${esc(describeLimit(a.upper))}` +
     (a.times ? `<br><small>Active: ${esc(a.times.toLowerCase().replace(/\bnotam\b/g, 'NOTAM'))}</small>` : '') +
-    '<br><small style="color:#64748b">FAA airspace data. Not for navigation.</small>'
+    (a.source === 'openAIP'
+      ? `<br><small style="color:#64748b"><a href="https://www.openaip.net" target="_blank" rel="noopener">openAIP</a> (CC BY-NC 4.0)${a.built ? `, data as of ${esc(a.built)}` : ''}. Not for navigation.</small>`
+      : '<br><small style="color:#64748b">FAA airspace data. Not for navigation.</small>')
   );
 }
 
@@ -1776,7 +1778,11 @@ async function refreshAirspace() {
   const gen = ++airspaceGen;
   const areas = mergeCells(await Promise.all(cells.map(fetchAirspaceCell)));
   if (gen !== airspaceGen || !map || !airspaceOn) return;
-  if (!airspaceLayer) airspaceLayer = L.layerGroup().addTo(map);
+  if (!airspaceLayer) {
+    airspaceLayer = L.layerGroup([], {
+      attribution: 'Airspace: FAA; <a href="https://www.openaip.net" target="_blank" rel="noopener">openAIP</a> (CC BY-NC 4.0), not for navigation',
+    }).addTo(map);
+  }
   if (!map.hasLayer(airspaceLayer)) airspaceLayer.addTo(map);
   airspaceLayer.clearLayers();
   for (const a of areas) {
