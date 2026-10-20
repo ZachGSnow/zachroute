@@ -2,11 +2,12 @@ import type { Airport, RunwayDetail } from './geoMath';
 import { formatDistance, clockOptions, UNITS_CHANGED } from './units';
 import { stationTemp } from './stationTemp';
 import { setLegend } from './legend';
-import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend, pirepLegend, fireLegend, hazardLegend, cycloneLegend, tfrLegend, tcfLegend, radarLegend, stormTopsLegend, spcLegend, geohazardsLegend, auroraLegend, terrainLegend, HAZARD_GLYPH } from './legends';
+import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend, pirepLegend, fireLegend, hazardLegend, cycloneLegend, tfrLegend, tcfLegend, radarLegend, stormTopsLegend, spcLegend, geohazardsLegend, auroraLegend, terrainLegend, airspaceLegend, HAZARD_GLYPH } from './legends';
 import { fetchSpcOutlook, spcLevel, spcCategoryName, spcRiskWord, type SpcDay } from './spc';
 import { fetchGeohazards, quakeSeverity, quakeRadius, volcanoSeverity, colorCodeLabel } from './geohazards';
 import { fetchSpaceWeather, auroraLookup, auroraRgba, scalesLabel } from './spaceWeather';
 import { TERRARIUM_URL, TERRAIN_MAX_NATIVE_ZOOM, reliefTile } from './terrainTiles';
+import { cellsFor, fetchAirspaceCell, mergeCells, airspaceStyle, describeLimit, MIN_AIRSPACE_ZOOM, type AirspaceArea } from './airspace';
 import {
   faaChartTileUrl,
   faaChartInfoUrl,
@@ -124,6 +125,7 @@ function updateZoomHint() {
   if (firesOn && z < MIN_FIRE_ZOOM) needed.push('fires');
   if (freezingOn && z < MIN_FREEZING_ZOOM) needed.push('the freezing level');
   if (chartsOn && z < FAA_CHART_MIN_ZOOM) needed.push('FAA charts');
+  if (airspaceOn && z < MIN_AIRSPACE_ZOOM) needed.push('airspace');
   setHint(needed.length ? `Zoom in to see ${needed.join(' and ')}` : null);
 }
 
@@ -146,6 +148,7 @@ export function initOverlays(m: L.Map) {
   map.createPane('night').style.zIndex = '250';
   map.createPane('radar').style.zIndex = '260';
   map.getPane('radar')!.style.pointerEvents = 'none';
+  map.createPane('airspace').style.zIndex = '370';
   map.createPane('hazards').style.zIndex = '380';
   map.getPane('night')!.style.pointerEvents = 'none';
 
@@ -168,6 +171,7 @@ export function initOverlays(m: L.Map) {
       void refreshPireps();
       void refreshFires();
       void refreshFreezing();
+      void refreshAirspace();
       noteSatelliteGap();
       refreshViewRunways();
     }, 500);
@@ -1722,6 +1726,69 @@ async function refreshAurora(announce: boolean) {
       5000
     );
   }
+}
+
+// ---------------------------------------------------------------------------
+// Airspace (US: FAA class B/C/D and special use airspace), from zoom 7
+// ---------------------------------------------------------------------------
+
+let airspaceOn = false;
+let airspaceGen = 0;
+let airspaceLayer: L.LayerGroup | null = null;
+let airspaceShown = '';
+
+function airspacePopup(a: AirspaceArea): string {
+  const style = airspaceStyle(a.kind);
+  return (
+    `<strong>${esc(style.label)}: ${esc(a.name)}</strong>` +
+    `<br>${esc(describeLimit(a.lower))} to ${esc(describeLimit(a.upper))}` +
+    (a.times ? `<br><small>Active: ${esc(a.times.toLowerCase().replace(/\bnotam\b/g, 'NOTAM'))}</small>` : '') +
+    '<br><small style="color:#64748b">FAA airspace data. Not for navigation.</small>'
+  );
+}
+
+export function setAirspace(on: boolean) {
+  airspaceOn = on;
+  setLegend('airspace', on ? airspaceLegend() : null);
+  if (!map) return;
+  if (!on) {
+    airspaceGen += 1;
+    airspaceShown = '';
+    airspaceLayer?.clearLayers();
+    updateZoomHint();
+    return;
+  }
+  void refreshAirspace();
+}
+
+async function refreshAirspace() {
+  updateZoomHint();
+  if (!map || !airspaceOn) return;
+  if (map.getZoom() < MIN_AIRSPACE_ZOOM) {
+    airspaceShown = '';
+    airspaceLayer?.clearLayers();
+    return;
+  }
+  const b = map.getBounds();
+  const cells = cellsFor(b.getSouth(), b.getWest(), b.getNorth(), b.getEast());
+  const key = cells.map((c) => c.join(',')).join(';');
+  if (key === airspaceShown) return;
+  const gen = ++airspaceGen;
+  const areas = mergeCells(await Promise.all(cells.map(fetchAirspaceCell)));
+  if (gen !== airspaceGen || !map || !airspaceOn) return;
+  if (!airspaceLayer) airspaceLayer = L.layerGroup().addTo(map);
+  if (!map.hasLayer(airspaceLayer)) airspaceLayer.addTo(map);
+  airspaceLayer.clearLayers();
+  for (const a of areas) {
+    const s = airspaceStyle(a.kind);
+    const popup = airspacePopup(a);
+    for (const poly of a.polygons) {
+      airspaceLayer.addLayer(
+        L.polygon(poly, { pane: 'airspace', color: s.color, weight: s.weight, dashArray: s.dash, fillColor: s.color, fillOpacity: s.fill }).bindPopup(popup)
+      );
+    }
+  }
+  airspaceShown = key;
 }
 
 // ---------------------------------------------------------------------------

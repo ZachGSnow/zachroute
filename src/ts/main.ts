@@ -3,7 +3,7 @@ import { formatDistance, getDistanceUnit, getClockFormat, getWeatherUnits, setDi
 import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
 import { haversineDistance } from './geoMath';
-import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, setRadar, setRadarMode, setSpc, setSpcDay, setGeohazards, setAurora, setCharts, setChartKind, setTerrain, highlightRunway } from './mapOverlays';
+import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, setRadar, setRadarMode, setSpc, setSpcDay, setGeohazards, setAurora, setCharts, setChartKind, setTerrain, setAirspace, highlightRunway } from './mapOverlays';
 import type { RadarMode } from './radarTiles';
 import type { TcfStep } from './tcf';
 import { parseQuery, loadAirports, suggest, type SearchIntent } from './searchParser';
@@ -524,6 +524,9 @@ async function init() {
   const freezingToggle = document.getElementById('freezing-toggle') as HTMLInputElement | null;
   const FREEZING_KEY = 'zachroute:show-freezing';
   restoreAirportToggle(freezingToggle, FREEZING_KEY, setFreezingLevel);
+  const airspaceToggle = document.getElementById('airspace-toggle') as HTMLInputElement | null;
+  const AIRSPACE_KEY = 'zachroute:show-airspace';
+  restoreAirportToggle(airspaceToggle, AIRSPACE_KEY, setAirspace);
   const terrainToggle = document.getElementById('terrain-toggle') as HTMLInputElement | null;
   const TERRAIN_KEY = 'zachroute:show-terrain';
   restoreAirportToggle(terrainToggle, TERRAIN_KEY, setTerrain);
@@ -632,6 +635,7 @@ async function init() {
   wireOverlayToggle(fireToggle, FIRE_KEY, setFires);
   wireOverlayToggle(aerosolToggle, AEROSOL_KEY, setAerosol);
   wireOverlayToggle(freezingToggle, FREEZING_KEY, setFreezingLevel);
+  wireOverlayToggle(airspaceToggle, AIRSPACE_KEY, setAirspace);
   wireOverlayToggle(terrainToggle, TERRAIN_KEY, setTerrain);
   wireOverlayToggle(chartsToggle, CHARTS_KEY, setCharts);
   wireOverlayToggle(radarToggle, RADAR_KEY, setRadar);
