@@ -218,6 +218,23 @@ export function stormTopsLegend(): LegendSpec {
   };
 }
 
+/** SPC outlook on the ladder; general thunderstorms in the soft blue radar uses for plain rain. */
+export function spcLegend(): LegendSpec {
+  const [light, moderate, severe, extreme] = severityLegendItems([1, 2, 3, 4], 'line');
+  return {
+    kind: 'items',
+    title: 'Severe storm outlook (US, SPC)',
+    items: [
+      { color: 'rgb(96, 165, 250)', label: 'thunderstorms, not severe', mark: 'line' },
+      { ...light, label: 'Light: marginal risk' },
+      { ...moderate, label: 'Moderate: slight risk' },
+      { ...severe, label: 'Severe: enhanced risk' },
+      { ...extreme, label: 'Extreme: moderate or high risk' },
+    ],
+    note: 'Where severe storms (large hail, damaging wind, tornadoes) are expected today or tomorrow',
+  };
+}
+
 export function tcfLegend(): LegendSpec {
   const [, moderate, severe, extreme] = severityLegendItems([1, 2, 3, 4], 'line');
   return {

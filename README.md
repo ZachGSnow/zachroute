@@ -100,7 +100,9 @@ feet; from zoom 3), weather radar (the US from NEXRAD via the Iowa Environmental
 storm tops: how high the storms reach, to compare with cruise altitude), pilot reports,
 weather hazards, the US thunderstorm forecast (the Aviation
 Weather Center's TFM Convective Forecast for 4, 6 or 8 hours ahead: where storms are expected, how
-much of each area they cover, the forecasters' confidence and the storm tops),
+much of each area they cover, the forecasters' confidence and the storm tops), the US severe storm
+outlook (NOAA Storm Prediction Center, today or tomorrow: where large hail, damaging wind or
+tornadoes are expected, by risk category),
 tropical cyclones (track, forecast track and uncertainty cone), US flight restrictions (TFRs), fires detected by satellite in the
 last 24 hours, dust and smoke from space (the latest daily pass), satellite clouds (infrared: white is cloud, colors are colder, taller storm tops up to magenta for
 the strongest cores; worldwide except near the poles: the Americas, the Pacific, Asia and Australia
@@ -118,7 +120,9 @@ reports are colored by how bad the turbulence or icing was (their shape says whi
 their radiative power. Weather advisories are colored by severity with a symbol for the hazard
 (AIRMETs moderate, SIGMETs severe, embedded or line thunderstorms and volcanic ash extreme),
 the thunderstorm forecast by how much of the area storms will cover (sparse moderate, medium
-severe, solid or a line extreme; dashed when confidence is low), tropical cyclones by strength,
+severe, solid or a line extreme; dashed when confidence is low), the severe storm outlook by SPC
+risk (general thunderstorms soft blue, marginal light, slight moderate, enhanced severe, moderate
+and high extreme), tropical cyclones by strength,
 and US flight restrictions by how restrictive they are. Cards and
 route lists show the same level as a badge, worst first.
 
@@ -256,6 +260,7 @@ can add on top of the source's age.
 | Weather radar and storm tops (US) | NEXRAD composites (base reflectivity, echo tops) from the [Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu) | Every 5 minutes | Up to 10 min (tiles cached 5 min; the layer redraws every 5 min) | Free for any lawful use; credit appreciated (credited in the app) |
 | Weather radar (outside the US) | [RainViewer](https://www.rainviewer.com) | Every 10 minutes | Up to 10 min | Free for personal and educational use; credit requested (credited in the app). Zoom 7 at most, 100 requests a minute per viewer, latest frame only |
 | Thunderstorm forecast (US, TCF) | Aviation Weather Center | Every 2 hours, for 4, 6 and 8 hours ahead | Up to 15 min | Public domain (US government) |
+| Severe storm outlook (US) | [NOAA Storm Prediction Center](https://www.spc.noaa.gov) | Day 1 five times a day, day 2 twice | Up to 25 min | Public domain (US government) |
 | Temporary flight restrictions (US) | [FAA TFR list and map service](https://tfr.faa.gov) | As issued | Up to 15 min | Public domain (US government) |
 | Tropical cyclones (from NHC, JTWC and other agencies) | [GDACS](https://www.gdacs.org), the UN / European Commission Global Disaster Alert and Coordination System | Each storm's advisory every 6 hours, republished by GDACS 1-6 hours later (storms were 5-14 hours past their advisory time when measured) | Up to 40 min | No published license; GDACS provides its data as is, for information only (credited in the app) |
 | Air quality (Copernicus CAMS models) | [Open-Meteo](https://open-meteo.com) | Hourly model values from model runs twice a day: estimates, not station measurements | Up to 30 min | CC BY 4.0, free for non-commercial use; contains Copernicus Atmosphere Monitoring Service information |

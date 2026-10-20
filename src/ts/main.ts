@@ -3,7 +3,7 @@ import { formatDistance, getDistanceUnit, getClockFormat, getWeatherUnits, setDi
 import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
 import { haversineDistance } from './geoMath';
-import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, setRadar, setRadarMode, highlightRunway } from './mapOverlays';
+import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, setRadar, setRadarMode, setSpc, setSpcDay, highlightRunway } from './mapOverlays';
 import type { RadarMode } from './radarTiles';
 import type { TcfStep } from './tcf';
 import { parseQuery, loadAirports, suggest, type SearchIntent } from './searchParser';
@@ -483,6 +483,32 @@ async function init() {
     });
   }
   restoreAirportToggle(tcfToggle, TCF_KEY, setTcf);
+  // Severe storm outlook: which day is restored before the layer turns on.
+  const spcToggle = document.getElementById('spc-toggle') as HTMLInputElement | null;
+  const SPC_KEY = 'zachroute:show-spc';
+  const spcDaySelect = document.getElementById('spc-day') as HTMLSelectElement | null;
+  const SPC_DAY_KEY = 'zachroute:spc-day';
+  if (spcDaySelect) {
+    let savedDay: string | null = null;
+    try {
+      savedDay = localStorage.getItem(SPC_DAY_KEY);
+    } catch {
+      /* convenience only */
+    }
+    if (savedDay === '2') {
+      spcDaySelect.value = '2';
+      setSpcDay(2);
+    }
+    spcDaySelect.addEventListener('change', () => {
+      try {
+        localStorage.setItem(SPC_DAY_KEY, spcDaySelect.value);
+      } catch {
+        /* convenience only */
+      }
+      setSpcDay(spcDaySelect.value === '2' ? 2 : 1);
+    });
+  }
+  restoreAirportToggle(spcToggle, SPC_KEY, setSpc);
   const fireToggle = document.getElementById('fires-toggle') as HTMLInputElement | null;
   const FIRE_KEY = 'zachroute:show-fires';
   restoreAirportToggle(fireToggle, FIRE_KEY, setFires);
@@ -565,6 +591,7 @@ async function init() {
   wireOverlayToggle(cycloneToggle, CYCLONE_KEY, setCyclones);
   wireOverlayToggle(tfrToggle, TFR_KEY, setTfrs);
   wireOverlayToggle(tcfToggle, TCF_KEY, setTcf);
+  wireOverlayToggle(spcToggle, SPC_KEY, setSpc);
   wireOverlayToggle(fireToggle, FIRE_KEY, setFires);
   wireOverlayToggle(aerosolToggle, AEROSOL_KEY, setAerosol);
   wireOverlayToggle(freezingToggle, FREEZING_KEY, setFreezingLevel);

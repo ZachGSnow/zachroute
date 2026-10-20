@@ -14,6 +14,7 @@ structure left untouched. They contain only public aviation, weather and geograp
 | `iem-n0q-5-6-12.png`, `iem-eet-5-6-12.png`, `iem-n0q-0.json`, `iem-eet-0.json` | Iowa Environmental Mesonet NEXRAD tiles (zoom 5, x 6, y 12: storms over New Mexico), base reflectivity and echo tops, and the reflectivity composite's time sidecar (`iem-eet-0.json` is the echo tops one), captured 2026-10-19 23:30 UTC |
 | `rainviewer-5-15-11.png`, `rainviewer-weather-maps.json` | RainViewer radar tile over Europe (zoom 5, Universal Blue, no smoothing) and its frame index, captured 2026-10-19 |
 | `eumetsat-mtg-capabilities.xml`, `eumetsat-iodc-5-24-15.png` | view.eumetsat.int: the Meteosat-12 infrared layer's own capabilities (newest image 23:30 UTC), and a Meteosat-9 infrared tile over the Indian Ocean (zoom 5, x 24, y 15) at 22:00 UTC, captured 2026-10-19 |
+| `spc-day1-cat.json`, `spc-day2-cat.json` | spc.noaa.gov categorical convective outlooks (GeoJSON), day 1 issued 19:58 UTC (general thunderstorms and a marginal risk) and day 2, captured 2026-10-19 |
 | `awc-isigmet.json` | aviationweather.gov international SIGMET: volcanic ash, tropical cyclone, thunderstorm, turbulence, icing, one multi-area record and two without a usable polygon |
 | `faa-status-delays.xml` | nasstatus.faa.gov airport status, captured 2026-10-16 01:00 UTC while delay programs were active |
 | `faa-status-closures.xml` | the same feed later that morning (closures only) |

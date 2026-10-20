@@ -2,7 +2,8 @@ import type { Airport, RunwayDetail } from './geoMath';
 import { formatDistance, clockOptions, UNITS_CHANGED } from './units';
 import { stationTemp } from './stationTemp';
 import { setLegend } from './legend';
-import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend, pirepLegend, fireLegend, hazardLegend, cycloneLegend, tfrLegend, tcfLegend, radarLegend, stormTopsLegend, HAZARD_GLYPH } from './legends';
+import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend, pirepLegend, fireLegend, hazardLegend, cycloneLegend, tfrLegend, tcfLegend, radarLegend, stormTopsLegend, spcLegend, HAZARD_GLYPH } from './legends';
+import { fetchSpcOutlook, spcLevel, spcCategoryName, spcRiskWord, type SpcDay } from './spc';
 import {
   IEM_REFLECTIVITY_URL,
   IEM_REFLECTIVITY_TIME_URL,
@@ -875,6 +876,81 @@ async function refreshTcf(announce: boolean) {
   if (announce) {
     setHint(
       time ? `Thunderstorms forecast for ${timeLabel(time)} (about ${TCF_STEP_HOURS[tcfStep]} hours ahead)` : 'No thunderstorms forecast over the US',
+      4000
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Severe storm outlook (NOAA SPC, US, today or tomorrow)
+// ---------------------------------------------------------------------------
+
+let spcLayer: L.LayerGroup | null = null;
+let spcOn = false;
+let spcDay: SpcDay = 1;
+let spcTimer: number | undefined;
+
+/** Soft blue for general (not severe) thunderstorms, as radar draws plain rain. */
+const SPC_TSTM_COLOR = 'rgb(96, 165, 250)';
+
+function spcDateLabel(iso?: string): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return `${d.toLocaleDateString('en-US', { weekday: 'short' })} ${d.toLocaleTimeString('en-US', clockOptions())}`;
+}
+
+export function setSpc(on: boolean) {
+  spcOn = on;
+  setLegend('spc', on ? spcLegend() : null);
+  window.clearInterval(spcTimer);
+  if (!map) return;
+  if (!on) {
+    spcLayer?.clearLayers();
+    return;
+  }
+  void refreshSpc(true);
+  // SPC updates the day 1 outlook several times a day; the server caches 15 minutes.
+  spcTimer = window.setInterval(() => void refreshSpc(false), 15 * 60 * 1000);
+}
+
+/** Which outlook to show: today (1) or tomorrow (2). */
+export function setSpcDay(day: SpcDay) {
+  spcDay = day;
+  if (spcOn) void refreshSpc(true);
+}
+
+async function refreshSpc(announce: boolean) {
+  if (!map || !spcOn) return;
+  const day = spcDay;
+  const outlook = await fetchSpcOutlook(day);
+  if (!map || !spcOn || day !== spcDay) return;
+  if (!spcLayer) spcLayer = L.layerGroup();
+  spcLayer.clearLayers();
+  const when = outlook ? `${spcDateLabel(outlook.validFrom)} to ${spcDateLabel(outlook.validTo)}` : '';
+  for (const area of outlook?.areas || []) {
+    const level = spcLevel(area.category);
+    const color = level === 0 ? SPC_TSTM_COLOR : severityColor(level);
+    const popup =
+      `<strong>${level === 0 ? '' : `${esc(severityName(level))}: `}${esc(spcCategoryName(area.category))}</strong>` +
+      (when ? `<br>${esc(when)}` : '') +
+      `<br><small style="color:#64748b">NOAA Storm Prediction Center, day ${day} outlook</small>`;
+    for (const poly of area.polygons) {
+      spcLayer.addLayer(
+        L.polygon(poly, { pane: 'hazards', color, weight: level >= 3 ? 2.5 : 1.5, fillColor: color, fillOpacity: level === 0 ? 0.06 : 0.14 }).bindPopup(popup)
+      );
+    }
+  }
+  if (!map.hasLayer(spcLayer)) spcLayer.addTo(map);
+  if (announce) {
+    // Areas come lowest risk first, so the last is the worst.
+    const worst = outlook?.areas[outlook.areas.length - 1]?.category;
+    const label = day === 1 ? 'today' : 'tomorrow';
+    setHint(
+      !outlook
+        ? 'Severe storm outlook unavailable right now'
+        : !worst || spcLevel(worst) === 0
+          ? `No severe storms expected over the US ${label}`
+          : `Severe storm outlook for ${label}: up to a ${spcRiskWord(worst)} risk`,
       4000
     );
   }
