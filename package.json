@@ -12,6 +12,8 @@
     "preview": "vite preview",
     "etl": "node scripts/etl_ourairports.js && node scripts/openaip_airspace.js",
     "etl:airspace": "node scripts/openaip_airspace.js",
+    "etl:airspace:due": "node scripts/openaip_airspace.js --if-due",
+    "airspace:due": "node scripts/airspace_due.js",
     "etl:t100": "node scripts/build_t100.js",
     "etl:airlines": "node scripts/build_airlines.js",
     "check:codes": "node scripts/check_bts_codes.js",

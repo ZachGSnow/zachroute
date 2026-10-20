@@ -263,6 +263,9 @@ an Open-Meteo API plan.
 ```bash
 npm run data           # OurAirports ETL + world airspace + US DOT routes and traffic (downloads about 220 MB) + route merge
 npm run etl:airspace   # world airspace only (openAIP exports, about 72 MB, about 1.5 minutes)
+npm run airspace:due   # is a newer AIRAC cycle in effect since the last airspace build?
+npm run etl:airspace:due  # rebuild world airspace only if it is
+npm run etl:airlines   # airline names by ICAO code (OpenFlights airlines.dat plus corrections)
 npm run etl:t100       # route and airport traffic only (BTS T-100, 24 months, about 1.5 minutes)
 npm run check:codes    # list BTS airport codes that do not match an airport's IATA code
 ```
@@ -272,9 +275,16 @@ for the months before the change and OurAirports keeps the old ident. Add the ch
 `shared/iataRenames.js` and every build script maps the old code to the new one; the old code
 stays searchable and the card shows "formerly ...".
 
-Airspace outside the US changes on the 28-day AIRAC cycle, so rebuild it at each release. The
-generated files (`public/data/airports.json`, `public/data/airspace/`) are gitignored. Run it every
-few months. The route merge refuses to run without the airport database so US
+Official airspace changes take effect on the 28-day AIRAC cycle (2611 on 29 October 2026, 2612 on
+26 November, 2613 on 24 December, 2701 on 21 January 2027). openAIP's exports change daily as people
+edit them, but the airspace in force only changes on those dates, so world airspace is rebuilt once
+per cycle rather than at every release: before deploying, run `npm run etl:airspace:due`, which
+rebuilds only when a newer cycle has taken effect since the build recorded in
+`scripts/airspace-build.json` (or when this machine has no airspace files) and otherwise says when
+the next one is due. A full build updates that record (date, cycle, next cycle, size); commit it
+with the release so the repo shows which cycle the live site's airspace is from. The generated files
+(`public/data/airports.json`, `public/data/airspace/`) are gitignored. Run `npm run data` every few
+months. The route merge refuses to run without the airport database so US
 routes never silently fall back to stale data.
 
 ## How it works
