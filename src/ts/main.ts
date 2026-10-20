@@ -4,8 +4,9 @@ import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
 import { mountSettings } from './settingsPanel';
 import { PREF_CHANGED } from './prefs';
+import { getFocus } from './focusTarget';
 import { haversineDistance } from './geoMath';
-import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, setRadar, setRadarMode, setSpc, setSpcDay, setGeohazards, setAurora, setCharts, setChartKind, setTerrain, setAirspace, highlightRunway } from './mapOverlays';
+import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, setRadar, setRadarMode, setSpc, setSpcDay, setGeohazards, setAurora, setCharts, setChartKind, setTerrain, setAirspace, highlightRunway, focusOn, clearFocus } from './mapOverlays';
 import type { RadarMode } from './radarTiles';
 import type { TcfStep } from './tcf';
 import { parseQuery, loadAirports, suggest, type SearchIntent } from './searchParser';
@@ -56,6 +57,27 @@ async function init() {
   const clearBtn = document.getElementById('search-clear') as HTMLButtonElement | null;
   const resultsEl = document.getElementById('results-content')!;
   const sheet = initSheet(refreshMapSize);
+
+  // Tap a chip or row with a place (data-focus) to see it on the map; the route stays drawn.
+  const focusFromEvent = (target: EventTarget | null) => {
+    const el = target instanceof Element ? target : null;
+    if (!el || el.closest('a, button')) return false;
+    const item = el.closest('[data-focus]') as HTMLElement | null;
+    const t = item && getFocus(item.dataset.focus || '');
+    if (!t) return false;
+    const onRoute = !!resultsEl.querySelector('.route-hazards');
+    void focusOn(t, onRoute ? 'Back to route' : 'Back to airport');
+    if (sheet.isPhone()) sheet.setState('peek');
+    return true;
+  };
+  resultsEl.addEventListener('click', (e) => focusFromEvent(e.target));
+  resultsEl.addEventListener('keydown', (e) => {
+    if ((e.key === 'Enter' || e.key === ' ') && focusFromEvent(e.target)) e.preventDefault();
+  });
+  document.getElementById('map-focus-back')?.addEventListener('click', () => {
+    clearFocus(true);
+    if (sheet.isPhone()) sheet.setState('half');
+  });
 
   // Phones: don't focus the box on launch, or the keyboard covers the app every time it opens.
   const isTouch = window.matchMedia('(pointer: coarse)').matches;

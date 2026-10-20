@@ -44,6 +44,11 @@ companion to a FlightWall display: see a plane overhead, look up where it is goi
   Settings, Airport cards sets that, whether the photo shows, and which folding sections (weather
   details, forecast periods, pilot reports, forecaster notes, runways, frequencies, navaids,
   destinations) start open. Tapping a section header opens or folds it on that card.
+- Tap an alert chip, a pilot report or the fires line to see it on the map: the map frames it,
+  outlines it in white with a popup, and a "Back to airport" button returns to the earlier view.
+  NWS warnings use their own area; watches and advisories that only name forecast zones fetch the
+  zone outlines from api.weather.gov. FAA delays have no place to show. Test messages from the NWS
+  (such as a monthly tsunami warning test) are not shown.
 - Current conditions from the latest METAR in plain English, with a "More details" section
   (dewpoint and fog risk, ceiling, altimeter or QNH, density altitude, wind as the tower states it,
   and the forecast freezing level).
@@ -116,6 +121,8 @@ used once and not stored; denying permission just shows a message.
   and "Focus on the route" (on by default): while a route is shown, the full advisory, pilot report,
   cyclone and TFR layers step aside so only what lies along the route is drawn, and come back when
   the route is cleared.
+- Tap a row of the hazard list (an advisory, cyclone, TFR, pilot report or the ash warning) to frame it
+  on the map with the route still drawn; "Back to route" returns to the whole route.
 - Space weather, on routes that reach 60 degrees north or south: a solar radiation storm (S1 and
   up; polar flights may be rerouted), a radio blackout (R2 and up) or a geomagnetic storm (G2 and
   up), both of which degrade HF radio, from NOAA's space weather scales.

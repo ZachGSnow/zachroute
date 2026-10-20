@@ -36,6 +36,7 @@ structure left untouched. They contain only public aviation, weather and geograp
 | `firms-modis-24h.csv` | NASA FIRMS MODIS global 24-hour file: header plus 20 confident and 4 low-confidence detections around Palembang, Indonesia, and 5 elsewhere |
 | `nws-points-ord.json`, `nws-office-lot.json`, `nws-afd-list-lot.json`, `nws-afd-lot.json` | api.weather.gov point lookup for ORD (trimmed to the office fields), the Chicago office, its forecast discussion list (first two) and the latest discussion, captured 2026-10-19 |
 | `nws-alerts.json` | api.weather.gov active alerts, trimmed to the fields the app reads (event, severity, headline, expires) |
+| `nws-alerts-shapes.json`, `nws-zone-azz001.json` | api.weather.gov active alerts captured 2026-10-20, two whole features: a storm-based Flood Warning for Lake and Volusia counties, Florida (its own polygon) and a zone-based Flood Watch for AZZ001 (no geometry); and the AZZ001 forecast zone (Northwest Plateau, Arizona) with its outline |
 | `open-meteo-aq-del.json`, `-pek.json`, `-syd.json` | air-quality-api.open-meteo.com current and hourly air quality for Delhi (unhealthy, hazy), Beijing (hazy, worse later) and Sydney (good), 18:00 UTC |
 | `open-meteo-250hpa-7pts.json` | api.open-meteo.com winds at 250 hPa for seven points between ORD and DEN |
 | `open-meteo-250hpa-fzl-7pts.json`, `open-meteo-fzl-anc.json` | The same request with the freezing level added, and the current freezing level over Anchorage, captured 2026-10-19 |

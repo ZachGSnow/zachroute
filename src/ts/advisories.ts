@@ -1,3 +1,4 @@
+import { nwsFocus, type FocusTarget } from './focusTarget';
 import { severityBadge } from './severityBadge';
 import type { Airport } from './geoMath';
 import { formatDistance } from './units';
@@ -53,6 +54,8 @@ export interface Chip {
   title?: string;
   /** Light to Extreme, where the source grades it (FAA delays do not). */
   severity?: Severity;
+  /** What a tap shows on the map; FAA delays have nothing to show. */
+  focus?: FocusTarget;
 }
 
 /** "4 alerts" with the worst severity among them, for the folded alerts header. */
@@ -112,6 +115,7 @@ interface NwsAlert {
   severity: string;
   headline: string;
   expires?: string;
+  focus: FocusTarget;
 }
 
 const nwsCache = new Map<string, { at: number; data: Promise<NwsAlert[]> }>();
@@ -125,7 +129,7 @@ function fetchNwsAlerts(lat: number, lon: number): Promise<NwsAlert[]> {
   const data = (async (): Promise<NwsAlert[]> => {
     if (!navigator.onLine) return [];
     try {
-      const res = await fetch(`https://api.weather.gov/alerts/active?point=${lat.toFixed(4)},${lon.toFixed(4)}`, {
+      const res = await fetch(`https://api.weather.gov/alerts/active?status=actual&point=${lat.toFixed(4)},${lon.toFixed(4)}`, {
         headers: { Accept: 'application/geo+json' },
       });
       if (!res.ok) return [];
@@ -135,6 +139,7 @@ function fetchNwsAlerts(lat: number, lon: number): Promise<NwsAlert[]> {
         severity: f.properties?.severity || 'Unknown',
         headline: f.properties?.headline || f.properties?.event || '',
         expires: f.properties?.expires,
+        focus: nwsFocus(f, [lat, lon]),
       }));
     } catch {
       return [];
@@ -159,7 +164,7 @@ export async function nwsAlertChips(airport: Airport): Promise<Chip[]> {
   const alerts = await fetchNwsAlerts(airport.lat, airport.lon);
   const order: Record<string, number> = { alert: 0, warn: 1, info: 2 };
   return alerts
-    .map((a): Chip => ({ level: SEVERITY_LEVEL[a.severity] || 'info', text: a.event, title: a.headline, severity: NWS_SEVERITY[a.severity] }))
+    .map((a): Chip => ({ level: SEVERITY_LEVEL[a.severity] || 'info', text: a.event, title: a.headline, severity: NWS_SEVERITY[a.severity], focus: a.focus }))
     .sort((a, b) => order[a.level] - order[b.level])
     .slice(0, 4);
 }
@@ -172,6 +177,7 @@ export interface PirepLine {
   text: string;
   severe: boolean;
   severity: Severity | null;
+  focus: FocusTarget;
 }
 
 /** Notable recent pilot reports within ~75nm, in plain English. */
@@ -192,7 +198,8 @@ export async function fetchPirepLines(airport: Airport): Promise<PirepLine[]> {
       const dir = compassPoint(bearingBetween(airport.lat, airport.lon, p.lat, p.lon));
       const where = miles < 3 ? 'at the airport' : `${formatDistance(miles)} ${dir} of here`;
       const meta = [pirepAltitudeLabel(p), where, p.acType, pirepAgeLabel(p.obsTime)].filter(Boolean).join(' - ');
-      lines.push({ text: `${summary.headline} <span class="muted">(${meta})</span>`, severe: summary.severe, severity: summary.severity });
+      const focus: FocusTarget = { title: `${summary.headline} (${meta})`, shapes: [], points: [[p.lat, p.lon]] };
+      lines.push({ text: `${summary.headline} <span class="muted">(${meta})</span>`, severe: summary.severe, severity: summary.severity, focus });
     }
     // Worst first; the feed's own order (newest first) breaks ties.
     return lines.map((l, i) => ({ l, i })).sort((a, b) => (b.l.severity ?? 0) - (a.l.severity ?? 0) || a.i - b.i).map((x) => x.l).slice(0, 8);

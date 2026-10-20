@@ -2,6 +2,7 @@
 // a route crosses, and which are near an airport. Most TFRs reach only a few thousand feet (drone
 // and fire restrictions often just 400 ft), far below an airliner's cruise, so the wording says so.
 
+import type { FocusTarget } from './focusTarget';
 import type { Airport } from './geoMath';
 import { pointInPolygon, distanceToPolygonMi } from './hazardGeo';
 import type { Chip } from './advisories';
@@ -83,12 +84,16 @@ export function fetchTfrs(): Promise<Tfr[]> {
 }
 
 /** Airport card chips for TFRs within 30 miles of a US airport. */
+/** A TFR's outline, for tap to focus. */
+export const tfrFocus = (tfr: Tfr): FocusTarget => ({ title: `TFR: ${tfrTypeLabel(tfr.type)}, ${tfrPlace(tfr.description)}`, shapes: tfr.rings, points: [] });
+
 export async function tfrChips(airport: Airport): Promise<Chip[]> {
   if (airport.country !== 'US') return [];
   const near = tfrsNear(airport.lat, airport.lon, await fetchTfrs());
   return near.slice(0, 3).map(({ tfr, miles }) => ({
     level: chipLevel(tfrSeverity(tfr.type)),
     severity: tfrSeverity(tfr.type),
+    focus: tfrFocus(tfr),
     text: `\u{1F6AB} TFR ${miles < 1 ? 'over the airport' : `${formatDistance(miles)} away`}: ${tfrTypeLabel(tfr.type)} (${severityName(tfrSeverity(tfr.type)).toLowerCase()})`,
     title: `${tfrPlace(tfr.description)} (NOTAM ${tfr.id}). Details: ${tfr.url}`,
   }));

@@ -1,6 +1,7 @@
+import { focusAttrs, type FocusTarget } from './focusTarget';
 import type { Airport, RunwayDetail } from './geoMath';
 import { formatDistance, formatTemp, formatPressure, formatVisibility, tempSpread, fogSpread, getWeatherUnits, metarVisibilityMetric, hourOptions } from './units';
-import { haversineDistance, initialBearing, blockTimeMiles, windAdjustedBlockTime, blockTimeWithHeadwind, slerpArc } from './geoMath';
+import { haversineDistance, haversineDistanceLatLon, initialBearing, blockTimeMiles, windAdjustedBlockTime, blockTimeWithHeadwind, slerpArc } from './geoMath';
 import {
   fetchWeather,
   categoryInfo,
@@ -19,12 +20,12 @@ import { localTimeLabel, nextDaylightEventLabel, moonPhaseLabel, isDaytime, utcO
 import { resolveCode } from './searchParser';
 import { fetchTaf, decodeTaf, compassPoint } from './forecast';
 import { faaDelayChips, nwsAlertChips, fetchPirepLines, alertsSummary, type Chip } from './advisories';
-import { fetchCyclones, stormsNearPoint, stormTitle } from './cyclones';
+import { fetchCyclones, stormsNearPoint, stormTitle, stormFocus } from './cyclones';
 import { fetchAirQuality, aqiScaleFor, aqiCategory, aqiValue, hazeNote, worseningAhead } from './airQuality';
 import { fetchFires, boxAround, summarizeFiresNear, AIRPORT_FIRE_RADIUS_MI } from './fires';
 import { fetchCruiseWind } from './windsAloft';
 import { fetchFreezingLevel, describeFreezingLevel, routeFreezingSummary } from './freezingLevel';
-import { tfrChips, describeTfr } from './tfr';
+import { tfrChips, describeTfr, tfrFocus } from './tfr';
 import { volcanoChips } from './geohazards';
 import { fetchMeasuredPm25, pm25Category, readingAge } from './openaq';
 import { fetchAirportTraffic, trafficAirlineName, compactCount, yearChange, monthLabel, busiestMonth, loadFactor } from './traffic';
@@ -508,9 +509,12 @@ function wireLoreButton(cardEl: HTMLElement, airport: Airport) {
 
 function chipsHtml(chips: Chip[]): string {
   return chips
-    .map((c) => `<span class="chip chip-${c.level}"${c.title ? ` title="${c.title.replace(/"/g, '&quot;')}"` : ''}>${c.text}</span>`)
+    .map((c) => `<span class="chip chip-${c.level}"${c.title ? ` title="${c.title.replace(/"/g, '&quot;')}"` : ''}${focusAttrs(c.focus)}>${c.text}</span>`)
     .join('');
 }
+
+/** An advisory's outline, for tap to focus. */
+const advisoryFocus = (a: Advisory): FocusTarget => ({ title: describeAdvisory(a).replace(/<[^>]+>/g, ''), shapes: [a.coords], points: [] });
 
 /** A chip for each volcanic ash advisory over or near the airport (worldwide, from SIGMETs). */
 async function ashChips(airport: Airport): Promise<Chip[]> {
@@ -529,6 +533,7 @@ async function ashChips(airport: Airport): Promise<Chip[]> {
     return {
       level: 'alert',
       severity: 4,
+      focus: advisoryFocus(advisory),
       text: `🌋 Volcanic ash ${where}${advisory.name ? ` (${advisory.name})` : ''}`,
       title: [alt && `Ash cloud ${alt}`, advisory.region && `${advisory.region} FIR`].filter(Boolean).join(', ') || undefined,
     };
@@ -546,6 +551,7 @@ async function cycloneChips(airport: Airport): Promise<Chip[]> {
       // Close or in its path: as urgent as the storm is strong. Farther off: a caution.
       level: miles <= 150 || inCone ? chipLevel(cycloneSeverity(storm.category, storm.peakWindKmh)) : 'warn',
       severity: cycloneSeverity(storm.category, storm.peakWindKmh),
+      focus: stormFocus(storm, stormTitle(storm)),
       text: `🌀 ${stormTitle(storm)} ${where}${path}`,
       title: `As of ${new Date(storm.asOf).toUTCString().replace(':00 GMT', ' UTC')}${storm.source ? `, ${storm.source} via GDACS` : ''}`,
     };
@@ -604,7 +610,7 @@ async function fillPireps(cardEl: HTMLElement, airport: Airport) {
   const lines = await fetchPirepLines(airport);
   if (!el.isConnected || lines.length === 0) return;
   const rows = lines
-    .map((l) => `<div class="detail-row${l.severe ? ' pirep-severe' : ''}"><span>${l.severity ? severityBadge(l.severity) : ''}${l.text}</span></div>`)
+    .map((l) => `<div class="detail-row${l.severe ? ' pirep-severe' : ''}"${focusAttrs(l.focus)}><span>${l.severity ? severityBadge(l.severity) : ''}${l.text}</span></div>`)
     .join('');
   el.innerHTML = expandableSection(`Pilot reports (${lines.length})`, rows, 'pireps');
   wireExpandables(el);
@@ -708,7 +714,9 @@ async function fillFires(cardEl: HTMLElement, airport: Airport) {
   const where = s.strongest.miles < 3 ? 'at the airport' : `${formatDistance(s.strongest.miles)} ${compassPoint(s.strongest.bearing)}`;
   const what = s.count === 1 ? '1 satellite fire or heat detection' : `${s.count} satellite fire or heat detections`;
   const most = s.count === 1 ? `, ${where}` : `, the most intense ${where}`;
-  el.innerHTML = `<div class="fires-line">🔥 ${what} within ${formatDistance(AIRPORT_FIRE_RADIUS_MI)} in the last 24 h${most}</div>`;
+  const near = fires.filter((f) => haversineDistanceLatLon(airport.lat, airport.lon, f.lat, f.lon) <= AIRPORT_FIRE_RADIUS_MI);
+  const focus = { title: `${what} in the last 24 h`, shapes: [], points: near.map((f): [number, number] => [f.lat, f.lon]) };
+  el.innerHTML = `<div class="fires-line"${focusAttrs(focus)}>🔥 ${what} within ${formatDistance(AIRPORT_FIRE_RADIUS_MI)} in the last 24 h${most}</div>`;
 }
 
 async function wireFacilityCard(cardEl: HTMLElement, airport: Airport) {
@@ -1046,7 +1054,8 @@ async function wireRouteHazards(points: Array<[number, number]>) {
   const parts: string[] = [];
   const ash = result.advisories.filter((a) => a.hazard === 'ASH');
   // Ash stays above the fold: flights do not fly through it at any altitude.
-  const ashHtml = ash.length > 0 ? `<div class="route-hazard-ash">${ashBanner(ash)}</div>` : '';
+  const ashFocus = { title: 'Volcanic ash along the route', shapes: ash.map((a) => a.coords), points: [] };
+  const ashHtml = ash.length > 0 ? `<div class="route-hazard-ash"${focusAttrs(ashFocus)}>${ashBanner(ash)}</div>` : '';
   if (spaceConcerns.length > 0) {
     const rows = spaceConcerns
       .map((c) => `<div class="route-hazard-row">${severityBadge(scaleSeverity(c.level))}${c.code}: ${c.text}</div>`)
@@ -1057,7 +1066,7 @@ async function wireRouteHazards(points: Array<[number, number]>) {
     const rows = result.cyclones
       .map(({ storm, miles, crossesCone }) => {
         const how = crossesCone ? 'passes through its forecast cone' : `passes ${formatDistance(miles)} from its center`;
-        return `<div class="route-hazard-row">${severityBadge(cycloneSeverity(storm.category, storm.peakWindKmh))}${stormTitle(storm)}: the route ${how}</div>`;
+        return `<div class="route-hazard-row"${focusAttrs(stormFocus(storm, stormTitle(storm)))}>${severityBadge(cycloneSeverity(storm.category, storm.peakWindKmh))}${stormTitle(storm)}: the route ${how}</div>`;
       })
       .join('');
     parts.push(`<div class="route-hazard-head">🌀 Tropical cyclone${result.cyclones.length === 1 ? '' : 's'} near the route (${onMap(show.cyclones, 'drawn on the map')})</div>${rows}`);
@@ -1065,24 +1074,26 @@ async function wireRouteHazards(points: Array<[number, number]>) {
   if (result.advisories.length > 0) {
     // Worst first (ash is always Extreme: flights do not fly through it at any altitude).
     const ordered = [...result.advisories].sort((a, b) => advisorySeverity(b) - advisorySeverity(a));
-    const rows = ordered.map((a) => `<div class="route-hazard-row">${severityBadge(advisorySeverity(a))}${describeAdvisory(a)}</div>`).join('');
+    const rows = ordered.map((a) => `<div class="route-hazard-row"${focusAttrs(advisoryFocus(a))}>${severityBadge(advisorySeverity(a))}${describeAdvisory(a)}</div>`).join('');
     parts.push(`<div class="route-hazard-head">⚠️ Route passes through ${result.advisories.length} weather advisor${result.advisories.length === 1 ? 'y' : 'ies'} (${onMap(show.advisories, 'outlined on the map')})</div>${rows}`);
   }
   if (result.tfrs.length > 0) {
     const rows = [...result.tfrs]
       .sort((a, b) => tfrSeverity(b.type) - tfrSeverity(a.type))
-      .map((t) => `<div class="route-hazard-row">${severityBadge(tfrSeverity(t.type))}${describeTfr(t)} (<a href="${t.url}" target="_blank" rel="noopener">details</a>)</div>`)
+      .map((t) => `<div class="route-hazard-row"${focusAttrs(tfrFocus(t))}>${severityBadge(tfrSeverity(t.type))}${describeTfr(t)} (<a href="${t.url}" target="_blank" rel="noopener">details</a>)</div>`)
       .join('');
     parts.push(
       `<div class="route-hazard-head">🚫 Route crosses ${result.tfrs.length} US flight restriction${result.tfrs.length === 1 ? '' : 's'} (${onMap(show.tfrs, 'outlined on the map')}). Most reach only a few thousand feet, well below cruise; they matter near the airports.</div>${rows}`
     );
   }
   const pirepLines = result.pireps
-    .map(describeRoutePirep)
-    .filter((t): t is string => !!t)
+    .map((p) => ({ p, text: describeRoutePirep(p) }))
+    .filter((x): x is { p: (typeof result.pireps)[number]; text: string } => !!x.text)
     .slice(0, 5);
   if (pirepLines.length > 0) {
-    const rows = pirepLines.map((t) => `<div class="route-hazard-row">${t}</div>`).join('');
+    const rows = pirepLines
+      .map(({ p, text }) => `<div class="route-hazard-row"${focusAttrs({ title: text.replace(/<[^>]+>/g, ''), shapes: [], points: [[p.lat, p.lon]] })}>${text}</div>`)
+      .join('');
     parts.push(`<div class="route-hazard-head">📣 Pilot reports near the route (${result.pireps.length}, ${onMap(show.pireps, 'dots on the map')})</div>${rows}`);
   }
   // Fold the list behind a one-line summary; Settings, Airport cards, Alerts decides how it starts.
