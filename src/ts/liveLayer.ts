@@ -4,7 +4,7 @@
 // until Continue; turning it off clears everything. Settings changes apply at the next refresh,
 // except the radius, which applies the next time it is turned on.
 
-import { readPref } from './prefs';
+import { readPref, PREF_CHANGED } from './prefs';
 import { loadAirlines, flightName, type AirlineTable } from './airlineCallsign';
 import { setLegend } from './legend';
 import { formatDistance } from './units';
@@ -14,6 +14,8 @@ import {
   SESSION_MS,
   METERS_PER_MI,
   altitudeColor,
+  formatSpeed,
+  speedUnitOf,
   liveLegend,
   liveQuery,
   verticalLabel,
@@ -37,6 +39,8 @@ const markers = new Map<string, L.Marker>();
 let airlines: AirlineTable = {};
 /** While adsb.lol asks to wait: when the next request may go, ms since epoch. */
 let busyUntil = 0;
+let lastQualifying = 0;
+const speed = (kt: number) => formatSpeed(kt, speedUnitOf(readPref('live-speed-unit', 'kt')));
 
 const el = (id: string) => document.getElementById(id) as HTMLElement | null;
 const NM_TO_MI = 1.150779;
@@ -76,6 +80,12 @@ export function initLive(m: L.Map) {
       e.preventDefault();
       showAircraft(row.dataset.liveHex || '');
     }
+  });
+  // A new speed unit shows at once, without waiting for the next refresh.
+  window.addEventListener(PREF_CHANGED, (e) => {
+    if ((e as CustomEvent).detail?.key !== 'live-speed-unit' || state === 'off' || !tracked.length) return;
+    draw();
+    setPanel(cardHtml(null, tracked, false, lastQualifying));
   });
   document.addEventListener('visibilitychange', () => {
     if (state !== 'tracking') return;
@@ -225,6 +235,7 @@ async function poll() {
       const body = await res.json();
       if (my !== gen) return;
       tracked = body.aircraft || [];
+      lastQualifying = body.qualifying || 0;
       if (body.busy) busyUntil = Date.now() + (Number(body.retryIn) || 60) * 1000;
       draw();
       setPanel(cardHtml(null, tracked, false, body.qualifying, body.busy ? busyMessage(Number(body.retryIn) || 60) : null));
@@ -274,7 +285,7 @@ function popupHtml(a: LiveAircraft): string {
     `<strong>${escapeHtml(name.label)}</strong>${a.reg ? ` <span class="muted">${escapeHtml(a.reg)}</span>` : ''}` +
     `${a.callsign && name.label !== a.callsign ? `<br><span class="muted">Callsign ${escapeHtml(a.callsign)}</span>` : ''}` +
     `<br>${escapeHtml(type)}${route ? `<br>${escapeHtml(route)}` : ''}` +
-    `<br>${a.altFt.toLocaleString('en-US')} ft (${a.aglFt.toLocaleString('en-US')} ft above you), ${a.gs} kt` +
+    `<br>${a.altFt.toLocaleString('en-US')} ft (${a.aglFt.toLocaleString('en-US')} ft above you), ${speed(a.gs)}` +
     `<br>${verticalLabel(a.rate)}${a.emergency ? `<br><strong>Emergency: ${escapeHtml(a.emergency)}</strong>` : ''}` +
     `<br><small style="color:#64748b">adsb.lol, ODbL</small>`
   );
@@ -331,7 +342,7 @@ function cardHtml(message: string | null, aircraft: LiveAircraft[], error = fals
       return `<div class="live-row" data-live-hex="${a.hex}" role="button" tabindex="0">
         <span class="live-dot" style="background:${altitudeColor(a.altFt)}"></span>
         <span class="live-main"><strong>${escapeHtml(name)}</strong>${reg ? ` <span class="muted">${escapeHtml(reg)}</span>` : ''}${type ? `<br><span class="muted">${escapeHtml(type)}</span>` : ''}${route ? `<br><span class="live-route${route === 'Route unknown' ? ' muted' : ''}">${escapeHtml(route)}</span>` : ''}</span>
-        <span class="live-stats">${a.altFt.toLocaleString('en-US')} ft, ${a.gs} kt<br><span class="muted">${verticalLabel(a.rate)} \u00b7 ${where}</span></span>
+        <span class="live-stats">${a.altFt.toLocaleString('en-US')} ft, ${speed(a.gs)}<br><span class="muted">${verticalLabel(a.rate)} \u00b7 ${where}</span></span>
       </div>`;
     })
     .join('');

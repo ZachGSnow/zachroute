@@ -136,6 +136,18 @@ export function routePlaces(route: LiveRoute, cityOf: (code: string) => string |
   return `${place(route.airports[0])} to ${place(route.airports[route.airports.length - 1])}`;
 }
 
+export type SpeedUnit = 'kt' | 'mph' | 'kmh';
+
+/** A speed given in knots, in the unit chosen for Live track: "164 kt", "189 mph", "304 km/h". */
+export function formatSpeed(kt: number, unit: SpeedUnit): string {
+  if (unit === 'mph') return `${Math.round(kt * 1.150779).toLocaleString('en-US')} mph`;
+  if (unit === 'kmh') return `${Math.round(kt * 1.852).toLocaleString('en-US')} km/h`;
+  return `${Math.round(kt).toLocaleString('en-US')} kt`;
+}
+
+/** The speed unit set in Settings, Live track (knots unless changed). */
+export const speedUnitOf = (stored: string | null): SpeedUnit => (stored === 'mph' || stored === 'kmh' ? stored : 'kt');
+
 /** "Climbing 1,200 ft/min", "Descending 800 ft/min" or "Level" (under 300 ft/min either way). */
 export function verticalLabel(rate: number | null): string {
   if (rate == null || Math.abs(rate) < 300) return 'Level';
