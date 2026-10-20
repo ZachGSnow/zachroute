@@ -251,6 +251,19 @@ export function geohazardsLegend(): LegendSpec {
   };
 }
 
+/** Aurora chance in green (spaceWeather.ts auroraRgba), with the current NOAA scales in the note. */
+export function auroraLegend(scales?: string): LegendSpec {
+  return {
+    kind: 'items',
+    title: 'Space weather and aurora',
+    items: [
+      { color: 'rgba(74, 222, 128, 0.35)', label: 'aurora possible (10-50%)', mark: 'dot' },
+      { color: 'rgba(74, 222, 128, 0.9)', label: 'aurora likely (50%+)', mark: 'dot' },
+    ],
+    note: `Under the aurora, HF radio and GPS degrade in storms.${scales ? ` NOAA scales now: ${scales}` : ''}`,
+  };
+}
+
 export function tcfLegend(): LegendSpec {
   const [, moderate, severe, extreme] = severityLegendItems([1, 2, 3, 4], 'line');
   return {
