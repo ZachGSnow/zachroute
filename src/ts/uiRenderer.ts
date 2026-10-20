@@ -26,6 +26,7 @@ import { fetchCruiseWind } from './windsAloft';
 import { fetchFreezingLevel, describeFreezingLevel, routeFreezingSummary } from './freezingLevel';
 import { tfrChips, describeTfr } from './tfr';
 import { volcanoChips } from './geohazards';
+import { fetchMeasuredPm25, pm25Category, readingAge } from './openaq';
 import { fetchSpaceWeather, polarConcerns, maxAbsLat, scaleSeverity, POLAR_LAT } from './spaceWeather';
 import { fetchTerrainProfile, profileSvg, highestPoint, frozenTerrainMiles, type ElevationProfile } from './terrainProfile';
 import { severityBadge } from './severityBadge';
@@ -636,21 +637,30 @@ const AQ_DOTS = ['🟢', '🟡', '🟠', '🔴', '🟣', '🟤'];
 async function fillAirQuality(cardEl: HTMLElement, airport: Airport) {
   const el = cardEl.querySelector('.aq-block') as HTMLElement | null;
   if (!el) return;
-  const aq = await fetchAirQuality(airport.lat, airport.lon);
-  if (!aq || !el.isConnected) return;
+  const [aq, measured] = await Promise.all([fetchAirQuality(airport.lat, airport.lon), fetchMeasuredPm25(airport.lat, airport.lon)]);
+  if ((!aq && !measured) || !el.isConnected) return;
 
   const scale = aqiScaleFor(airport.country);
   const scaleName = scale === 'eu' ? 'European AQI' : 'US AQI';
-  const value = aqiValue(aq, scale);
+  const value = aq ? aqiValue(aq, scale) : undefined;
   const lines: string[] = [];
-  if (value !== undefined) {
+  if (aq && value !== undefined) {
     const cat = aqiCategory(value, scale);
     const pm = aq.pm25 !== undefined ? ` \u2022 PM2.5 ${Math.round(aq.pm25)} \u00b5g/m\u00b3` : '';
     lines.push(`${AQ_DOTS[cat.level]} Air quality: ${cat.label} <span class="muted">(${scaleName} ${Math.round(value)})</span>${pm}`);
   }
-  const haze = hazeNote(aq);
+  if (measured) {
+    // A ground station's reading, beside the model estimate above.
+    const cat = pm25Category(measured.pm25, scale);
+    const where = `${escapeHtml(measured.station)}, ${formatDistance(measured.distanceKm / 1.609344)} away, ${readingAge(measured.time)}`;
+    const source = ['OpenAQ', measured.provider, measured.monitor ? '' : 'low-cost sensor'].filter((s): s is string => !!s).map(escapeHtml).join(', ');
+    lines.push(
+      `\u{1F4CD} Measured nearby: PM2.5 ${Math.round(measured.pm25)} \u00b5g/m\u00b3 (PM2.5 alone: ${cat.label.toLowerCase()}) <span class="muted">${where} (${source})</span>`
+    );
+  }
+  const haze = aq ? hazeNote(aq) : null;
   if (haze) lines.push(`🌫️ ${haze}`);
-  const ahead = worseningAhead(aq, scale);
+  const ahead = aq ? worseningAhead(aq, scale) : null;
   if (ahead) {
     const at = new Date(ahead.hour.time).toLocaleTimeString('en-US', { ...hourOptions(), timeZone: airport.timeZone || undefined });
     lines.push(`<span class="muted">Forecast to reach ${ahead.category.label.toLowerCase()} (${Math.round(ahead.value)}) around ${at}</span>`);

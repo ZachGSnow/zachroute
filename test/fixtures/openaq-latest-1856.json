@@ -1,0 +1,24 @@
+{
+ "meta": {
+  "name": "openaq-api",
+  "website": "/",
+  "page": 1,
+  "limit": 100,
+  "found": 1
+ },
+ "results": [
+  {
+   "datetime": {
+    "utc": "2026-10-20T09:00:00Z",
+    "local": "2026-10-20T04:00:00-05:00"
+   },
+   "value": 20.8,
+   "coordinates": {
+    "latitude": 41.864329,
+    "longitude": -87.748826
+   },
+   "sensorsId": 3277,
+   "locationsId": 1856
+  }
+ ]
+}

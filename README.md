@@ -60,6 +60,8 @@ companion to a FlightWall display: see a plane overhead, look up where it is goi
 - Air quality: the US AQI, or the European AQI at European airports, with PM2.5, a note when
   smoke, dust or haze may reduce visibility, and a heads-up when it is forecast to get worse in the
   next 12 hours.
+  Where a ground station within 25 km has reported in the last 3 hours, its measured PM2.5 too, with
+  the station, distance and age (OpenAQ).
 - Satellite fire and heat detections within 50 miles in the last 24 hours, with the most intense
   one's distance and direction.
 - US only: FAA ground stops, ground delay programs and departure/arrival delays, active
@@ -187,7 +189,7 @@ npx wrangler pages deploy dist --project-name=<your-project> --branch=main
 
 | Setting | Where | Notes |
 |---|---|---|
-| API keys (optional) | Cloudflare Pages secrets (Settings, Variables and Secrets, for Production and Preview); locally `.dev.vars` (copy of `.dev.vars.example`, gitignored) | `FIRMS_MAP_KEY` ([free NASA FIRMS map key](https://firms.modaps.eosdis.nasa.gov/api/map_key/)) switches fires from MODIS to VIIRS. Keys are read only by Pages Functions, never sent to the browser or committed; without them the app falls back to the keyless sources. |
+| API keys (optional) | Cloudflare Pages secrets (Settings, Variables and Secrets, for Production and Preview); locally `.dev.vars` (copy of `.dev.vars.example`, gitignored) | `FIRMS_MAP_KEY` ([free NASA FIRMS map key](https://firms.modaps.eosdis.nasa.gov/api/map_key/)) switches fires from MODIS to VIIRS; `OPENAQ_API_KEY` ([free OpenAQ key](https://explore.openaq.org/register)) adds measured PM2.5 to airport cards. Keys are read only by Pages Functions, never sent to the browser or committed; without them the app falls back to the keyless sources. |
 | KV namespace IDs | `wrangler.toml` (copy of `wrangler.toml.example`, gitignored) | Create with `npx wrangler kv namespace create LORE_KV` (and `--preview`). KV caches upstream responses for 5 to 30 minutes (7 days for airport history); the app works without it. |
 | Map tiles | [Stadia Maps](https://stadiamaps.com) dashboard | Tiles use Stadia domain authentication: add your site's domain in the dashboard. `localhost` works without registration. No API key is stored in the code. |
 | User-Agent for upstream APIs | `package.json` `name`, `version`, `homepage` | Sent with every server-side request (aviationweather.gov, the FAA, GDACS, NASA FIRMS and Wikipedia), since several sources ask callers to identify themselves. |
@@ -218,7 +220,10 @@ for the design and the reasoning behind the main decisions.
 
 - Routes are great circles, not airways or air traffic routing, and connections come from route
   data, not live schedules. International routes use OpenFlights data from 2017.
-- Air quality is a model estimate (Copernicus CAMS), not a station measurement.
+- Air quality is a model estimate (Copernicus CAMS). A measured PM2.5 reading is added only where a
+  ground station within 25 km reported in the last 3 hours (with the OpenAQ key); low-cost sensors
+  are named as such. The measured line rates PM2.5 alone, while the model AQI takes the worst of
+  several pollutants, so the two can differ.
 - Tropical cyclone positions are from the latest official advisory, typically several hours old.
 - An airport card loads its data when you search and does not refresh while it is open; search
   again for newer data.
@@ -287,6 +292,7 @@ can add on top of the source's age.
 | Tropical cyclones elsewhere (from JTWC and other agencies) | [GDACS](https://www.gdacs.org), the UN / European Commission Global Disaster Alert and Coordination System | Each storm's advisory every 6 hours, republished by GDACS 1-6 hours later (storms were 5-14 hours past their advisory time when measured) | Up to 40 min | No published license; GDACS provides its data as is, for information only (credited in the app) |
 | Tropical cyclones, Atlantic and East and Central Pacific | [National Hurricane Center](https://www.nhc.noaa.gov) advisories (CurrentStorms.json; cone and track from NOAA's tropical map service) | Every 6 hours, plus intermediate advisories | Up to 40 min | Public domain (US government) |
 | Air quality (Copernicus CAMS models) | [Open-Meteo](https://open-meteo.com) | Hourly model values from model runs twice a day: estimates, not station measurements | Up to 30 min | CC BY 4.0, free for non-commercial use; contains Copernicus Atmosphere Monitoring Service information |
+| Measured air quality (PM2.5 at the nearest ground station within 25 km) | [OpenAQ](https://openaq.org) (with `OPENAQ_API_KEY`), from government monitors (AirNow, CPCB, ...) and low-cost sensor networks | Stations report hourly or more often; only readings from the last 3 hours are shown | Up to 45 min | Free key; credit OpenAQ and the original provider (both named on the card) |
 | Winds aloft and freezing level | Open-Meteo | Hourly model values (the freezing level on the airport card every 15 minutes) | Up to 15 min (30 min for the freezing level map layer) | CC BY 4.0, free for non-commercial use |
 | Fire and heat detections (VIIRS, 375 m, from NOAA-20, NOAA-21 and Suomi-NPP; MODIS 1 km without a key) | [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov) area API (with `FIRMS_MAP_KEY`) or global MODIS file | Several satellite passes per place per day, published minutes to 3 hours later; the app keeps the last 24 hours. VIIRS detections of one pass within about 1 km are summed into one fire | Up to 75 min (the source, the result and the browser are each cached) | Free and open (NASA); credited in the app |
 | Satellite clouds (GOES-East and GOES-West from NOAA, Himawari from JMA; infrared band 13) | NASA GIBS | Every 10 minutes | Redraws every 10 min | Free and open (NASA); credited on the map |

@@ -1,0 +1,1041 @@
+{
+ "meta": {
+  "name": "openaq-api",
+  "website": "/",
+  "page": 1,
+  "limit": 1000,
+  "found": 14
+ },
+ "results": [
+  {
+   "id": 1657,
+   "name": "CHI_SP",
+   "locality": "Chicago-Naperville-Joliet",
+   "timezone": "America/Chicago",
+   "country": {
+    "id": 155,
+    "code": "US",
+    "name": "United States"
+   },
+   "owner": {
+    "id": 4,
+    "name": "Unknown Governmental Organization"
+   },
+   "provider": {
+    "id": 119,
+    "name": "AirNow"
+   },
+   "isMobile": false,
+   "isMonitor": true,
+   "instruments": [
+    {
+     "id": 2,
+     "name": "Government Monitor"
+    }
+   ],
+   "sensors": [
+    {
+     "id": 2934,
+     "name": "pm25 \u00c2\u00b5g/m\u00c2\u00b3",
+     "parameter": {
+      "id": 2,
+      "name": "pm25",
+      "units": "\u00c2\u00b5g/m\u00c2\u00b3",
+      "displayName": "PM2.5"
+     }
+    }
+   ],
+   "coordinates": {
+    "latitude": 41.9136,
+    "longitude": -87.7239
+   },
+   "licenses": [
+    {
+     "id": 33,
+     "name": "US Public Domain",
+     "attribution": {
+      "name": "Unknown Governmental Organization",
+      "url": null
+     },
+     "dateFrom": "2016-01-30",
+     "dateTo": null
+    }
+   ],
+   "bounds": [
+    -87.7239,
+    41.9136,
+    -87.7239,
+    41.9136
+   ],
+   "distance": 16647.34698613,
+   "datetimeFirst": {
+    "utc": "2016-03-11T16:00:00Z",
+    "local": "2016-03-11T10:00:00-06:00"
+   },
+   "datetimeLast": {
+    "utc": "2026-10-20T09:00:00Z",
+    "local": "2026-10-20T04:00:00-05:00"
+   }
+  },
+  {
+   "id": 1856,
+   "name": "Cicero Liberty",
+   "locality": "Chicago-Naperville-Joliet",
+   "timezone": "America/Chicago",
+   "country": {
+    "id": 155,
+    "code": "US",
+    "name": "United States"
+   },
+   "owner": {
+    "id": 4,
+    "name": "Unknown Governmental Organization"
+   },
+   "provider": {
+    "id": 119,
+    "name": "AirNow"
+   },
+   "isMobile": false,
+   "isMonitor": true,
+   "instruments": [
+    {
+     "id": 2,
+     "name": "Government Monitor"
+    }
+   ],
+   "sensors": [
+    {
+     "id": 3277,
+     "name": "pm25 \u00c2\u00b5g/m\u00c2\u00b3",
+     "parameter": {
+      "id": 2,
+      "name": "pm25",
+      "units": "\u00c2\u00b5g/m\u00c2\u00b3",
+      "displayName": "PM2.5"
+     }
+    }
+   ],
+   "coordinates": {
+    "latitude": 41.864329,
+    "longitude": -87.748826
+   },
+   "licenses": [
+    {
+     "id": 33,
+     "name": "US Public Domain",
+     "attribution": {
+      "name": "Unknown Governmental Organization",
+      "url": null
+     },
+     "dateFrom": "2016-01-30",
+     "dateTo": null
+    }
+   ],
+   "bounds": [
+    -87.748826,
+    41.864329,
+    -87.748826,
+    41.864329
+   ],
+   "distance": 18124.48747255,
+   "datetimeFirst": {
+    "utc": "2016-03-06T20:00:00Z",
+    "local": "2016-03-06T14:00:00-06:00"
+   },
+   "datetimeLast": {
+    "utc": "2026-10-20T09:00:00Z",
+    "local": "2026-10-20T04:00:00-05:00"
+   }
+  },
+  {
+   "id": 1962,
+   "name": "NORTHBRK",
+   "locality": "Chicago-Naperville-Joliet",
+   "timezone": "America/Chicago",
+   "country": {
+    "id": 155,
+    "code": "US",
+    "name": "United States"
+   },
+   "owner": {
+    "id": 4,
+    "name": "Unknown Governmental Organization"
+   },
+   "provider": {
+    "id": 119,
+    "name": "AirNow"
+   },
+   "isMobile": false,
+   "isMonitor": true,
+   "instruments": [
+    {
+     "id": 2,
+     "name": "Government Monitor"
+    }
+   ],
+   "sensors": [
+    {
+     "id": 3474,
+     "name": "o3 ppm",
+     "parameter": {
+      "id": 10,
+      "name": "o3",
+      "units": "ppm",
+      "displayName": "O\u00e2\u201a\u0192"
+     }
+    },
+    {
+     "id": 13363352,
+     "name": "pm10 \u00c2\u00b5g/m\u00c2\u00b3",
+     "parameter": {
+      "id": 1,
+      "name": "pm10",
+      "units": "\u00c2\u00b5g/m\u00c2\u00b3",
+      "displayName": "PM10"
+     }
+    },
+    {
+     "id": 22653,
+     "name": "pm25 \u00c2\u00b5g/m\u00c2\u00b3",
+     "parameter": {
+      "id": 2,
+      "name": "pm25",
+      "units": "\u00c2\u00b5g/m\u00c2\u00b3",
+      "displayName": "PM2.5"
+     }
+    }
+   ],
+   "coordinates": {
+    "latitude": 42.1406,
+    "longitude": -87.7994
+   },
+   "licenses": [
+    {
+     "id": 33,
+     "name": "US Public Domain",
+     "attribution": {
+      "name": "Unknown Governmental Organization",
+      "url": null
+     },
+     "dateFrom": "2016-01-30",
+     "dateTo": null
+    }
+   ],
+   "bounds": [
+    -87.7994,
+    42.1406,
+    -87.7994,
+    42.1406
+   ],
+   "distance": 19997.4922601,
+   "datetimeFirst": {
+    "utc": "2016-03-06T20:00:00Z",
+    "local": "2016-03-06T14:00:00-06:00"
+   },
+   "datetimeLast": {
+    "utc": "2026-10-20T09:00:00Z",
+    "local": "2026-10-20T04:00:00-05:00"
+   }
+  },
+  {
+   "id": 2085,
+   "name": "SCHILPRK",
+   "locality": "Chicago-Naperville-Joliet",
+   "timezone": "America/Chicago",
+   "country": {
+    "id": 155,
+    "code": "US",
+    "name": "United States"
+   },
+   "owner": {
+    "id": 4,
+    "name": "Unknown Governmental Organization"
+   },
+   "provider": {
+    "id": 119,
+    "name": "AirNow"
+   },
+   "isMobile": false,
+   "isMonitor": true,
+   "instruments": [
+    {
+     "id": 2,
+     "name": "Government Monitor"
+    }
+   ],
+   "sensors": [
+    {
+     "id": 3716,
+     "name": "o3 ppm",
+     "parameter": {
+      "id": 10,
+      "name": "o3",
+      "units": "ppm",
+      "displayName": "O\u00e2\u201a\u0192"
+     }
+    },
+    {
+     "id": 2087664,
+     "name": "pm25 \u00c2\u00b5g/m\u00c2\u00b3",
+     "parameter": {
+      "id": 2,
+      "name": "pm25",
+      "units": "\u00c2\u00b5g/m\u00c2\u00b3",
+      "displayName": "PM2.5"
+     }
+    }
+   ],
+   "coordinates": {
+    "latitude": 41.965,
+    "longitude": -87.8761
+   },
+   "licenses": [
+    {
+     "id": 33,
+     "name": "US Public Domain",
+     "attribution": {
+      "name": "Unknown Governmental Organization",
+      "url": null
+     },
+     "dateFrom": "2016-01-30",
+     "dateTo": null
+    }
+   ],
+   "bounds": [
+    -87.8761,
+    41.965,
+    -87.8761,
+    41.965
+   ],
+   "distance": 2817.95760621,
+   "datetimeFirst": {
+    "utc": "2016-03-06T20:00:00Z",
+    "local": "2016-03-06T14:00:00-06:00"
+   },
+   "datetimeLast": {
+    "utc": "2026-10-20T09:00:00Z",
+    "local": "2026-10-20T04:00:00-05:00"
+   }
+  },
+  {
+   "id": 2112,
+   "name": "DESPLNS",
+   "locality": "Chicago-Naperville-Joliet",
+   "timezone": "America/Chicago",
+   "country": {
+    "id": 155,
+    "code": "US",
+    "name": "United States"
+   },
+   "owner": {
+    "id": 4,
+    "name": "Unknown Governmental Organization"
+   },
+   "provider": {
+    "id": 119,
+    "name": "AirNow"
+   },
+   "isMobile": false,
+   "isMonitor": true,
+   "instruments": [
+    {
+     "id": 2,
+     "name": "Government Monitor"
+    }
+   ],
+   "sensors": [
+    {
+     "id": 3799,
+     "name": "o3 ppm",
+     "parameter": {
+      "id": 10,
+      "name": "o3",
+      "units": "ppm",
+      "displayName": "O\u00e2\u201a\u0192"
+     }
+    },
+    {
+     "id": 25257,
+     "name": "pm25 \u00c2\u00b5g/m\u00c2\u00b3",
+     "parameter": {
+      "id": 2,
+      "name": "pm25",
+      "units": "\u00c2\u00b5g/m\u00c2\u00b3",
+      "displayName": "PM2.5"
+     }
+    }
+   ],
+   "coordinates": {
+    "latitude": 42.0603,
+    "longitude": -87.8631
+   },
+   "licenses": [
+    {
+     "id": 33,
+     "name": "US Public Domain",
+     "attribution": {
+      "name": "Unknown Governmental Organization",
+      "url": null
+     },
+     "dateFrom": "2016-01-30",
+     "dateTo": null
+    }
+   ],
+   "bounds": [
+    -87.8631,
+    42.0603,
+    -87.8631,
+    42.0603
+   ],
+   "distance": 9709.7582551,
+   "datetimeFirst": {
+    "utc": "2016-03-31T16:00:00Z",
+    "local": "2016-03-31T11:00:00-05:00"
+   },
+   "datetimeLast": {
+    "utc": "2026-10-20T09:00:00Z",
+    "local": "2026-10-20T04:00:00-05:00"
+   }
+  },
+  {
+   "id": 2047319,
+   "name": "McCook",
+   "locality": "Chicago-Naperville-Joliet",
+   "timezone": "America/Chicago",
+   "country": {
+    "id": 155,
+    "code": "US",
+    "name": "United States"
+   },
+   "owner": {
+    "id": 4,
+    "name": "Unknown Governmental Organization"
+   },
+   "provider": {
+    "id": 119,
+    "name": "AirNow"
+   },
+   "isMobile": false,
+   "isMonitor": true,
+   "instruments": [
+    {
+     "id": 2,
+     "name": "Government Monitor"
+    }
+   ],
+   "sensors": [
+    {
+     "id": 14375982,
+     "name": "pm10 \u00c2\u00b5g/m\u00c2\u00b3",
+     "parameter": {
+      "id": 1,
+      "name": "pm10",
+      "units": "\u00c2\u00b5g/m\u00c2\u00b3",
+      "displayName": "PM10"
+     }
+    },
+    {
+     "id": 7635192,
+     "name": "pm25 \u00c2\u00b5g/m\u00c2\u00b3",
+     "parameter": {
+      "id": 2,
+      "name": "pm25",
+      "units": "\u00c2\u00b5g/m\u00c2\u00b3",
+      "displayName": "PM2.5"
+     }
+    }
+   ],
+   "coordinates": {
+    "latitude": 41.80117,
+    "longitude": -87.83194
+   },
+   "licenses": [
+    {
+     "id": 33,
+     "name": "US Public Domain",
+     "attribution": {
+      "name": "Unknown Governmental Organization",
+      "url": null
+     },
+     "dateFrom": "2016-01-30",
+     "dateTo": null
+    }
+   ],
+   "bounds": [
+    -87.83194,
+    41.80117,
+    -87.83194,
+    41.80117
+   ],
+   "distance": 20614.18701646,
+   "datetimeFirst": {
+    "utc": "2024-01-02T17:00:00Z",
+    "local": "2024-01-02T11:00:00-06:00"
+   },
+   "datetimeLast": {
+    "utc": "2026-10-20T09:00:00Z",
+    "local": "2026-10-20T04:00:00-05:00"
+   }
+  },
+  {
+   "id": 3301365,
+   "name": "CHI_MAYFAIR",
+   "locality": "Chicago-Naperville-Joliet",
+   "timezone": "America/Chicago",
+   "country": {
+    "id": 155,
+    "code": "US",
+    "name": "United States"
+   },
+   "owner": {
+    "id": 4,
+    "name": "Unknown Governmental Organization"
+   },
+   "provider": {
+    "id": 119,
+    "name": "AirNow"
+   },
+   "isMobile": false,
+   "isMonitor": true,
+   "instruments": [
+    {
+     "id": 2,
+     "name": "Government Monitor"
+    }
+   ],
+   "sensors": [
+    {
+     "id": 11543361,
+     "name": "pm25 \u00c2\u00b5g/m\u00c2\u00b3",
+     "parameter": {
+      "id": 2,
+      "name": "pm25",
+      "units": "\u00c2\u00b5g/m\u00c2\u00b3",
+      "displayName": "PM2.5"
+     }
+    }
+   ],
+   "coordinates": {
+    "latitude": 41.96548,
+    "longitude": -87.74992
+   },
+   "licenses": [
+    {
+     "id": 33,
+     "name": "US Public Domain",
+     "attribution": {
+      "name": "Unknown Governmental Organization",
+      "url": null
+     },
+     "dateFrom": "2016-01-30",
+     "dateTo": null
+    }
+   ],
+   "bounds": [
+    -87.74992,
+    41.96548,
+    -87.74992,
+    41.96548
+   ],
+   "distance": 12919.98759607,
+   "datetimeFirst": {
+    "utc": "2024-12-04T16:00:00Z",
+    "local": "2024-12-04T10:00:00-06:00"
+   },
+   "datetimeLast": {
+    "utc": "2026-10-20T09:00:00Z",
+    "local": "2026-10-20T04:00:00-05:00"
+   }
+  },
+  {
+   "id": 3301366,
+   "name": "CHI_MAYFAIR",
+   "locality": "Chicago-Naperville-Joliet",
+   "timezone": "America/Chicago",
+   "country": {
+    "id": 155,
+    "code": "US",
+    "name": "United States"
+   },
+   "owner": {
+    "id": 4,
+    "name": "Unknown Governmental Organization"
+   },
+   "provider": {
+    "id": 119,
+    "name": "AirNow"
+   },
+   "isMobile": false,
+   "isMonitor": true,
+   "instruments": [
+    {
+     "id": 2,
+     "name": "Government Monitor"
+    }
+   ],
+   "sensors": [
+    {
+     "id": 11543362,
+     "name": "pm25 \u00c2\u00b5g/m\u00c2\u00b3",
+     "parameter": {
+      "id": 2,
+      "name": "pm25",
+      "units": "\u00c2\u00b5g/m\u00c2\u00b3",
+      "displayName": "PM2.5"
+     }
+    }
+   ],
+   "coordinates": {
+    "latitude": 41.96548,
+    "longitude": -87.74992
+   },
+   "licenses": [
+    {
+     "id": 33,
+     "name": "US Public Domain",
+     "attribution": {
+      "name": "Unknown Governmental Organization",
+      "url": null
+     },
+     "dateFrom": "2016-01-30",
+     "dateTo": null
+    }
+   ],
+   "bounds": [
+    -87.74992,
+    41.96548,
+    -87.74992,
+    41.96548
+   ],
+   "distance": 12919.98759607,
+   "datetimeFirst": {
+    "utc": "2024-12-04T16:00:00Z",
+    "local": "2024-12-04T10:00:00-06:00"
+   },
+   "datetimeLast": {
+    "utc": "2026-09-21T17:00:00Z",
+    "local": "2026-09-21T12:00:00-05:00"
+   }
+  },
+  {
+   "id": 4139028,
+   "name": "Summit",
+   "locality": "COOK",
+   "timezone": "America/Chicago",
+   "country": {
+    "id": 155,
+    "code": "US",
+    "name": "United States"
+   },
+   "owner": {
+    "id": 4,
+    "name": "Unknown Governmental Organization"
+   },
+   "provider": {
+    "id": 119,
+    "name": "AirNow"
+   },
+   "isMobile": false,
+   "isMonitor": true,
+   "instruments": [
+    {
+     "id": 2,
+     "name": "Government Monitor"
+    }
+   ],
+   "sensors": [
+    {
+     "id": 12856503,
+     "name": "pm25 \u00c2\u00b5g/m\u00c2\u00b3",
+     "parameter": {
+      "id": 2,
+      "name": "pm25",
+      "units": "\u00c2\u00b5g/m\u00c2\u00b3",
+      "displayName": "PM2.5"
+     }
+    }
+   ],
+   "coordinates": {
+    "latitude": 41.78276,
+    "longitude": -87.80537
+   },
+   "licenses": [
+    {
+     "id": 33,
+     "name": "US Public Domain",
+     "attribution": {
+      "name": "Unknown Governmental Organization",
+      "url": null
+     },
+     "dateFrom": "2016-01-30",
+     "dateTo": null
+    }
+   ],
+   "bounds": [
+    -87.80537,
+    41.78276,
+    -87.80537,
+    41.78276
+   ],
+   "distance": 23265.23096541,
+   "datetimeFirst": {
+    "utc": "2025-04-21T19:00:00Z",
+    "local": "2025-04-21T14:00:00-05:00"
+   },
+   "datetimeLast": {
+    "utc": "2026-09-21T17:00:00Z",
+    "local": "2026-09-21T12:00:00-05:00"
+   }
+  },
+  {
+   "id": 4139029,
+   "name": "Summit",
+   "locality": "COOK",
+   "timezone": "America/Chicago",
+   "country": {
+    "id": 155,
+    "code": "US",
+    "name": "United States"
+   },
+   "owner": {
+    "id": 4,
+    "name": "Unknown Governmental Organization"
+   },
+   "provider": {
+    "id": 119,
+    "name": "AirNow"
+   },
+   "isMobile": false,
+   "isMonitor": true,
+   "instruments": [
+    {
+     "id": 2,
+     "name": "Government Monitor"
+    }
+   ],
+   "sensors": [
+    {
+     "id": 15675768,
+     "name": "pm25 \u00c2\u00b5g/m\u00c2\u00b3",
+     "parameter": {
+      "id": 2,
+      "name": "pm25",
+      "units": "\u00c2\u00b5g/m\u00c2\u00b3",
+      "displayName": "PM2.5"
+     }
+    }
+   ],
+   "coordinates": {
+    "latitude": 41.78276,
+    "longitude": -87.80537
+   },
+   "licenses": [
+    {
+     "id": 33,
+     "name": "US Public Domain",
+     "attribution": {
+      "name": "Unknown Governmental Organization",
+      "url": null
+     },
+     "dateFrom": "2016-01-30",
+     "dateTo": null
+    }
+   ],
+   "bounds": [
+    -87.80537,
+    41.78276,
+    -87.80537,
+    41.78276
+   ],
+   "distance": 23265.23096541,
+   "datetimeFirst": {
+    "utc": "2026-03-13T00:00:00Z",
+    "local": "2026-03-12T19:00:00-05:00"
+   },
+   "datetimeLast": {
+    "utc": "2026-10-20T09:00:00Z",
+    "local": "2026-10-20T04:00:00-05:00"
+   }
+  },
+  {
+   "id": 6222232,
+   "name": "Jefferson Park 3",
+   "locality": null,
+   "timezone": "America/Chicago",
+   "country": {
+    "id": 155,
+    "code": "US",
+    "name": "United States"
+   },
+   "owner": {
+    "id": 9,
+    "name": "Clarity"
+   },
+   "provider": {
+    "id": 166,
+    "name": "Clarity"
+   },
+   "isMobile": false,
+   "isMonitor": false,
+   "instruments": [
+    {
+     "id": 4,
+     "name": "Clarity Sensor"
+    }
+   ],
+   "sensors": [
+    {
+     "id": 15314419,
+     "name": "pm25 \u00c2\u00b5g/m\u00c2\u00b3",
+     "parameter": {
+      "id": 2,
+      "name": "pm25",
+      "units": "\u00c2\u00b5g/m\u00c2\u00b3",
+      "displayName": "PM2.5"
+     }
+    }
+   ],
+   "coordinates": {
+    "latitude": 41.97575,
+    "longitude": -87.78063
+   },
+   "licenses": [
+    {
+     "id": 38,
+     "name": "CC0 1.0",
+     "attribution": {
+      "name": "Clarity",
+      "url": null
+     },
+     "dateFrom": "2021-10-20",
+     "dateTo": null
+    }
+   ],
+   "bounds": [
+    -87.78063,
+    41.97575,
+    -87.78063,
+    41.97575
+   ],
+   "distance": 10296.12124629,
+   "datetimeFirst": {
+    "utc": "2026-01-31T02:08:09Z",
+    "local": "2026-01-30T20:08:09-06:00"
+   },
+   "datetimeLast": {
+    "utc": "2026-10-20T09:07:00Z",
+    "local": "2026-10-20T04:07:00-05:00"
+   }
+  },
+  {
+   "id": 6221779,
+   "name": "West Elsdon 1",
+   "locality": null,
+   "timezone": "America/Chicago",
+   "country": {
+    "id": 155,
+    "code": "US",
+    "name": "United States"
+   },
+   "owner": {
+    "id": 9,
+    "name": "Clarity"
+   },
+   "provider": {
+    "id": 166,
+    "name": "Clarity"
+   },
+   "isMobile": false,
+   "isMonitor": false,
+   "instruments": [
+    {
+     "id": 4,
+     "name": "Clarity Sensor"
+    }
+   ],
+   "sensors": [
+    {
+     "id": 15312226,
+     "name": "pm25 \u00c2\u00b5g/m\u00c2\u00b3",
+     "parameter": {
+      "id": 2,
+      "name": "pm25",
+      "units": "\u00c2\u00b5g/m\u00c2\u00b3",
+      "displayName": "PM2.5"
+     }
+    }
+   ],
+   "coordinates": {
+    "latitude": 41.79302,
+    "longitude": -87.73738
+   },
+   "licenses": [
+    {
+     "id": 38,
+     "name": "CC0 1.0",
+     "attribution": {
+      "name": "Clarity",
+      "url": null
+     },
+     "dateFrom": "2021-10-20",
+     "dateTo": null
+    }
+   ],
+   "bounds": [
+    -87.73738,
+    41.79302,
+    -87.73738,
+    41.79302
+   ],
+   "distance": 24858.92830025,
+   "datetimeFirst": {
+    "utc": "2026-01-30T21:01:44Z",
+    "local": "2026-01-30T15:01:44-06:00"
+   },
+   "datetimeLast": {
+    "utc": "2026-10-20T09:06:56Z",
+    "local": "2026-10-20T04:06:56-05:00"
+   }
+  },
+  {
+   "id": 6221767,
+   "name": "Garfield Ridge 3",
+   "locality": null,
+   "timezone": "America/Chicago",
+   "country": {
+    "id": 155,
+    "code": "US",
+    "name": "United States"
+   },
+   "owner": {
+    "id": 9,
+    "name": "Clarity"
+   },
+   "provider": {
+    "id": 166,
+    "name": "Clarity"
+   },
+   "isMobile": false,
+   "isMonitor": false,
+   "instruments": [
+    {
+     "id": 4,
+     "name": "Clarity Sensor"
+    }
+   ],
+   "sensors": [
+    {
+     "id": 15312224,
+     "name": "pm25 \u00c2\u00b5g/m\u00c2\u00b3",
+     "parameter": {
+      "id": 2,
+      "name": "pm25",
+      "units": "\u00c2\u00b5g/m\u00c2\u00b3",
+      "displayName": "PM2.5"
+     }
+    }
+   ],
+   "coordinates": {
+    "latitude": 41.79223,
+    "longitude": -87.78258
+   },
+   "licenses": [
+    {
+     "id": 38,
+     "name": "CC0 1.0",
+     "attribution": {
+      "name": "Clarity",
+      "url": null
+     },
+     "dateFrom": "2021-10-20",
+     "dateTo": null
+    }
+   ],
+   "bounds": [
+    -87.78258,
+    41.79223,
+    -87.78258,
+    41.79223
+   ],
+   "distance": 23052.26124714,
+   "datetimeFirst": {
+    "utc": "2026-01-30T21:10:59Z",
+    "local": "2026-01-30T15:10:59-06:00"
+   },
+   "datetimeLast": {
+    "utc": "2026-10-20T09:06:55Z",
+    "local": "2026-10-20T04:06:55-05:00"
+   }
+  },
+  {
+   "id": 6221835,
+   "name": "Lower West Side 5",
+   "locality": null,
+   "timezone": "America/Chicago",
+   "country": {
+    "id": 155,
+    "code": "US",
+    "name": "United States"
+   },
+   "owner": {
+    "id": 9,
+    "name": "Clarity"
+   },
+   "provider": {
+    "id": 166,
+    "name": "Clarity"
+   },
+   "isMobile": false,
+   "isMonitor": false,
+   "instruments": [
+    {
+     "id": 4,
+     "name": "Clarity Sensor"
+    }
+   ],
+   "sensors": [
+    {
+     "id": 15312494,
+     "name": "pm25 \u00c2\u00b5g/m\u00c2\u00b3",
+     "parameter": {
+      "id": 2,
+      "name": "pm25",
+      "units": "\u00c2\u00b5g/m\u00c2\u00b3",
+      "displayName": "PM2.5"
+     }
+    }
+   ],
+   "coordinates": {
+    "latitude": 41.84063,
+    "longitude": -87.68543
+   },
+   "licenses": [
+    {
+     "id": 38,
+     "name": "CC0 1.0",
+     "attribution": {
+      "name": "Clarity",
+      "url": null
+     },
+     "dateFrom": "2021-10-20",
+     "dateTo": null
+    }
+   ],
+   "bounds": [
+    -87.68543,
+    41.84063,
+    -87.68543,
+    41.84063
+   ],
+   "distance": 23792.96343492,
+   "datetimeFirst": {
+    "utc": "2026-01-30T22:14:11Z",
+    "local": "2026-01-30T16:14:11-06:00"
+   },
+   "datetimeLast": {
+    "utc": "2026-10-20T09:06:54Z",
+    "local": "2026-10-20T04:06:54-05:00"
+   }
+  }
+ ]
+}
