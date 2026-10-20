@@ -139,6 +139,13 @@ describe('Search', () => {
     ['kansas city new york', 'MCI-JFK'],
     ['san jose costa rica', 'SJO'],
     ['zzzz', 'INVALID'],
+    // Palm Beach's code changed from PBI to DJT in 2026; the old codes still find it
+    ['DJT', 'DJT'],
+    ['PBI', 'DJT'],
+    ['KPBI', 'DJT'],
+    ['west palm beach', 'DJT'],
+    ['pbi jfk', 'DJT-JFK'],
+    ['jfk to pbi', 'JFK-DJT'],
   ])('%s -> %s', (q, expected) => {
     expect(route(q)).toBe(expected);
   });

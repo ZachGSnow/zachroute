@@ -19,6 +19,7 @@ import path from 'node:path';
 import readline from 'node:readline';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { currentIata } from '../shared/iataRenames.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -95,7 +96,8 @@ export async function countMonth(csvPath) {
     }
     const f = parseCsvLine(line);
     if (f[idx.Cancelled] === '1.00' || f[idx.Cancelled] === '1') continue;
-    const key = `${f[idx.Origin]}-${f[idx.Dest]}|${f[idx.IATA_CODE_Reporting_Airline]}`;
+    // Months before an airport's code change report the old code (PBI for DJT).
+    const key = `${currentIata(f[idx.Origin])}-${currentIata(f[idx.Dest])}|${f[idx.IATA_CODE_Reporting_Airline]}`;
     counts.set(key, (counts.get(key) || 0) + 1);
   }
   return counts;
