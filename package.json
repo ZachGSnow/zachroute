@@ -13,11 +13,12 @@
     "etl": "node scripts/etl_ourairports.js && node scripts/openaip_airspace.js",
     "etl:airspace": "node scripts/openaip_airspace.js",
     "etl:t100": "node scripts/build_t100.js",
+    "etl:airlines": "node scripts/build_airlines.js",
     "check:codes": "node scripts/check_bts_codes.js",
     "icons": "node scripts/generate-icons.mjs",
     "test": "vitest run",
     "typecheck": "tsc --noEmit -p .",
-    "data": "node scripts/etl_ourairports.js && node scripts/openaip_airspace.js && node scripts/build_us_routes.js && node scripts/build_t100.js && node scripts/build_connections.js"
+    "data": "node scripts/etl_ourairports.js && node scripts/openaip_airspace.js && node scripts/build_us_routes.js && node scripts/build_t100.js && node scripts/build_airlines.js && node scripts/build_connections.js"
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",
