@@ -5,6 +5,7 @@
 // except the radius, which applies the next time it is turned on.
 
 import { readPref } from './prefs';
+import { loadAirlines, flightName, type AirlineTable } from './airlineCallsign';
 import { setLegend } from './legend';
 import { formatDistance } from './units';
 import { compassPoint } from './forecast';
@@ -33,6 +34,9 @@ let tracked: LiveAircraft[] = [];
 let layer: L.LayerGroup | null = null;
 let aircraftLayer: L.LayerGroup | null = null;
 const markers = new Map<string, L.Marker>();
+let airlines: AirlineTable = {};
+/** While adsb.lol asks to wait: when the next request may go, ms since epoch. */
+let busyUntil = 0;
 
 const el = (id: string) => document.getElementById(id) as HTMLElement | null;
 const NM_TO_MI = 1.150779;
@@ -41,7 +45,10 @@ const NM_TO_MI = 1.150779;
 export interface LiveDrawHooks {
   update(map: L.Map, group: L.LayerGroup, aircraft: LiveAircraft[]): void;
   clear(): void;
+  /** "Chicago (ORD) to Denver (DEN)" once the route is known and fits, else null. */
   routeLabel(hex: string): string | null;
+  /** Whether the route lookup for this aircraft has finished (so "Route unknown" can be said). */
+  routeSettled(hex: string): boolean;
   typeName(code: string | undefined): string | null;
 }
 
@@ -136,6 +143,7 @@ async function start() {
   }
   center = where;
   radiusMi = Math.min(15, Math.max(1, Number(readPref('live-radius-mi', '5')) || 5));
+  void loadAirlines().then((t) => (airlines = t));
   elevFt = await groundFt(center[0], center[1]);
   if (my !== gen) return;
 
@@ -197,33 +205,48 @@ async function poll() {
       mi: radiusMi,
       minFt: Number(readPref('live-min-ft', '500')) || 0,
       minKt: Number(readPref('live-min-kt', '60')) || 0,
+      max: Math.min(10, Math.max(5, Number(readPref('live-max', '5')) || 5)),
       elevFt,
       keep: tracked.map((a) => a.hex),
     });
     const res = await fetch(`/api/live?${query}`);
     if (my !== gen) return;
+    busyUntil = 0;
     if (res.status === 503) {
       message = 'Live track is not set up on this site.';
+    } else if (res.status === 429) {
+      const body = await res.json().catch(() => ({}));
+      const wait = Number(body.retryIn) || 60;
+      busyUntil = Date.now() + wait * 1000;
+      message = busyMessage(wait);
     } else if (!res.ok) {
       message = 'Live aircraft data is unavailable right now; trying again.';
     } else {
       const body = await res.json();
       if (my !== gen) return;
       tracked = body.aircraft || [];
+      if (body.busy) busyUntil = Date.now() + (Number(body.retryIn) || 60) * 1000;
       draw();
-      setPanel(cardHtml(null, tracked, false, body.qualifying));
+      setPanel(cardHtml(null, tracked, false, body.qualifying, body.busy ? busyMessage(Number(body.retryIn) || 60) : null));
     }
   } catch {
     message = navigator.onLine ? 'Live aircraft data is unavailable right now; trying again.' : 'You are offline.';
   }
   if (message) setPanel(cardHtml(message, tracked));
-  if (state === 'tracking' && my === gen) pollTimer = window.setTimeout(() => void poll(), POLL_MS);
+  // While adsb.lol asks to wait, the next request waits too.
+  const delay = Math.max(POLL_MS, busyUntil - Date.now());
+  if (state === 'tracking' && my === gen) pollTimer = window.setTimeout(() => void poll(), delay);
 }
+
+const busyMessage = (seconds: number) => `Live data is busy; trying again in ${seconds} s.`;
+
+/** "Delta 1234", "Private" or the callsign, for labels. */
+const nameOf = (a: LiveAircraft) => flightName(a.callsign, a.reg, airlines);
 
 function planeIcon(a: LiveAircraft): L.DivIcon {
   const color = altitudeColor(a.altFt);
   const rotate = a.track ?? 0;
-  const label = a.callsign || a.reg || a.hex.toUpperCase();
+  const label = nameOf(a).label === 'Private' ? a.reg || a.callsign || 'Private' : nameOf(a).label;
   return L.divIcon({
     className: 'live-plane',
     iconSize: [28, 28],
@@ -235,11 +258,21 @@ function planeIcon(a: LiveAircraft): L.DivIcon {
   });
 }
 
+/** The route line: "Chicago (ORD) to Denver (DEN)", "Route unknown" once looked up, or nothing. */
+function routeText(a: LiveAircraft): string | null {
+  const route = hooks?.routeLabel(a.hex);
+  if (route) return route;
+  if (nameOf(a).private || !hooks?.routeSettled(a.hex)) return null;
+  return 'Route unknown';
+}
+
 function popupHtml(a: LiveAircraft): string {
   const type = hooks?.typeName(a.type) || a.type || 'Unknown type';
-  const route = hooks?.routeLabel(a.hex);
+  const route = routeText(a);
+  const name = nameOf(a);
   return (
-    `<strong>${escapeHtml(a.callsign || a.reg || a.hex.toUpperCase())}</strong>${a.reg && a.callsign ? ` <span class="muted">${escapeHtml(a.reg)}</span>` : ''}` +
+    `<strong>${escapeHtml(name.label)}</strong>${a.reg ? ` <span class="muted">${escapeHtml(a.reg)}</span>` : ''}` +
+    `${a.callsign && name.label !== a.callsign ? `<br><span class="muted">Callsign ${escapeHtml(a.callsign)}</span>` : ''}` +
     `<br>${escapeHtml(type)}${route ? `<br>${escapeHtml(route)}` : ''}` +
     `<br>${a.altFt.toLocaleString('en-US')} ft (${a.aglFt.toLocaleString('en-US')} ft above you), ${a.gs} kt` +
     `<br>${verticalLabel(a.rate)}${a.emergency ? `<br><strong>Emergency: ${escapeHtml(a.emergency)}</strong>` : ''}` +
@@ -280,21 +313,24 @@ function showAircraft(hex: string) {
 
 const escapeHtml = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-function cardHtml(message: string | null, aircraft: LiveAircraft[], error = false, qualifying?: number): string {
+function cardHtml(message: string | null, aircraft: LiveAircraft[], error = false, qualifying?: number, note: string | null = null): string {
   const radius = formatDistance(radiusMi);
   const head = `<div class="live-head"><strong>\u{1F4E1} Live track</strong><span class="muted">${center ? `within ${radius} of you` : ''}</span><button type="button" id="live-stop-inline" class="live-stop-inline" aria-label="Stop Live track">Stop</button></div>`;
   if (message) return `${head}<div class="live-msg${error ? ' live-msg--error' : ''}">${escapeHtml(message)}</div>`;
   if (!aircraft.length) return `${head}<div class="live-msg">No aircraft in the air within ${radius} right now. Checking every 10 seconds.</div>`;
-  const more = qualifying && qualifying > aircraft.length ? `<div class="live-msg muted">Showing the ${aircraft.length} closest of ${qualifying}.</div>` : '';
+  const more =
+    (qualifying && qualifying > aircraft.length ? `<div class="live-msg muted">Showing ${aircraft.length} of ${qualifying}, the closest first.</div>` : '') +
+    (note ? `<div class="live-msg live-msg--busy">${escapeHtml(note)}</div>` : '');
   const rows = aircraft
     .map((a) => {
       const type = hooks?.typeName(a.type) || a.type || '';
-      const route = hooks?.routeLabel(a.hex);
-      const name = a.callsign || a.reg || a.hex.toUpperCase();
+      const route = routeText(a);
+      const name = nameOf(a).label;
+      const reg = a.reg && a.reg !== name ? a.reg : '';
       const where = `${formatDistance(a.distNm * NM_TO_MI)} ${compassPoint(a.bearing)}`;
       return `<div class="live-row" data-live-hex="${a.hex}" role="button" tabindex="0">
         <span class="live-dot" style="background:${altitudeColor(a.altFt)}"></span>
-        <span class="live-main"><strong>${escapeHtml(name)}</strong>${type ? ` <span class="muted">${escapeHtml(type)}</span>` : ''}${route ? `<br><span class="live-route">${escapeHtml(route)}</span>` : ''}</span>
+        <span class="live-main"><strong>${escapeHtml(name)}</strong>${reg ? ` <span class="muted">${escapeHtml(reg)}</span>` : ''}${type ? `<br><span class="muted">${escapeHtml(type)}</span>` : ''}${route ? `<br><span class="live-route${route === 'Route unknown' ? ' muted' : ''}">${escapeHtml(route)}</span>` : ''}</span>
         <span class="live-stats">${a.altFt.toLocaleString('en-US')} ft, ${a.gs} kt<br><span class="muted">${verticalLabel(a.rate)} \u00b7 ${where}</span></span>
       </div>`;
     })

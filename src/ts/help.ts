@@ -190,6 +190,7 @@ export const HELP: Record<string, HelpEntry> = {
     legends: () => [liveLegend()],
     about: 'How far around you Live track looks, 1 to 15 miles. The circle is drawn where you were when you turned Live track on; to move it, turn Live track off and on again.',
   },
+  'live-max': { about: 'How many aircraft Live track follows at once, 5 to 10. Aircraft already on the list stay while they are in the circle; the closest others fill the rest. It does not change how often adsb.lol is asked.' },
   'live-min-height': { about: 'Aircraft lower than this above the ground at your spot are left out, so planes on runways and in the pattern do not crowd the list. Aircraft reported on the ground are always left out.' },
   'live-min-speed': { about: 'Aircraft slower than this are left out, such as ones taxiing or hovering.' },
   'route-focus': {

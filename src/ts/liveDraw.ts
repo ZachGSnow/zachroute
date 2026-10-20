@@ -6,11 +6,14 @@
 import { setLiveDrawHooks, type LiveDrawHooks } from './liveLayer';
 import { aircraftTypeName } from './aircraftTypes';
 import { slerpArc, type Airport } from './geoMath';
-import { altitudeColor, extendTrail, pointAhead, routeFits, routeLabel, type LiveAircraft, type LiveRoute } from './liveTrack';
+import { altitudeColor, extendTrail, pointAhead, routeLeg, routePlaces, type LiveAircraft, type LiveRoute } from './liveTrack';
+import { resolveCode } from './searchParser';
 
 const trails = new Map<string, Array<[number, number]>>();
 const routes = new Map<string, Promise<LiveRoute | null>>();
 const fitting = new Map<string, LiveRoute>();
+/** Aircraft whose route lookup has finished, fitting or not. */
+const settled = new Set<string>();
 let drawn: L.Layer[] = [];
 let session = 0;
 
@@ -61,11 +64,14 @@ const hooks: LiveDrawHooks = {
     for (const a of aircraft) {
       void lookUpRoute(a).then((route) => {
         if (my !== session) return;
-        const fits = routeFits(route, [a.lat, a.lon], a.track);
-        const had = fitting.has(a.hex);
-        if (fits && route) fitting.set(a.hex, route);
+        // Only the leg the aircraft is on is shown and drawn.
+        const leg = routeLeg(route, [a.lat, a.lon], a.track, a.rate);
+        const had = fitting.get(a.hex);
+        settled.add(a.hex);
+        if (leg) fitting.set(a.hex, leg);
         else fitting.delete(a.hex);
-        if (fits !== had) redraw(map, group, aircraft);
+        const changed = !!leg !== !!had || (leg && had && leg.airports[1] !== had.airports[1]);
+        if (changed) redraw(map, group, aircraft);
       });
     }
   },
@@ -74,12 +80,14 @@ const hooks: LiveDrawHooks = {
     trails.clear();
     routes.clear();
     fitting.clear();
+    settled.clear();
     drawn = [];
   },
   routeLabel(hex) {
     const r = fitting.get(hex);
-    return r ? routeLabel(r) : null;
+    return r ? routePlaces(r, (code) => resolveCode(code)?.city || null) : null;
   },
+  routeSettled: (hex) => settled.has(hex),
   typeName: aircraftTypeName,
 };
 

@@ -2167,3 +2167,8 @@ body {
     animation: none;
   }
 }
+
+.live-msg--busy {
+  color: #fcd34d;
+  font-size: 0.8rem;
+}

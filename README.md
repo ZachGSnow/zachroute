@@ -177,13 +177,17 @@ route lists show the same level as a badge, worst first.
 **Live track**: the radar button in the header shows aircraft in the air around you. It finds your
 location once, draws a circle of 1 to 15 miles (Settings, Live track; it stays where it was drawn
 until Live track is turned off and on) and follows up to 5 aircraft inside it, the closest first,
-refreshing every 10 seconds while the page is visible. Aircraft on the ground, lower than the set
+refreshing every 10 seconds while the page is visible (5 by default; Settings, Live track, Aircraft
+shown, up to 10). Aircraft on the ground, lower than the set
 height above the ground (default 500 ft) or slower than the set speed (default 60 kt) are left out.
 Each shows as an icon pointing along its track, colored by altitude, with the path flown since
 tracking started, a line one minute ahead, and a dashed line to its destination when adsb.lol knows
 the flight's route and it fits the aircraft's position and heading (adsb.lol's own check is lenient:
-it called a flight landing at ORD "plausible" for Dallas to Charlotte). A card lists callsign, type,
-route, altitude, speed, climb or descent and distance; tapping one finds it on the map. To keep the
+it called a flight landing at ORD "plausible" for Dallas to Charlotte). A card lists each flight by airline and number from its callsign ("Delta 1234",
+"UPS 2911"; regional airlines by their operator, such as SkyWest Airlines; registrations used as
+callsigns as "Private"), its registration and type, where it is flying from and to ("Chicago (ORD)
+to Denver (DEN)", or "Route unknown" when the route is missing or does not fit), altitude, speed,
+climb or descent and distance; tapping one finds it on the map. To keep the
 load on the data source small, Live track pauses after 5 minutes until Continue is tapped, sends
 adsb.lol your position rounded to about 1 km, asks it to leave out aircraft well below the set height, reuses each answer for 8 seconds, and when adsb.lol asks to wait (429) sends nothing until its Retry-After has passed. Help is in the
 settings footer, next to the version.
