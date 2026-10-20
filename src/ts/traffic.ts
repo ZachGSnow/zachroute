@@ -2,7 +2,7 @@
 // public/data/t100/): passengers, flights, how full the flights were, the airlines and aircraft, and
 // the change on the year before. Covers flights touching the US only. Files load on demand.
 
-import { airlineName } from './carriers';
+import { airlineName, shortCarrierName } from './carriers';
 
 export interface RouteTraffic {
   pax: number;
@@ -68,16 +68,7 @@ export async function trafficAirlineName(code: string): Promise<string> {
   return shortCarrierName(i?.airlines[code] || code);
 }
 
-/** "Global Crossing Airlines, Inc." -> "Global Crossing Airlines". */
-export function shortCarrierName(name: string): string {
-  let out = name.replace(/\s+d\/b\/a.*$/i, '').trim();
-  // Company suffixes can stack ("Co. Ltd."), so strip until none is left.
-  for (let prev = ''; prev !== out; ) {
-    prev = out;
-    out = out.replace(/,?\s+(Inc|Co|Corp|Corporation|Ltd|LLC|S\.?A|plc|AG|N\.?V)\.?$/i, '').trim();
-  }
-  return out;
-}
+export { shortCarrierName };
 
 /** "84.7M", "126K", "950". */
 export function compactCount(n: number): string {

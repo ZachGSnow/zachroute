@@ -4,10 +4,12 @@
 //
 // Sources, in priority order:
 //   1. src/data/us-routes.json   current US domestic routes + airlines (scripts/build_us_routes.js, DOT/BTS)
-//   2. scripts/route_overrides.json   hand-kept additions / removals
-//   3. OpenFlights routes.dat   everything else (international). That file has not been updated
-//      since 2017, so it is only used where no better source exists: a pair whose two airports
-//      are both in the US is taken from sources 1 and 2 only.
+//   2. src/data/us-intl-routes.json   current nonstops between US and foreign airports + airlines
+//      (scripts/build_t100.js, DOT/BTS T-100 all carriers)
+//   3. scripts/route_overrides.json   hand-kept additions / removals
+//   4. OpenFlights routes.dat   everything else (between two foreign airports). That file has not
+//      been updated since 2017, so it is only used where no better source exists: a pair with a US
+//      airport at either end is taken from sources 1 to 3 only.
 //
 // Usage: node scripts/etl_ourairports.js && node scripts/build_us_routes.js && node scripts/build_connections.js
 
@@ -20,6 +22,7 @@ const ROOT = path.resolve(__dirname, '..');
 const OUT_PATH = path.join(ROOT, 'src', 'data', 'connections.json');
 const CARRIERS_PATH = path.join(ROOT, 'src', 'data', 'carriers.json');
 const US_ROUTES_PATH = path.join(ROOT, 'src', 'data', 'us-routes.json');
+const US_INTL_PATH = path.join(ROOT, 'src', 'data', 'us-intl-routes.json');
 const OVERRIDES_PATH = path.join(__dirname, 'route_overrides.json');
 const AIRPORTS_PATH = path.join(ROOT, 'public', 'data', 'airports.json');
 
@@ -43,10 +46,11 @@ export function usAirportSet(airportsData) {
  * @param {object} input
  * @param {string[]} input.routeLines  OpenFlights routes.dat lines
  * @param {object|null} input.usRoutes  contents of us-routes.json, or null
+ * @param {object|null} [input.usIntlRoutes]  contents of us-intl-routes.json, or null
  * @param {object|null} input.overrides contents of route_overrides.json, or null
  * @param {Set<string>} input.usAirports IATA codes treated as US
  */
-export function mergeRoutes({ routeLines, usRoutes, overrides, usAirports }) {
+export function mergeRoutes({ routeLines, usRoutes, usIntlRoutes = null, overrides, usAirports }) {
   const connections = {};
   const add = (a, b) => {
     if (!a || !b || a === b) return;
@@ -54,8 +58,11 @@ export function mergeRoutes({ routeLines, usRoutes, overrides, usAirports }) {
     connections[a].add(b);
   };
   const isUsPair = (a, b) => usAirports.has(a) && usAirports.has(b);
+  // With T-100 data, a pair with a US airport at one end is known better than OpenFlights knows it.
+  const isUsIntl = (a, b) => !!usIntlRoutes && usAirports.has(a) !== usAirports.has(b);
 
   let skippedUs = 0;
+  let skippedIntl = 0;
   for (const line of routeLines) {
     // Format: Airline,AirlineID,Source,SourceID,Dest,DestID,Codeshare,Stops,Equipment
     const parts = line.split(',');
@@ -65,6 +72,10 @@ export function mergeRoutes({ routeLines, usRoutes, overrides, usAirports }) {
     if (isUsPair(origin, dest)) {
       skippedUs++;
       continue; // superseded by current BTS data below
+    }
+    if (isUsIntl(origin, dest)) {
+      skippedIntl++;
+      continue; // superseded by current T-100 data below
     }
     add(origin, dest);
   }
@@ -85,6 +96,16 @@ export function mergeRoutes({ routeLines, usRoutes, overrides, usAirports }) {
         add(dst, org); // services run both ways; a sampled month can miss one direction
         setCarriers(org, dst, list);
         if (!(usRoutes.routes[dst] && usRoutes.routes[dst][org])) setCarriers(dst, org, list);
+      }
+    }
+  }
+
+  if (usIntlRoutes) {
+    meta = { ...meta, intlMonths: usIntlRoutes.months, names: usIntlRoutes.names || {} };
+    for (const [org, dests] of Object.entries(usIntlRoutes.routes || {})) {
+      for (const [dst, list] of Object.entries(dests)) {
+        add(org, dst);
+        setCarriers(org, dst, list);
       }
     }
   }
@@ -121,7 +142,7 @@ export function mergeRoutes({ routeLines, usRoutes, overrides, usAirports }) {
     }
   }
 
-  return { connections: final, carriers: { meta, routes: carrierRoutes }, skippedUs };
+  return { connections: final, carriers: { meta, routes: carrierRoutes }, skippedUs, skippedIntl };
 }
 
 async function main() {
@@ -139,10 +160,12 @@ async function main() {
   const usRoutes = fs.existsSync(US_ROUTES_PATH) ? JSON.parse(fs.readFileSync(US_ROUTES_PATH, 'utf8')) : null;
   if (!usRoutes) console.warn('src/data/us-routes.json not found (run scripts/build_us_routes.js); no carrier data.');
   const overrides = fs.existsSync(OVERRIDES_PATH) ? JSON.parse(fs.readFileSync(OVERRIDES_PATH, 'utf8')) : null;
+  const usIntlRoutes = fs.existsSync(US_INTL_PATH) ? JSON.parse(fs.readFileSync(US_INTL_PATH, 'utf8')) : null;
+  if (!usIntlRoutes) console.warn('src/data/us-intl-routes.json not found (run scripts/build_t100.js); US-international routes fall back to OpenFlights.');
 
-  const { connections, carriers, skippedUs } = mergeRoutes({ routeLines, usRoutes, overrides, usAirports });
+  const { connections, carriers, skippedUs, skippedIntl } = mergeRoutes({ routeLines, usRoutes, usIntlRoutes, overrides, usAirports });
 
-  console.log(`OpenFlights: skipped ${skippedUs} US-to-US rows (replaced by BTS data)`);
+  console.log(`OpenFlights: skipped ${skippedUs} US-to-US rows (replaced by BTS data) and ${skippedIntl} US-international rows (replaced by T-100)`);
   if (usRoutes) console.log(`BTS: ${Object.keys(usRoutes.routes).length} airports, months ${usRoutes.months.join(', ')}`);
   if (overrides) console.log(`Overrides: ${(overrides.add || []).length} added, ${(overrides.remove || []).length} removed`);
 

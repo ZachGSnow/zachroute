@@ -3,8 +3,12 @@
 // its tests: CSV rows -> per-airport traffic summaries and the list of US-international nonstops.
 // Public domain (US DOT Bureau of Transportation Statistics).
 
-/** Scheduled passenger (F) and scheduled cargo-and-passenger (L) service; charters and freight-only are left out. */
-export const SERVICE_CLASSES = new Set(['F', 'L']);
+/**
+ * Scheduled passenger service (class F) only. Class L is non-scheduled (charter) passenger service:
+ * tour charters, sports teams and immigration removal flights, which nobody can book; G and P are
+ * freight.
+ */
+export const SERVICE_CLASSES = new Set(['F']);
 export const TOP_AIRLINES = 5;
 export const TOP_AIRCRAFT = 3;
 export const TOP_ROUTES = 5;
@@ -30,7 +34,10 @@ export function parseCsvLine(line) {
   return out;
 }
 
-/** T-100 CSV text -> scheduled-service rows {origin, dest, carrier, aircraft, deps, seats, pax, year, month}. */
+/**
+ * T-100 CSV text -> scheduled-service rows {origin, dest, carrier, aircraft, deps, seats, pax, year,
+ * month}, plus originCountry and destCountry when the file has those columns.
+ */
 export function parseT100(csv) {
   const lines = csv.split(/\r?\n/).filter(Boolean);
   if (!lines.length) return [];
@@ -49,6 +56,8 @@ export function parseT100(csv) {
     cls: at('CLASS'),
   };
   if (Object.values(i).some((n) => n < 0)) throw new Error(`T-100 CSV is missing columns: ${head.join(',')}`);
+  const oc = at('ORIGIN_COUNTRY');
+  const dc = at('DEST_COUNTRY');
   const rows = [];
   for (const line of lines.slice(1)) {
     const c = parseCsvLine(line);
@@ -67,9 +76,27 @@ export function parseT100(csv) {
       pax,
       year: Number(c[i.year]),
       month: Number(c[i.month]),
+      ...(oc >= 0 && dc >= 0 ? { originCountry: c[oc], destCountry: c[dc] } : {}),
     });
   }
   return rows;
+}
+
+/** Countries BTS counts as domestic: the states and US territories. */
+export const US_COUNTRIES = new Set(['US', 'PR', 'VI', 'GU', 'MP', 'AS']);
+
+/**
+ * A "is this airport in the US" test from the rows' own country columns, so US airports without an
+ * IATA code (Alaska's seaplane bases use FAA codes like 7AK) are not mistaken for foreign ones.
+ * Airports the rows give no country for fall back to `fallback`.
+ */
+export function usTestFromRows(rows, fallback = () => false) {
+  const country = new Map();
+  for (const r of rows) {
+    if (r.originCountry) country.set(r.origin, r.originCountry);
+    if (r.destCountry) country.set(r.dest, r.destCountry);
+  }
+  return (code) => (country.has(code) ? US_COUNTRIES.has(country.get(code)) : fallback(code));
 }
 
 /** "2026-07" for a year and month. */

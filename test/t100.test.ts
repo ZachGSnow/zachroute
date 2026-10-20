@@ -12,6 +12,7 @@ import {
   pairSummary,
   aircraftLabel,
   MIN_ROUTE_PAX,
+  usTestFromRows,
 } from '../shared/t100.js';
 import { readZipEntry } from '../scripts/build_t100.js';
 
@@ -22,6 +23,10 @@ const us = new Set(['ORD', 'LGA', 'JFK']);
 describe('reading T-100', () => {
   it('keeps scheduled passenger service, dropping charters, freight and empty rows', () => {
     const rows = parseT100(csv);
+    // A charter (class L): an immigration removal flight Global Crossing reports to T-100
+    const header = csv.split(/\r?\n/)[0];
+    expect(parseT100(`${header}\n10,10,1500,1200,0,0,GCA,AEX,GUA,694,2026,7,L\n`)).toEqual([]);
+    expect(parseT100(`${header}\n10,10,1500,1200,0,0,UA,ORD,LGA,694,2026,7,F\n`)).toHaveLength(1);
     expect(rows.every((r) => r.origin !== r.dest)).toBe(true);
     expect(rows.length).toBeGreaterThan(30);
     expect(rows.length).toBeLessThan(csv.trim().split('\n').length - 1);
@@ -83,5 +88,14 @@ describe('route and airport summaries', () => {
     expect(intl.LHR.JFK).toEqual(intl.JFK.LHR);
     expect(intl.ORD.NRT).toEqual(['JL', 'NH']);
     expect(intl.ORD?.LGA).toBeUndefined(); // domestic pairs come from the on-time data
+  });
+
+  it('tells US airports by the country columns, so FAA-coded Alaska fields are not foreign', () => {
+    const rows = [
+      { origin: 'ANC', dest: '7AK', originCountry: 'US', destCountry: 'US' },
+      { origin: 'SJU', dest: 'SDQ', originCountry: 'PR', destCountry: 'DO' },
+    ];
+    const isUs = usTestFromRows(rows as any, (c: string) => c === 'ORD');
+    expect(['ANC', '7AK', 'SJU', 'SDQ', 'ORD', 'LHR'].map(isUs)).toEqual([true, true, true, false, true, false]);
   });
 });

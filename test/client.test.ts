@@ -175,6 +175,9 @@ describe('Airlines (bundled US DOT-derived data)', () => {
     const list = carriersFor(airports.ORD, airports.DEN);
     expect(list.length).toBeGreaterThan(0);
     expect(carrierNames(list)).toMatch(/United/);
-    expect(carriersFor(airports.ORD, airports.LHR)).toEqual([]); // no airline data outside the US
+    // routes between US and foreign airports have airlines from T-100, foreign ones named from US DOT
+    const intl = carriersFor(airports.ORD, airports.LHR);
+    expect(intl.map((c) => c.code)).toContain('BA');
+    expect(intl.find((c) => c.code === 'BA')!.name).toBe('British Airways');
   });
 });
