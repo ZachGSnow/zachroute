@@ -185,6 +185,11 @@ export const HELP: Record<string, HelpEntry> = {
     updates: 'Charts every 56 days; the tile service lags',
     source: 'FAA Aeronautical Information Services',
   },
+  'live-radius': {
+    about: 'How far around you Live track looks, 1 to 15 miles. The circle is drawn where you were when you turned Live track on; to move it, turn Live track off and on again.',
+  },
+  'live-min-height': { about: 'Aircraft lower than this above the ground at your spot are left out, so planes on runways and in the pattern do not crowd the list. Aircraft reported on the ground are always left out.' },
+  'live-min-speed': { about: 'Aircraft slower than this are left out, such as ones taxiing or hovering.' },
   'route-focus': {
     about: 'While a route is shown, hides the full advisory, pilot report, cyclone and TFR layers so only what lies along the route is drawn. Clearing the route brings them back.',
   },
@@ -211,7 +216,7 @@ export const TOPICS: Array<{ id: string; title: string; html: string }> = [
     title: 'Getting started',
     html: `<p>Search for an airport by code (<code>ORD</code>, <code>KORD</code>), city or name, or for a route with two airports (<code>ORD DEN</code>, <code>chicago to denver</code>). The target button lists airports near you.</p>
 <p>Every search has its own link: use Share, or copy the address. Install ZachRoute from your browser's menu to use it like an app; airport details keep working offline after the first visit.</p>
-<p>The gear opens Settings, where map layers are switched on and off. The \u24d8 next to a setting opens its entry here.</p>`,
+<p>The gear opens Settings, where map layers are switched on and off; Help is at the bottom of Settings, next to the version. The radar button turns Live track on and off. The \u24d8 next to a setting opens its entry here.</p>`,
   },
   {
     id: 'airport-card',
@@ -225,6 +230,13 @@ export const TOPICS: Array<{ id: string; title: string; html: string }> = [
     html: `<p>Distance, flight time and the time adjusted for forecast winds, the freezing level, a terrain profile for nonstop routes, airlines, traffic, connections when there is no nonstop, and hazards along the way.</p>
 <p>The route line is colored by the forecast headwind or tailwind at cruise. It is the great circle between the airports, not an air traffic control routing.</p>
 <p>Tap a hazard row to see it on the map with the route still drawn, then "Back to route".</p>`,
+  },
+  {
+    id: 'live',
+    title: 'Live track',
+    html: `<p>The radar button in the header shows aircraft in the air around you. It finds your location once, draws a circle (1 to 15 miles, set in Settings, Live track) and follows up to 5 aircraft inside it, the closest first, refreshing every 10 seconds. Aircraft on the ground, or below the height and speed you set, are left out.</p>
+<p>Each aircraft shows its direction, altitude, speed, type and, when it can be worked out, where it is flying to. Tap one in the list to find it on the map. After 5 minutes Live track pauses until you tap Continue, to keep the data source's load small; the button turns it off.</p>
+<p>Your position is rounded to about 1 km before it is sent to adsb.lol, a community network of receivers (data under the ODbL 1.0 license). Coverage depends on nearby receivers, and not every aircraft broadcasts its position.</p>`,
   },
   {
     id: 'severity',

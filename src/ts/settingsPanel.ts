@@ -5,6 +5,7 @@
 
 import { FEATURES, SECTIONS, isSettingKey, type Choice, type Feature } from './features';
 import { readPref, writePref } from './prefs';
+import { convertMiles, getDistanceUnit } from './units';
 
 const OPEN_KEY = 'zachroute:settings-open';
 
@@ -39,6 +40,9 @@ export function featureRowHtml(f: Feature): string {
   const info = `<button type="button" class="setting-info" data-help="${f.id}" aria-label="Help: ${f.label}" title="What this shows">i</button>`;
   if (c.kind === 'choice') {
     return `<div class="setting-row setting-row--choice" data-feature="${f.id}">${text}${info}${segmentedHtml(c.input, f.label, c.choices)}</div>`;
+  }
+  if (c.kind === 'range') {
+    return `<div class="setting-row setting-row--range" data-feature="${f.id}"><label class="setting-main" for="${c.input}">${text}</label>${info}<span class="range-wrap"><input type="range" class="range" id="${c.input}" min="${c.min}" max="${c.max}" step="${c.step}" data-unit="${c.unit}" /><output class="range-value" for="${c.input}"></output></span></div>`;
   }
   const row = `<div class="setting-row" data-feature="${f.id}"><label class="setting-main" for="${c.input}">${text}</label>${info}<input type="checkbox" role="switch" class="switch" id="${c.input}" /></div>`;
   if (!c.option) return row;
@@ -85,9 +89,24 @@ export function mountSettings(onHelp?: (feature: string) => void): SettingsPanel
     const { key, default: fallback } = f.pref;
     const input = document.getElementById(f.control.input) as HTMLInputElement | HTMLSelectElement | null;
     if (!input) continue;
-    if (input instanceof HTMLInputElement) input.checked = readPref(key, fallback) === 'true';
+    const isSwitch = input instanceof HTMLInputElement && input.type === 'checkbox';
+    if (isSwitch) (input as HTMLInputElement).checked = readPref(key, fallback) === 'true';
     else input.value = readPref(key, fallback);
-    input.addEventListener('change', () => writePref(key, input instanceof HTMLInputElement ? String(input.checked) : input.value));
+    input.addEventListener('change', () => writePref(key, isSwitch ? String((input as HTMLInputElement).checked) : input.value));
+  }
+
+  // A slider's value in words: miles in the chosen distance unit, feet and knots as they are.
+  function showRange(range: HTMLInputElement) {
+    const out = range.parentElement?.querySelector('output');
+    if (!out) return;
+    const v = Number(range.value);
+    if (range.dataset.unit === 'mi') {
+      const unit = getDistanceUnit();
+      const n = convertMiles(v, unit);
+      out.textContent = `${n < 10 && unit !== 'mi' ? n.toFixed(1) : Math.round(n)} ${unit}`;
+    } else {
+      out.textContent = `${v.toLocaleString('en-US')} ${range.dataset.unit}`;
+    }
   }
 
   function syncSegmented(group: HTMLElement) {
@@ -106,6 +125,7 @@ export function mountSettings(onHelp?: (feature: string) => void): SettingsPanel
       opt.hidden = !input?.checked;
     }
     for (const group of body!.querySelectorAll<HTMLElement>('.segmented')) syncSegmented(group);
+    for (const range of body!.querySelectorAll<HTMLInputElement>('input.range')) showRange(range);
     for (const sec of body!.querySelectorAll<HTMLElement>('.settings-section')) {
       const count = sec.querySelector('.settings-count');
       if (!count) continue;
@@ -115,6 +135,9 @@ export function mountSettings(onHelp?: (feature: string) => void): SettingsPanel
   }
 
   body.addEventListener('change', refresh);
+  body.addEventListener('input', (e) => {
+    if ((e.target as HTMLElement).matches('input.range')) showRange(e.target as HTMLInputElement);
+  });
 
   body.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;

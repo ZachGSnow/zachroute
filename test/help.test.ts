@@ -26,7 +26,7 @@ describe('Help', () => {
   it('starts with the topics and shows the layers in their own colors', () => {
     const html = helpHtml();
     expect(html.indexOf('help-start')).toBeLessThan(html.indexOf('help-terrain'));
-    expect(TOPICS.map((t) => t.id)).toEqual(['start', 'airport-card', 'route-card', 'severity', 'limits']);
+    expect(TOPICS.map((t) => t.id)).toEqual(['start', 'airport-card', 'route-card', 'live', 'severity', 'limits']);
     const radar = html.slice(html.indexOf('id="help-radar"'), html.indexOf('id="help-satellite"'));
     expect(radar).toContain('lg-row');
     expect(radar).toContain('Storm tops');
