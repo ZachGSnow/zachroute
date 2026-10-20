@@ -2,6 +2,7 @@ import { initMap, showSingleAirport, showRoute, showConnectingRoutes, highlightV
 import { formatDistance, getDistanceUnit, getClockFormat, getWeatherUnits, setDistanceUnit, setClockFormat, setWeatherUnits, UNITS_CHANGED, type DistanceUnit, type ClockFormat, type WeatherUnits } from './units';
 import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
+import { mountSettings } from './settingsPanel';
 import { haversineDistance } from './geoMath';
 import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, setRadar, setRadarMode, setSpc, setSpcDay, setGeohazards, setAurora, setCharts, setChartKind, setTerrain, setAirspace, highlightRunway } from './mapOverlays';
 import type { RadarMode } from './radarTiles';
@@ -343,32 +344,8 @@ async function init() {
     });
   }
 
-  // Settings flyout menu (anchored to the airplane icon)
-  const menuToggle = document.getElementById('menu-toggle') as HTMLButtonElement | null;
-  const settingsMenu = document.getElementById('settings-menu') as HTMLElement | null;
-  if (menuToggle && settingsMenu) {
-    const closeMenu = () => {
-      settingsMenu.hidden = true;
-      menuToggle.setAttribute('aria-expanded', 'false');
-    };
-    const openMenu = () => {
-      settingsMenu.hidden = false;
-      menuToggle.setAttribute('aria-expanded', 'true');
-    };
-    menuToggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (settingsMenu.hidden) openMenu();
-      else closeMenu();
-    });
-    document.addEventListener('click', (e) => {
-      if (!settingsMenu.hidden && !settingsMenu.contains(e.target as Node) && e.target !== menuToggle) {
-        closeMenu();
-      }
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeMenu();
-    });
-  }
+  // Settings window (gear button), built from the feature list before the inputs are wired below
+  const settings = mountSettings();
 
   // About modal
   const aboutOpenBtn = document.getElementById('about-open');
@@ -376,7 +353,7 @@ async function init() {
   const aboutCloseBtn = document.getElementById('about-close');
   if (aboutOpenBtn && aboutModal) {
     aboutOpenBtn.addEventListener('click', () => {
-      settingsMenu && (settingsMenu.hidden = true);
+      settings?.close();
       aboutModal.hidden = false;
     });
   }
@@ -673,6 +650,7 @@ async function init() {
   if (aboutVersionEl) aboutVersionEl.textContent = __APP_VERSION__;
   if (aboutBuildEl) aboutBuildEl.textContent = buildLabel;
   if (menuVersionEl) menuVersionEl.textContent = `v${__APP_VERSION__}`;
+  settings?.refresh();
 
   if (largeToggle) {
     largeToggle.addEventListener('change', () => {

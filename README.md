@@ -109,7 +109,7 @@ used once and not stored; denying permission just shows a message.
   up; polar flights may be rerouted), a radio blackout (R2 and up) or a geomagnetic storm (G2 and
   up), both of which degrade HF radio, from NOAA's space weather scales.
 
-**Map layers** (settings menu): nonstop connections, airport size layers, weather stations
+**Map layers** (the gear button opens Settings, where layers are on/off switches grouped into folding sections: Map, Airports and routes, Weather, Flight hazards, Natural hazards, Airspace and charts; each section shows how many are on, and "Turn off all layers" and "Reset all settings" are at hand): nonstop connections, airport size layers, weather stations
 (wind arrows, with a ring only when conditions are below VFR; or temperatures colored cold to hot,
 marked where it is at or below freezing and where temperature and dewpoint are close enough for
 fog), the forecast freezing level (shaded dark blue where it is low, with values in thousands of
@@ -158,7 +158,7 @@ route lists show the same level as a badge, worst first.
 
 **Units**: distances in miles, kilometers or nautical miles, a 12 or 24-hour clock, and weather in US
 units (F, inHg, miles) or metric (C, QNH in hPa, visibility in km or metres, read straight from the
-METAR where it is reported in metres). Settings menu; miles and 12-hour by default, and weather units
+METAR where it is reported in metres). Settings, Units; miles and 12-hour by default, and weather units
 follow the device's region. Wind stays in knots and altitudes in feet, as aviation sources report them
 worldwide.
 
