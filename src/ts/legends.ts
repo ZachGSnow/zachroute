@@ -235,6 +235,22 @@ export function spcLegend(): LegendSpec {
   };
 }
 
+export function geohazardsLegend(): LegendSpec {
+  const [light, moderate, severe, extreme] = severityLegendItems([1, 2, 3, 4], 'dot');
+  return {
+    kind: 'items',
+    title: 'Earthquakes and volcanoes',
+    items: [
+      { ...light, label: 'Light: M4.5-5.4; volcano YELLOW' },
+      { ...moderate, label: 'Moderate: M5.5-6.4; volcano ORANGE' },
+      { ...severe, label: 'Severe: M6.5-7.4' },
+      { ...extreme, label: 'Extreme: M7.5+; volcano RED' },
+      { color: '#e2e8f0', label: 'volcano (aviation color code)', mark: 'glyph', glyph: HAZARD_GLYPH.ASH },
+    ],
+    note: 'Earthquakes worldwide in the last day, sized by magnitude. Volcanoes: US observatories (ash elsewhere shows as SIGMETs)',
+  };
+}
+
 export function tcfLegend(): LegendSpec {
   const [, moderate, severe, extreme] = severityLegendItems([1, 2, 3, 4], 'line');
   return {

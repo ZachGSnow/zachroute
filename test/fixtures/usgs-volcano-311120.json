@@ -1,0 +1,19 @@
+{
+ "volcano_name": "Great Sitkin",
+ "vnum": "311120",
+ "obs_abbr": "avo",
+ "obs_fullname": "Alaska Volcano Observatory",
+ "volcano_cd": "ak111",
+ "region": "Aleutians",
+ "latitude": 52.0765,
+ "longitude": -176.1109,
+ "elevation_meters": 1740,
+ "boilerplate": "<a href=\"https://avo.alaska.edu/volcano/great-sitkin\">Great Sitkin Volcano</a> is a basaltic andesite volcano that occupies most of the northern half of Great Sitkin Island, a member of the Andreanof Islands group in the central Aleutian Islands. It is located 26 miles (42 km) east of the community of Adak. The volcano is a composite structure consisting of an older dissected volcano and a younger parasitic cone with a ~1 mile (1.6 km)-diameter summit crater. A steep-sided lava dome, emplaced in the crater during an eruption in 1974, has been mostly buried by the ongoing eruption. The 1974 eruption produced at least one ash cloud that likely exceeded an altitude of 25,000 ft (7.6 km) above sea level. A poorly documented eruption also occurred in 1945, producing a lava dome that was partially destroyed in the 1974 eruption. Within the past 280 years a large explosive eruption produced pyroclastic flows that partially filled the Glacier Creek valley on the southwest flank.",
+ "volcano_url": "https://www.avo.alaska.edu/activity/GreatSitkin.php",
+ "volcano_image_url": "https://avo.alaska.edu/images/dbimages/display/1102983616_16_3.jpg",
+ "nvews_threat": "High Threat",
+ "icao_coordinates": "N5205 W17607",
+ "hans_url": "https://volcanoes.usgs.gov/hans-public/volcano/311120",
+ "hans_data_url": "https://volcanoes.usgs.gov/hans-public/api/volcano/getVolcano/311120",
+ "newest_notice_url": "https://volcanoes.usgs.gov/hans-public/api/volcano/newestForVolcano/311120"
+}

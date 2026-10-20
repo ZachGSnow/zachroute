@@ -25,6 +25,7 @@ import { fetchFires, boxAround, summarizeFiresNear, AIRPORT_FIRE_RADIUS_MI } fro
 import { fetchCruiseWind } from './windsAloft';
 import { fetchFreezingLevel, describeFreezingLevel, routeFreezingSummary } from './freezingLevel';
 import { tfrChips, describeTfr } from './tfr';
+import { volcanoChips } from './geohazards';
 import { severityBadge } from './severityBadge';
 import { advisorySeverity, cycloneSeverity, tfrSeverity, chipLevel } from './severity';
 import { fetchForecasterNotes, forecasterNotesLabel } from './forecasterNotes';
@@ -543,15 +544,16 @@ async function cycloneChips(airport: Airport): Promise<Chip[]> {
 async function fillAlerts(cardEl: HTMLElement, airport: Airport) {
   const el = cardEl.querySelector('.alerts-block') as HTMLElement | null;
   if (!el) return;
-  const [ash, storms, delays, alerts, tfrs] = await Promise.all([
+  const [ash, storms, delays, alerts, tfrs, volcanoes] = await Promise.all([
     ashChips(airport),
     cycloneChips(airport),
     faaDelayChips(airport),
     nwsAlertChips(airport),
     tfrChips(airport),
+    volcanoChips(airport),
   ]);
   if (!el.isConnected) return;
-  const chips = [...ash, ...storms, ...delays, ...alerts, ...tfrs];
+  const chips = [...ash, ...volcanoes, ...storms, ...delays, ...alerts, ...tfrs];
   if (chips.length === 0) return;
   el.innerHTML = `<div class="chips">${chipsHtml(chips)}</div>`;
 }
