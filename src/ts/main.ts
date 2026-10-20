@@ -6,6 +6,7 @@ import { mountSettings } from './settingsPanel';
 import { mountHelp } from './helpPanel';
 import { PREF_CHANGED } from './prefs';
 import { getFocus } from './focusTarget';
+import { initLive } from './liveLayer';
 import { haversineDistance } from './geoMath';
 import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, setRadar, setRadarMode, setSpc, setSpcDay, setGeohazards, setAurora, setCharts, setChartKind, setTerrain, setAirspace, highlightRunway, focusOn, clearFocus } from './mapOverlays';
 import type { RadarMode } from './radarTiles';
@@ -39,7 +40,7 @@ async function init() {
   loadAirports(airportsData as Record<string, Airport>);
   setAirportDatabase(airportsData as Record<string, Airport>);
 
-  // Initialize map, with the saved base map style
+  // Initialize map, with the saved base map style (Live track hooks onto it below)
   let savedBase: string | null = null;
   try {
     savedBase = localStorage.getItem(BASE_MAP_KEY);
@@ -47,7 +48,7 @@ async function init() {
     /* convenience only */
   }
   if (savedBase === 'light' || savedBase === 'satellite') setBaseStyle(savedBase);
-  initMap('map');
+  initLive(initMap('map'));
 
   // Initialize persistent airport background layers (large/medium) once
   initAirportLayers(airportsData as Record<string, Airport>);
@@ -384,6 +385,11 @@ async function init() {
     settings?.close();
     help?.open(feature);
   });
+  // Help sits in the settings footer, next to the version
+  document.getElementById('help-open')?.addEventListener('click', () => {
+    settings?.close();
+    help?.open();
+  });
 
   // About modal
   const aboutOpenBtn = document.getElementById('about-open');
@@ -691,7 +697,9 @@ async function init() {
     if (currentQuery) runSearch(currentQuery, 'none');
   });
   // Route drawing and card choices (Settings, On a route and Airport cards) show on the current result at once.
-  window.addEventListener(PREF_CHANGED, () => {
+  window.addEventListener(PREF_CHANGED, (e) => {
+    // Live track reads its settings at each refresh; the result does not need redrawing for them.
+    if (String((e as CustomEvent).detail?.key || '').startsWith('live-')) return;
     if (currentQuery) runSearch(currentQuery, 'none');
   });
 

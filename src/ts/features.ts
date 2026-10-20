@@ -3,7 +3,7 @@
 // is one entry here. Map layer inputs are wired by main.ts (which owns their storage keys);
 // entries with `pref` are stored by the settings window itself and read through prefs.ts.
 
-export type SectionId = 'map' | 'airports' | 'weather' | 'flight' | 'natural' | 'airspace' | 'route' | 'cards' | 'units';
+export type SectionId = 'map' | 'airports' | 'weather' | 'flight' | 'natural' | 'airspace' | 'live' | 'route' | 'cards' | 'units';
 
 export interface Choice {
   value: string;
@@ -24,8 +24,11 @@ export interface Feature {
   label: string;
   /** One short line under the label: what it shows and where. */
   desc: string;
-  /** A switch (checkbox input id) or a choice of values. */
-  control: { kind: 'switch'; input: string; option?: FeatureOption } | { kind: 'choice'; input: string; choices: Choice[] };
+  /** A switch (checkbox input id), a choice of values, or a slider (shown in `unit`). */
+  control:
+    | { kind: 'switch'; input: string; option?: FeatureOption }
+    | { kind: 'choice'; input: string; choices: Choice[] }
+    | { kind: 'range'; input: string; min: number; max: number; step: number; unit: 'mi' | 'ft' | 'kt' };
   /** Stored by the settings window under zachroute:<key>, with its default ('true'/'false' for a switch). */
   pref?: { key: string; default: string };
 }
@@ -46,6 +49,7 @@ export const SECTIONS: Section[] = [
   { id: 'flight', title: 'Flight hazards', layers: true },
   { id: 'natural', title: 'Natural hazards', layers: true },
   { id: 'airspace', title: 'Airspace and charts', layers: true },
+  { id: 'live', title: 'Live track', layers: false, note: 'The radar button in the header finds you and follows up to 5 aircraft in the air around you, refreshing every 10 seconds. It pauses after 5 minutes until you continue.' },
   { id: 'route', title: 'On a route', layers: false, note: 'What is drawn on the map along a searched route. The route card lists everything either way.' },
   { id: 'cards', title: 'Airport cards', layers: false, note: 'How cards start out. Tap a section on a card to open or fold it there.' },
   { id: 'units', title: 'Units', layers: false },
@@ -170,6 +174,32 @@ export const FEATURES: Feature[] = [
     }),
   },
 
+  // Live track (the header button turns it on and off)
+  {
+    id: 'live-radius',
+    section: 'live',
+    label: 'Radius',
+    desc: 'How far around you to look. To move the circle, turn Live track off and on',
+    control: { kind: 'range', input: 'pref-live-radius-mi', min: 1, max: 15, step: 1, unit: 'mi' },
+    pref: { key: 'live-radius-mi', default: '5' },
+  },
+  {
+    id: 'live-min-height',
+    section: 'live',
+    label: 'Lowest height',
+    desc: 'Leave out aircraft lower than this above the ground',
+    control: { kind: 'range', input: 'pref-live-min-ft', min: 0, max: 3000, step: 100, unit: 'ft' },
+    pref: { key: 'live-min-ft', default: '500' },
+  },
+  {
+    id: 'live-min-speed',
+    section: 'live',
+    label: 'Lowest speed',
+    desc: 'Leave out aircraft slower than this, such as ones taxiing',
+    control: { kind: 'range', input: 'pref-live-min-kt', min: 0, max: 200, step: 10, unit: 'kt' },
+    pref: { key: 'live-min-kt', default: '60' },
+  },
+
   // On a route
   {
     id: 'route-focus',
@@ -277,6 +307,7 @@ export function isSettingKey(key: string): boolean {
   return (
     name.startsWith('show-') ||
     name.startsWith('route-') ||
+    name.startsWith('live-') ||
     name.startsWith('card-') ||
     ['base-map', 'tcf-step', 'spc-day', 'charts-kind', 'radar-mode', 'wxstations-mode', 'distance-unit', 'clock', 'weather-units', 'legend-open', 'settings-open'].includes(name)
   );

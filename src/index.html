@@ -50,8 +50,8 @@
         <button type="button" id="near-me" class="icon-btn near-me-btn" aria-label="Airports near me" title="Airports near me">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5" fill="#38bdf8"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
         </button>
-        <button type="button" id="help-open" class="icon-btn help-btn" aria-haspopup="dialog" aria-expanded="false" aria-controls="help-modal" aria-label="Help" title="Help">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.4-2.7 4.1"/><circle cx="12" cy="17.6" r="0.6" fill="#38bdf8"/></svg>
+        <button type="button" id="live-toggle" class="icon-btn live-btn" aria-pressed="false" aria-label="Live track: aircraft around you" title="Live track: aircraft around you">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="5" opacity="0.6"/><path d="M12 12l6.5-6.5"/><circle cx="12" cy="12" r="1.4" fill="#38bdf8"/></svg>
         </button>
       </div>
     </header>
@@ -67,7 +67,10 @@
         <div class="settings-footer">
           <button type="button" id="about-open" class="menu-link">About ZachRoute</button>
           <button type="button" id="settings-reset" class="menu-link">Reset all settings</button>
-          <div class="menu-version" id="menu-version"></div>
+          <span class="settings-footer-end">
+            <button type="button" id="help-open" class="menu-link" aria-haspopup="dialog" aria-controls="help-modal">Help</button>
+            <span class="menu-version" id="menu-version"></span>
+          </span>
         </div>
       </div>
     </div>
@@ -130,6 +133,11 @@
       <div id="map" class="map-container"></div>
       <div id="map-hint" class="map-hint" hidden></div>
       <button type="button" id="map-focus-back" class="map-focus-back" hidden>Back</button>
+      <div id="live-banner" class="live-banner" role="status" hidden>
+        <span>Live track paused after 5 minutes</span>
+        <button type="button" id="live-continue" class="live-banner-btn">Continue</button>
+        <button type="button" id="live-stop" class="live-banner-btn live-banner-btn--plain">Stop</button>
+      </div>
       <div id="route-summary" class="route-summary" hidden></div>
       <div id="map-legend" class="map-legend" hidden></div>
       
@@ -138,6 +146,7 @@
           <div class="sheet-handle-bar"></div>
           <div id="sheet-summary" class="sheet-summary">Search an airport or route</div>
         </div>
+        <div id="live-panel" class="live-panel" aria-live="polite" hidden></div>
         <div id="results-content" class="results-content">
           <div class="empty-state">
             <p>Enter an airport code, a city or airport name, or a route.</p>

@@ -65,7 +65,6 @@ export function mountHelp(): HelpPanel | null {
   }
 
   search.addEventListener('input', filter);
-  opener?.addEventListener('click', () => (modal.hidden ? open() : close()));
   modal.querySelector('.modal-close')?.addEventListener('click', close);
   modal.addEventListener('click', (e) => {
     if (e.target === modal) close();
