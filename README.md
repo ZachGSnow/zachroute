@@ -99,7 +99,8 @@ used once and not stored; denying permission just shows a message.
 (wind arrows, with a ring only when conditions are below VFR; or temperatures colored cold to hot,
 marked where it is at or below freezing and where temperature and dewpoint are close enough for
 fog), the forecast freezing level (shaded dark blue where it is low, with values in thousands of
-feet; from zoom 3), weather radar (the US from NEXRAD via the Iowa Environmental Mesonet, about
+feet; from zoom 3), FAA aeronautical charts for the US (the VFR sectional or the IFR low enroute
+chart, from zoom 8, with the edition date; not for navigation), weather radar (the US from NEXRAD via the Iowa Environmental Mesonet, about
 1 km detail; elsewhere RainViewer, coarser, from countries that share their radar; or, for the US,
 storm tops: how high the storms reach, to compare with cruise altitude), pilot reports,
 weather hazards, the US thunderstorm forecast (the Aviation
@@ -272,6 +273,7 @@ can add on top of the source's age.
 | Earthquakes (M4.5+, worldwide) | [USGS](https://earthquake.usgs.gov) earthquake feed | Within minutes of each quake | Up to 15 min | Public domain (US government) |
 | Volcano alerts (US) | [USGS Volcano Hazards Program](https://volcanoes.usgs.gov) notices | As observatories issue them | Up to 15 min | Public domain (US government) |
 | Space weather scales, Kp and aurora forecast | [NOAA Space Weather Prediction Center](https://www.swpc.noaa.gov) | Scales and Kp as conditions change; aurora (OVATION) every few minutes, about 30-90 min ahead | Up to 25 min | Public domain (US government) |
+| Aeronautical charts (US: VFR sectional, IFR low enroute) | [FAA Aeronautical Information Services](https://www.faa.gov/air_traffic/flight_info/aeronav) tile service | Charts every 56 days; the tile service is updated less often (last on 9 Jul 2026), and the app shows its edition date | Tiles cached 1 hour by the browser | Public domain (US government); not for navigation |
 | Temporary flight restrictions (US) | [FAA TFR list and map service](https://tfr.faa.gov) | As issued | Up to 15 min | Public domain (US government) |
 | Tropical cyclones elsewhere (from JTWC and other agencies) | [GDACS](https://www.gdacs.org), the UN / European Commission Global Disaster Alert and Coordination System | Each storm's advisory every 6 hours, republished by GDACS 1-6 hours later (storms were 5-14 hours past their advisory time when measured) | Up to 40 min | No published license; GDACS provides its data as is, for information only (credited in the app) |
 | Tropical cyclones, Atlantic and East and Central Pacific | [National Hurricane Center](https://www.nhc.noaa.gov) advisories (CurrentStorms.json; cone and track from NOAA's tropical map service) | Every 6 hours, plus intermediate advisories | Up to 40 min | Public domain (US government) |

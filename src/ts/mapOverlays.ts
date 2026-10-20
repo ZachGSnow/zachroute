@@ -7,6 +7,16 @@ import { fetchSpcOutlook, spcLevel, spcCategoryName, spcRiskWord, type SpcDay } 
 import { fetchGeohazards, quakeSeverity, quakeRadius, volcanoSeverity, colorCodeLabel } from './geohazards';
 import { fetchSpaceWeather, auroraLookup, auroraRgba, scalesLabel } from './spaceWeather';
 import {
+  faaChartTileUrl,
+  faaChartInfoUrl,
+  faaChartName,
+  chartUpdated,
+  chartAgeNote,
+  FAA_CHART_MIN_ZOOM,
+  FAA_CHART_MAX_NATIVE_ZOOM,
+  type FaaChart,
+} from './faaCharts';
+import {
   IEM_REFLECTIVITY_URL,
   IEM_REFLECTIVITY_TIME_URL,
   IEM_ECHO_TOPS_URL,
@@ -112,6 +122,7 @@ function updateZoomHint() {
   if (pirepsOn && z < MIN_PIREP_ZOOM) needed.push('pilot reports');
   if (firesOn && z < MIN_FIRE_ZOOM) needed.push('fires');
   if (freezingOn && z < MIN_FREEZING_ZOOM) needed.push('the freezing level');
+  if (chartsOn && z < FAA_CHART_MIN_ZOOM) needed.push('FAA charts');
   setHint(needed.length ? `Zoom in to see ${needed.join(' and ')}` : null);
 }
 
@@ -124,6 +135,8 @@ export function initOverlays(m: L.Map) {
   map = m;
 
   // Night shading sits just above the base tiles; hazards sit under the airport markers.
+  // FAA charts replace the look of the base map, so they sit right on it, under all weather.
+  map.createPane('charts').style.zIndex = '220';
   map.createPane('satellite').style.zIndex = '240';
   map.getPane('satellite')!.style.pointerEvents = 'none';
   map.createPane('night').style.zIndex = '250';
@@ -1704,6 +1717,66 @@ async function refreshAurora(announce: boolean) {
       5000
     );
   }
+}
+
+// ---------------------------------------------------------------------------
+// FAA aeronautical charts (US), zoom 8 and closer
+// ---------------------------------------------------------------------------
+
+let chartsOn = false;
+let chartKind: FaaChart = 'vfr';
+let chartLayer: L.TileLayer | null = null;
+const chartNotes = new Map<FaaChart, Promise<string>>();
+
+/** "edition of 9 Jul 2026, older than the current one", read once per chart from the FAA service. */
+function chartNote(chart: FaaChart): Promise<string> {
+  let note = chartNotes.get(chart);
+  if (!note) {
+    note = fetch(faaChartInfoUrl(chart))
+      .then((res) => (res.ok ? res.json() : null))
+      .then((info) => chartAgeNote(chartUpdated(info)))
+      .catch(() => chartAgeNote(null));
+    chartNotes.set(chart, note);
+  }
+  return note;
+}
+
+/** Shows the chosen chart once its edition date is known (or after 3 s), so the credit can carry it. */
+async function showCharts(announce: boolean) {
+  if (!map) return;
+  const chart = chartKind;
+  const note = await Promise.race([chartNote(chart), new Promise<string>((r) => window.setTimeout(() => r(chartAgeNote(null)), 3000))]);
+  if (!map || !chartsOn || chart !== chartKind) return;
+  if (chartLayer) map.removeLayer(chartLayer);
+  chartLayer = L.tileLayer(faaChartTileUrl(chart), {
+    pane: 'charts',
+    minZoom: FAA_CHART_MIN_ZOOM,
+    maxNativeZoom: FAA_CHART_MAX_NATIVE_ZOOM,
+    // US and territories; outside it the service has no tiles.
+    bounds: L.latLngBounds([13, -180], [72, -60]),
+    opacity: 0.9,
+    attribution: `Charts: FAA Aeronautical Information Services (${faaChartName(chart)}, ${note}), not for navigation`,
+  }).addTo(map);
+  updateZoomHint();
+  if (announce && map.getZoom() >= FAA_CHART_MIN_ZOOM) setHint(`FAA ${faaChartName(chart)} chart, ${note}. Not for navigation`, 6000);
+}
+
+export function setCharts(on: boolean) {
+  chartsOn = on;
+  if (!map) return;
+  if (!on) {
+    if (chartLayer) map.removeLayer(chartLayer);
+    chartLayer = null;
+    updateZoomHint();
+    return;
+  }
+  void showCharts(true);
+}
+
+/** Which chart to show: the VFR sectional or the IFR low enroute chart. */
+export function setChartKind(chart: FaaChart) {
+  chartKind = chart;
+  if (chartsOn) void showCharts(true);
 }
 
 // ---------------------------------------------------------------------------
