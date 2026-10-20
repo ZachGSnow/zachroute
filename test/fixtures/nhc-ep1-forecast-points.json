@@ -1,0 +1,210 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "id": 6379,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -109.49999999960022,
+     20.200000000199964
+    ]
+   },
+   "properties": {
+    "objectid": 6379,
+    "stormname": "Tropical Storm Trudy",
+    "stormtype": "STD",
+    "dvlbl": "D",
+    "basin": "EP",
+    "advdate": "200 PM MST Mon Oct 19 2026",
+    "advisnum": "26",
+    "fcstprd": 120,
+    "gust": 35,
+    "maxwind": 25,
+    "mslp": 9999,
+    "ssnum": 0,
+    "datelbl": "11:00 AM Wed",
+    "tcdvlp": "Subtropical Depression",
+    "tcdir": 9999,
+    "tcspd": 9999,
+    "fldatelbl": "2026-10-21 11:00 AM Wed MST",
+    "lat": 20,
+    "lon": -110,
+    "stormnum": 21,
+    "stormsrc": "Post-Tropical Cyclone",
+    "tau": 48,
+    "timezone": "MST",
+    "validtime": "21/1800",
+    "idp_source": "ep212026-026_5day_pts",
+    "idp_filedate": 1792444078000,
+    "idp_ingestdate": 1792444215000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 6375,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -107.90000000009985,
+     19.300000000199987
+    ]
+   },
+   "properties": {
+    "objectid": 6375,
+    "stormname": "Tropical Storm Trudy",
+    "stormtype": "TS",
+    "dvlbl": "S",
+    "basin": "EP",
+    "advdate": "200 PM MST Mon Oct 19 2026",
+    "advisnum": "26",
+    "fcstprd": 120,
+    "gust": 45,
+    "maxwind": 35,
+    "mslp": 1004,
+    "ssnum": 0,
+    "datelbl": "2:00 PM Mon",
+    "tcdvlp": "Tropical Storm",
+    "tcdir": 360,
+    "tcspd": 0,
+    "fldatelbl": "2026-10-19 11:00 AM Mon MST",
+    "lat": 19,
+    "lon": -108,
+    "stormnum": 21,
+    "stormsrc": "Tropical Cyclone",
+    "tau": 0,
+    "timezone": "MST",
+    "validtime": "19/1800",
+    "idp_source": "ep212026-026_5day_pts",
+    "idp_filedate": 1792444078000,
+    "idp_ingestdate": 1792444215000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 6376,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -108.30000000019976,
+     19.400000000000148
+    ]
+   },
+   "properties": {
+    "objectid": 6376,
+    "stormname": "Tropical Storm Trudy",
+    "stormtype": "TD",
+    "dvlbl": "D",
+    "basin": "EP",
+    "advdate": "200 PM MST Mon Oct 19 2026",
+    "advisnum": "26",
+    "fcstprd": 120,
+    "gust": 40,
+    "maxwind": 30,
+    "mslp": 9999,
+    "ssnum": 0,
+    "datelbl": "11:00 PM Mon",
+    "tcdvlp": "Tropical Depression",
+    "tcdir": 9999,
+    "tcspd": 9999,
+    "fldatelbl": "2026-10-19 11:00 PM Mon MST",
+    "lat": 19,
+    "lon": -108,
+    "stormnum": 21,
+    "stormsrc": "Tropical Cyclone",
+    "tau": 12,
+    "timezone": "MST",
+    "validtime": "20/0600",
+    "idp_source": "ep212026-026_5day_pts",
+    "idp_filedate": 1792444078000,
+    "idp_ingestdate": 1792444215000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 6377,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -108.89999999989999,
+     19.49999999980031
+    ]
+   },
+   "properties": {
+    "objectid": 6377,
+    "stormname": "Tropical Storm Trudy",
+    "stormtype": "STD",
+    "dvlbl": "D",
+    "basin": "EP",
+    "advdate": "200 PM MST Mon Oct 19 2026",
+    "advisnum": "26",
+    "fcstprd": 120,
+    "gust": 40,
+    "maxwind": 30,
+    "mslp": 9999,
+    "ssnum": 0,
+    "datelbl": "11:00 AM Tue",
+    "tcdvlp": "Subtropical Depression",
+    "tcdir": 9999,
+    "tcspd": 9999,
+    "fldatelbl": "2026-10-20 11:00 AM Tue MST",
+    "lat": 20,
+    "lon": -109,
+    "stormnum": 21,
+    "stormsrc": "Post-Tropical Cyclone",
+    "tau": 24,
+    "timezone": "MST",
+    "validtime": "20/1800",
+    "idp_source": "ep212026-026_5day_pts",
+    "idp_filedate": 1792444078000,
+    "idp_ingestdate": 1792444215000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 6378,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -109.2999999999999,
+     19.800000000100056
+    ]
+   },
+   "properties": {
+    "objectid": 6378,
+    "stormname": "Tropical Storm Trudy",
+    "stormtype": "STD",
+    "dvlbl": "D",
+    "basin": "EP",
+    "advdate": "200 PM MST Mon Oct 19 2026",
+    "advisnum": "26",
+    "fcstprd": 120,
+    "gust": 35,
+    "maxwind": 25,
+    "mslp": 9999,
+    "ssnum": 0,
+    "datelbl": "11:00 PM Tue",
+    "tcdvlp": "Subtropical Depression",
+    "tcdir": 9999,
+    "tcspd": 9999,
+    "fldatelbl": "2026-10-20 11:00 PM Tue MST",
+    "lat": 20,
+    "lon": -109,
+    "stormnum": 21,
+    "stormsrc": "Post-Tropical Cyclone",
+    "tau": 36,
+    "timezone": "MST",
+    "validtime": "21/0600",
+    "idp_source": "ep212026-026_5day_pts",
+    "idp_filedate": 1792444078000,
+    "idp_ingestdate": 1792444215000,
+    "binnumber": "EP1"
+   }
+  }
+ ]
+}

@@ -1,0 +1,537 @@
+{
+ "currentVersion": 11.3,
+ "serviceDescription": "<div>\n<b>The National Hurricane Center and Central Pacific Center Tropical Weather Web Service</b> is a web service that contains the tropical cyclone data for possible storms throughout the United States and its territories. Specific storms can be identified on this summary service by the storm\u2019s wallet. Wallet information is found in the \"idp_source\" with a field alias GIS Source attribute field of the data as the leading three characters.<br /><br />\nThis web service visually displays potential impact of tropical cyclones on coastal communities. The provided wind, probability of flooding, surge inundation layers, watch warnings and tidal masks offers critical information for emergency preparedness and response efforts. This includes helping residents, emergency managers, and policymakers understand the potential severity of coastal flooding and take appropriate precautions. This web service covers a wide range of coastal areas prone to tropical cyclones, ensuring that stakeholders across different regions have access to essential tropical storm information. This comprehensive coverage enhances the service's utility and relevance for a diverse audience.<br /><br />\nHowever, understanding the full extent of risk requires a comprehensive view of the affected areas. Therefore, it's highly recommended to complement the National Hurricane Center and Central Pacific Center Tropical Weather Web Service is complimented with the use of additional resources including NHC Peak Storm Surge Web Service that provide information about major roads, railways, landmarks, and areas likely to be flooded. Incorporating data on past flood levels can further enrich the analysis and aid in predicting future impacts.<br /><br />\nOne such valuable asset is the <a href='https://viewer.weather.noaa.gov/tropical' target='_blank'>NWS National Viewer\u2019s Tropical Site</a>, which offers a wealth of supplementary information to enhance situational awareness and risk assessment. By integrating these complementary resources, stakeholders can gain a holistic understanding of the potential impacts of tropical cyclones and make more effective decisions to safeguard lives, property, and critical.<br /><br />\n<b>Layer Descriptions:</b><br /><br />\n<b>2 Day Outlook</b> depicts the 2-day Graphic Tropical Weather Outlook from the NHC.<br /><br />\n<b>7 Day Outlook</b> depicts the 7-day Graphic Tropical Weather Outlook from the NHC.<br /><br />\n<b>Forecast Points</b> depicts the current position and forecast positions of the storm out to 120 hours.<br /><br />\n<b>Forecast Track</b> is a line connecting the forecast points.<br /><br />\n<b>Forecast Cone</b> depicts the forecast \"cone of uncertainty\".<br /><br />\n<b>Watch-Warning</b> depicts a \"watch/warning\" line indicating which sections of the coastline are in a watch/warning state due to the storm.<br /><br />\n<b>Past Points</b> depicts the \"best\" track of the storm to the current time.<br /><br />\n<b>Past Track</b> is a line connecting the past points.<br /><br />\n<b>Best Wind Radii</b> shows how the size of the storm has changed and the areas potentially affected so far by sustained winds.<br /><br />\n<b>Surface Wind Field</b> is intended to show the areas potentially being affected by sustained winds of tropical storm force (34 knot and 50 knot) and hurricane force (64 knot).<br /><br />\n<b>Forecast Wind Radii</b> are intended to show the expected size of the storm and the areas potentially affected by sustained winds of tropical storm force (34 knot and 50 knot) and hurricane force (64 knot).<br /><br />\n<b>Arrival Time of TS Winds</b> depicts the earliest reasonable or the most likely arrival time of tropical storm force winds.<br /><br />\n<b>Inundation</b> depicts the total water level that occurs on normally dry ground as a result of the storm tide.<br /><br />\n<b>Tidal Mask</b> depicts the total water level that occurs on normally dry ground as a result of the storm tide, plus intertidal zones/estuarine wetlands.<br /><br />\n<b>Probabilistic Winds</b> depicts the probability of 34, 50 and 64 knot winds.<br /><br />\n<b>Update Frequency:</b> Every 6 hours and every 3 hours if the storm is approaching the shore.<br /><br />\nLink to graphical web page: <a href='https://www.nhc.noaa.gov' target='_blank'>https://www.nhc.noaa.gov</a><br /><br />\nLink to data download (shapefile): <a href='https://www.nhc.noaa.gov/gis' target='_blank'>https://www.nhc.noaa.gov/gis</a><br /><br />\nLink to <a href='https://www.weather.gov/gis/IDP-GISRestMetadata' target='_blank'>metadata</a><br /><br />\nQuestions/Concerns about the service, please contact the <a href='mailto:nws.mapservices@noaa.gov' target='_blank'>DISS GIS</a> team.<br /><br />\n<b>Time Information:</b> This service is not time enabled.\n</div>",
+ "mapName": "Tropical Weather",
+ "layers": [
+  {
+   "id": 4,
+   "name": "AT1",
+   "parentLayerId": -1,
+   "defaultVisibility": true,
+   "subLayerIds": [
+    5,
+    10,
+    15,
+    18,
+    21
+   ],
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Group Layer",
+   "supportsDynamicLegends": false
+  },
+  {
+   "id": 5,
+   "name": "AT1 Forecast Information",
+   "parentLayerId": 4,
+   "defaultVisibility": true,
+   "subLayerIds": [
+    6,
+    7,
+    8,
+    9
+   ],
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Group Layer",
+   "supportsDynamicLegends": false
+  },
+  {
+   "id": 6,
+   "name": "AT1 Forecast Points",
+   "parentLayerId": 5,
+   "defaultVisibility": true,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPoint",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 7,
+   "name": "AT1 Forecast Track",
+   "parentLayerId": 5,
+   "defaultVisibility": true,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolyline",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 8,
+   "name": "AT1 Forecast Cone",
+   "parentLayerId": 5,
+   "defaultVisibility": true,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolygon",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 9,
+   "name": "AT1 Watch-Warning",
+   "parentLayerId": 5,
+   "defaultVisibility": true,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolyline",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 10,
+   "name": "AT1 Past Track Infomation",
+   "parentLayerId": 4,
+   "defaultVisibility": true,
+   "subLayerIds": [
+    11,
+    12,
+    13,
+    14
+   ],
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Group Layer",
+   "supportsDynamicLegends": false
+  },
+  {
+   "id": 11,
+   "name": "AT1 Past Points",
+   "parentLayerId": 10,
+   "defaultVisibility": true,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPoint",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 12,
+   "name": "AT1 Past Track",
+   "parentLayerId": 10,
+   "defaultVisibility": false,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolyline",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 13,
+   "name": "AT1 Past Cumulative Wind Swath",
+   "parentLayerId": 10,
+   "defaultVisibility": false,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolygon",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 14,
+   "name": "AT1 Past Wind Radii",
+   "parentLayerId": 10,
+   "defaultVisibility": false,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolygon",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 15,
+   "name": "AT1 Wind Information",
+   "parentLayerId": 4,
+   "defaultVisibility": true,
+   "subLayerIds": [
+    16,
+    17
+   ],
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Group Layer",
+   "supportsDynamicLegends": false
+  },
+  {
+   "id": 16,
+   "name": "AT1 Forecast Wind Radii",
+   "parentLayerId": 15,
+   "defaultVisibility": false,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolygon",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 17,
+   "name": "AT1 Advisory Wind Field",
+   "parentLayerId": 15,
+   "defaultVisibility": false,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolygon",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 18,
+   "name": "AT1 Arrival Time of TS Winds",
+   "parentLayerId": 4,
+   "defaultVisibility": true,
+   "subLayerIds": [
+    19,
+    20
+   ],
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Group Layer",
+   "supportsDynamicLegends": false
+  },
+  {
+   "id": 19,
+   "name": "AT1 Earliest Reasonable Arrival Time",
+   "parentLayerId": 18,
+   "defaultVisibility": false,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolyline",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 20,
+   "name": "AT1 Most Likely Arrival Time",
+   "parentLayerId": 18,
+   "defaultVisibility": false,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolyline",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 21,
+   "name": "AT1 Inundation and Tidal Mask",
+   "parentLayerId": 4,
+   "defaultVisibility": true,
+   "subLayerIds": [
+    22,
+    26
+   ],
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Group Layer",
+   "supportsDynamicLegends": false
+  },
+  {
+   "id": 22,
+   "name": "AT1 Inundation",
+   "parentLayerId": 21,
+   "defaultVisibility": false,
+   "subLayerIds": [
+    23,
+    24,
+    25
+   ],
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Mosaic Layer",
+   "supportsDynamicLegends": false
+  },
+  {
+   "id": 26,
+   "name": "AT1 Tidal Mask",
+   "parentLayerId": 21,
+   "defaultVisibility": false,
+   "subLayerIds": [
+    27,
+    28,
+    29
+   ],
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Mosaic Layer",
+   "supportsDynamicLegends": false
+  },
+  {
+   "id": 134,
+   "name": "EP1",
+   "parentLayerId": -1,
+   "defaultVisibility": true,
+   "subLayerIds": [
+    135,
+    140,
+    145,
+    148,
+    151
+   ],
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Group Layer",
+   "supportsDynamicLegends": false
+  },
+  {
+   "id": 135,
+   "name": "EP1 Forecast Information",
+   "parentLayerId": 134,
+   "defaultVisibility": true,
+   "subLayerIds": [
+    136,
+    137,
+    138,
+    139
+   ],
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Group Layer",
+   "supportsDynamicLegends": false
+  },
+  {
+   "id": 136,
+   "name": "EP1 Forecast Points",
+   "parentLayerId": 135,
+   "defaultVisibility": true,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPoint",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 137,
+   "name": "EP1 Forecast Track",
+   "parentLayerId": 135,
+   "defaultVisibility": true,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolyline",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 138,
+   "name": "EP1 Forecast Cone",
+   "parentLayerId": 135,
+   "defaultVisibility": true,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolygon",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 139,
+   "name": "EP1 Watch-Warning",
+   "parentLayerId": 135,
+   "defaultVisibility": true,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolyline",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 140,
+   "name": "EP1 Past Track Infomation",
+   "parentLayerId": 134,
+   "defaultVisibility": true,
+   "subLayerIds": [
+    141,
+    142,
+    143,
+    144
+   ],
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Group Layer",
+   "supportsDynamicLegends": false
+  },
+  {
+   "id": 141,
+   "name": "EP1 Past Points",
+   "parentLayerId": 140,
+   "defaultVisibility": true,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPoint",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 142,
+   "name": "EP1 Past Track",
+   "parentLayerId": 140,
+   "defaultVisibility": false,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolyline",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 143,
+   "name": "EP1 Past Cumulative Wind Swath",
+   "parentLayerId": 140,
+   "defaultVisibility": false,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolygon",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 144,
+   "name": "EP1 Past Wind Radii",
+   "parentLayerId": 140,
+   "defaultVisibility": false,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolygon",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 145,
+   "name": "EP1 Wind Information",
+   "parentLayerId": 134,
+   "defaultVisibility": true,
+   "subLayerIds": [
+    146,
+    147
+   ],
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Group Layer",
+   "supportsDynamicLegends": false
+  },
+  {
+   "id": 146,
+   "name": "EP1 Forecast Wind Radii",
+   "parentLayerId": 145,
+   "defaultVisibility": false,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolygon",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 147,
+   "name": "EP1 Advisory Wind Field",
+   "parentLayerId": 145,
+   "defaultVisibility": false,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolygon",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 148,
+   "name": "EP1 Arrival Time of TS Winds",
+   "parentLayerId": 134,
+   "defaultVisibility": true,
+   "subLayerIds": [
+    149,
+    150
+   ],
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Group Layer",
+   "supportsDynamicLegends": false
+  },
+  {
+   "id": 149,
+   "name": "EP1 Earliest Reasonable Arrival Time",
+   "parentLayerId": 148,
+   "defaultVisibility": false,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolyline",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 150,
+   "name": "EP1 Most Likely Arrival Time",
+   "parentLayerId": 148,
+   "defaultVisibility": false,
+   "subLayerIds": null,
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Feature Layer",
+   "geometryType": "esriGeometryPolyline",
+   "supportsDynamicLegends": true
+  },
+  {
+   "id": 151,
+   "name": "EP1 Inundation and Tidal Mask",
+   "parentLayerId": 134,
+   "defaultVisibility": true,
+   "subLayerIds": [
+    152,
+    156
+   ],
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Group Layer",
+   "supportsDynamicLegends": false
+  },
+  {
+   "id": 152,
+   "name": "EP1 Inundation",
+   "parentLayerId": 151,
+   "defaultVisibility": false,
+   "subLayerIds": [
+    153,
+    154,
+    155
+   ],
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Mosaic Layer",
+   "supportsDynamicLegends": false
+  },
+  {
+   "id": 156,
+   "name": "EP1 Tidal Mask",
+   "parentLayerId": 151,
+   "defaultVisibility": false,
+   "subLayerIds": [
+    157,
+    158,
+    159
+   ],
+   "minScale": 0,
+   "maxScale": 0,
+   "type": "Mosaic Layer",
+   "supportsDynamicLegends": false
+  }
+ ]
+}

@@ -15,6 +15,7 @@ structure left untouched. They contain only public aviation, weather and geograp
 | `rainviewer-5-15-11.png`, `rainviewer-weather-maps.json` | RainViewer radar tile over Europe (zoom 5, Universal Blue, no smoothing) and its frame index, captured 2026-10-19 |
 | `eumetsat-mtg-capabilities.xml`, `eumetsat-iodc-5-24-15.png` | view.eumetsat.int: the Meteosat-12 infrared layer's own capabilities (newest image 23:30 UTC), and a Meteosat-9 infrared tile over the Indian Ocean (zoom 5, x 24, y 15) at 22:00 UTC, captured 2026-10-19 |
 | `spc-day1-cat.json`, `spc-day2-cat.json` | spc.noaa.gov categorical convective outlooks (GeoJSON), day 1 issued 19:58 UTC (general thunderstorms and a marginal risk) and day 2, captured 2026-10-19 |
+| `nhc-current-storms.json`, `nhc-ep1-cone.json`, `nhc-ep1-forecast-points.json`, `nhc-ep1-past-points.json`, `nhc-mapserver-layers.json` | NHC CurrentStorms.json with Tropical Storm Trudy (advisory 26, 21:00 UTC), and her forecast cone, forecast points and best-track points from mapservices.weather.noaa.gov (GeoJSON), plus that service's layer list trimmed to the EP1 and AT1 layers, captured 2026-10-19 |
 | `awc-isigmet.json` | aviationweather.gov international SIGMET: volcanic ash, tropical cyclone, thunderstorm, turbulence, icing, one multi-area record and two without a usable polygon |
 | `faa-status-delays.xml` | nasstatus.faa.gov airport status, captured 2026-10-16 01:00 UTC while delay programs were active |
 | `faa-status-closures.xml` | the same feed later that morning (closures only) |

@@ -1,0 +1,1125 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "id": 30626,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -88.00000000029968,
+     7.600000000199998
+    ]
+   },
+   "properties": {
+    "objectid": 30626,
+    "stormname": "GENESIS031",
+    "stormtype": "DB",
+    "stormnum": 21,
+    "intensity": 15,
+    "basin": "ep",
+    "mslp": 0,
+    "dtg": 2026101106,
+    "year": 2026,
+    "month": "10",
+    "day": 11,
+    "hhmm": "0600",
+    "lat": 8,
+    "lon": -88,
+    "ss": 0,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30627,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -89.19999999970014,
+     7.399999999700356
+    ]
+   },
+   "properties": {
+    "objectid": 30627,
+    "stormname": "GENESIS031",
+    "stormtype": "DB",
+    "stormnum": 21,
+    "intensity": 15,
+    "basin": "ep",
+    "mslp": 0,
+    "dtg": 2026101112,
+    "year": 2026,
+    "month": "10",
+    "day": 11,
+    "hhmm": "1200",
+    "lat": 7,
+    "lon": -89,
+    "ss": 0,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30628,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -90.39999999999992,
+     7.200000000100033
+    ]
+   },
+   "properties": {
+    "objectid": 30628,
+    "stormname": "GENESIS031",
+    "stormtype": "DB",
+    "stormnum": 21,
+    "intensity": 15,
+    "basin": "ep",
+    "mslp": 0,
+    "dtg": 2026101118,
+    "year": 2026,
+    "month": "10",
+    "day": 11,
+    "hhmm": "1800",
+    "lat": 7,
+    "lon": -90,
+    "ss": 0,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30629,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -91.39999999980006,
+     7.299999999900194
+    ]
+   },
+   "properties": {
+    "objectid": 30629,
+    "stormname": "GENESIS031",
+    "stormtype": "DB",
+    "stormnum": 21,
+    "intensity": 25,
+    "basin": "ep",
+    "mslp": 1010,
+    "dtg": 2026101200,
+    "year": 2026,
+    "month": "10",
+    "day": 12,
+    "hhmm": "0000",
+    "lat": 7,
+    "lon": -91,
+    "ss": 0,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30630,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -92.10000000019977,
+     7.700000000000159
+    ]
+   },
+   "properties": {
+    "objectid": 30630,
+    "stormname": "INVEST",
+    "stormtype": "DB",
+    "stormnum": 21,
+    "intensity": 25,
+    "basin": "ep",
+    "mslp": 1010,
+    "dtg": 2026101206,
+    "year": 2026,
+    "month": "10",
+    "day": 12,
+    "hhmm": "0600",
+    "lat": 8,
+    "lon": -92,
+    "ss": 0,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30631,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -93.09999999999991,
+     7.899999999600425
+    ]
+   },
+   "properties": {
+    "objectid": 30631,
+    "stormname": "INVEST",
+    "stormtype": "DB",
+    "stormnum": 21,
+    "intensity": 25,
+    "basin": "ep",
+    "mslp": 1009,
+    "dtg": 2026101212,
+    "year": 2026,
+    "month": "10",
+    "day": 12,
+    "hhmm": "1200",
+    "lat": 8,
+    "lon": -93,
+    "ss": 0,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30632,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -93.90000000019973,
+     8.100000000100067
+    ]
+   },
+   "properties": {
+    "objectid": 30632,
+    "stormname": "INVEST",
+    "stormtype": "DB",
+    "stormnum": 21,
+    "intensity": 25,
+    "basin": "ep",
+    "mslp": 1008,
+    "dtg": 2026101218,
+    "year": 2026,
+    "month": "10",
+    "day": 12,
+    "hhmm": "1800",
+    "lat": 8,
+    "lon": -94,
+    "ss": 0,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30633,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -94.7000000003996,
+     8.600000000000136
+    ]
+   },
+   "properties": {
+    "objectid": 30633,
+    "stormname": "INVEST",
+    "stormtype": "DB",
+    "stormnum": 21,
+    "intensity": 25,
+    "basin": "ep",
+    "mslp": 1008,
+    "dtg": 2026101300,
+    "year": 2026,
+    "month": "10",
+    "day": 13,
+    "hhmm": "0000",
+    "lat": 9,
+    "lon": -95,
+    "ss": 0,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30634,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -95.09999999960019,
+     9.099999999900206
+    ]
+   },
+   "properties": {
+    "objectid": 30634,
+    "stormname": "INVEST",
+    "stormtype": "DB",
+    "stormnum": 21,
+    "intensity": 25,
+    "basin": "ep",
+    "mslp": 1008,
+    "dtg": 2026101306,
+    "year": 2026,
+    "month": "10",
+    "day": 13,
+    "hhmm": "0600",
+    "lat": 9,
+    "lon": -95,
+    "ss": 0,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30635,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -95.49999999970015,
+     9.500000000000114
+    ]
+   },
+   "properties": {
+    "objectid": 30635,
+    "stormname": "TWENTY-ONE",
+    "stormtype": "TD",
+    "stormnum": 21,
+    "intensity": 30,
+    "basin": "ep",
+    "mslp": 1006,
+    "dtg": 2026101312,
+    "year": 2026,
+    "month": "10",
+    "day": 13,
+    "hhmm": "1200",
+    "lat": 10,
+    "lon": -96,
+    "ss": 0,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30636,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -95.99999999960022,
+     10.300000000199987
+    ]
+   },
+   "properties": {
+    "objectid": 30636,
+    "stormname": "TRUDY",
+    "stormtype": "TS",
+    "stormnum": 21,
+    "intensity": 35,
+    "basin": "ep",
+    "mslp": 1005,
+    "dtg": 2026101318,
+    "year": 2026,
+    "month": "10",
+    "day": 13,
+    "hhmm": "1800",
+    "lat": 10,
+    "lon": -96,
+    "ss": 0,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30637,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -96.8999999996002,
+     10.499999999800309
+    ]
+   },
+   "properties": {
+    "objectid": 30637,
+    "stormname": "TRUDY",
+    "stormtype": "TS",
+    "stormnum": 21,
+    "intensity": 35,
+    "basin": "ep",
+    "mslp": 1004,
+    "dtg": 2026101400,
+    "year": 2026,
+    "month": "10",
+    "day": 14,
+    "hhmm": "0000",
+    "lat": 10,
+    "lon": -97,
+    "ss": 0,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30638,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -98.40000000019973,
+     10.899999999900217
+    ]
+   },
+   "properties": {
+    "objectid": 30638,
+    "stormname": "TRUDY",
+    "stormtype": "TS",
+    "stormnum": 21,
+    "intensity": 40,
+    "basin": "ep",
+    "mslp": 1002,
+    "dtg": 2026101406,
+    "year": 2026,
+    "month": "10",
+    "day": 14,
+    "hhmm": "0600",
+    "lat": 11,
+    "lon": -98,
+    "ss": 0,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30639,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -99.09999999970012,
+     11.300000000000125
+    ]
+   },
+   "properties": {
+    "objectid": 30639,
+    "stormname": "TRUDY",
+    "stormtype": "TS",
+    "stormnum": 21,
+    "intensity": 50,
+    "basin": "ep",
+    "mslp": 999,
+    "dtg": 2026101412,
+    "year": 2026,
+    "month": "10",
+    "day": 14,
+    "hhmm": "1200",
+    "lat": 11,
+    "lon": -99,
+    "ss": 0,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30640,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -99.70000000029967,
+     11.70000000010009
+    ]
+   },
+   "properties": {
+    "objectid": 30640,
+    "stormname": "TRUDY",
+    "stormtype": "TS",
+    "stormnum": 21,
+    "intensity": 55,
+    "basin": "ep",
+    "mslp": 997,
+    "dtg": 2026101418,
+    "year": 2026,
+    "month": "10",
+    "day": 14,
+    "hhmm": "1800",
+    "lat": 12,
+    "lon": -100,
+    "ss": 0,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30641,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -100.49999999960022,
+     12.299999999800264
+    ]
+   },
+   "properties": {
+    "objectid": 30641,
+    "stormname": "TRUDY",
+    "stormtype": "TS",
+    "stormnum": 21,
+    "intensity": 60,
+    "basin": "ep",
+    "mslp": 994,
+    "dtg": 2026101500,
+    "year": 2026,
+    "month": "10",
+    "day": 15,
+    "hhmm": "0000",
+    "lat": 12,
+    "lon": -100,
+    "ss": 0,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30642,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -101.19999999999987,
+     12.600000000100067
+    ]
+   },
+   "properties": {
+    "objectid": 30642,
+    "stormname": "TRUDY",
+    "stormtype": "HU",
+    "stormnum": 21,
+    "intensity": 70,
+    "basin": "ep",
+    "mslp": 983,
+    "dtg": 2026101506,
+    "year": 2026,
+    "month": "10",
+    "day": 15,
+    "hhmm": "0600",
+    "lat": 13,
+    "lon": -101,
+    "ss": 1,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30643,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -101.50000000029968,
+     12.79999999970039
+    ]
+   },
+   "properties": {
+    "objectid": 30643,
+    "stormname": "TRUDY",
+    "stormtype": "HU",
+    "stormnum": 21,
+    "intensity": 80,
+    "basin": "ep",
+    "mslp": 979,
+    "dtg": 2026101512,
+    "year": 2026,
+    "month": "10",
+    "day": 15,
+    "hhmm": "1200",
+    "lat": 13,
+    "lon": -102,
+    "ss": 1,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30644,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -101.60000000009984,
+     13.500000000100044
+    ]
+   },
+   "properties": {
+    "objectid": 30644,
+    "stormname": "TRUDY",
+    "stormtype": "HU",
+    "stormnum": 21,
+    "intensity": 80,
+    "basin": "ep",
+    "mslp": 978,
+    "dtg": 2026101518,
+    "year": 2026,
+    "month": "10",
+    "day": 15,
+    "hhmm": "1800",
+    "lat": 14,
+    "lon": -102,
+    "ss": 1,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30645,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -101.90000000039959,
+     14.000000000000114
+    ]
+   },
+   "properties": {
+    "objectid": 30645,
+    "stormname": "TRUDY",
+    "stormtype": "HU",
+    "stormnum": 21,
+    "intensity": 90,
+    "basin": "ep",
+    "mslp": 970,
+    "dtg": 2026101600,
+    "year": 2026,
+    "month": "10",
+    "day": 16,
+    "hhmm": "0000",
+    "lat": 14,
+    "lon": -102,
+    "ss": 2,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30646,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -102.40000000029966,
+     14.000000000000114
+    ]
+   },
+   "properties": {
+    "objectid": 30646,
+    "stormname": "TRUDY",
+    "stormtype": "HU",
+    "stormnum": 21,
+    "intensity": 105,
+    "basin": "ep",
+    "mslp": 956,
+    "dtg": 2026101606,
+    "year": 2026,
+    "month": "10",
+    "day": 16,
+    "hhmm": "0600",
+    "lat": 14,
+    "lon": -102,
+    "ss": 3,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30647,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -102.50000000009982,
+     14.199999999600436
+    ]
+   },
+   "properties": {
+    "objectid": 30647,
+    "stormname": "TRUDY",
+    "stormtype": "HU",
+    "stormnum": 21,
+    "intensity": 90,
+    "basin": "ep",
+    "mslp": 969,
+    "dtg": 2026101612,
+    "year": 2026,
+    "month": "10",
+    "day": 16,
+    "hhmm": "1200",
+    "lat": 14,
+    "lon": -102,
+    "ss": 2,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30648,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -102.40000000029966,
+     14.599999999700344
+    ]
+   },
+   "properties": {
+    "objectid": 30648,
+    "stormname": "TRUDY",
+    "stormtype": "HU",
+    "stormnum": 21,
+    "intensity": 75,
+    "basin": "ep",
+    "mslp": 982,
+    "dtg": 2026101618,
+    "year": 2026,
+    "month": "10",
+    "day": 16,
+    "hhmm": "1800",
+    "lat": 15,
+    "lon": -102,
+    "ss": 1,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30649,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -102.69999999970014,
+     15.099999999600414
+    ]
+   },
+   "properties": {
+    "objectid": 30649,
+    "stormname": "TRUDY",
+    "stormtype": "HU",
+    "stormnum": 21,
+    "intensity": 75,
+    "basin": "ep",
+    "mslp": 982,
+    "dtg": 2026101700,
+    "year": 2026,
+    "month": "10",
+    "day": 17,
+    "hhmm": "0000",
+    "lat": 15,
+    "lon": -103,
+    "ss": 1,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30650,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -103.19999999960021,
+     15.700000000199964
+    ]
+   },
+   "properties": {
+    "objectid": 30650,
+    "stormname": "TRUDY",
+    "stormtype": "HU",
+    "stormnum": 21,
+    "intensity": 80,
+    "basin": "ep",
+    "mslp": 979,
+    "dtg": 2026101706,
+    "year": 2026,
+    "month": "10",
+    "day": 17,
+    "hhmm": "0600",
+    "lat": 16,
+    "lon": -103,
+    "ss": 1,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30651,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -103.99999999980002,
+     16.20000000010009
+    ]
+   },
+   "properties": {
+    "objectid": 30651,
+    "stormname": "TRUDY",
+    "stormtype": "HU",
+    "stormnum": 21,
+    "intensity": 80,
+    "basin": "ep",
+    "mslp": 979,
+    "dtg": 2026101712,
+    "year": 2026,
+    "month": "10",
+    "day": 17,
+    "hhmm": "1200",
+    "lat": 16,
+    "lon": -104,
+    "ss": 1,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30652,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -104.99999999960022,
+     17.000000000299906
+    ]
+   },
+   "properties": {
+    "objectid": 30652,
+    "stormname": "TRUDY",
+    "stormtype": "HU",
+    "stormnum": 21,
+    "intensity": 85,
+    "basin": "ep",
+    "mslp": 976,
+    "dtg": 2026101718,
+    "year": 2026,
+    "month": "10",
+    "day": 17,
+    "hhmm": "1800",
+    "lat": 17,
+    "lon": -105,
+    "ss": 2,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30653,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -105.60000000019977,
+     17.79999999960046
+    ]
+   },
+   "properties": {
+    "objectid": 30653,
+    "stormname": "TRUDY",
+    "stormtype": "HU",
+    "stormnum": 21,
+    "intensity": 85,
+    "basin": "ep",
+    "mslp": 976,
+    "dtg": 2026101800,
+    "year": 2026,
+    "month": "10",
+    "day": 18,
+    "hhmm": "0000",
+    "lat": 18,
+    "lon": -106,
+    "ss": 2,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30654,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -106.1999999999,
+     18.40000000020001
+    ]
+   },
+   "properties": {
+    "objectid": 30654,
+    "stormname": "TRUDY",
+    "stormtype": "HU",
+    "stormnum": 21,
+    "intensity": 90,
+    "basin": "ep",
+    "mslp": 970,
+    "dtg": 2026101806,
+    "year": 2026,
+    "month": "10",
+    "day": 18,
+    "hhmm": "0600",
+    "lat": 18,
+    "lon": -106,
+    "ss": 2,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30655,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -106.59999999999991,
+     18.90000000010008
+    ]
+   },
+   "properties": {
+    "objectid": 30655,
+    "stormname": "TRUDY",
+    "stormtype": "HU",
+    "stormnum": 21,
+    "intensity": 90,
+    "basin": "ep",
+    "mslp": 970,
+    "dtg": 2026101812,
+    "year": 2026,
+    "month": "10",
+    "day": 18,
+    "hhmm": "1200",
+    "lat": 19,
+    "lon": -107,
+    "ss": 2,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30656,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -106.90000000029966,
+     19.300000000199987
+    ]
+   },
+   "properties": {
+    "objectid": 30656,
+    "stormname": "TRUDY",
+    "stormtype": "HU",
+    "stormnum": 21,
+    "intensity": 85,
+    "basin": "ep",
+    "mslp": 974,
+    "dtg": 2026101818,
+    "year": 2026,
+    "month": "10",
+    "day": 18,
+    "hhmm": "1800",
+    "lat": 19,
+    "lon": -107,
+    "ss": 2,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30657,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -107.40000000019973,
+     19.599999999600414
+    ]
+   },
+   "properties": {
+    "objectid": 30657,
+    "stormname": "TRUDY",
+    "stormtype": "HU",
+    "stormnum": 21,
+    "intensity": 75,
+    "basin": "ep",
+    "mslp": 982,
+    "dtg": 2026101900,
+    "year": 2026,
+    "month": "10",
+    "day": 19,
+    "hhmm": "0000",
+    "lat": 20,
+    "lon": -107,
+    "ss": 1,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30658,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -107.80000000029969,
+     19.700000000299895
+    ]
+   },
+   "properties": {
+    "objectid": 30658,
+    "stormname": "TRUDY",
+    "stormtype": "TS",
+    "stormnum": 21,
+    "intensity": 55,
+    "basin": "ep",
+    "mslp": 995,
+    "dtg": 2026101906,
+    "year": 2026,
+    "month": "10",
+    "day": 19,
+    "hhmm": "0600",
+    "lat": 20,
+    "lon": -108,
+    "ss": 0,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30659,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -107.99999999989996,
+     19.599999999600414
+    ]
+   },
+   "properties": {
+    "objectid": 30659,
+    "stormname": "TRUDY",
+    "stormtype": "TS",
+    "stormnum": 21,
+    "intensity": 50,
+    "basin": "ep",
+    "mslp": 999,
+    "dtg": 2026101912,
+    "year": 2026,
+    "month": "10",
+    "day": 19,
+    "hhmm": "1200",
+    "lat": 20,
+    "lon": -108,
+    "ss": 0,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 30660,
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -107.90000000009985,
+     19.49999999980031
+    ]
+   },
+   "properties": {
+    "objectid": 30660,
+    "stormname": "TRUDY",
+    "stormtype": "TS",
+    "stormnum": 21,
+    "intensity": 40,
+    "basin": "ep",
+    "mslp": 1004,
+    "dtg": 2026101918,
+    "year": 2026,
+    "month": "10",
+    "day": 19,
+    "hhmm": "1800",
+    "lat": 20,
+    "lon": -108,
+    "ss": 0,
+    "idp_source": "EP212026_pts",
+    "idp_filedate": 1792444079000,
+    "idp_ingestdate": 1792444256000,
+    "binnumber": "EP1"
+   }
+  }
+ ]
+}
