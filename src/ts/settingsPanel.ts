@@ -36,10 +36,11 @@ function segmentedHtml(input: string, label: string, choices: Choice[]): string 
 export function featureRowHtml(f: Feature): string {
   const c = f.control;
   const text = `<span class="setting-text"><span class="setting-label">${f.label}</span><span class="setting-desc">${f.desc}</span></span>`;
+  const info = `<button type="button" class="setting-info" data-help="${f.id}" aria-label="Help: ${f.label}" title="What this shows">i</button>`;
   if (c.kind === 'choice') {
-    return `<div class="setting-row setting-row--choice" data-feature="${f.id}">${text}${segmentedHtml(c.input, f.label, c.choices)}</div>`;
+    return `<div class="setting-row setting-row--choice" data-feature="${f.id}">${text}${info}${segmentedHtml(c.input, f.label, c.choices)}</div>`;
   }
-  const row = `<div class="setting-row" data-feature="${f.id}"><label class="setting-main" for="${c.input}">${text}</label><input type="checkbox" role="switch" class="switch" id="${c.input}" /></div>`;
+  const row = `<div class="setting-row" data-feature="${f.id}"><label class="setting-main" for="${c.input}">${text}</label>${info}<input type="checkbox" role="switch" class="switch" id="${c.input}" /></div>`;
   if (!c.option) return row;
   const o = c.option;
   return `${row}<div class="setting-option" data-for="${c.input}" hidden><span class="setting-option-label">${o.label}</span>${segmentedHtml(o.input, `${f.label}: ${o.label}`, o.choices)}</div>`;
@@ -66,7 +67,7 @@ export interface SettingsPanel {
 }
 
 /** Builds the settings window and wires opening, closing, folding and the segmented buttons. */
-export function mountSettings(): SettingsPanel | null {
+export function mountSettings(onHelp?: (feature: string) => void): SettingsPanel | null {
   const modal = document.getElementById('settings-modal') as HTMLElement | null;
   const body = document.getElementById('settings-body') as HTMLElement | null;
   const opener = document.getElementById('menu-toggle') as HTMLButtonElement | null;
@@ -117,6 +118,11 @@ export function mountSettings(): SettingsPanel | null {
 
   body.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
+    const info = target.closest('.setting-info') as HTMLButtonElement | null;
+    if (info) {
+      onHelp?.(info.dataset.help || '');
+      return;
+    }
     const head = target.closest('.settings-section-head') as HTMLButtonElement | null;
     if (head) {
       const sec = head.closest('.settings-section') as HTMLElement;

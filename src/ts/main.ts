@@ -3,6 +3,7 @@ import { formatDistance, getDistanceUnit, getClockFormat, getWeatherUnits, setDi
 import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
 import { mountSettings } from './settingsPanel';
+import { mountHelp } from './helpPanel';
 import { PREF_CHANGED } from './prefs';
 import { getFocus } from './focusTarget';
 import { haversineDistance } from './geoMath';
@@ -377,7 +378,12 @@ async function init() {
   }
 
   // Settings window (gear button), built from the feature list before the inputs are wired below
-  const settings = mountSettings();
+  // Help window (? button), also opened at a setting's entry from its info button
+  const help = mountHelp();
+  const settings = mountSettings((feature) => {
+    settings?.close();
+    help?.open(feature);
+  });
 
   // About modal
   const aboutOpenBtn = document.getElementById('about-open');

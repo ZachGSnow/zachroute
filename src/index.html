@@ -50,6 +50,9 @@
         <button type="button" id="near-me" class="icon-btn near-me-btn" aria-label="Airports near me" title="Airports near me">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5" fill="#38bdf8"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
         </button>
+        <button type="button" id="help-open" class="icon-btn help-btn" aria-haspopup="dialog" aria-expanded="false" aria-controls="help-modal" aria-label="Help" title="Help">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.4-2.7 4.1"/><circle cx="12" cy="17.6" r="0.6" fill="#38bdf8"/></svg>
+        </button>
       </div>
     </header>
 
@@ -68,6 +71,14 @@
         </div>
       </div>
     </div>
+    <div id="help-modal" class="modal-overlay" hidden>
+      <div class="modal-panel help-panel" role="dialog" aria-modal="true" aria-labelledby="help-title">
+        <button type="button" class="icon-btn modal-close" aria-label="Close help">&#x2715;</button>
+        <h2 id="help-title">Help</h2>
+        <input type="search" id="help-search" class="help-search" placeholder="Search help" aria-label="Search help" autocomplete="off" spellcheck="false" />
+        <div id="help-body" class="help-body"></div>
+      </div>
+    </div>
     <div id="about-modal" class="modal-overlay" hidden>
       <div class="modal-panel">
         <button type="button" id="about-close" class="icon-btn modal-close" aria-label="Close">&#x2715;</button>
@@ -77,16 +88,41 @@
         <p>Designed and built by <a href="https://github.com/ZachGSnow/" target="_blank" rel="noopener">Zach Snow</a> &middot; &copy; 2026</p>
         <p class="about-disclaimer">For information only. Not for navigation or flight planning. Always use official aviation sources.</p>
         <p class="about-sources-title">Data sources</p>
-        <ul class="about-sources">
-          <li>Weather, forecasts, pilot reports, AIRMETs and SIGMETs worldwide: <a href="https://aviationweather.gov" target="_blank" rel="noopener">Aviation Weather Center</a> (updated within minutes)</li>
-          <li>US delays: <a href="https://nasstatus.faa.gov" target="_blank" rel="noopener">FAA</a>; US weather alerts: <a href="https://www.weather.gov" target="_blank" rel="noopener">National Weather Service</a></li>
-          <li>Tropical cyclones: <a href="https://www.gdacs.org" target="_blank" rel="noopener">GDACS</a> (UN / European Commission), from the official advisories, every 6 hours</li>
-          <li>Fires: <a href="https://firms.modaps.eosdis.nasa.gov" target="_blank" rel="noopener">NASA FIRMS</a> (last 24 hours); dust and smoke: <a href="https://nasa-gibs.github.io/gibs-api-docs/" target="_blank" rel="noopener">NASA GIBS</a>, OMPS on NOAA-20 (daily)</li>
-          <li>Air quality and winds aloft: <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0), model estimates; air quality contains Copernicus Atmosphere Monitoring Service information</li>
-          <li>Airports and runways: <a href="https://ourairports.com" target="_blank" rel="noopener">OurAirports</a> (public domain); airlines and US routes: <a href="https://www.transtats.bts.gov" target="_blank" rel="noopener">U.S. DOT BTS</a>; other routes: <a href="https://openflights.org" target="_blank" rel="noopener">OpenFlights</a> (ODbL, 2017)</li>
-          <li>Airport history and photos: <a href="https://www.wikipedia.org" target="_blank" rel="noopener">Wikipedia</a> (CC BY-SA); magnetic variation: World Magnetic Model; map: <a href="https://stadiamaps.com" target="_blank" rel="noopener">Stadia Maps</a>, OpenMapTiles, OpenStreetMap</li>
-        </ul>
-        <p class="muted">An airport card loads its data when you search and does not refresh while open; search again for newer data.</p>
+        <div class="about-sources">
+          <p class="about-group">Weather</p>
+          <ul>
+            <li>Current weather, forecasts, pilot reports, AIRMETs, SIGMETs and the thunderstorm forecast: <a href="https://aviationweather.gov" target="_blank" rel="noopener">Aviation Weather Center</a> (public domain)</li>
+            <li>US weather alerts and forecaster notes: <a href="https://www.weather.gov" target="_blank" rel="noopener">National Weather Service</a>; severe storm outlook: <a href="https://www.spc.noaa.gov" target="_blank" rel="noopener">NOAA Storm Prediction Center</a></li>
+            <li>US radar and storm tops: NEXRAD via the <a href="https://mesonet.agron.iastate.edu" target="_blank" rel="noopener">Iowa Environmental Mesonet</a>; radar elsewhere: <a href="https://www.rainviewer.com" target="_blank" rel="noopener">RainViewer</a> (personal use, with credit)</li>
+            <li>Satellite clouds: <a href="https://nasa-gibs.github.io/gibs-api-docs/" target="_blank" rel="noopener">NASA GIBS</a> (NOAA GOES, JMA Himawari) and <a href="https://view.eumetsat.int" target="_blank" rel="noopener">EUMETSAT</a> (Meteosat); dust and smoke: NASA GIBS (OMPS on NOAA-20)</li>
+            <li>Winds aloft, freezing level, terrain height and air quality model: <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0; air quality contains Copernicus Atmosphere Monitoring Service information); measured PM2.5: <a href="https://openaq.org" target="_blank" rel="noopener">OpenAQ</a> and the station's provider</li>
+          </ul>
+          <p class="about-group">Hazards</p>
+          <ul>
+            <li>US delays: <a href="https://nasstatus.faa.gov" target="_blank" rel="noopener">FAA NAS Status</a>; flight restrictions: <a href="https://tfr.faa.gov" target="_blank" rel="noopener">FAA TFRs</a></li>
+            <li>Tropical cyclones: <a href="https://www.nhc.noaa.gov" target="_blank" rel="noopener">National Hurricane Center</a> (Atlantic, East and Central Pacific) and <a href="https://www.gdacs.org" target="_blank" rel="noopener">GDACS</a> (UN / European Commission) elsewhere</li>
+            <li>Earthquakes: <a href="https://earthquake.usgs.gov" target="_blank" rel="noopener">USGS</a>; US volcano alerts: <a href="https://volcanoes.usgs.gov" target="_blank" rel="noopener">USGS Volcano Hazards Program</a></li>
+            <li>Fires: <a href="https://firms.modaps.eosdis.nasa.gov" target="_blank" rel="noopener">NASA FIRMS</a> (last 24 hours); space weather and aurora: <a href="https://www.swpc.noaa.gov" target="_blank" rel="noopener">NOAA Space Weather Prediction Center</a></li>
+          </ul>
+          <p class="about-group">Airspace and charts</p>
+          <ul>
+            <li>US airspace: <a href="https://adds-faa.opendata.arcgis.com" target="_blank" rel="noopener">FAA open data</a>; charts: <a href="https://www.faa.gov/air_traffic/flight_info/aeronav" target="_blank" rel="noopener">FAA Aeronautical Information Services</a></li>
+            <li>Airspace elsewhere: <a href="https://www.openaip.net" target="_blank" rel="noopener">openAIP</a> (CC BY-NC 4.0)</li>
+          </ul>
+          <p class="about-group">Airports, routes and traffic</p>
+          <ul>
+            <li>Airports, runways, frequencies and navaids: <a href="https://ourairports.com" target="_blank" rel="noopener">OurAirports</a> (public domain); magnetic variation: World Magnetic Model</li>
+            <li>US routes, airlines and traffic: <a href="https://www.transtats.bts.gov" target="_blank" rel="noopener">U.S. DOT Bureau of Transportation Statistics</a> (on-time data and T-100); routes between two foreign airports: <a href="https://openflights.org" target="_blank" rel="noopener">OpenFlights</a> (ODbL, 2017)</li>
+            <li>History and photos: <a href="https://en.wikipedia.org" target="_blank" rel="noopener">Wikipedia</a> (CC BY-SA), matched through <a href="https://www.wikidata.org" target="_blank" rel="noopener">Wikidata</a> (CC0)</li>
+          </ul>
+          <p class="about-group">Map and terrain</p>
+          <ul>
+            <li>Maps: <a href="https://stadiamaps.com" target="_blank" rel="noopener">Stadia Maps</a>, OpenMapTiles, OpenStreetMap contributors, Stamen Design</li>
+            <li>Satellite base map: <a href="https://cloudless.eox.at" target="_blank" rel="noopener">EOxCloudless 2025</a> by EOX IT Services GmbH, contains modified Copernicus Sentinel data 2025 (CC BY-NC-SA 4.0)</li>
+            <li>Terrain shading: <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">AWS Open Data terrain tiles</a> (Mapzen, from SRTM, ETOPO1, USGS and others)</li>
+          </ul>
+        </div>
+        <p class="muted">An airport card loads its data when you search and does not refresh while open; search again for newer data. The ? button explains every layer.</p>
       </div>
     </div>
 
