@@ -5,7 +5,8 @@ import { describe, expect, it } from 'vitest';
 import { jsonFixture, pagesContext, stubFetch } from './helpers';
 import { onRequest as liveFn, parseLiveQuery, selectAircraft, upstreamArea, MAX_AIRCRAFT, NM_PER_MI, type LiveQuery } from '../functions/api/live';
 import { onRequest as routeFn, parseRoute, cleanCallsign } from '../functions/api/live-route';
-import { routeFits, routeLabel, verticalLabel, pointAhead, distanceNm, extendTrail, liveQuery, altitudeColor, TRAIL_POINTS } from '../src/ts/liveTrack';
+import { routeFits, routeLabel, verticalLabel, pointAhead, distanceNm, extendTrail, liveQuery, altitudeColor, liveLegend, ALTITUDE_BANDS, TRAIL_POINTS } from '../src/ts/liveTrack';
+import { aircraftTypeName } from '../src/ts/aircraftTypes';
 
 const point = jsonFixture('adsblol-point-ord-4nm.json');
 const route = jsonFixture('adsblol-route-aal1696.json');
@@ -135,5 +136,22 @@ describe('drawing helpers', () => {
     expect(liveQuery({ lat: 41.973214, lon: -87.904881, mi: 5, minFt: 500, minKt: 60, elevFt: 680.4, keep: ['a11a84'] })).toBe(
       'lat=41.97321&lon=-87.90488&mi=5&minft=500&minkt=60&elev=680&keep=a11a84'
     );
+  });
+});
+
+describe('names and legend', () => {
+  it('names the types seen in the captured traffic, and leaves unknown codes alone', () => {
+    const codes = [...new Set(point.ac.map((a: any) => a.t).filter(Boolean))] as string[];
+    expect(codes.length).toBeGreaterThan(3);
+    expect(codes.filter((c) => !aircraftTypeName(c))).toEqual([]);
+    expect(aircraftTypeName('b738')).toBe('Boeing 737-800');
+    expect(aircraftTypeName('ZZZZ')).toBeNull();
+    expect(aircraftTypeName(undefined)).toBeNull();
+  });
+
+  it('shows each altitude band in the color the icons use', () => {
+    const legend = liveLegend();
+    for (const [ft] of ALTITUDE_BANDS) expect(legend.items.map((i) => i.color)).toContain(altitudeColor(ft));
+    expect(legend.note).toContain('ODbL');
   });
 });

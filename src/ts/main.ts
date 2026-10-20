@@ -7,6 +7,7 @@ import { mountHelp } from './helpPanel';
 import { PREF_CHANGED } from './prefs';
 import { getFocus } from './focusTarget';
 import { initLive } from './liveLayer';
+import { initLiveDraw } from './liveDraw';
 import { haversineDistance } from './geoMath';
 import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, setRadar, setRadarMode, setSpc, setSpcDay, setGeohazards, setAurora, setCharts, setChartKind, setTerrain, setAirspace, highlightRunway, focusOn, clearFocus } from './mapOverlays';
 import type { RadarMode } from './radarTiles';
@@ -49,6 +50,7 @@ async function init() {
   }
   if (savedBase === 'light' || savedBase === 'satellite') setBaseStyle(savedBase);
   initLive(initMap('map'));
+  initLiveDraw();
 
   // Initialize persistent airport background layers (large/medium) once
   initAirportLayers(airportsData as Record<string, Airport>);

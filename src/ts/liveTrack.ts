@@ -127,6 +127,19 @@ export const ALTITUDE_BANDS: Array<[number, string]> = [
   [30000, '30,000 ft and up'],
 ];
 
+/** The legend shown while Live track is on: icon colors by altitude, and what the lines mean. */
+export function liveLegend(): { kind: 'items'; title: string; items: Array<{ color: string; label: string; mark?: 'dot' | 'line' | 'dash' }>; note: string } {
+  return {
+    kind: 'items',
+    title: 'Live track: altitude',
+    items: [
+      ...ALTITUDE_BANDS.map(([ft, label]) => ({ color: altitudeColor(ft), label, mark: 'dot' as const })),
+      { color: '#e2e8f0', label: 'to destination', mark: 'dash' as const },
+    ],
+    note: 'Solid: path since tracking started. Dotted: one minute ahead. Aircraft data: adsb.lol contributors, ODbL 1.0',
+  };
+}
+
 /** Adds a position to an aircraft's path, skipping repeats, keeping the last TRAIL_POINTS. */
 export function extendTrail(trail: Array<[number, number]>, pos: [number, number]): Array<[number, number]> {
   const last = trail[trail.length - 1];

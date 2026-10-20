@@ -26,6 +26,7 @@ import {
   tfrLegend,
 } from './legends';
 import { severityLegendItems } from './severity';
+import { liveLegend } from './liveTrack';
 
 export interface HelpEntry {
   /** What it shows and how to read it. */
@@ -186,6 +187,7 @@ export const HELP: Record<string, HelpEntry> = {
     source: 'FAA Aeronautical Information Services',
   },
   'live-radius': {
+    legends: () => [liveLegend()],
     about: 'How far around you Live track looks, 1 to 15 miles. The circle is drawn where you were when you turned Live track on; to move it, turn Live track off and on again.',
   },
   'live-min-height': { about: 'Aircraft lower than this above the ground at your spot are left out, so planes on runways and in the pattern do not crowd the list. Aircraft reported on the ground are always left out.' },
