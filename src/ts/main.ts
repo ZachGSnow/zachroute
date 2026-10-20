@@ -1,4 +1,4 @@
-import { initMap, showSingleAirport, showRoute, showConnectingRoutes, highlightViaRoute, setAirportDatabase, showConnections, resetView, initAirportLayers, showLargeAirports, showMediumAirports, showRegionalAirports, drawAirportRunways, setPreferredRunwayEnd, colorRouteByWind, setApproachTicks, showAllViaOptions, refreshMapSize, showNearby } from './mapRenderer';
+import { initMap, showSingleAirport, showRoute, showConnectingRoutes, highlightViaRoute, setAirportDatabase, showConnections, resetView, initAirportLayers, showLargeAirports, showMediumAirports, showRegionalAirports, drawAirportRunways, setPreferredRunwayEnd, colorRouteByWind, setApproachTicks, showAllViaOptions, refreshMapSize, showNearby, setBaseStyle, type BaseStyle } from './mapRenderer';
 import { formatDistance, getDistanceUnit, getClockFormat, getWeatherUnits, setDistanceUnit, setClockFormat, setWeatherUnits, UNITS_CHANGED, type DistanceUnit, type ClockFormat, type WeatherUnits } from './units';
 import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
@@ -13,6 +13,8 @@ import { loadRecent, addRecent, clearRecent, loadFavorites, FAVORITES_CHANGED } 
 import type { Airport } from './geoMath';
 import { renderSingle, renderRoute, renderError, enrichLore, getCachedLore, renderNearby } from './uiRenderer';
 import { findConnectingRoutes, isKnownDirect } from './connections';
+
+const BASE_MAP_KEY = 'zachroute:base-map';
 
 async function init() {
   // Fetched at runtime (rather than bundled via a JS import) so the ~18 MB
@@ -34,7 +36,14 @@ async function init() {
   loadAirports(airportsData as Record<string, Airport>);
   setAirportDatabase(airportsData as Record<string, Airport>);
 
-  // Initialize map
+  // Initialize map, with the saved base map style
+  let savedBase: string | null = null;
+  try {
+    savedBase = localStorage.getItem(BASE_MAP_KEY);
+  } catch {
+    /* convenience only */
+  }
+  if (savedBase === 'light' || savedBase === 'satellite') setBaseStyle(savedBase);
   initMap('map');
 
   // Initialize persistent airport background layers (large/medium) once
@@ -618,6 +627,20 @@ async function init() {
   wireOverlayToggle(radarToggle, RADAR_KEY, setRadar);
   wireOverlayToggle(satelliteToggle, SATELLITE_KEY, setSatellite);
   wireOverlayToggle(approachToggle, APPROACH_KEY, setApproachTicks);
+
+  // Base map style (settings, Map)
+  const baseMapSelect = document.getElementById('base-map') as HTMLSelectElement | null;
+  if (baseMapSelect) {
+    baseMapSelect.value = savedBase === 'light' || savedBase === 'satellite' ? savedBase : 'dark';
+    baseMapSelect.addEventListener('change', () => {
+      try {
+        localStorage.setItem(BASE_MAP_KEY, baseMapSelect.value);
+      } catch {
+        /* convenience only */
+      }
+      setBaseStyle(baseMapSelect.value as BaseStyle);
+    });
+  }
 
   // Units (settings menu). Changing one re-renders the current result in the new units.
   const distanceSelect = document.getElementById('distance-unit') as HTMLSelectElement | null;
