@@ -1,0 +1,32 @@
+{
+  "_airport_codes_iata": "DFW-CLT",
+  "_airports": [
+    {
+      "alt_feet": 607.0,
+      "alt_meters": 185.01,
+      "countryiso2": "US",
+      "iata": "DFW",
+      "icao": "KDFW",
+      "lat": 32.896801,
+      "location": "Dallas-Fort Worth",
+      "lon": -97.038002,
+      "name": "Dallas Fort Worth International Airport"
+    },
+    {
+      "alt_feet": 748.0,
+      "alt_meters": 227.99,
+      "countryiso2": "US",
+      "iata": "CLT",
+      "icao": "KCLT",
+      "lat": 35.214001,
+      "location": "Charlotte",
+      "lon": -80.9431,
+      "name": "Charlotte Douglas International Airport"
+    }
+  ],
+  "airline_code": "AAL",
+  "airport_codes": "KDFW-KCLT",
+  "callsign": "AAL1696",
+  "number": "1696",
+  "plausible": true
+}
