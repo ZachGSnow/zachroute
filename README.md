@@ -185,7 +185,7 @@ the flight's route and it fits the aircraft's position and heading (adsb.lol's o
 it called a flight landing at ORD "plausible" for Dallas to Charlotte). A card lists callsign, type,
 route, altitude, speed, climb or descent and distance; tapping one finds it on the map. To keep the
 load on the data source small, Live track pauses after 5 minutes until Continue is tapped, sends
-adsb.lol your position rounded to about 1 km, and reuses each answer for 8 seconds. Help is in the
+adsb.lol your position rounded to about 1 km, asks it to leave out aircraft well below the set height, reuses each answer for 8 seconds, and when adsb.lol asks to wait (429) sends nothing until its Retry-After has passed. Help is in the
 settings footer, next to the version.
 
 **Units**: distances in miles, kilometers or nautical miles, a 12 or 24-hour clock, and weather in US
@@ -363,7 +363,7 @@ can add on top of the source's age.
 | Routes between US and foreign airports | US DOT T-100 Segment (all carriers), `npm run etl:t100` | Monthly, about 3 months behind | Until you run `npm run data` | Public domain (US government) |
 | Routes between two foreign airports | [OpenFlights](https://openflights.org/data.php) `routes.dat` | Not updated since 2017 | Until you run `npm run data` | [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/); `src/data/connections.json` is shared under the same license (see [`src/data/README.md`](src/data/README.md)) |
 | Map tiles (dark and light base maps, place names on the satellite map) | [Stadia Maps](https://stadiamaps.com) (Alidade Smooth, Alidade Smooth Dark, Stamen Toner labels), OpenMapTiles, OpenStreetMap | Per provider | Not cached by the app | Per provider terms; credited on the map. Stadia's own satellite style needs a paid plan (403 on the free plan), so it is not used |
-| Live track aircraft and flight routes | [adsb.lol](https://adsb.lol) API (with `ADSBLOL_API_KEY`): community ADS-B and MLAT receivers; routes from the Virtual Radar Server standing data via adsb.lol | Positions within seconds; routes as maintained | Aircraft reused 8 s per rounded area; routes 6 h per callsign | [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/) (credited on the map, the Live track card, Help and About); the app's `/api/live` output is offered under ODbL 1.0 too |
+| Live track aircraft and flight routes | [adsb.lol](https://adsb.lol) re-api and API (with `ADSBLOL_API_KEY`): community ADS-B and MLAT receivers; routes from the Virtual Radar Server standing data via adsb.lol | Positions within seconds; routes as maintained | Aircraft reused 8 s per rounded area; routes 6 h per callsign | [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/) (credited on the map, the Live track card, Help and About); the app's `/api/live` output is offered under ODbL 1.0 too |
 | Satellite base map | [EOxCloudless](https://cloudless.eox.at) 2025 by EOX IT Services GmbH, a cloud-free Sentinel-2 mosaic (contains modified Copernicus Sentinel data 2025) | Yearly mosaic | Not cached by the app | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): non-commercial use with credit (credited on the map) |
 
 The last weather and history seen for an airport stay available offline. For information only:
