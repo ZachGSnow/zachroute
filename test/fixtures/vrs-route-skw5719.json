@@ -1,0 +1,31 @@
+{
+    "callsign": "SKW5719",
+    "number": "5719",
+    "airline_code": "SKW",
+    "airport_codes": "KORD-KMLI",
+    "_airport_codes_iata": "ORD-MLI",
+    "_airports": [
+        {
+            "name": "Chicago O'Hare International Airport",
+            "icao": "KORD",
+            "iata": "ORD",
+            "location": "Chicago",
+            "countryiso2": "US",
+            "lat": 41.9786,
+            "lon": -87.9048,
+            "alt_feet": 672.0,
+            "alt_meters": 204.83
+        },
+        {
+            "name": "Quad City International Airport",
+            "icao": "KMLI",
+            "iata": "MLI",
+            "location": "Moline",
+            "countryiso2": "US",
+            "lat": 41.448502,
+            "lon": -90.5075,
+            "alt_feet": 590.0,
+            "alt_meters": 179.83
+        }
+    ]
+}
