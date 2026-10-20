@@ -48,4 +48,5 @@ structure left untouched. They contain only public aviation, weather and geograp
 | `bts-ontime-sample.csv` | US DOT BTS on-time performance, July 2026, header plus ORD rows |
 | `bts-ontime-2026-07-pbi-sample.csv`, `bts-ontime-2026-08-djt-sample.csv` | The same files for July and August 2026, captured 2026-10-20: four Delta rows each way between ATL and Palm Beach, reported as PBI in July and DJT from August 1 (same BTS airport ID 14027) |
 | `bts-t100-segment-2026-07-pbi-sample.csv` | BTS T-100 Segment for July 2026 (the latest month on 2026-10-20), the Delta ATL-PBI rows both ways. T-100 has no DJT month yet, so the test relabels these rows as August DJT to stand in for it |
+| `adsblol-point-ord-4nm.json`, `adsblol-route-aal1696.json` | api.adsb.lol `/v2/point/41.97/-87.9/4.34` (aircraft within 5 statute miles of O'Hare, some on the ground, some on approach) and `/api/0/route/AAL1696/41.9657/-87.9372`, captured 2026-10-20. The route says DFW to CLT, flagged plausible, while AAL1696 was landing at ORD |
 | `airports-subset.json` | Output of `scripts/etl_ourairports.js` for the airports the search tests use |
