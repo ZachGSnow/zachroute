@@ -1,13 +1,16 @@
 import { USER_AGENT } from '../../shared/userAgent';
-// Cloudflare Pages Function: /api/live?lat=&lon=&mi=&minft=&minkt=&elev=&keep=
+// Cloudflare Pages Function: /api/live?lat=&lon=&mi=&minft=&minkt=&elev=&max=&keep=
 // Live track (header button): aircraft in the air within a small circle around the viewer, from
-// adsb.lol (ODbL 1.0, https://adsb.lol). Usage is kept small on purpose:
-//   - the radius is 1 to 15 statute miles (the API takes nautical miles);
-//   - only aircraft off the ground, at least `minft` above the ground (`elev`, feet) and at least
-//     `minkt` fast are kept, and at most 5 of them: those already tracked (`keep`, hex codes) while
-//     they still qualify, then the closest;
+// the adsb.lol re-api (ODbL 1.0, https://adsb.lol). Usage is kept small on purpose:
+//   - the radius is 1 to 15 statute miles (the re-api takes nautical miles);
+//   - adsb.lol already leaves out aircraft well below the height asked for (above_alt_baro), and
+//     here only aircraft off the ground, at least `minft` above the ground (`elev`, feet) and at
+//     least `minkt` fast are kept, `max` of them (5 to 10): those already tracked (`keep`, hex
+//     codes) while they still qualify, then the closest;
 //   - adsb.lol sees the viewer's position rounded to 0.01 degree (about 1 km), and one answer per
-//     rounded area is reused for 8 seconds by this isolate.
+//     rounded area is reused for 8 seconds by this isolate;
+//   - when adsb.lol answers 429, no request goes out until its Retry-After has passed; the last
+//     answer for the area is served meanwhile, marked busy.
 // The key (Pages secret ADSBLOL_API_KEY) goes in the x-api-key header and never leaves the server.
 // The output is a derived database of adsb.lol data and is offered under ODbL 1.0 as well.
 
@@ -15,9 +18,12 @@ interface Env {
   ADSBLOL_API_KEY?: string;
 }
 
-export const MAX_AIRCRAFT = 5;
+export const MAX_AIRCRAFT = 10;
+export const DEFAULT_AIRCRAFT = 5;
 export const NM_PER_MI = 0.868976;
-const API = 'https://api.adsb.lol/v2/point';
+const API = 'https://re-api.adsb.lol/';
+/** Barometric altitude can read a few hundred feet off true height; ask adsb.lol for this much lower. */
+const BARO_MARGIN_FT = 1000;
 const REUSE_MS = 8000;
 const EARTH_RADIUS_NM = 3440.065;
 export const LICENSE = 'Aircraft data (c) adsb.lol contributors, ODbL 1.0 (https://opendatacommons.org/licenses/odbl/1-0/)';
@@ -56,6 +62,8 @@ export interface LiveQuery {
   minFt: number;
   minKt: number;
   elevFt: number;
+  /** How many aircraft to return, 5 to 10. */
+  max: number;
   keep: string[];
 }
 
@@ -77,6 +85,7 @@ export function parseLiveQuery(params: URLSearchParams): LiveQuery | null {
     minFt: clamp(num(params.get('minft'), 500), 0, 10000),
     minKt: clamp(num(params.get('minkt'), 60), 0, 300),
     elevFt: clamp(num(params.get('elev'), 0), -1500, 15000),
+    max: Math.round(clamp(num(params.get('max'), DEFAULT_AIRCRAFT), DEFAULT_AIRCRAFT, MAX_AIRCRAFT)),
     keep: (params.get('keep') || '')
       .split(',')
       .map((h) => h.trim().toLowerCase())
@@ -98,20 +107,34 @@ export function bearingDeg(lat1: number, lon1: number, lat2: number, lon2: numbe
   return ((Math.atan2(y, x) * 180) / Math.PI + 360) % 360;
 }
 
-/** The area adsb.lol is asked about: the position rounded to 0.01 degree, and a radius that still covers the circle. */
-export function upstreamArea(q: LiveQuery): { lat: number; lon: number; nm: number } {
+export interface UpstreamArea {
+  lat: number;
+  lon: number;
+  nm: number;
+  /** Lowest barometric altitude adsb.lol should send, feet, in steps of 500 (null: no floor). */
+  floorFt: number | null;
+}
+
+/** The area adsb.lol is asked about: the position rounded to 0.01 degree, a radius that still covers the circle, and a height floor. */
+export function upstreamArea(q: LiveQuery): UpstreamArea {
   const lat = Math.round(q.lat * 100) / 100;
   const lon = Math.round(q.lon * 100) / 100;
   // Rounding moves the center by up to about 0.43 nm; ask for that much more.
   const nm = Math.ceil((q.mi * NM_PER_MI + 0.5) * 10) / 10;
-  return { lat, lon, nm };
+  const floor = Math.floor((q.elevFt + q.minFt - BARO_MARGIN_FT) / 500) * 500;
+  return { lat, lon, nm, floorFt: floor > 0 ? floor : null };
 }
 
-/** Aircraft from an adsb.lol /v2/point answer that are in the circle and in the air above the cut-offs, at most 5. */
+/** The re-api request for an area. */
+export function upstreamUrl(a: UpstreamArea): string {
+  return `${API}?circle=${a.lat},${a.lon},${a.nm}${a.floorFt != null ? `&above_alt_baro=${a.floorFt}` : ''}`;
+}
+
+/** Aircraft from an adsb.lol answer (re-api `aircraft`, or /v2 `ac`) in the circle and in the air above the cut-offs, at most `max`. */
 export function selectAircraft(upstream: any, q: LiveQuery): { aircraft: LiveAircraft[]; qualifying: number } {
   const radiusNm = q.mi * NM_PER_MI;
   const qualifying: LiveAircraft[] = [];
-  for (const a of upstream?.ac || []) {
+  for (const a of upstream?.aircraft || upstream?.ac || []) {
     if (typeof a?.hex !== 'string' || !Number.isFinite(a.lat) || !Number.isFinite(a.lon)) continue;
     if (a.alt_baro === 'ground') continue;
     const altFt = Number.isFinite(a.alt_geom) ? a.alt_geom : Number.isFinite(a.alt_baro) ? a.alt_baro : null;
@@ -146,23 +169,57 @@ export function selectAircraft(upstream: any, q: LiveQuery): { aircraft: LiveAir
   const byDistance = (x: LiveAircraft, y: LiveAircraft) => x.distNm - y.distNm;
   const kept = qualifying.filter((a) => keep.has(a.hex)).sort(byDistance);
   const rest = qualifying.filter((a) => !keep.has(a.hex)).sort(byDistance);
-  return { aircraft: [...kept, ...rest].slice(0, MAX_AIRCRAFT), qualifying: qualifying.length };
+  return { aircraft: [...kept, ...rest].slice(0, q.max), qualifying: qualifying.length };
+}
+
+/** Seconds to wait from a Retry-After header (seconds or an HTTP date), 1 to 3600, default 60. */
+export function retryAfterSeconds(header: string | null, now = Date.now()): number {
+  if (!header) return 60;
+  const secs = /^\d+$/.test(header.trim()) ? Number(header) : (Date.parse(header) - now) / 1000;
+  return Number.isFinite(secs) ? Math.min(3600, Math.max(1, Math.ceil(secs))) : 60;
+}
+
+class Busy extends Error {
+  constructor(public retryIn: number) {
+    super('busy');
+  }
 }
 
 const reuse = new Map<string, { at: number; data: Promise<any> }>();
+/** The last good answer per area, served while adsb.lol asks us to wait. */
+const lastGood = new Map<string, any>();
+let blockedUntil = 0;
 
-async function fetchArea(area: { lat: number; lon: number; nm: number }, key: string): Promise<any> {
-  const id = `${area.lat},${area.lon},${area.nm}`;
+const areaId = (a: UpstreamArea) => `${a.lat},${a.lon},${a.nm},${a.floorFt}`;
+
+async function fetchArea(area: UpstreamArea, key: string): Promise<any> {
+  const id = areaId(area);
   const hit = reuse.get(id);
   if (hit && Date.now() - hit.at < REUSE_MS) return hit.data;
-  const data = fetch(`${API}/${area.lat}/${area.lon}/${area.nm}`, { headers: { 'User-Agent': USER_AGENT, 'x-api-key': key } }).then(async (res) => {
+  if (Date.now() < blockedUntil) throw new Busy(Math.ceil((blockedUntil - Date.now()) / 1000));
+  const data = fetch(upstreamUrl(area), { headers: { 'User-Agent': USER_AGENT, 'x-api-key': key } }).then(async (res) => {
+    if (res.status === 429) {
+      const wait = retryAfterSeconds(res.headers.get('retry-after'));
+      blockedUntil = Date.now() + wait * 1000;
+      throw new Busy(wait);
+    }
     if (!res.ok) throw new Error(`adsb.lol ${res.status}`);
-    return res.json();
+    const body = await res.json();
+    lastGood.set(id, body);
+    if (lastGood.size > 200) lastGood.delete(lastGood.keys().next().value as string);
+    return body;
   });
   reuse.set(id, { at: Date.now(), data });
   data.catch(() => reuse.delete(id));
   if (reuse.size > 200) reuse.delete(reuse.keys().next().value as string);
   return data;
+}
+
+/** For tests: forget answers and any wait. */
+export function resetLiveState() {
+  reuse.clear();
+  lastGood.clear();
+  blockedUntil = 0;
 }
 
 const json = (body: unknown, status = 200) =>
@@ -173,11 +230,18 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   if (!key) return json({ error: 'not configured' }, 503);
   const q = parseLiveQuery(new URL(context.request.url).searchParams);
   if (!q) return json({ error: 'lat and lon are required' }, 400);
-  try {
-    const upstream = await fetchArea(upstreamArea(q), key);
+  const area = upstreamArea(q);
+  const answer = (upstream: any, extra: Record<string, unknown> = {}) => {
     const { aircraft, qualifying } = selectAircraft(upstream, q);
-    return json({ now: Date.now(), radiusNm: Math.round(q.mi * NM_PER_MI * 100) / 100, qualifying, aircraft, license: LICENSE });
-  } catch {
+    return json({ now: Date.now(), radiusNm: Math.round(q.mi * NM_PER_MI * 100) / 100, qualifying, aircraft, license: LICENSE, ...extra });
+  };
+  try {
+    return answer(await fetchArea(area, key));
+  } catch (e) {
+    if (e instanceof Busy) {
+      const stale = lastGood.get(areaId(area));
+      return stale ? answer(stale, { busy: true, retryIn: e.retryIn }) : json({ error: 'busy', retryIn: e.retryIn }, 429);
+    }
     // Never pass the upstream error on: it could name the request.
     return json({ error: 'unavailable' }, 502);
   }
