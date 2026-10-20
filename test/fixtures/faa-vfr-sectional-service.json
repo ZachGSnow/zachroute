@@ -1,0 +1,26 @@
+{
+ "currentVersion": 10.81,
+ "mapName": "Layers",
+ "copyrightText": "Federal Aviation Administration, Aeronautical Information Services",
+ "documentInfo": {
+  "title": "VFR_Sectional",
+  "author": "AeronauticalInformationServices_FAA",
+  "comments": "",
+  "subject": "Updated with the latest charts on 07-09-2026.",
+  "category": "",
+  "keywords": "Cache, chart, VFR",
+  "credits": "Federal Aviation Administration, Aeronautical Information Services"
+ },
+ "minLOD": 8,
+ "maxLOD": 12,
+ "fullExtent": {
+  "xmin": -22041228.60225191,
+  "ymin": -2339125.939555036,
+  "xmax": 22041228.602202363,
+  "ymax": 12553941.08853691,
+  "spatialReference": {
+   "wkid": 102100,
+   "latestWkid": 3857
+  }
+ }
+}

@@ -3,7 +3,7 @@ import { formatDistance, getDistanceUnit, getClockFormat, getWeatherUnits, setDi
 import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
 import { haversineDistance } from './geoMath';
-import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, setRadar, setRadarMode, setSpc, setSpcDay, setGeohazards, setAurora, highlightRunway } from './mapOverlays';
+import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, setRadar, setRadarMode, setSpc, setSpcDay, setGeohazards, setAurora, setCharts, setChartKind, highlightRunway } from './mapOverlays';
 import type { RadarMode } from './radarTiles';
 import type { TcfStep } from './tcf';
 import { parseQuery, loadAirports, suggest, type SearchIntent } from './searchParser';
@@ -524,6 +524,32 @@ async function init() {
   const freezingToggle = document.getElementById('freezing-toggle') as HTMLInputElement | null;
   const FREEZING_KEY = 'zachroute:show-freezing';
   restoreAirportToggle(freezingToggle, FREEZING_KEY, setFreezingLevel);
+  // FAA charts: which chart is restored before the layer turns on.
+  const chartsToggle = document.getElementById('charts-toggle') as HTMLInputElement | null;
+  const CHARTS_KEY = 'zachroute:show-charts';
+  const chartsKind = document.getElementById('charts-kind') as HTMLSelectElement | null;
+  const CHARTS_KIND_KEY = 'zachroute:charts-kind';
+  if (chartsKind) {
+    let saved: string | null = null;
+    try {
+      saved = localStorage.getItem(CHARTS_KIND_KEY);
+    } catch {
+      /* convenience only */
+    }
+    if (saved === 'ifr') {
+      chartsKind.value = 'ifr';
+      setChartKind('ifr');
+    }
+    chartsKind.addEventListener('change', () => {
+      try {
+        localStorage.setItem(CHARTS_KIND_KEY, chartsKind.value);
+      } catch {
+        /* convenience only */
+      }
+      setChartKind(chartsKind.value === 'ifr' ? 'ifr' : 'vfr');
+    });
+  }
+  restoreAirportToggle(chartsToggle, CHARTS_KEY, setCharts);
   const radarToggle = document.getElementById('radar-toggle') as HTMLInputElement | null;
   const RADAR_KEY = 'zachroute:show-radar';
   // What radar shows, restored before the layer turns on.
@@ -603,6 +629,7 @@ async function init() {
   wireOverlayToggle(fireToggle, FIRE_KEY, setFires);
   wireOverlayToggle(aerosolToggle, AEROSOL_KEY, setAerosol);
   wireOverlayToggle(freezingToggle, FREEZING_KEY, setFreezingLevel);
+  wireOverlayToggle(chartsToggle, CHARTS_KEY, setCharts);
   wireOverlayToggle(radarToggle, RADAR_KEY, setRadar);
   wireOverlayToggle(satelliteToggle, SATELLITE_KEY, setSatellite);
   wireOverlayToggle(approachToggle, APPROACH_KEY, setApproachTicks);
