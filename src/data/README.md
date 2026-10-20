@@ -6,6 +6,7 @@ in `scripts/route_overrides.json`.
 | File | Contents | Built from | License |
 |---|---|---|---|
 | `us-routes.json` | US routes (including US territories) and the airlines flying them, by month | US DOT Bureau of Transportation Statistics on-time data | Public domain (US government) |
+| `us-intl-routes.json` | Current nonstops between US and foreign airports (at least 8 flights in some month of the last 12), with the airlines flying them and airline names | US DOT Bureau of Transportation Statistics T-100 Segment (all carriers), `scripts/build_t100.js` | Public domain (US government) |
 | `carriers.json` | Airlines per route, for the routes in `us-routes.json` only | US DOT Bureau of Transportation Statistics on-time data | Public domain (US government) |
 | `connections.json` | Every known nonstop airport pair | `us-routes.json` for US routes, [OpenFlights](https://openflights.org/data.php) `routes.dat` for everything else | [Open Database License (ODbL) 1.0](https://opendatacommons.org/licenses/odbl/1-0/) |
 
