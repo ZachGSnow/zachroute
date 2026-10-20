@@ -28,7 +28,7 @@ export interface Feature {
   control:
     | { kind: 'switch'; input: string; option?: FeatureOption }
     | { kind: 'choice'; input: string; choices: Choice[] }
-    | { kind: 'range'; input: string; min: number; max: number; step: number; unit: 'mi' | 'ft' | 'kt' };
+    | { kind: 'range'; input: string; min: number; max: number; step: number; unit: 'mi' | 'ft' | 'kt' | 'aircraft' };
   /** Stored by the settings window under zachroute:<key>, with its default ('true'/'false' for a switch). */
   pref?: { key: string; default: string };
 }
@@ -182,6 +182,14 @@ export const FEATURES: Feature[] = [
     desc: 'How far around you to look. To move the circle, turn Live track off and on',
     control: { kind: 'range', input: 'pref-live-radius-mi', min: 1, max: 15, step: 1, unit: 'mi' },
     pref: { key: 'live-radius-mi', default: '5' },
+  },
+  {
+    id: 'live-max',
+    section: 'live',
+    label: 'Aircraft shown',
+    desc: 'How many to follow at once, the closest first',
+    control: { kind: 'range', input: 'pref-live-max', min: 5, max: 10, step: 1, unit: 'aircraft' },
+    pref: { key: 'live-max', default: '5' },
   },
   {
     id: 'live-min-height',

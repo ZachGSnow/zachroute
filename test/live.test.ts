@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { jsonFixture, pagesContext, stubFetch } from './helpers';
 import { onRequest as liveFn, parseLiveQuery, selectAircraft, upstreamArea, upstreamUrl, retryAfterSeconds, resetLiveState, MAX_AIRCRAFT, DEFAULT_AIRCRAFT, NM_PER_MI, type LiveQuery } from '../functions/api/live';
 import { onRequest as routeFn, parseRoute, cleanCallsign } from '../functions/api/live-route';
-import { routeFits, routeLabel, verticalLabel, pointAhead, distanceNm, extendTrail, liveQuery, altitudeColor, liveLegend, ALTITUDE_BANDS, TRAIL_POINTS } from '../src/ts/liveTrack';
+import { routeFits, routeLeg, routeLabel, routePlaces, verticalLabel, pointAhead, distanceNm, extendTrail, liveQuery, altitudeColor, liveLegend, ALTITUDE_BANDS, TRAIL_POINTS } from '../src/ts/liveTrack';
 import { aircraftTypeName } from '../src/ts/aircraftTypes';
 
 const point = jsonFixture('adsblol-point-ord-4nm.json');
@@ -224,5 +224,50 @@ describe('names and legend', () => {
     const legend = liveLegend();
     for (const [ft] of ALTITUDE_BANDS) expect(legend.items.map((i) => i.color)).toContain(altitudeColor(ft));
     expect(legend.note).toContain('ODbL');
+  });
+});
+
+describe('route and request wording', () => {
+  it('names origin and destination by city where the app knows the airport', () => {
+    const r = parseRoute('AAL1696', route)!;
+    const cities: Record<string, string> = { DFW: 'Dallas-Fort Worth' };
+    expect(routePlaces(r, (code) => cities[code] || null)).toBe('Dallas-Fort Worth (DFW) to Charlotte Douglas International Airport (CLT)');
+  });
+
+  it('asks for the number of aircraft set', () => {
+    expect(liveQuery({ lat: 41.97, lon: -87.9, mi: 5, minFt: 500, minKt: 60, elevFt: 680, max: 8, keep: [] })).toContain('&max=8');
+  });
+});
+
+describe('multi-leg routes', () => {
+  // Routes often go out and back (ORD to MSN to ORD); seen on 2026-10-20 as "Chicago to Chicago".
+  const ordAp = { iata: 'ORD', lat: 41.9786, lon: -87.9048 };
+  const msnAp = { iata: 'MSN', lat: 43.1399, lon: -89.3375 };
+  const outAndBack = { callsign: 'SKW4927', airports: [ordAp, msnAp, ordAp] };
+  const toMsn = bearingDegOf([ordAp.lat, ordAp.lon], [msnAp.lat, msnAp.lon]);
+
+  function bearingDegOf(a: [number, number], b: [number, number]) {
+    const r = (d: number) => (d * Math.PI) / 180;
+    const y = Math.sin(r(b[1] - a[1])) * Math.cos(r(b[0]));
+    const x = Math.cos(r(a[0])) * Math.sin(r(b[0])) - Math.sin(r(a[0])) * Math.cos(r(b[0])) * Math.cos(r(b[1] - a[1]));
+    return ((Math.atan2(y, x) * 180) / Math.PI + 360) % 360;
+  }
+
+  it('picks the outbound leg for an aircraft climbing out toward the next stop', () => {
+    const pos = pointAhead([ordAp.lat, ordAp.lon], toMsn, 8);
+    const leg = routeLeg(outAndBack, pos, toMsn, 1500)!;
+    expect(routeLabel(leg)).toBe('ORD to MSN');
+  });
+
+  it('picks the inbound leg for an aircraft descending into the airport', () => {
+    const pos = pointAhead([ordAp.lat, ordAp.lon], toMsn, 20);
+    const leg = routeLeg(outAndBack, pos, (toMsn + 200) % 360, -1000)!; // turning onto final
+    expect(routeLabel(leg)).toBe('MSN to ORD');
+  });
+
+  it('does not take the near-destination shortcut for a climbing aircraft heading away', () => {
+    const pos = pointAhead([ordAp.lat, ordAp.lon], (toMsn + 180) % 360, 10);
+    expect(routeLeg(outAndBack, pos, (toMsn + 180) % 360, 2000)).toBeNull();
+    expect(routeLeg({ callsign: 'X', airports: [ordAp, ordAp] }, [ordAp.lat, ordAp.lon], 0, -500)).toBeNull();
   });
 });

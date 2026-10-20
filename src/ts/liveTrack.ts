@@ -76,30 +76,61 @@ const angleBetween = (a: number, b: number) => {
   return d > 180 ? 360 - d : d;
 };
 
+const sameAirport = (a: RouteAirport, b: RouteAirport) => distanceNm([a.lat, a.lon], [b.lat, b.lon]) < 2;
+
 /**
- * Whether a looked-up route fits what the aircraft is doing. adsb.lol's own check is lenient
- * (it called a flight landing at ORD "plausible" for DFW to CLT), so the route is kept only when
- * the aircraft is near the line between its last two airports (no more than 15% plus 30 nm out of
- * the way) and, unless it is within 40 nm of the destination where approaches turn, heading
- * roughly toward it (within 60 degrees).
+ * The leg of a looked-up route the aircraft is flying, as a two-airport route, or null when none
+ * fits. adsb.lol's own check is lenient (it called a flight landing at ORD "plausible" for DFW to
+ * CLT), and multi-leg routes often start and end at the same airport (ORD to MSN to ORD), so a leg
+ * is kept only when:
+ *   - its two airports differ;
+ *   - the aircraft is near the line between them (no more than 15% plus 30 nm out of the way);
+ *   - it is heading roughly toward the leg's destination (within 60 degrees), or it is within
+ *     40 nm of it and not climbing (approaches turn; a climbing aircraft there is departing).
+ * Of the legs that fit, the one the aircraft is least out of the way on wins.
  */
-export function routeFits(route: LiveRoute | null, pos: [number, number], track: number | null): boolean {
-  if (!route || route.airports.length < 2) return false;
-  const from = route.airports[route.airports.length - 2];
-  const to = route.airports[route.airports.length - 1];
-  const a: [number, number] = [from.lat, from.lon];
-  const b: [number, number] = [to.lat, to.lon];
-  const direct = distanceNm(a, b);
-  const toDest = distanceNm(pos, b);
-  if (distanceNm(a, pos) + toDest > direct * 1.15 + 30) return false;
-  if (toDest <= 40 || track == null) return true;
-  return angleBetween(track, bearingDeg(pos, b)) <= 60;
+export function routeLeg(route: LiveRoute | null, pos: [number, number], track: number | null, rate: number | null = null): LiveRoute | null {
+  if (!route || route.airports.length < 2) return null;
+  let best: { leg: LiveRoute; detour: number } | null = null;
+  for (let i = 0; i + 1 < route.airports.length; i++) {
+    const from = route.airports[i];
+    const to = route.airports[i + 1];
+    if (sameAirport(from, to)) continue;
+    const a: [number, number] = [from.lat, from.lon];
+    const b: [number, number] = [to.lat, to.lon];
+    const direct = distanceNm(a, b);
+    const toDest = distanceNm(pos, b);
+    const detour = distanceNm(a, pos) + toDest - direct;
+    if (detour > direct * 0.15 + 30) continue;
+    const heading = track == null || angleBetween(track, bearingDeg(pos, b)) <= 60;
+    const arriving = toDest <= 40 && (rate == null || rate <= 300);
+    if (!heading && !arriving) continue;
+    if (!best || detour < best.detour) best = { leg: { ...route, airports: [from, to] }, detour };
+  }
+  return best?.leg ?? null;
 }
+
+/** Whether a looked-up route fits what the aircraft is doing (see routeLeg). */
+export const routeFits = (route: LiveRoute | null, pos: [number, number], track: number | null, rate: number | null = null) =>
+  routeLeg(route, pos, track, rate) !== null;
 
 /** "ORD to DEN" (IATA where known, else ICAO). */
 export function routeLabel(route: LiveRoute): string {
   const code = (a: RouteAirport) => a.iata || a.icao || '?';
   return route.airports.map(code).join(' to ');
+}
+
+/**
+ * "Chicago (ORD) to Denver (DEN)": the first and last airport of a route, each with its city when
+ * `cityOf` knows the code (the app's airport data), else the route's own airport name.
+ */
+export function routePlaces(route: LiveRoute, cityOf: (code: string) => string | null): string {
+  const place = (a: RouteAirport) => {
+    const code = a.iata || a.icao || '?';
+    const city = (a.iata && cityOf(a.iata)) || (a.icao && cityOf(a.icao)) || a.name;
+    return city ? `${city} (${code})` : code;
+  };
+  return `${place(route.airports[0])} to ${place(route.airports[route.airports.length - 1])}`;
 }
 
 /** "Climbing 1,200 ft/min", "Descending 800 ft/min" or "Level" (under 300 ft/min either way). */
@@ -148,7 +179,7 @@ export function extendTrail(trail: Array<[number, number]>, pos: [number, number
 }
 
 /** The query string for /api/live. */
-export function liveQuery(o: { lat: number; lon: number; mi: number; minFt: number; minKt: number; elevFt: number; keep: string[] }): string {
+export function liveQuery(o: { lat: number; lon: number; mi: number; minFt: number; minKt: number; elevFt: number; max?: number; keep: string[] }): string {
   const p = new URLSearchParams({
     lat: o.lat.toFixed(5),
     lon: o.lon.toFixed(5),
@@ -157,6 +188,7 @@ export function liveQuery(o: { lat: number; lon: number; mi: number; minFt: numb
     minkt: String(o.minKt),
     elev: String(Math.round(o.elevFt)),
   });
+  if (o.max) p.set('max', String(o.max));
   if (o.keep.length) p.set('keep', o.keep.join(','));
   return p.toString();
 }
