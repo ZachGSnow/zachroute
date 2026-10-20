@@ -1831,3 +1831,139 @@ body {
     animation: none;
   }
 }
+
+/* Help window and About sources */
+.help-panel {
+  width: min(640px, calc(100vw - 32px));
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 20px 0;
+}
+
+.help-search {
+  width: 100%;
+  padding: 8px 12px;
+  margin: 2px 0 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.help-search:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.help-body {
+  overflow-y: auto;
+  padding-bottom: 20px;
+  margin-right: -8px;
+  padding-right: 8px;
+}
+
+.help-section h3 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin: 14px 0 6px;
+}
+
+.help-section[hidden],
+.help-entry[hidden] {
+  display: none;
+}
+
+.help-entry {
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+  scroll-margin-top: 8px;
+}
+
+.help-entry h4 {
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.modal-panel .help-entry p {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+
+.help-entry.is-flash {
+  animation: help-flash 1.6s ease-out;
+}
+
+@keyframes help-flash {
+  from { background: rgba(56, 189, 248, 0.18); }
+  to { background: transparent; }
+}
+
+.help-facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 10px;
+  font-size: 0.78rem;
+  margin: 2px 0 6px;
+}
+
+.help-facts dt {
+  color: var(--text-muted);
+}
+
+.help-legends {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-top: 6px;
+}
+
+.help-target {
+  color: var(--accent);
+}
+
+.setting-info {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text-muted);
+  font: italic 600 0.75rem Georgia, serif;
+  cursor: pointer;
+}
+
+.setting-info:hover,
+.setting-info:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+  outline: none;
+}
+
+.about-sources ul {
+  margin: 0 0 6px 16px;
+}
+
+.about-group {
+  font-weight: 600;
+  color: var(--text);
+  margin: 8px 0 2px !important;
+  font-size: 0.8rem !important;
+}
+
+@media (max-width: 600px) {
+  #help-modal .modal-panel {
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    border-radius: 0;
+    border: none;
+  }
+}

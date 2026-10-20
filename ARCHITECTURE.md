@@ -19,6 +19,7 @@ browser (src/ts) <--------------------------------------+
 | Path | Role |
 |---|---|
 | `src/ts/main.ts` | Boot, search box, history and shareable links (`runSearch` is the single entry point), wiring of every setting |
+| `src/ts/help.ts`, `helpPanel.ts` | Help window: topics on using the app and an entry per setting (from `features.ts`, with the layers' legends), search, deep links (`#help/<id>`) |
 | `src/ts/focusTarget.ts` | Tap to focus: the shapes and points each chip or row frames on the map (NWS areas or zone outlines, storms, TFRs, advisories, reports), their bounds, and the registry behind `data-focus`; `mapOverlays.focusOn` draws the highlight |
 | `src/ts/prefs.ts` | Route drawing and airport card choices stored by the settings window: what to draw along a route, route focus, how alerts and card sections start |
 | `src/ts/features.ts`, `settingsPanel.ts` | Every setting the app offers (section, label, one-line description, input ids) and the settings window built from it: folding sections, on/off switches, segmented sub-options over hidden selects, turn off all, reset |

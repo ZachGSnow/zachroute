@@ -182,8 +182,11 @@ worldwide.
 
 **App**: installs as a PWA. Search and airport details (runways, frequencies, navaids) work offline
 after the first load, since the airport database is precached, along with the last weather seen for
-an airport. The map background and all live data need a connection. A new version takes over on the next launch after a deploy. The About
-screen shows the version, build time and every data source.
+an airport. The map background and all live data need a connection. A new version takes over on the next launch after a deploy. The ? button
+opens Help: how to search and read the cards, the severity colors, and an entry for every layer and
+setting (what it shows, where, how often it updates, its source and its colors), with a search box;
+each setting's info button opens its entry, and a link ending in `#help/radar` opens Help there. The
+About screen shows the version, build time and every data source, grouped by kind.
 
 ## Quick start
 
