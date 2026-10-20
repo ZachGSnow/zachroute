@@ -4,9 +4,9 @@
 // which was landing at ORD at the time but is listed as DFW to CLT.
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { jsonFixture, pagesContext, stubFetch } from './helpers';
-import { onRequest as liveFn, parseLiveQuery, selectAircraft, upstreamArea, upstreamUrl, retryAfterSeconds, resetLiveState, MAX_AIRCRAFT, DEFAULT_AIRCRAFT, NM_PER_MI, type LiveQuery } from '../functions/api/live';
+import { onRequest as liveFn, parseLiveQuery, selectAircraft, upstreamArea, upstreamUrl, retryAfterSeconds, isDailyLimit, resetLiveState, MAX_AIRCRAFT, DEFAULT_AIRCRAFT, NM_PER_MI, type LiveQuery } from '../functions/api/live';
 import { onRequest as routeFn, parseRoute, cleanCallsign, resetRouteCache } from '../functions/api/live-route';
-import { routeFits, routeLeg, routeLabel, routePlaces, formatSpeed, speedUnitOf, routeProgress, timeToGoLabel, overviewBounds, verticalLabel, pointAhead, distanceNm, extendTrail, liveQuery, altitudeColor, liveLegend, ALTITUDE_BANDS, TRAIL_POINTS } from '../src/ts/liveTrack';
+import { routeFits, routeLeg, routeLabel, routePlaces, waitPlan, waitLabel, formatSpeed, speedUnitOf, routeProgress, timeToGoLabel, overviewBounds, verticalLabel, pointAhead, distanceNm, extendTrail, liveQuery, altitudeColor, liveLegend, ALTITUDE_BANDS, TRAIL_POINTS } from '../src/ts/liveTrack';
 import { aircraftTypeName } from '../src/ts/aircraftTypes';
 
 const point = jsonFixture('adsblol-point-ord-4nm.json');
@@ -122,7 +122,8 @@ describe('when adsb.lol says wait (429)', () => {
     expect(retryAfterSeconds('30')).toBe(30);
     expect(retryAfterSeconds(null)).toBe(60);
     expect(retryAfterSeconds(new Date(Date.now() + 90_000).toUTCString())).toBeGreaterThanOrEqual(89);
-    expect(retryAfterSeconds('999999')).toBe(3600);
+    expect(retryAfterSeconds('6778')).toBe(6778); // the daily allowance, as seen on 2026-10-20
+    expect(retryAfterSeconds('999999')).toBe(86400);
   });
 
   it('serves the last answer marked busy, and asks nothing until the wait is over', async () => {
@@ -357,5 +358,52 @@ describe('route overview', () => {
     const off: [number, number] = [41.5, -88.5];
     const [[s2, w2]] = overviewBounds(leg(), off);
     expect([s2, w2]).toEqual(off);
+  });
+});
+
+describe('the daily allowance (429 "1d window")', () => {
+  beforeEach(() => resetLiveState());
+  // adsb.lol's answer when the key's daily allowance was used up, 2026-10-20
+  const DAILY = 'rate limit exceeded: 1d window for tier adhoc\n';
+  const ctx = (url: string) => {
+    const c = pagesContext(url);
+    c.env.ADSBLOL_API_KEY = 'test-key';
+    return c;
+  };
+
+  it('tells the daily limit from a short wait', () => {
+    expect(isDailyLimit(DAILY, 6778)).toBe(true);
+    expect(isDailyLimit('', 30)).toBe(false);
+    expect(isDailyLimit('', 1200)).toBe(true); // anything over 10 minutes is treated the same
+  });
+
+  it('reports it with the reset time and serves no hours-old aircraft', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-10-20T19:00:00Z'));
+    stubFetch([['re-api.adsb.lol', circle]]);
+    const url = 'https://x/api/live?lat=41.97&lon=-87.9&mi=5';
+    await liveFn(ctx(url)); // an earlier good answer exists for this area
+
+    vi.setSystemTime(new Date('2026-10-20T19:00:10Z'));
+    const limited = vi.fn(async () => new Response(DAILY, { status: 429, headers: { 'Retry-After': '6778' } }));
+    vi.stubGlobal('fetch', limited);
+    const res = await liveFn(ctx(url));
+    expect(res.status).toBe(429);
+    const body = await json(res);
+    expect(body).toEqual(expect.objectContaining({ error: 'busy', daily: true, retryIn: 6778 }));
+    expect(body.retryAt).toBe(Date.parse('2026-10-20T19:00:10Z') + 6778 * 1000);
+
+    vi.setSystemTime(new Date('2026-10-20T20:00:00Z'));
+    expect((await json(await liveFn(ctx(url)))).daily).toBe(true);
+    expect(limited).toHaveBeenCalledTimes(1); // nothing more is sent before the reset
+    vi.useRealTimers();
+  });
+
+  it('makes the app stop for long waits and retry short ones', () => {
+    expect(waitPlan(6778, true)).toBe('stop');
+    expect(waitPlan(30, true)).toBe('stop');
+    expect(waitPlan(900, false)).toBe('stop');
+    expect(waitPlan(30, false)).toBe('retry');
+    expect([waitLabel(45), waitLabel(240)]).toEqual(['45 s', 'about 4 min']);
   });
 });

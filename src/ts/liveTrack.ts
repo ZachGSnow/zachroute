@@ -176,6 +176,22 @@ export function overviewBounds(leg: LiveRoute, pos: [number, number]): [[number,
   ];
 }
 
+/** Waits up to this long are retried; longer ones (or the daily allowance) stop Live track. */
+export const SHORT_WAIT_S = 300;
+
+/** "45 s", "about 4 min". */
+export function waitLabel(seconds: number): string {
+  return seconds < 60 ? `${Math.max(1, Math.round(seconds))} s` : `about ${Math.round(seconds / 60)} min`;
+}
+
+/**
+ * What to do when adsb.lol asks us to wait: retry after a short wait, or stop until a clock time
+ * when the wait is long or the key's daily allowance is used up (the clock time is the caller's).
+ */
+export function waitPlan(retryIn: number, daily: boolean): 'retry' | 'stop' {
+  return daily || retryIn > SHORT_WAIT_S ? 'stop' : 'retry';
+}
+
 export type SpeedUnit = 'kt' | 'mph' | 'kmh';
 
 /** A speed given in knots, in the unit chosen for Live track: "164 kt", "189 mph", "304 km/h". */

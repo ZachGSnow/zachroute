@@ -9,8 +9,10 @@ import { USER_AGENT } from '../../shared/userAgent';
 //     codes) while they still qualify, then the closest;
 //   - adsb.lol sees the viewer's position rounded to 0.01 degree (about 1 km), and one answer per
 //     rounded area is reused for 8 seconds by this isolate;
-//   - when adsb.lol answers 429, no request goes out until its Retry-After has passed; the last
-//     answer for the area is served meanwhile, marked busy.
+//   - when adsb.lol answers 429, no request goes out until its Retry-After has passed. A short wait
+//     serves the last answer for the area, marked busy; the key's daily allowance running out
+//     ("1d window" in the answer, or a wait over 10 minutes) is reported as `daily` with the time
+//     it resets, so the app stops instead of retrying.
 // The key (Pages secret ADSBLOL_API_KEY) goes in the x-api-key header and never leaves the server.
 // The output is a derived database of adsb.lol data and is offered under ODbL 1.0 as well.
 
@@ -174,15 +176,24 @@ export function selectAircraft(upstream: any, q: LiveQuery): { aircraft: LiveAir
   return { aircraft: [...kept, ...rest].slice(0, q.max), qualifying: qualifying.length };
 }
 
-/** Seconds to wait from a Retry-After header (seconds or an HTTP date), 1 to 3600, default 60. */
+/** Seconds to wait from a Retry-After header (seconds or an HTTP date), 1 s to a day, default 60. */
 export function retryAfterSeconds(header: string | null, now = Date.now()): number {
   if (!header) return 60;
   const secs = /^\d+$/.test(header.trim()) ? Number(header) : (Date.parse(header) - now) / 1000;
-  return Number.isFinite(secs) ? Math.min(3600, Math.max(1, Math.ceil(secs))) : 60;
+  return Number.isFinite(secs) ? Math.min(86400, Math.max(1, Math.ceil(secs))) : 60;
 }
 
+/** Waits longer than this are treated like the daily allowance being used up: stop, do not retry. */
+export const LONG_WAIT_S = 600;
+
+/** Whether a 429 is the key's daily allowance (adsb.lol says "1d window") or a wait that long. */
+export const isDailyLimit = (body: string, waitS: number) => /\b1d window\b/i.test(body) || waitS > LONG_WAIT_S;
+
 class Busy extends Error {
-  constructor(public retryIn: number) {
+  constructor(
+    public retryIn: number,
+    public daily: boolean
+  ) {
     super('busy');
   }
 }
@@ -191,6 +202,7 @@ const reuse = new Map<string, { at: number; data: Promise<any> }>();
 /** The last good answer per area, served while adsb.lol asks us to wait. */
 const lastGood = new Map<string, any>();
 let blockedUntil = 0;
+let blockedDaily = false;
 
 const areaId = (a: UpstreamArea) => `${a.lat},${a.lon},${a.nm},${a.floorFt}`;
 
@@ -198,12 +210,13 @@ async function fetchArea(area: UpstreamArea, key: string): Promise<any> {
   const id = areaId(area);
   const hit = reuse.get(id);
   if (hit && Date.now() - hit.at < REUSE_MS) return hit.data;
-  if (Date.now() < blockedUntil) throw new Busy(Math.ceil((blockedUntil - Date.now()) / 1000));
+  if (Date.now() < blockedUntil) throw new Busy(Math.ceil((blockedUntil - Date.now()) / 1000), blockedDaily);
   const data = fetch(upstreamUrl(area), { headers: { 'User-Agent': USER_AGENT, 'x-api-key': key }, signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS) }).then(async (res) => {
     if (res.status === 429) {
       const wait = retryAfterSeconds(res.headers.get('retry-after'));
       blockedUntil = Date.now() + wait * 1000;
-      throw new Busy(wait);
+      blockedDaily = isDailyLimit(await res.text().catch(() => ''), wait);
+      throw new Busy(wait, blockedDaily);
     }
     if (!res.ok) throw new Error(`adsb.lol ${res.status}`);
     const body = await res.json();
@@ -222,6 +235,7 @@ export function resetLiveState() {
   reuse.clear();
   lastGood.clear();
   blockedUntil = 0;
+  blockedDaily = false;
 }
 
 const json = (body: unknown, status = 200) =>
@@ -241,8 +255,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     return answer(await fetchArea(area, key));
   } catch (e) {
     if (e instanceof Busy) {
-      const stale = lastGood.get(areaId(area));
-      return stale ? answer(stale, { busy: true, retryIn: e.retryIn }) : json({ error: 'busy', retryIn: e.retryIn }, 429);
+      const retryAt = Date.now() + e.retryIn * 1000;
+      // Hours-old aircraft would mislead: a daily limit gets no stale answer.
+      const stale = e.daily ? null : lastGood.get(areaId(area));
+      return stale
+        ? answer(stale, { busy: true, retryIn: e.retryIn, retryAt })
+        : json({ error: 'busy', retryIn: e.retryIn, retryAt, daily: e.daily }, 429);
     }
     // Never pass the upstream error on: it could name the request.
     return json({ error: 'unavailable' }, 502);

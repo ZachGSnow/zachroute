@@ -10,7 +10,7 @@
 // "Back to Live track". It asks adsb.lol nothing extra: if the aircraft leaves the Live track
 // circle, it stays at its last known position, marked out of range.
 
-import { setLiveDrawHooks, fitLiveCircle, planeIcon, type LiveDrawHooks } from './liveLayer';
+import { setLiveDrawHooks, fitLiveCircle, frame, planeIcon, type LiveDrawHooks } from './liveLayer';
 import { aircraftTypeName } from './aircraftTypes';
 import { slerpArc, type Airport } from './geoMath';
 import { formatDistance, clockOptions } from './units';
@@ -137,7 +137,7 @@ function drawOverview(fit: boolean) {
   overviewLayer.addLayer(airportMarker(end(leg, 0), `${codeOf(leg, 0)} ${cityOf(codeOf(leg, 0)) || ''}`.trim()));
   overviewLayer.addLayer(airportMarker(end(leg, 1), `${codeOf(leg, 1)} ${cityOf(codeOf(leg, 1)) || ''}`.trim()));
   overviewLayer.addLayer(L.marker(pos, { icon: planeIcon(a, true), interactive: false, zIndexOffset: 1000 }));
-  if (fit) map.flyToBounds(L.latLngBounds(overviewBounds(leg, pos)), { padding: [50, 50], maxZoom: 10, duration: 0.9 });
+  if (fit) frame(map, L.latLngBounds(overviewBounds(leg, pos)), 50, 10);
   renderStrip();
 }
 

@@ -5,6 +5,7 @@
 // except the radius, which applies the next time it is turned on.
 
 import { readPref, PREF_CHANGED } from './prefs';
+import { clockOptions } from './units';
 import { loadAirlines, flightName, type AirlineTable } from './airlineCallsign';
 import { setLegend } from './legend';
 import { formatDistance } from './units';
@@ -14,6 +15,8 @@ import {
   SESSION_MS,
   METERS_PER_MI,
   altitudeColor,
+  waitPlan,
+  waitLabel,
   formatSpeed,
   speedUnitOf,
   liveLegend,
@@ -150,8 +153,41 @@ async function groundFt(lat: number, lon: number): Promise<number> {
   }
 }
 
+/** Until when adsb.lol has asked this site to stop (the daily allowance), remembered across reloads. */
+const WAIT_KEY = 'zachroute:live-wait-until';
+
+function waitUntil(): number {
+  try {
+    return Number(localStorage.getItem(WAIT_KEY)) || 0;
+  } catch {
+    return 0;
+  }
+}
+
+function limitMessage(until: number): string {
+  const at = new Date(until).toLocaleTimeString([], clockOptions());
+  return `adsb.lol's allowance for live aircraft data is used up for now. Live track can be used again after ${at}.`;
+}
+
+/** Stops Live track until `until`, without any more requests before then. */
+function stopForLimit(until: number) {
+  try {
+    localStorage.setItem(WAIT_KEY, String(until));
+  } catch {
+    /* the server also waits */
+  }
+  stop();
+  setPanel(cardHtml(limitMessage(until), [], true));
+}
+
 async function start() {
   if (!map) return;
+  const until = waitUntil();
+  if (until > Date.now()) {
+    // Asked to wait: say until when, and send nothing.
+    setPanel(cardHtml(limitMessage(until), [], true));
+    return;
+  }
   const my = ++gen;
   state = 'locating';
   setButton();
@@ -177,7 +213,7 @@ async function start() {
   layer.addLayer(circle);
   layer.addLayer(L.circleMarker(center, { radius: 5, color: '#0f172a', weight: 2, fillColor: '#38bdf8', fillOpacity: 1, interactive: false }));
   circleBounds = circle.getBounds();
-  map.flyToBounds(circleBounds, { padding: [30, 30], duration: 0.8 });
+  frame(map, circleBounds, 30);
   setLegend('live', liveLegend());
   resume();
 }
@@ -243,6 +279,7 @@ async function poll() {
     } else if (res.status === 429) {
       const body = await res.json().catch(() => ({}));
       const wait = Number(body.retryIn) || 60;
+      if (waitPlan(wait, !!body.daily) === 'stop') return stopForLimit(Number(body.retryAt) || Date.now() + wait * 1000);
       busyUntil = Date.now() + wait * 1000;
       message = busyMessage(wait);
     } else if (!res.ok) {
@@ -265,14 +302,28 @@ async function poll() {
   if (state === 'tracking' && my === gen) pollTimer = window.setTimeout(() => void poll(), delay);
 }
 
-const busyMessage = (seconds: number) => `Live data is busy; trying again in ${seconds} s.`;
+const busyMessage = (seconds: number) => `Live data is busy; trying again in ${waitLabel(seconds)}.`;
 
 /** "Delta 1234", "Private" or the callsign, for labels. */
 const nameOf = (a: LiveAircraft) => flightName(a.callsign, a.reg, airlines);
 
+/**
+ * Moves the map to show `bounds`. A map with no size yet (a hidden or collapsed view) cannot work
+ * out a zoom and Leaflet throws on NaN; Live track carries on without moving it.
+ */
+export function frame(m: L.Map, bounds: L.LatLngBounds, padding: number, maxZoom?: number) {
+  const size = m.getSize();
+  if (!size.x || !size.y) return;
+  try {
+    m.flyToBounds(bounds, { padding: [padding, padding], maxZoom, duration: 0.8 });
+  } catch {
+    /* leave the map where it is */
+  }
+}
+
 /** Flies back to the Live track circle (after a route overview). */
 export function fitLiveCircle() {
-  if (map && circleBounds) map.flyToBounds(circleBounds, { padding: [30, 30], duration: 0.8 });
+  if (map && circleBounds) frame(map, circleBounds, 30);
 }
 
 /** The aircraft's icon; `focus` marks the one a route overview is about. */
