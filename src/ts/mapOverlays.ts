@@ -966,13 +966,14 @@ function stormTimeLabel(iso: string): string {
 }
 
 function stormPopup(storm: Cyclone): string {
-  const source = storm.source ? `${esc(storm.source)} advisory via GDACS` : 'via GDACS';
-  const link = storm.report ? `<br><a href="${esc(storm.report)}" target="_blank" rel="noopener">GDACS report</a>` : '';
+  const nhc = storm.source === 'NHC';
+  const source = nhc ? 'National Hurricane Center advisory' : storm.source ? `${esc(storm.source)} advisory via GDACS` : 'via GDACS';
+  const link = storm.report ? `<br><a href="${esc(storm.report)}" target="_blank" rel="noopener">${nhc ? 'NHC advisory' : 'GDACS report'}</a>` : '';
   return (
     `<strong>${esc(severityName(cycloneSeverity(storm.category, storm.peakWindKmh)))}: ${esc(stormTitle(storm))}</strong>` +
     (storm.peakWindKmh ? `<br>Strongest winds so far: ${storm.peakWindKmh} km/h (${Math.round(storm.peakWindKmh / 1.852)} kt)` : '') +
     `<br>As of ${esc(stormTimeLabel(storm.asOf))} (${source})` +
-    `<br>Impact alert: ${esc(storm.alert)}` +
+    (storm.alert ? `<br>Impact alert (GDACS): ${esc(storm.alert)}` : '') +
     (storm.cone ? '<br><small>Shaded: forecast uncertainty cone. Dashed: forecast track.</small>' : '') +
     link +
     '<br><small style="color:#64748b">For information only; follow official advisories.</small>'

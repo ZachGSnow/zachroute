@@ -226,7 +226,7 @@ npm run typecheck
 Every integration that parses an upstream response is tested against a real response captured from
 the source on 2026-10-16 (`test/fixtures/`): aviationweather.gov METAR, TAF, PIREP (by airport and
 by area), METAR by area, AIRMET/SIGMET, G-AIRMET, international SIGMET and the convective forecast (TCF); the FAA NAS status XML; NWS
-alerts; GDACS tropical cyclones; NASA FIRMS fire detections; Open-Meteo winds aloft and air quality;
+alerts; GDACS and NHC tropical cyclones; NASA FIRMS fire detections; Open-Meteo winds aloft and air quality;
 Wikipedia search and summaries; OurAirports CSVs; OpenFlights `routes.dat`; and the US DOT on-time
 CSV. The dust layer's pixel filter is tested on sample pixels; the NASA GIBS tiles themselves are
 not. Each test was confirmed to fail when its parser is deliberately broken. Writing these tests
@@ -262,7 +262,8 @@ can add on top of the source's age.
 | Thunderstorm forecast (US, TCF) | Aviation Weather Center | Every 2 hours, for 4, 6 and 8 hours ahead | Up to 15 min | Public domain (US government) |
 | Severe storm outlook (US) | [NOAA Storm Prediction Center](https://www.spc.noaa.gov) | Day 1 five times a day, day 2 twice | Up to 25 min | Public domain (US government) |
 | Temporary flight restrictions (US) | [FAA TFR list and map service](https://tfr.faa.gov) | As issued | Up to 15 min | Public domain (US government) |
-| Tropical cyclones (from NHC, JTWC and other agencies) | [GDACS](https://www.gdacs.org), the UN / European Commission Global Disaster Alert and Coordination System | Each storm's advisory every 6 hours, republished by GDACS 1-6 hours later (storms were 5-14 hours past their advisory time when measured) | Up to 40 min | No published license; GDACS provides its data as is, for information only (credited in the app) |
+| Tropical cyclones elsewhere (from JTWC and other agencies) | [GDACS](https://www.gdacs.org), the UN / European Commission Global Disaster Alert and Coordination System | Each storm's advisory every 6 hours, republished by GDACS 1-6 hours later (storms were 5-14 hours past their advisory time when measured) | Up to 40 min | No published license; GDACS provides its data as is, for information only (credited in the app) |
+| Tropical cyclones, Atlantic and East and Central Pacific | [National Hurricane Center](https://www.nhc.noaa.gov) advisories (CurrentStorms.json; cone and track from NOAA's tropical map service) | Every 6 hours, plus intermediate advisories | Up to 40 min | Public domain (US government) |
 | Air quality (Copernicus CAMS models) | [Open-Meteo](https://open-meteo.com) | Hourly model values from model runs twice a day: estimates, not station measurements | Up to 30 min | CC BY 4.0, free for non-commercial use; contains Copernicus Atmosphere Monitoring Service information |
 | Winds aloft and freezing level | Open-Meteo | Hourly model values (the freezing level on the airport card every 15 minutes) | Up to 15 min (30 min for the freezing level map layer) | CC BY 4.0, free for non-commercial use |
 | Fire and heat detections (MODIS) | [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov) | A few satellite passes per place per day, published about 3 hours later; the app keeps the last 24 hours | Up to 75 min (the source file, the result and the browser are each cached) | Free and open (NASA); credited in the app |
