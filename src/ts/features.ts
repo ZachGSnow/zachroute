@@ -192,6 +192,22 @@ export const FEATURES: Feature[] = [
     pref: { key: 'live-max', default: '5' },
   },
   {
+    id: 'live-speed-unit',
+    section: 'live',
+    label: 'Speed in',
+    desc: 'Knots, as pilots use, or miles or kilometers per hour',
+    control: {
+      kind: 'choice',
+      input: 'pref-live-speed-unit',
+      choices: [
+        { value: 'kt', label: 'kt' },
+        { value: 'mph', label: 'mph' },
+        { value: 'kmh', label: 'km/h' },
+      ],
+    },
+    pref: { key: 'live-speed-unit', default: 'kt' },
+  },
+  {
     id: 'live-min-height',
     section: 'live',
     label: 'Lowest height',

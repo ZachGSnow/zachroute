@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { jsonFixture, pagesContext, stubFetch } from './helpers';
 import { onRequest as liveFn, parseLiveQuery, selectAircraft, upstreamArea, upstreamUrl, retryAfterSeconds, resetLiveState, MAX_AIRCRAFT, DEFAULT_AIRCRAFT, NM_PER_MI, type LiveQuery } from '../functions/api/live';
 import { onRequest as routeFn, parseRoute, cleanCallsign, resetRouteCache } from '../functions/api/live-route';
-import { routeFits, routeLeg, routeLabel, routePlaces, verticalLabel, pointAhead, distanceNm, extendTrail, liveQuery, altitudeColor, liveLegend, ALTITUDE_BANDS, TRAIL_POINTS } from '../src/ts/liveTrack';
+import { routeFits, routeLeg, routeLabel, routePlaces, formatSpeed, speedUnitOf, verticalLabel, pointAhead, distanceNm, extendTrail, liveQuery, altitudeColor, liveLegend, ALTITUDE_BANDS, TRAIL_POINTS } from '../src/ts/liveTrack';
 import { aircraftTypeName } from '../src/ts/aircraftTypes';
 
 const point = jsonFixture('adsblol-point-ord-4nm.json');
@@ -304,5 +304,15 @@ describe('multi-leg routes', () => {
     const pos = pointAhead([ordAp.lat, ordAp.lon], (toMsn + 180) % 360, 10);
     expect(routeLabel(routeLeg(outAndBack, pos, (toMsn + 180) % 360, 2000)!)).toBe('ORD to MSN');
     expect(routeLeg({ callsign: 'X', airports: [ordAp, ordAp] }, [ordAp.lat, ordAp.lon], 0, -500)).toBeNull();
+  });
+});
+
+describe('speed units', () => {
+  it('shows ground speed in knots, mph or km/h', () => {
+    expect(formatSpeed(164, 'kt')).toBe('164 kt');
+    expect(formatSpeed(164, 'mph')).toBe('189 mph');
+    expect(formatSpeed(164, 'kmh')).toBe('304 km/h');
+    expect(formatSpeed(60, 'mph')).toBe('69 mph'); // the default lowest speed
+    expect([speedUnitOf(null), speedUnitOf('mph'), speedUnitOf('kmh'), speedUnitOf('furlongs')]).toEqual(['kt', 'mph', 'kmh', 'kt']);
   });
 });

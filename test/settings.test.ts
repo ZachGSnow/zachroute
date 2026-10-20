@@ -47,7 +47,7 @@ describe('settings window', () => {
   });
 
   it('keeps the storage keys of earlier versions, and reset leaves favorites and history', () => {
-    for (const key of ['show-radar', 'show-large', 'base-map', 'route-focus', 'card-alerts', 'card-open-runways', 'radar-mode', 'tcf-step', 'distance-unit', 'clock', 'weather-units', 'settings-open']) {
+    for (const key of ['show-radar', 'show-large', 'base-map', 'route-focus', 'card-alerts', 'card-open-runways', 'live-speed-unit', 'live-max', 'radar-mode', 'tcf-step', 'distance-unit', 'clock', 'weather-units', 'settings-open']) {
       expect(isSettingKey(`zachroute:${key}`)).toBe(true);
     }
     for (const key of ['favorites', 'recent-searches', 'sheet-state']) expect(isSettingKey(`zachroute:${key}`)).toBe(false);

@@ -6,6 +6,7 @@
 import { FEATURES, SECTIONS, isSettingKey, type Choice, type Feature } from './features';
 import { readPref, writePref } from './prefs';
 import { convertMiles, getDistanceUnit } from './units';
+import { formatSpeed, speedUnitOf } from './liveTrack';
 
 const OPEN_KEY = 'zachroute:settings-open';
 
@@ -104,6 +105,8 @@ export function mountSettings(onHelp?: (feature: string) => void): SettingsPanel
       const unit = getDistanceUnit();
       const n = convertMiles(v, unit);
       out.textContent = `${n < 10 && unit !== 'mi' ? n.toFixed(1) : Math.round(n)} ${unit}`;
+    } else if (range.dataset.unit === 'kt') {
+      out.textContent = formatSpeed(v, speedUnitOf(readPref('live-speed-unit', 'kt')));
     } else {
       out.textContent = `${v.toLocaleString('en-US')} ${range.dataset.unit}`;
     }

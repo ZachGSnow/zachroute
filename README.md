@@ -187,7 +187,8 @@ it called a flight landing at ORD "plausible" for Dallas to Charlotte). A card l
 "UPS 2911"; regional airlines by their operator, such as SkyWest Airlines; registrations used as
 callsigns as "Private"), its registration and type, where it is flying from and to ("Chicago (ORD)
 to Denver (DEN)", or "Route unknown" when the route is missing or does not fit), altitude, speed,
-climb or descent and distance; tapping one finds it on the map. To keep the
+climb or descent and distance (speed in knots, mph or km/h, set in Settings, Live track); tapping
+one finds it on the map. To keep the
 load on the data source small, Live track pauses after 5 minutes until Continue is tapped, sends
 adsb.lol your position rounded to about 1 km, asks it to leave out aircraft well below the set height, reuses each answer for 8 seconds, and when adsb.lol asks to wait (429) sends nothing until its Retry-After has passed. Help is in the
 settings footer, next to the version.
