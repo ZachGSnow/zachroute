@@ -78,6 +78,11 @@ used once and not stored; denying permission just shows a message.
   shape.
 - The forecast freezing level at both airports, and the lowest along the way when it dips well below
   them.
+- A terrain profile of direct routes: terrain height along the great circle (sampled about every 5
+  miles, up to 200 points), the forecast freezing level over it, the stretches where terrain rises
+  above the freezing level, and the highest terrain and where it is. Airliners cruise far above
+  terrain, but the highest ground decides the escape plan after a depressurization or engine
+  failure.
 - When there is no nonstop, one-stop and two-stop connections from the route data (not live
   schedules) are drawn and listed; the selected itinerary shows per-leg distance and time.
 - Weather advisories the route passes through are listed and drawn: US G-AIRMETs (the graphical
@@ -274,6 +279,7 @@ can add on top of the source's age.
 | Earthquakes (M4.5+, worldwide) | [USGS](https://earthquake.usgs.gov) earthquake feed | Within minutes of each quake | Up to 15 min | Public domain (US government) |
 | Volcano alerts (US) | [USGS Volcano Hazards Program](https://volcanoes.usgs.gov) notices | As observatories issue them | Up to 15 min | Public domain (US government) |
 | Space weather scales, Kp and aurora forecast | [NOAA Space Weather Prediction Center](https://www.swpc.noaa.gov) | Scales and Kp as conditions change; aurora (OVATION) every few minutes, about 30-90 min ahead | Up to 25 min | Public domain (US government) |
+| Terrain height along routes | [Open-Meteo](https://open-meteo.com) elevation API (about 90 m terrain data) | Static | Each route cached 30 days, shared | CC BY 4.0, free for non-commercial use |
 | Terrain (shading) | [AWS Open Data terrain tiles](https://registry.opendata.aws/terrain-tiles/) (Mapzen; from SRTM, ETOPO1, USGS and other sources) | Static | Browser cache | Open data; credit Mapzen and the sources (credited on the map) |
 | Aeronautical charts (US: VFR sectional, IFR low enroute) | [FAA Aeronautical Information Services](https://www.faa.gov/air_traffic/flight_info/aeronav) tile service | Charts every 56 days; the tile service is updated less often (last on 9 Jul 2026), and the app shows its edition date | Tiles cached 1 hour by the browser | Public domain (US government); not for navigation |
 | Temporary flight restrictions (US) | [FAA TFR list and map service](https://tfr.faa.gov) | As issued | Up to 15 min | Public domain (US government) |
