@@ -205,8 +205,9 @@ an Open-Meteo API plan.
 ### Refreshing the data
 
 ```bash
-npm run data           # OurAirports ETL + world airspace + US DOT routes (downloads about 200 MB) + route merge
+npm run data           # OurAirports ETL + world airspace + US DOT routes and traffic (downloads about 220 MB) + route merge
 npm run etl:airspace   # world airspace only (openAIP exports, about 72 MB, about 1.5 minutes)
+npm run etl:t100       # route and airport traffic only (BTS T-100, 24 months, about 1.5 minutes)
 ```
 
 Airspace outside the US changes on the 28-day AIRAC cycle, so rebuild it at each release. The
