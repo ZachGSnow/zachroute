@@ -2,8 +2,9 @@ import type { Airport, RunwayDetail } from './geoMath';
 import { formatDistance, clockOptions, UNITS_CHANGED } from './units';
 import { stationTemp } from './stationTemp';
 import { setLegend } from './legend';
-import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend, pirepLegend, fireLegend, hazardLegend, cycloneLegend, tfrLegend, tcfLegend, radarLegend, stormTopsLegend, spcLegend, HAZARD_GLYPH } from './legends';
+import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend, pirepLegend, fireLegend, hazardLegend, cycloneLegend, tfrLegend, tcfLegend, radarLegend, stormTopsLegend, spcLegend, geohazardsLegend, HAZARD_GLYPH } from './legends';
 import { fetchSpcOutlook, spcLevel, spcCategoryName, spcRiskWord, type SpcDay } from './spc';
+import { fetchGeohazards, quakeSeverity, quakeRadius, volcanoSeverity, colorCodeLabel } from './geohazards';
 import {
   IEM_REFLECTIVITY_URL,
   IEM_REFLECTIVITY_TIME_URL,
@@ -952,6 +953,79 @@ async function refreshSpc(announce: boolean) {
           ? `No severe storms expected over the US ${label}`
           : `Severe storm outlook for ${label}: up to a ${spcRiskWord(worst)} risk`,
       4000
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Earthquakes (USGS, M4.5+, last day) and US volcanoes at an elevated alert
+// ---------------------------------------------------------------------------
+
+let geoLayer: L.LayerGroup | null = null;
+let geoOn = false;
+let geoTimer: number | undefined;
+
+export function setGeohazards(on: boolean) {
+  geoOn = on;
+  setLegend('geohazards', on ? geohazardsLegend() : null);
+  window.clearInterval(geoTimer);
+  if (!map) return;
+  if (!on) {
+    geoLayer?.clearLayers();
+    return;
+  }
+  void refreshGeohazards(true);
+  geoTimer = window.setInterval(() => void refreshGeohazards(false), 10 * 60 * 1000);
+}
+
+function quakeAgeLabel(ms: number): string {
+  const hours = Math.max(0, Math.round((Date.now() - ms) / 3_600_000));
+  return hours < 1 ? 'within the hour' : `${hours} h ago`;
+}
+
+async function refreshGeohazards(announce: boolean) {
+  if (!map || !geoOn) return;
+  const { quakes, volcanoes } = await fetchGeohazards();
+  if (!map || !geoOn) return;
+  if (!geoLayer) geoLayer = L.layerGroup();
+  geoLayer.clearLayers();
+  // Smallest first, so the strongest draw on top.
+  for (const q of [...quakes].sort((a, b) => a.mag - b.mag)) {
+    const level = quakeSeverity(q.mag);
+    const color = severityColor(level);
+    geoLayer.addLayer(
+      L.circleMarker([q.lat, q.lon], { pane: 'hazards', radius: quakeRadius(q.mag), color, weight: 1.5, fillColor: color, fillOpacity: 0.35 }).bindPopup(
+        `<strong>${esc(severityName(level))}: magnitude ${q.mag} earthquake</strong><br>${esc(q.place)}` +
+          `<br>${esc(quakeAgeLabel(q.time))}${q.depthKm !== undefined ? `, ${q.depthKm} km deep` : ''}` +
+          (q.tsunami ? '<br>USGS flags a possible tsunami: check official warnings' : '') +
+          (q.url ? `<br><a href="${esc(q.url)}" target="_blank" rel="noopener">USGS event page</a>` : '')
+      )
+    );
+  }
+  for (const v of volcanoes) {
+    const level = volcanoSeverity(v.colorCode);
+    if (level === null) continue;
+    const color = severityColor(level);
+    geoLayer.addLayer(
+      L.marker([v.lat, v.lon], {
+        pane: 'hazards',
+        icon: L.divIcon({ className: 'hazard-glyph', html: `<span style="--c:${color}">${HAZARD_GLYPH.ASH}</span>`, iconSize: [20, 20], iconAnchor: [10, 10] }),
+        keyboard: false,
+      }).bindPopup(
+        `<strong>${esc(severityName(level))}: ${esc(v.name)} volcano</strong>` +
+          `<br>Aviation color code ${esc(colorCodeLabel(v.colorCode))}` +
+          (v.alertLevel ? `<br>Alert level ${esc(v.alertLevel)}` : '') +
+          (v.observatory ? `<br>${esc(v.observatory)}` : '') +
+          (v.url ? `<br><a href="${esc(v.url)}" target="_blank" rel="noopener">Latest notice</a>` : '')
+      )
+    );
+  }
+  if (!map.hasLayer(geoLayer)) geoLayer.addTo(map);
+  if (announce) {
+    const strongest = quakes[0];
+    setHint(
+      `${quakes.length} earthquake${quakes.length === 1 ? '' : 's'} of M4.5+ in the last day${strongest ? ` (strongest M${strongest.mag})` : ''}; ${volcanoes.length} US volcano${volcanoes.length === 1 ? '' : 'es'} at an elevated alert`,
+      5000
     );
   }
 }

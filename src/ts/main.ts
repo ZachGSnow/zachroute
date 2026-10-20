@@ -3,7 +3,7 @@ import { formatDistance, getDistanceUnit, getClockFormat, getWeatherUnits, setDi
 import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
 import { haversineDistance } from './geoMath';
-import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, setRadar, setRadarMode, setSpc, setSpcDay, highlightRunway } from './mapOverlays';
+import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, setRadar, setRadarMode, setSpc, setSpcDay, setGeohazards, highlightRunway } from './mapOverlays';
 import type { RadarMode } from './radarTiles';
 import type { TcfStep } from './tcf';
 import { parseQuery, loadAirports, suggest, type SearchIntent } from './searchParser';
@@ -457,6 +457,9 @@ async function init() {
   const tfrToggle = document.getElementById('tfr-toggle') as HTMLInputElement | null;
   const TFR_KEY = 'zachroute:show-tfrs';
   restoreAirportToggle(tfrToggle, TFR_KEY, setTfrs);
+  const geoToggle = document.getElementById('geohazards-toggle') as HTMLInputElement | null;
+  const GEO_KEY = 'zachroute:show-geohazards';
+  restoreAirportToggle(geoToggle, GEO_KEY, setGeohazards);
   // Thunderstorm forecast: which step (4, 6 or 8 hours ahead) is restored before the layer turns on.
   const tcfToggle = document.getElementById('tcf-toggle') as HTMLInputElement | null;
   const TCF_KEY = 'zachroute:show-tcf';
@@ -590,6 +593,7 @@ async function init() {
   wireOverlayToggle(pirepToggle, PIREP_KEY, setPireps);
   wireOverlayToggle(cycloneToggle, CYCLONE_KEY, setCyclones);
   wireOverlayToggle(tfrToggle, TFR_KEY, setTfrs);
+  wireOverlayToggle(geoToggle, GEO_KEY, setGeohazards);
   wireOverlayToggle(tcfToggle, TCF_KEY, setTcf);
   wireOverlayToggle(spcToggle, SPC_KEY, setSpc);
   wireOverlayToggle(fireToggle, FIRE_KEY, setFires);

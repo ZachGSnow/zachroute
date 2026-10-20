@@ -1,0 +1,501 @@
+{
+ "type": "FeatureCollection",
+ "metadata": {
+  "generated": 1792454718000,
+  "url": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson",
+  "title": "USGS Magnitude 4.5+ Earthquakes, Past Day",
+  "status": 200,
+  "api": "2.7.0",
+  "count": 12
+ },
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 6,
+    "place": "186 km NW of Port-Olry, Vanuatu",
+    "time": 1792396144900,
+    "updated": 1792411717509,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000u3bc",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000u3bc.geojson",
+    "felt": 0,
+    "cdi": 1,
+    "mmi": 4.013,
+    "alert": "green",
+    "status": "reviewed",
+    "tsunami": 0,
+    "sig": 554,
+    "net": "us",
+    "code": "6000u3bc",
+    "ids": ",us6000u3bc,",
+    "sources": ",us,",
+    "types": ",dyfi,ground-failure,losspager,moment-tensor,origin,phase-data,shakemap,",
+    "nst": 82,
+    "dmin": 6.596,
+    "rms": 1.01,
+    "gap": 63,
+    "magType": "mww",
+    "type": "earthquake",
+    "title": "M 6.0 - 186 km NW of Port-Olry, Vanuatu"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     165.6761,
+     -14.0533,
+     10
+    ]
+   },
+   "id": "us6000u3bc"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 5.7,
+    "place": "203 km WNW of Port-Olry, Vanuatu",
+    "time": 1792436137471,
+    "updated": 1792443679614,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000u3ge",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000u3ge.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": 0,
+    "alert": "green",
+    "status": "reviewed",
+    "tsunami": 0,
+    "sig": 500,
+    "net": "us",
+    "code": "6000u3ge",
+    "ids": ",us6000u3ge,",
+    "sources": ",us,",
+    "types": ",losspager,origin,phase-data,shakemap,",
+    "nst": 51,
+    "dmin": 6.59,
+    "rms": 0.93,
+    "gap": 60,
+    "magType": "mb",
+    "type": "earthquake",
+    "title": "M 5.7 - 203 km WNW of Port-Olry, Vanuatu"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     165.4974,
+     -14.0266,
+     10
+    ]
+   },
+   "id": "us6000u3ge"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 5.7,
+    "place": "198 km NW of Port-Olry, Vanuatu",
+    "time": 1792435956659,
+    "updated": 1792443485553,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000u3ga",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000u3ga.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": 0,
+    "alert": "green",
+    "status": "reviewed",
+    "tsunami": 0,
+    "sig": 500,
+    "net": "us",
+    "code": "6000u3ga",
+    "ids": ",us6000u3ga,",
+    "sources": ",us,",
+    "types": ",losspager,moment-tensor,origin,phase-data,shakemap,",
+    "nst": 78,
+    "dmin": 6.589,
+    "rms": 0.77,
+    "gap": 61,
+    "magType": "mww",
+    "type": "earthquake",
+    "title": "M 5.7 - 198 km NW of Port-Olry, Vanuatu"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     165.5508,
+     -14.0371,
+     10
+    ]
+   },
+   "id": "us6000u3ga"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 5.4,
+    "place": "196 km NW of Port-Olry, Vanuatu",
+    "time": 1792406421108,
+    "updated": 1792413980260,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000u3c6",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000u3c6.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": 0,
+    "alert": "green",
+    "status": "reviewed",
+    "tsunami": 0,
+    "sig": 449,
+    "net": "us",
+    "code": "6000u3c6",
+    "ids": ",us6000u3c6,",
+    "sources": ",us,",
+    "types": ",losspager,origin,phase-data,shakemap,",
+    "nst": 47,
+    "dmin": 6.591,
+    "rms": 1.38,
+    "gap": 72,
+    "magType": "mb",
+    "type": "earthquake",
+    "title": "M 5.4 - 196 km NW of Port-Olry, Vanuatu"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     165.5687,
+     -14.0378,
+     10
+    ]
+   },
+   "id": "us6000u3c6"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 5.4,
+    "place": "184 km WNW of Port-Olry, Vanuatu",
+    "time": 1792397558235,
+    "updated": 1792405029760,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000u3bi",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000u3bi.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": 3.445,
+    "alert": "green",
+    "status": "reviewed",
+    "tsunami": 0,
+    "sig": 449,
+    "net": "us",
+    "code": "6000u3bi",
+    "ids": ",us6000u3bi,",
+    "sources": ",us,",
+    "types": ",losspager,origin,phase-data,shakemap,",
+    "nst": 72,
+    "dmin": 6.506,
+    "rms": 0.52,
+    "gap": 64,
+    "magType": "mb",
+    "type": "earthquake",
+    "title": "M 5.4 - 184 km WNW of Port-Olry, Vanuatu"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     165.6383,
+     -14.1387,
+     10
+    ]
+   },
+   "id": "us6000u3bi"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 5.3,
+    "place": "116 km WNW of H\u00f6fn, Iceland",
+    "time": 1792421064015,
+    "updated": 1792421993040,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000u3ct",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000u3ct.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "reviewed",
+    "tsunami": 0,
+    "sig": 432,
+    "net": "us",
+    "code": "6000u3ct",
+    "ids": ",us6000u3ct,",
+    "sources": ",us,",
+    "types": ",moment-tensor,origin,phase-data,",
+    "nst": 95,
+    "dmin": 1.649,
+    "rms": 0.75,
+    "gap": 70,
+    "magType": "mww",
+    "type": "earthquake",
+    "title": "M 5.3 - 116 km WNW of H\u00f6fn, Iceland"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -17.5136,
+     64.5774,
+     10
+    ]
+   },
+   "id": "us6000u3ct"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 4.7,
+    "place": "163 km WNW of Tobelo, Indonesia",
+    "time": 1792400439067,
+    "updated": 1792405525040,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000u3bv",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000u3bv.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "reviewed",
+    "tsunami": 0,
+    "sig": 340,
+    "net": "us",
+    "code": "6000u3bv",
+    "ids": ",us6000u3bv,",
+    "sources": ",us,",
+    "types": ",origin,phase-data,",
+    "nst": 36,
+    "dmin": 14.489,
+    "rms": 0.61,
+    "gap": 101,
+    "magType": "mb",
+    "type": "earthquake",
+    "title": "M 4.7 - 163 km WNW of Tobelo, Indonesia"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     126.7168,
+     2.4339,
+     49.006
+    ]
+   },
+   "id": "us6000u3bv"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 4.6,
+    "place": "south of the Fiji Islands",
+    "time": 1792426433665,
+    "updated": 1792427375040,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000u3db",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000u3db.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "reviewed",
+    "tsunami": 0,
+    "sig": 326,
+    "net": "us",
+    "code": "6000u3db",
+    "ids": ",us6000u3db,",
+    "sources": ",us,",
+    "types": ",origin,phase-data,",
+    "nst": 35,
+    "dmin": 6.021,
+    "rms": 0.69,
+    "gap": 126,
+    "magType": "mb",
+    "type": "earthquake",
+    "title": "M 4.6 - south of the Fiji Islands"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     179.8713,
+     -23.5497,
+     536.111
+    ]
+   },
+   "id": "us6000u3db"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 4.6,
+    "place": "5 km E of San Jos\u00e9 El \u00cddolo, Guatemala",
+    "time": 1792421265038,
+    "updated": 1792445728705,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000u3cu",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000u3cu.geojson",
+    "felt": 2,
+    "cdi": 2.2,
+    "mmi": null,
+    "alert": null,
+    "status": "reviewed",
+    "tsunami": 0,
+    "sig": 326,
+    "net": "us",
+    "code": "6000u3cu",
+    "ids": ",us6000u3cu,",
+    "sources": ",us,",
+    "types": ",dyfi,origin,phase-data,",
+    "nst": 115,
+    "dmin": 1.961,
+    "rms": 0.69,
+    "gap": 156,
+    "magType": "mb",
+    "type": "earthquake",
+    "title": "M 4.6 - 5 km E of San Jos\u00e9 El \u00cddolo, Guatemala"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -91.373,
+     14.4536,
+     109.709
+    ]
+   },
+   "id": "us6000u3cu"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 4.5,
+    "place": "Kuril Islands",
+    "time": 1792446216577,
+    "updated": 1792449290040,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000u3i2",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000u3i2.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "reviewed",
+    "tsunami": 0,
+    "sig": 312,
+    "net": "us",
+    "code": "6000u3i2",
+    "ids": ",us6000u3i2,",
+    "sources": ",us,",
+    "types": ",origin,phase-data,",
+    "nst": 35,
+    "dmin": 5.326,
+    "rms": 0.58,
+    "gap": 135,
+    "magType": "mb",
+    "type": "earthquake",
+    "title": "M 4.5 - Kuril Islands"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     153.6468,
+     48.4485,
+     102.09
+    ]
+   },
+   "id": "us6000u3i2"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 4.5,
+    "place": "2 km W of Lunca Jari\u0219tei, Romania",
+    "time": 1792399917571,
+    "updated": 1792427049301,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000u3bs",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000u3bs.geojson",
+    "felt": 18,
+    "cdi": 3.4,
+    "mmi": null,
+    "alert": null,
+    "status": "reviewed",
+    "tsunami": 0,
+    "sig": 318,
+    "net": "us",
+    "code": "6000u3bs",
+    "ids": ",us6000u3bs,",
+    "sources": ",us,",
+    "types": ",dyfi,origin,phase-data,",
+    "nst": 134,
+    "dmin": 1.864,
+    "rms": 0.56,
+    "gap": 33,
+    "magType": "mb",
+    "type": "earthquake",
+    "title": "M 4.5 - 2 km W of Lunca Jari\u0219tei, Romania"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     26.2168,
+     45.481,
+     124.754
+    ]
+   },
+   "id": "us6000u3bs"
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "mag": 4.5,
+    "place": "Banda Sea",
+    "time": 1792390513394,
+    "updated": 1792392414040,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000u3ar",
+    "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000u3ar.geojson",
+    "felt": null,
+    "cdi": null,
+    "mmi": null,
+    "alert": null,
+    "status": "reviewed",
+    "tsunami": 0,
+    "sig": 312,
+    "net": "us",
+    "code": "6000u3ar",
+    "ids": ",us6000u3ar,",
+    "sources": ",us,",
+    "types": ",origin,phase-data,",
+    "nst": 42,
+    "dmin": 6.574,
+    "rms": 0.72,
+    "gap": 115,
+    "magType": "mb",
+    "type": "earthquake",
+    "title": "M 4.5 - Banda Sea"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     129.9289,
+     -6.3365,
+     157.774
+    ]
+   },
+   "id": "us6000u3ar"
+  }
+ ],
+ "bbox": [
+  -174.5697,
+  -56.3542,
+  10,
+  179.8713,
+  64.5774,
+  536.111
+ ]
+}

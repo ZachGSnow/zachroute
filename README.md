@@ -54,6 +54,7 @@ companion to a FlightWall display: see a plane overhead, look up where it is goi
 
 **Hazards and air near an airport** (worldwide unless noted)
 - Volcanic ash over or within 100 miles of the airport, from international SIGMETs.
+- US volcanoes at an elevated alert within 100 miles, with the aviation color code.
 - Tropical cyclones (hurricanes, typhoons, cyclones in every ocean) within 300 miles, or whose
   forecast cone covers the airport, even when the storm is still far away.
 - Air quality: the US AQI, or the European AQI at European airports, with PM2.5, a note when
@@ -103,7 +104,8 @@ Weather Center's TFM Convective Forecast for 4, 6 or 8 hours ahead: where storms
 much of each area they cover, the forecasters' confidence and the storm tops), the US severe storm
 outlook (NOAA Storm Prediction Center, today or tomorrow: where large hail, damaging wind or
 tornadoes are expected, by risk category),
-tropical cyclones (track, forecast track and uncertainty cone), US flight restrictions (TFRs), fires detected by satellite in the
+tropical cyclones (track, forecast track and uncertainty cone), earthquakes (M4.5 and up worldwide in
+the last day) and US volcanoes at an elevated alert, US flight restrictions (TFRs), fires detected by satellite in the
 last 24 hours, dust and smoke from space (the latest daily pass), satellite clouds (infrared: white is cloud, colors are colder, taller storm tops up to magenta for
 the strongest cores; worldwide except near the poles: the Americas, the Pacific, Asia and Australia
 from NASA, the newest image every 10 minutes, and Europe, Africa, the Middle East and India from
@@ -122,7 +124,9 @@ their radiative power. Weather advisories are colored by severity with a symbol 
 the thunderstorm forecast by how much of the area storms will cover (sparse moderate, medium
 severe, solid or a line extreme; dashed when confidence is low), the severe storm outlook by SPC
 risk (general thunderstorms soft blue, marginal light, slight moderate, enhanced severe, moderate
-and high extreme), tropical cyclones by strength,
+and high extreme), tropical cyclones by strength, earthquakes by magnitude (Light from M4.5,
+Moderate 5.5, Severe 6.5, Extreme 7.5) and volcanoes by aviation color code (YELLOW light, ORANGE
+moderate, RED extreme),
 and US flight restrictions by how restrictive they are. Cards and
 route lists show the same level as a badge, worst first.
 
@@ -261,6 +265,8 @@ can add on top of the source's age.
 | Weather radar (outside the US) | [RainViewer](https://www.rainviewer.com) | Every 10 minutes | Up to 10 min | Free for personal and educational use; credit requested (credited in the app). Zoom 7 at most, 100 requests a minute per viewer, latest frame only |
 | Thunderstorm forecast (US, TCF) | Aviation Weather Center | Every 2 hours, for 4, 6 and 8 hours ahead | Up to 15 min | Public domain (US government) |
 | Severe storm outlook (US) | [NOAA Storm Prediction Center](https://www.spc.noaa.gov) | Day 1 five times a day, day 2 twice | Up to 25 min | Public domain (US government) |
+| Earthquakes (M4.5+, worldwide) | [USGS](https://earthquake.usgs.gov) earthquake feed | Within minutes of each quake | Up to 15 min | Public domain (US government) |
+| Volcano alerts (US) | [USGS Volcano Hazards Program](https://volcanoes.usgs.gov) notices | As observatories issue them | Up to 15 min | Public domain (US government) |
 | Temporary flight restrictions (US) | [FAA TFR list and map service](https://tfr.faa.gov) | As issued | Up to 15 min | Public domain (US government) |
 | Tropical cyclones elsewhere (from JTWC and other agencies) | [GDACS](https://www.gdacs.org), the UN / European Commission Global Disaster Alert and Coordination System | Each storm's advisory every 6 hours, republished by GDACS 1-6 hours later (storms were 5-14 hours past their advisory time when measured) | Up to 40 min | No published license; GDACS provides its data as is, for information only (credited in the app) |
 | Tropical cyclones, Atlantic and East and Central Pacific | [National Hurricane Center](https://www.nhc.noaa.gov) advisories (CurrentStorms.json; cone and track from NOAA's tropical map service) | Every 6 hours, plus intermediate advisories | Up to 40 min | Public domain (US government) |
