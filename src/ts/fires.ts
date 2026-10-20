@@ -9,6 +9,10 @@ export interface Fire {
   /** Fire radiative power, megawatts. */
   frp: number;
   time: string;
+  /** VIIRS: how many 375 m detections make up this fire. */
+  pixels?: number;
+  /** Which satellite instrument saw it: "VIIRS" (375 m) or "MODIS" (1 km). */
+  source?: string;
 }
 
 /** Detections within this distance of an airport are summarized on its card. */
@@ -31,7 +35,8 @@ export function fetchFires(minLat: number, minLon: number, maxLat: number, maxLo
       const res = await fetch(`/api/fires?bbox=${key}`);
       if (!res.ok) return [];
       const json = await res.json();
-      return (json.fires || []) as Fire[];
+      const source = typeof json.source === 'string' ? json.source : undefined;
+      return ((json.fires || []) as Fire[]).map((f) => ({ ...f, source }));
     } catch {
       return [];
     }

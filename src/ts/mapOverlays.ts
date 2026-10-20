@@ -639,7 +639,8 @@ function fireMarker(f: Fire): L.CircleMarker {
   marker.bindPopup(
     `<strong>Fire or heat source: ${esc(severityName(level).toLowerCase())}</strong><br>${Math.round(f.frp)} MW, seen by satellite ${esc(label)}` +
       `<br><small>${esc(placeNear(f.lat, f.lon))}</small>` +
-      '<br><small style="color:#64748b">NASA FIRMS (MODIS). Includes wildfires, field burning and gas flares.</small>'
+      (f.pixels && f.pixels > 1 ? `<br><small>${f.pixels} neighbouring detections, summed</small>` : '') +
+      `<br><small style="color:#64748b">NASA FIRMS (${f.source === 'VIIRS' ? 'VIIRS, 375 m' : 'MODIS, 1 km'}). Includes wildfires, field burning and gas flares.</small>`
   );
   return marker;
 }

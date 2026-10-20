@@ -1,0 +1,6 @@
+# Copy to .dev.vars (gitignored) for `npx wrangler pages dev`. Never commit real values.
+# On Cloudflare these are Pages secrets: Settings > Variables and Secrets, set for Production and Preview.
+FIRMS_MAP_KEY=
+FAA_CLIENT_ID=
+FAA_CLIENT_SECRET=
+OPENAQ_API_KEY=
