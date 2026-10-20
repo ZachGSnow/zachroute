@@ -40,6 +40,7 @@ let airlines: AirlineTable = {};
 /** While adsb.lol asks to wait: when the next request may go, ms since epoch. */
 let busyUntil = 0;
 let lastQualifying = 0;
+let circleBounds: L.LatLngBounds | null = null;
 const speed = (kt: number) => formatSpeed(kt, speedUnitOf(readPref('live-speed-unit', 'kt')));
 
 const el = (id: string) => document.getElementById(id) as HTMLElement | null;
@@ -54,6 +55,8 @@ export interface LiveDrawHooks {
   /** Whether the route lookup for this aircraft has finished (so "Route unknown" can be said). */
   routeSettled(hex: string): boolean;
   typeName(code: string | undefined): string | null;
+  /** Opens the route overview for an aircraft with a known route. */
+  openOverview(hex: string): void;
 }
 
 let hooks: LiveDrawHooks | null = null;
@@ -71,6 +74,7 @@ export function initLive(m: L.Map) {
   panel?.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
     if (target.closest('.live-stop-inline')) return stop();
+    if (target.closest('[data-overview]')) return; // handled by the document listener
     const row = target.closest('[data-live-hex]') as HTMLElement | null;
     if (row) showAircraft(row.dataset.liveHex || '');
   });
@@ -80,6 +84,15 @@ export function initLive(m: L.Map) {
       e.preventDefault();
       showAircraft(row.dataset.liveHex || '');
     }
+  });
+  // Route overview buttons, on card rows and in aircraft popups.
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('[data-overview]') as HTMLElement | null;
+    if (!btn || state === 'off') return;
+    e.preventDefault();
+    e.stopPropagation();
+    map?.closePopup();
+    hooks?.openOverview(btn.dataset.overview || '');
   });
   // A new speed unit shows at once, without waiting for the next refresh.
   window.addEventListener(PREF_CHANGED, (e) => {
@@ -156,13 +169,15 @@ async function start() {
   void loadAirlines().then((t) => (airlines = t));
   elevFt = await groundFt(center[0], center[1]);
   if (my !== gen) return;
+  setPanel(cardHtml('Looking for aircraft around you\u2026', []));
 
   layer = L.layerGroup().addTo(map);
   aircraftLayer = L.layerGroup().addTo(map);
   const circle = L.circle(center, { radius: radiusMi * METERS_PER_MI, color: '#38bdf8', weight: 2, dashArray: '6, 6', fillColor: '#38bdf8', fillOpacity: 0.05, interactive: false });
   layer.addLayer(circle);
   layer.addLayer(L.circleMarker(center, { radius: 5, color: '#0f172a', weight: 2, fillColor: '#38bdf8', fillOpacity: 1, interactive: false }));
-  map.flyToBounds(circle.getBounds(), { padding: [30, 30], duration: 0.8 });
+  circleBounds = circle.getBounds();
+  map.flyToBounds(circleBounds, { padding: [30, 30], duration: 0.8 });
   setLegend('live', liveLegend());
   resume();
 }
@@ -199,6 +214,7 @@ export function stop() {
   markers.clear();
   tracked = [];
   center = null;
+  circleBounds = null;
   setLegend('live', null);
   hooks?.clear();
 }
@@ -254,12 +270,18 @@ const busyMessage = (seconds: number) => `Live data is busy; trying again in ${s
 /** "Delta 1234", "Private" or the callsign, for labels. */
 const nameOf = (a: LiveAircraft) => flightName(a.callsign, a.reg, airlines);
 
-function planeIcon(a: LiveAircraft): L.DivIcon {
+/** Flies back to the Live track circle (after a route overview). */
+export function fitLiveCircle() {
+  if (map && circleBounds) map.flyToBounds(circleBounds, { padding: [30, 30], duration: 0.8 });
+}
+
+/** The aircraft's icon; `focus` marks the one a route overview is about. */
+export function planeIcon(a: LiveAircraft, focus = false): L.DivIcon {
   const color = altitudeColor(a.altFt);
   const rotate = a.track ?? 0;
   const label = nameOf(a).label === 'Private' ? a.reg || a.callsign || 'Private' : nameOf(a).label;
   return L.divIcon({
-    className: 'live-plane',
+    className: focus ? 'live-plane live-plane--focus' : 'live-plane',
     iconSize: [28, 28],
     iconAnchor: [14, 14],
     html:
@@ -287,6 +309,7 @@ function popupHtml(a: LiveAircraft): string {
     `<br>${escapeHtml(type)}${route ? `<br>${escapeHtml(route)}` : ''}` +
     `<br>${a.altFt.toLocaleString('en-US')} ft (${a.aglFt.toLocaleString('en-US')} ft above you), ${speed(a.gs)}` +
     `<br>${verticalLabel(a.rate)}${a.emergency ? `<br><strong>Emergency: ${escapeHtml(a.emergency)}</strong>` : ''}` +
+    (hooks?.routeLabel(a.hex) ? `<br><button type="button" class="live-overview-btn" data-overview="${a.hex}">Route overview</button>` : '') +
     `<br><small style="color:#64748b">adsb.lol, ODbL</small>`
   );
 }
@@ -341,7 +364,7 @@ function cardHtml(message: string | null, aircraft: LiveAircraft[], error = fals
       const where = `${formatDistance(a.distNm * NM_TO_MI)} ${compassPoint(a.bearing)}`;
       return `<div class="live-row" data-live-hex="${a.hex}" role="button" tabindex="0">
         <span class="live-dot" style="background:${altitudeColor(a.altFt)}"></span>
-        <span class="live-main"><strong>${escapeHtml(name)}</strong>${reg ? ` <span class="muted">${escapeHtml(reg)}</span>` : ''}${type ? `<br><span class="muted">${escapeHtml(type)}</span>` : ''}${route ? `<br><span class="live-route${route === 'Route unknown' ? ' muted' : ''}">${escapeHtml(route)}</span>` : ''}</span>
+        <span class="live-main"><strong>${escapeHtml(name)}</strong>${reg ? ` <span class="muted">${escapeHtml(reg)}</span>` : ''}${type ? `<br><span class="muted">${escapeHtml(type)}</span>` : ''}${route ? `<br><span class="live-route${route === 'Route unknown' ? ' muted' : ''}">${escapeHtml(route)}</span>` : ''}${route && route !== 'Route unknown' ? ` <button type="button" class="live-overview-btn" data-overview="${a.hex}">Overview</button>` : ''}</span>
         <span class="live-stats">${a.altFt.toLocaleString('en-US')} ft, ${speed(a.gs)}<br><span class="muted">${verticalLabel(a.rate)} \u00b7 ${where}</span></span>
       </div>`;
     })

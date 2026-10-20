@@ -181,9 +181,15 @@ refreshing every 10 seconds while the page is visible (5 by default; Settings, L
 shown, up to 10). Aircraft on the ground, lower than the set
 height above the ground (default 500 ft) or slower than the set speed (default 60 kt) are left out.
 Each shows as an icon pointing along its track, colored by altitude, with the path flown since
-tracking started, a line one minute ahead, and a dashed line to its destination when adsb.lol knows
-the flight's route and it fits the aircraft's position and heading (adsb.lol's own check is lenient:
-it called a flight landing at ORD "plausible" for Dallas to Charlotte). A card lists each flight by airline and number from its callsign ("Delta 1234",
+tracking started and, when the flight's route is known and fits the aircraft's position and heading,
+a line on to its destination (with a faint estimate back to its origin); aircraft without a route get
+a dotted line one minute ahead instead. **Route overview** (the Overview button on the card or popup,
+or tapping a route line) frames the whole leg: origin and destination, the part flown and the part to
+go, distances and a rough time to go at the current speed, "Weather along this route" (the app's
+normal route view for that pair) and "Back to Live track"; it asks adsb.lol nothing extra, so an
+aircraft that leaves the circle stays at its last known position, marked out of range. Routes are checked against
+where the aircraft is and where it is heading, since adsb.lol's own check is lenient (it called a
+flight landing at ORD "plausible" for Dallas to Charlotte). A card lists each flight by airline and number from its callsign ("Delta 1234",
 "UPS 2911"; regional airlines by their operator, such as SkyWest Airlines; registrations used as
 callsigns as "Private"), its registration and type, where it is flying from and to ("Chicago (ORD)
 to Denver (DEN)", or "Route unknown" when the route is missing or does not fit), altitude, speed,
