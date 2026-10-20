@@ -2,10 +2,11 @@ import type { Airport, RunwayDetail } from './geoMath';
 import { formatDistance, clockOptions, UNITS_CHANGED } from './units';
 import { stationTemp } from './stationTemp';
 import { setLegend } from './legend';
-import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend, pirepLegend, fireLegend, hazardLegend, cycloneLegend, tfrLegend, tcfLegend, radarLegend, stormTopsLegend, spcLegend, geohazardsLegend, auroraLegend, HAZARD_GLYPH } from './legends';
+import { FLIGHT_CATEGORY_COLOR, stationWindLegend, stationTempLegend, freezingLevelLegend, aerosolLegend, satelliteLegend, pirepLegend, fireLegend, hazardLegend, cycloneLegend, tfrLegend, tcfLegend, radarLegend, stormTopsLegend, spcLegend, geohazardsLegend, auroraLegend, terrainLegend, HAZARD_GLYPH } from './legends';
 import { fetchSpcOutlook, spcLevel, spcCategoryName, spcRiskWord, type SpcDay } from './spc';
 import { fetchGeohazards, quakeSeverity, quakeRadius, volcanoSeverity, colorCodeLabel } from './geohazards';
 import { fetchSpaceWeather, auroraLookup, auroraRgba, scalesLabel } from './spaceWeather';
+import { TERRARIUM_URL, TERRAIN_MAX_NATIVE_ZOOM, reliefTile } from './terrainTiles';
 import {
   faaChartTileUrl,
   faaChartInfoUrl,
@@ -135,7 +136,10 @@ export function initOverlays(m: L.Map) {
   map = m;
 
   // Night shading sits just above the base tiles; hazards sit under the airport markers.
-  // FAA charts replace the look of the base map, so they sit right on it, under all weather.
+  // Terrain shading and FAA charts change the look of the base map, so they sit right on it, under
+  // all weather (charts over the shading).
+  map.createPane('terrain').style.zIndex = '215';
+  map.getPane('terrain')!.style.pointerEvents = 'none';
   map.createPane('charts').style.zIndex = '220';
   map.createPane('satellite').style.zIndex = '240';
   map.getPane('satellite')!.style.pointerEvents = 'none';
@@ -1717,6 +1721,36 @@ async function refreshAurora(announce: boolean) {
       5000
     );
   }
+}
+
+// ---------------------------------------------------------------------------
+// Terrain shading (relief from AWS Open Data terrain tiles, computed in the browser)
+// ---------------------------------------------------------------------------
+
+let terrainLayer: L.GridLayer | null = null;
+
+export function setTerrain(on: boolean) {
+  setLegend('terrain', on ? terrainLegend() : null);
+  if (!map) return;
+  if (!on) {
+    if (terrainLayer && map.hasLayer(terrainLayer)) map.removeLayer(terrainLayer);
+    return;
+  }
+  if (!terrainLayer) {
+    terrainLayer = radarGridLayer(
+      {
+        pane: 'terrain',
+        opacity: 1,
+        maxNativeZoom: TERRAIN_MAX_NATIVE_ZOOM,
+        keepBuffer: 2,
+        attribution:
+          'Terrain: <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Mapzen terrain tiles</a> (SRTM, ETOPO1, USGS and others)',
+      },
+      () => TERRARIUM_URL,
+      (rgba, c) => reliefTile(rgba, (tileLat(c.y, c.z) + tileLat(c.y + 1, c.z)) / 2, c.z)
+    );
+  }
+  if (!map.hasLayer(terrainLayer)) terrainLayer.addTo(map);
 }
 
 // ---------------------------------------------------------------------------

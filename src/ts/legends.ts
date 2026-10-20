@@ -264,6 +264,18 @@ export function auroraLegend(scales?: string): LegendSpec {
   };
 }
 
+export function terrainLegend(): LegendSpec {
+  return {
+    kind: 'items',
+    title: 'Terrain',
+    items: [
+      { color: 'rgba(0, 0, 0, 0.45)', label: 'shadow: slope away from the light', mark: 'dot' },
+      { color: 'rgba(235, 238, 242, 0.35)', label: 'pale: above 10,000 ft', mark: 'dot' },
+    ],
+    note: 'Relief lit from the northwest, exaggerated when zoomed out',
+  };
+}
+
 export function tcfLegend(): LegendSpec {
   const [, moderate, severe, extreme] = severityLegendItems([1, 2, 3, 4], 'line');
   return {

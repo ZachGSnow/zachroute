@@ -19,6 +19,7 @@ structure left untouched. They contain only public aviation, weather and geograp
 | `usgs-quakes-4.5-day.json`, `usgs-elevated-volcanoes.json`, `usgs-volcano-311120.json` | USGS M4.5+ day feed (trimmed to the 6 strongest and 6 weakest), the US volcanoes at an elevated alert (Great Sitkin ORANGE, three YELLOW) and Great Sitkin's volcano record, captured 2026-10-19 |
 | `swpc-noaa-scales.json`, `swpc-planetary-k-index.json`, `swpc-ovation-aurora-lon0-29.json` | services.swpc.noaa.gov NOAA scales (now R0 S0 G0, G1 forecast for tomorrow), the last 8 planetary Kp values, and the OVATION aurora grid trimmed to longitudes 0-29, captured 2026-10-20 00:00 UTC |
 | `faa-vfr-sectional-service.json` | The FAA VFR sectional tile service description (tiles.arcgis.com), trimmed to its name, credit, update note and zoom range, captured 2026-10-19 |
+| `terrarium-9-106-195.png` | AWS Open Data terrain tile (Terrarium, zoom 9, x 106, y 195) over the Colorado Front Range with Pikes Peak, captured 2026-10-19 |
 | `awc-isigmet.json` | aviationweather.gov international SIGMET: volcanic ash, tropical cyclone, thunderstorm, turbulence, icing, one multi-area record and two without a usable polygon |
 | `faa-status-delays.xml` | nasstatus.faa.gov airport status, captured 2026-10-16 01:00 UTC while delay programs were active |
 | `faa-status-closures.xml` | the same feed later that morning (closures only) |

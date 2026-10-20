@@ -53,14 +53,15 @@ export function stubBrowser() {
 }
 
 /**
- * Decodes an 8-bit RGBA, non-interlaced PNG fixture (what the radar tile servers send) to raw
- * pixels, since Node has no canvas.
+ * Decodes an 8-bit RGBA or RGB, non-interlaced PNG fixture (what the radar and terrain tile servers
+ * send) to raw RGBA pixels, since Node has no canvas.
  */
 export function decodeRgbaPng(name: string): { width: number; height: number; data: Uint8ClampedArray } {
   const buf = fs.readFileSync(fixturePath(name));
   let pos = 8;
   let width = 0;
   let height = 0;
+  let bpp = 4;
   const idat: Buffer[] = [];
   while (pos < buf.length) {
     const len = buf.readUInt32BE(pos);
@@ -69,20 +70,21 @@ export function decodeRgbaPng(name: string): { width: number; height: number; da
     if (type === 'IHDR') {
       width = body.readUInt32BE(0);
       height = body.readUInt32BE(4);
-      if (body[8] !== 8 || body[9] !== 6 || body[12] !== 0) throw new Error(`${name}: not 8-bit RGBA non-interlaced`);
+      if (body[8] !== 8 || (body[9] !== 6 && body[9] !== 2) || body[12] !== 0) throw new Error(`${name}: not 8-bit RGB(A) non-interlaced`);
+      bpp = body[9] === 6 ? 4 : 3;
     } else if (type === 'IDAT') idat.push(body);
     pos += 12 + len;
   }
   const raw = zlib.inflateSync(Buffer.concat(idat));
-  const stride = width * 4;
-  const out = new Uint8ClampedArray(width * height * 4);
+  const stride = width * bpp;
+  const px = new Uint8ClampedArray(width * height * bpp);
   for (let y = 0; y < height; y++) {
     const filter = raw[y * (stride + 1)];
     const line = raw.subarray(y * (stride + 1) + 1, (y + 1) * (stride + 1));
     for (let i = 0; i < stride; i++) {
-      const a = i >= 4 ? out[y * stride + i - 4] : 0;
-      const b = y > 0 ? out[(y - 1) * stride + i] : 0;
-      const c = i >= 4 && y > 0 ? out[(y - 1) * stride + i - 4] : 0;
+      const a = i >= bpp ? px[y * stride + i - bpp] : 0;
+      const b = y > 0 ? px[(y - 1) * stride + i] : 0;
+      const c = i >= bpp && y > 0 ? px[(y - 1) * stride + i - bpp] : 0;
       let v = line[i];
       if (filter === 1) v += a;
       else if (filter === 2) v += b;
@@ -94,8 +96,16 @@ export function decodeRgbaPng(name: string): { width: number; height: number; da
         const pc = Math.abs(p - c);
         v += pa <= pb && pa <= pc ? a : pb <= pc ? b : c;
       }
-      out[y * stride + i] = v & 255;
+      px[y * stride + i] = v & 255;
     }
+  }
+  if (bpp === 4) return { width, height, data: px };
+  const out = new Uint8ClampedArray(width * height * 4);
+  for (let p = 0; p < width * height; p++) {
+    out[p * 4] = px[p * 3];
+    out[p * 4 + 1] = px[p * 3 + 1];
+    out[p * 4 + 2] = px[p * 3 + 2];
+    out[p * 4 + 3] = 255;
   }
   return { width, height, data: out };
 }
