@@ -59,6 +59,10 @@ describe('route and airport summaries', () => {
 
   it('names aircraft from the BTS lookup', () => {
     expect(aircraftLabel('694', names)).toBe('Airbus A320-100/200');
+    expect(aircraftLabel('x', { x: 'A220-300 BD-500-1A11' })).toBe('Airbus A220-300');
+    expect(aircraftLabel('x', { x: 'Airbus 350-1000' })).toBe('Airbus A350-1000');
+    expect(aircraftLabel('889', names)).toBe('Boeing 787-900 Dreamliner');
+    expect(aircraftLabel('614', names)).toBe('Boeing 737-800');
     expect(aircraftLabel('999', names)).toBe('type 999');
   });
 

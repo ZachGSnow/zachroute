@@ -27,6 +27,7 @@ import { fetchFreezingLevel, describeFreezingLevel, routeFreezingSummary } from 
 import { tfrChips, describeTfr } from './tfr';
 import { volcanoChips } from './geohazards';
 import { fetchMeasuredPm25, pm25Category, readingAge } from './openaq';
+import { fetchAirportTraffic, trafficAirlineName, compactCount, yearChange, monthLabel, busiestMonth, loadFactor } from './traffic';
 import { fetchSpaceWeather, polarConcerns, maxAbsLat, scaleSeverity, POLAR_LAT } from './spaceWeather';
 import { fetchTerrainProfile, profileSvg, highestPoint, frozenTerrainMiles, type ElevationProfile } from './terrainProfile';
 import { severityBadge } from './severityBadge';
@@ -461,6 +462,7 @@ function buildFacilityCard(airport: Airport): string {
       <div class="weather-block">${weatherPlaceholderHtml()}</div>
       <div class="aq-block"></div>
       <div class="fires-block"></div>
+      <div class="traffic-block"></div>
       ${timeLineHtml(airport)}
       <div class="forecast-block"></div>
       <div class="pirep-block"></div>
@@ -669,6 +671,23 @@ async function fillAirQuality(cardEl: HTMLElement, airport: Airport) {
   el.innerHTML = lines.map((l) => `<div class="aq-line">${l}</div>`).join('');
 }
 
+const US_TRAFFIC_COUNTRIES = new Set(['US', 'PR', 'VI', 'GU', 'MP', 'AS']);
+
+/** "84.7M passengers in the last 12 months (up 6% on the year before). Busiest routes: LGA, LAX, ...". */
+async function fillAirportTraffic(cardEl: HTMLElement, airport: Airport) {
+  const el = cardEl.querySelector('.traffic-block') as HTMLElement | null;
+  if (!el) return;
+  const t = await fetchAirportTraffic(airport.iata);
+  if (!t || !el.isConnected) return;
+  const us = US_TRAFFIC_COUNTRIES.has(airport.country || '');
+  const change = yearChange(t.total.pax, t.total.paxPrev);
+  const what = us ? 'passengers' : 'passengers on flights to and from the US';
+  el.innerHTML =
+    `<div class="traffic-line">\u2708\ufe0f ${compactCount(t.total.pax)} ${what} in the last 12 months${change ? ` (${change})` : ''}. ` +
+    `Busiest routes: ${t.top.join(', ')}.</div>` +
+    `<div class="traffic-line muted">US DOT T-100, ${monthLabel(t.months.from)} to ${monthLabel(t.months.to)}</div>`;
+}
+
 /** "12 satellite fire or heat detections within 50 mi in the last 24 h, the most intense 18 mi NW". */
 async function fillFires(cardEl: HTMLElement, airport: Airport) {
   const el = cardEl.querySelector('.fires-block') as HTMLElement | null;
@@ -697,6 +716,7 @@ async function wireFacilityCard(cardEl: HTMLElement, airport: Airport) {
   void fillForecasterNotes(cardEl, airport);
   void fillAirQuality(cardEl, airport);
   void fillFires(cardEl, airport);
+  void fillAirportTraffic(cardEl, airport);
 
   const weatherEl = cardEl.querySelector('.weather-block');
   if (!weatherEl || !airport.icao) return;
@@ -891,6 +911,33 @@ function renderTerrainProfile(el: HTMLElement, p: ElevationProfile | null, freez
     `<div class="tp-note">${notes.join('. ')}.</div>`;
 }
 
+/**
+ * The route's traffic on US DOT records (routes touching the US): passengers, flights, seats filled,
+ * busiest month, change on the year before, airlines by share and the main aircraft.
+ */
+async function wireRouteTraffic(origin: Airport, destination: Airport) {
+  const el = resultsContent.querySelector('.route-traffic') as HTMLElement | null;
+  if (!el) return;
+  const a = origin.iata;
+  const b = destination.iata;
+  const fromA = await fetchAirportTraffic(a);
+  const fromB = fromA && b && fromA.routes[b] ? null : await fetchAirportTraffic(b);
+  const r = (b && fromA?.routes[b]) || (a && fromB?.routes[a]) || null;
+  const months = (fromA || fromB)?.months;
+  if (!r || !months || !el.isConnected) return;
+  const lf = loadFactor(r.pax, r.seats);
+  const change = yearChange(r.pax, r.paxPrev);
+  const airlines = await Promise.all(r.airlines.map(async ([code, share]) => `${escapeHtml(await trafficAirlineName(code))} ${share}%`));
+  if (!el.isConnected) return;
+  el.innerHTML =
+    `<div class="stats-row"><span class="stats-label">\u{1F4CA} Traffic</span><span class="stats-value">` +
+    `${compactCount(r.pax)} passengers on ${r.deps.toLocaleString('en-US')} flights${lf !== null ? `, ${lf}% of seats filled` : ''}</span></div>` +
+    `<div class="traffic-line">Busiest in ${busiestMonth(r.monthly, months.to)}${change ? `; ${change}` : ''}.` +
+    (airlines.length ? ` Airlines by passengers: ${airlines.join(', ')}.` : '') +
+    (r.aircraft.length ? ` Mostly ${r.aircraft.map(escapeHtml).join(', ')}.` : '') +
+    `</div><div class="traffic-line muted">Both directions, US DOT T-100, ${monthLabel(months.from)} to ${monthLabel(months.to)}</div>`;
+}
+
 async function wireWindAdjustedBlockTime(origin: Airport, destination: Airport, distanceMiles: number, bearingDeg: number) {
   const valueEl = resultsContent.querySelector('.wind-adjusted-value');
   if (!valueEl) return;
@@ -1058,6 +1105,7 @@ export function renderRoute(origin: Airport, destination: Airport) {
       <div class="stats-row"><span class="stats-label">✅ Known direct route</span><span class="stats-value">${direct ? 'Yes' : 'No'}</span></div>
       ${directAirlines ? `<div class="stats-row"><span class="stats-label">✈️ Airlines</span><span class="stats-value" title="${carrierDataNote()}">${directAirlines}</span></div>` : ''}
       ${viaResult ? viaConnectionsHtml(origin, destination, viaResult.options, viaResult.totalFound, selectedKey, viaResult.depth) : ''}
+      <div class="route-traffic"></div>
       <div class="stats-row"><span class="stats-label">⛰️ Elevation change</span><span class="stats-value">${elevationChangeLabel(origin, destination)}</span></div>
       <div class="stats-row"><span class="stats-label">🕐 Local time difference</span><span class="stats-value">${timeDifferenceLabel(origin, destination)}</span></div>
       <div class="route-hazards"></div>
@@ -1076,6 +1124,7 @@ export function renderRoute(origin: Airport, destination: Airport) {
   routeEnds = { origin, destination };
   const shownOption = viaResult ? viaResult.options.find((o) => o.key === selectedKey) : null;
   void wireRouteHazards(routePoints(origin, destination, shownOption));
+  void wireRouteTraffic(origin, destination);
   if (viaResult) {
     wireViaList(viaResult.options);
     bindViaSelection(viaResult.options);

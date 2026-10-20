@@ -1556,3 +1556,13 @@ body {
   color: var(--text-muted);
   margin-top: 2px;
 }
+
+/* Traffic from US DOT T-100 (airport card and route card) */
+.traffic-line {
+  font-size: 0.8rem;
+  margin: 2px 0;
+}
+
+.route-traffic .traffic-line {
+  padding-left: 4px;
+}
