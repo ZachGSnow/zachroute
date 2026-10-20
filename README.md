@@ -196,7 +196,10 @@ to Denver (DEN)", or "Route unknown" when the route is missing or does not fit),
 climb or descent and distance (speed in knots, mph or km/h, set in Settings, Live track); tapping
 one finds it on the map. To keep the
 load on the data source small, Live track pauses after 5 minutes until Continue is tapped, sends
-adsb.lol your position rounded to about 1 km, asks it to leave out aircraft well below the set height, reuses each answer for 8 seconds, and when adsb.lol asks to wait (429) sends nothing until its Retry-After has passed. Help is in the
+adsb.lol your position rounded to about 1 km, asks it to leave out aircraft well below the set height, reuses each answer for 8 seconds, and when adsb.lol asks to wait (429) sends nothing until its Retry-After has passed:
+a short wait is retried, while a long one or the key's daily allowance running out stops Live track
+and says when it can be used again (remembered in the browser, so tapping the button sends nothing
+before then). Help is in the
 settings footer, next to the version.
 
 **Units**: distances in miles, kilometers or nautical miles, a 12 or 24-hour clock, and weather in US
