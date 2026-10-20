@@ -3,6 +3,7 @@ import { formatDistance, getDistanceUnit, getClockFormat, getWeatherUnits, setDi
 import { nearestAirports, locate } from './nearby';
 import { initSheet } from './sheet';
 import { mountSettings } from './settingsPanel';
+import { PREF_CHANGED } from './prefs';
 import { haversineDistance } from './geoMath';
 import { setWeatherStations, setStationMode, type StationMode, setHazards, setDayNight, setPireps, setCyclones, setFires, setAerosol, setFreezingLevel, setSatellite, setTfrs, setTcf, setTcfStep, setRadar, setRadarMode, setSpc, setSpcDay, setGeohazards, setAurora, setCharts, setChartKind, setTerrain, setAirspace, highlightRunway } from './mapOverlays';
 import type { RadarMode } from './radarTiles';
@@ -659,6 +660,10 @@ async function init() {
     weatherSelect.addEventListener('change', () => setWeatherUnits(weatherSelect.value as WeatherUnits));
   }
   window.addEventListener(UNITS_CHANGED, () => {
+    if (currentQuery) runSearch(currentQuery, 'none');
+  });
+  // Route drawing and card choices (Settings, On a route and Airport cards) show on the current result at once.
+  window.addEventListener(PREF_CHANGED, () => {
     if (currentQuery) runSearch(currentQuery, 'none');
   });
 

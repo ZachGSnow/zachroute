@@ -109,6 +109,7 @@ export async function volcanoChips(airport: Airport): Promise<Chip[]> {
     const level = volcanoSeverity(volcano.colorCode)!;
     return {
       level: chipLevel(level),
+      severity: level,
       text: `\u{1F30B} ${volcano.name} volcano ${formatDistance(miles)} away: aviation code ${volcano.colorCode} (${severityName(level).toLowerCase()})`,
       title: `${colorCodeLabel(volcano.colorCode)}. ${volcano.observatory || 'USGS'}${volcano.url ? `: ${volcano.url}` : ''}`,
     };

@@ -1749,3 +1749,24 @@ body {
 .base-satellite .leaflet-airspace-pane svg {
   filter: drop-shadow(0 0 1px rgba(15, 23, 42, 0.95)) drop-shadow(0 0 2px rgba(15, 23, 42, 0.6));
 }
+
+.settings-note {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: 0 0 6px;
+}
+
+/* Folded alerts on an airport card and the route hazard list: a one-line summary that opens */
+.alerts-fold > .expandable-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.alerts-fold > .expandable-content {
+  margin-top: 4px;
+}

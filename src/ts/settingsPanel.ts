@@ -4,6 +4,7 @@
 // wiring plain inputs and change events.
 
 import { FEATURES, SECTIONS, isSettingKey, type Choice, type Feature } from './features';
+import { readPref, writePref } from './prefs';
 
 const OPEN_KEY = 'zachroute:settings-open';
 
@@ -48,11 +49,12 @@ export function settingsHtml(open: Set<string>): string {
   return SECTIONS.map((s) => {
     const rows = FEATURES.filter((f) => f.section === s.id).map(featureRowHtml).join('');
     const isOpen = open.has(s.id);
-    return `<section class="settings-section" data-section="${s.id}">
+    const note = s.note ? `<p class="settings-note">${s.note}</p>` : '';
+    return `<section class="settings-section" data-section="${s.id}" data-layers="${s.layers}">
       <button type="button" class="settings-section-head" aria-expanded="${isOpen}" aria-controls="settings-sec-${s.id}">
-        <span class="settings-section-title">${s.title}</span>${s.counts ? '<span class="settings-count"></span>' : ''}<span class="settings-chevron" aria-hidden="true"></span>
+        <span class="settings-section-title">${s.title}</span>${s.layers ? '<span class="settings-count"></span>' : ''}<span class="settings-chevron" aria-hidden="true"></span>
       </button>
-      <div class="settings-section-body" id="settings-sec-${s.id}"${isOpen ? '' : ' hidden'}>${rows}</div>
+      <div class="settings-section-body" id="settings-sec-${s.id}"${isOpen ? '' : ' hidden'}>${note}${rows}</div>
     </section>`;
   }).join('');
 }
@@ -73,7 +75,19 @@ export function mountSettings(): SettingsPanel | null {
   const open = readOpenSections();
   body.innerHTML = settingsHtml(open);
 
-  const switches = () => [...body.querySelectorAll<HTMLInputElement>('input.switch')];
+  // Map layer switches only: route and card choices are not layers.
+  const switches = () => [...body.querySelectorAll<HTMLInputElement>('[data-layers="true"] input.switch')];
+
+  // Settings the window stores itself: restore them now, save them on change.
+  for (const f of FEATURES) {
+    if (!f.pref) continue;
+    const { key, default: fallback } = f.pref;
+    const input = document.getElementById(f.control.input) as HTMLInputElement | HTMLSelectElement | null;
+    if (!input) continue;
+    if (input instanceof HTMLInputElement) input.checked = readPref(key, fallback) === 'true';
+    else input.value = readPref(key, fallback);
+    input.addEventListener('change', () => writePref(key, input instanceof HTMLInputElement ? String(input.checked) : input.value));
+  }
 
   function syncSegmented(group: HTMLElement) {
     const select = document.getElementById(group.dataset.input || '') as HTMLSelectElement | null;

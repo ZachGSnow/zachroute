@@ -1,3 +1,4 @@
+import { severityBadge } from './severityBadge';
 import type { Airport } from './geoMath';
 import { formatDistance } from './units';
 import { haversineDistanceLatLon, bearingBetween } from './geoMath';
@@ -50,6 +51,16 @@ export interface Chip {
   level: 'info' | 'warn' | 'alert';
   text: string;
   title?: string;
+  /** Light to Extreme, where the source grades it (FAA delays do not). */
+  severity?: Severity;
+}
+
+/** "4 alerts" with the worst severity among them, for the folded alerts header. */
+export function alertsSummary(chips: Chip[]): string {
+  const graded = chips.map((c) => c.severity).filter((s): s is Severity => s != null);
+  const worst = graded.length ? (Math.max(...graded) as Severity) : null;
+  const n = chips.length;
+  return `\u26a0\ufe0f ${n} alert${n === 1 ? '' : 's'}${worst ? ` ${severityBadge(worst)}` : ''}`;
 }
 
 /** Delay / ground-stop chips for a US airport. Empty when everything is normal or unavailable. */
@@ -133,6 +144,8 @@ function fetchNwsAlerts(lat: number, lon: number): Promise<NwsAlert[]> {
   return data;
 }
 
+const NWS_SEVERITY: Record<string, Severity> = { Extreme: 4, Severe: 3, Moderate: 2, Minor: 1 };
+
 const SEVERITY_LEVEL: Record<string, Chip['level']> = {
   Extreme: 'alert',
   Severe: 'alert',
@@ -146,7 +159,7 @@ export async function nwsAlertChips(airport: Airport): Promise<Chip[]> {
   const alerts = await fetchNwsAlerts(airport.lat, airport.lon);
   const order: Record<string, number> = { alert: 0, warn: 1, info: 2 };
   return alerts
-    .map((a): Chip => ({ level: SEVERITY_LEVEL[a.severity] || 'info', text: a.event, title: a.headline }))
+    .map((a): Chip => ({ level: SEVERITY_LEVEL[a.severity] || 'info', text: a.event, title: a.headline, severity: NWS_SEVERITY[a.severity] }))
     .sort((a, b) => order[a.level] - order[b.level])
     .slice(0, 4);
 }

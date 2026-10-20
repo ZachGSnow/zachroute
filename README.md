@@ -39,6 +39,11 @@ companion to a FlightWall display: see a plane overhead, look up where it is goi
   previous search.
 
 **Airport card**
+- Alerts (delays, weather alerts, ash, volcanoes, cyclones, flight restrictions) fold behind one line
+  with their count and worst grade; by default they start open only when one is Severe or Extreme.
+  Settings, Airport cards sets that, whether the photo shows, and which folding sections (weather
+  details, forecast periods, pilot reports, forecaster notes, runways, frequencies, navaids,
+  destinations) start open. Tapping a section header opens or folds it on that card.
 - Current conditions from the latest METAR in plain English, with a "More details" section
   (dewpoint and fog risk, ceiling, altimeter or QNH, density altitude, wind as the tower states it,
   and the forecast freezing level).
@@ -105,6 +110,12 @@ used once and not stored; denying permission just shows a message.
 - US temporary flight restrictions the route crosses, with a link to the FAA's details. Most reach
   only a few thousand feet, so they matter near the airports rather than at cruise.
 - Pilot reports of turbulence or icing near the route.
+- The hazard list folds behind a one-line summary (count by kind and the worst grade), opening by
+  itself when something is Severe or Extreme; volcanic ash always stays above it. Settings, On a
+  route chooses which kinds are drawn on the map (all by default; the list names any that are not)
+  and "Focus on the route" (on by default): while a route is shown, the full advisory, pilot report,
+  cyclone and TFR layers step aside so only what lies along the route is drawn, and come back when
+  the route is cleared.
 - Space weather, on routes that reach 60 degrees north or south: a solar radiation storm (S1 and
   up; polar flights may be rerouted), a radio blackout (R2 and up) or a geomagnetic storm (G2 and
   up), both of which degrade HF radio, from NOAA's space weather scales.

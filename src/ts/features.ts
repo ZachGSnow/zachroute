@@ -1,8 +1,9 @@
 // Every setting the app offers, in the order the settings window shows them. The settings
 // window is built from this list (settingsPanel.ts), and so is the Help panel, so a new layer
-// is one entry here. Input ids are the ones main.ts wires up; storage keys belong to main.ts.
+// is one entry here. Map layer inputs are wired by main.ts (which owns their storage keys);
+// entries with `pref` are stored by the settings window itself and read through prefs.ts.
 
-export type SectionId = 'map' | 'airports' | 'weather' | 'flight' | 'natural' | 'airspace' | 'units';
+export type SectionId = 'map' | 'airports' | 'weather' | 'flight' | 'natural' | 'airspace' | 'route' | 'cards' | 'units';
 
 export interface Choice {
   value: string;
@@ -23,25 +24,31 @@ export interface Feature {
   label: string;
   /** One short line under the label: what it shows and where. */
   desc: string;
-  /** A switch (checkbox input id) or, for units, a choice of values. */
+  /** A switch (checkbox input id) or a choice of values. */
   control: { kind: 'switch'; input: string; option?: FeatureOption } | { kind: 'choice'; input: string; choices: Choice[] };
+  /** Stored by the settings window under zachroute:<key>, with its default ('true'/'false' for a switch). */
+  pref?: { key: string; default: string };
 }
 
 export interface Section {
   id: SectionId;
   title: string;
-  /** Layer sections show how many of their switches are on. */
-  counts: boolean;
+  /** Map layer sections show how many of their switches are on, and "Turn off all layers" covers them. */
+  layers: boolean;
+  /** A line at the top of the section. */
+  note?: string;
 }
 
 export const SECTIONS: Section[] = [
-  { id: 'map', title: 'Map', counts: true },
-  { id: 'airports', title: 'Airports and routes', counts: true },
-  { id: 'weather', title: 'Weather', counts: true },
-  { id: 'flight', title: 'Flight hazards', counts: true },
-  { id: 'natural', title: 'Natural hazards', counts: true },
-  { id: 'airspace', title: 'Airspace and charts', counts: true },
-  { id: 'units', title: 'Units', counts: false },
+  { id: 'map', title: 'Map', layers: true },
+  { id: 'airports', title: 'Airports and routes', layers: true },
+  { id: 'weather', title: 'Weather', layers: true },
+  { id: 'flight', title: 'Flight hazards', layers: true },
+  { id: 'natural', title: 'Natural hazards', layers: true },
+  { id: 'airspace', title: 'Airspace and charts', layers: true },
+  { id: 'route', title: 'On a route', layers: false, note: 'What is drawn on the map along a searched route. The route card lists everything either way.' },
+  { id: 'cards', title: 'Airport cards', layers: false, note: 'How cards start out. Tap a section on a card to open or fold it there.' },
+  { id: 'units', title: 'Units', layers: false },
 ];
 
 const sw = (input: string, option?: FeatureOption) => ({ kind: 'switch' as const, input, option });
@@ -163,6 +170,60 @@ export const FEATURES: Feature[] = [
     }),
   },
 
+  // On a route
+  {
+    id: 'route-focus',
+    section: 'route',
+    label: 'Focus on the route',
+    desc: 'Hide the full hazard, pilot report, cyclone and TFR layers while a route is shown',
+    control: sw('pref-route-focus'),
+    pref: { key: 'route-focus', default: 'true' },
+  },
+  { id: 'route-advisories', section: 'route', label: 'Advisories', desc: 'AIRMETs, SIGMETs and CWAs the route passes through', control: sw('pref-route-advisories'), pref: { key: 'route-advisories', default: 'true' } },
+  { id: 'route-pireps', section: 'route', label: 'Pilot reports', desc: 'Notable reports within 50 mi of the route', control: sw('pref-route-pireps'), pref: { key: 'route-pireps', default: 'true' } },
+  { id: 'route-cyclones', section: 'route', label: 'Tropical cyclones', desc: 'Storms near the route or whose cone it crosses', control: sw('pref-route-cyclones'), pref: { key: 'route-cyclones', default: 'true' } },
+  { id: 'route-tfrs', section: 'route', label: 'Flight restrictions', desc: 'US TFRs the route crosses', control: sw('pref-route-tfrs'), pref: { key: 'route-tfrs', default: 'true' } },
+
+  // Airport cards
+  {
+    id: 'card-alerts',
+    section: 'cards',
+    label: 'Alerts',
+    desc: 'Auto opens them when one is Severe or Extreme; also the route hazard list',
+    control: {
+      kind: 'choice',
+      input: 'pref-card-alerts',
+      choices: [
+        { value: 'auto', label: 'Auto' },
+        { value: 'open', label: 'Open' },
+        { value: 'folded', label: 'Folded' },
+      ],
+    },
+    pref: { key: 'card-alerts', default: 'auto' },
+  },
+  { id: 'card-photo', section: 'cards', label: 'Airport photo', desc: 'The Wikipedia photo near the top of the card', control: sw('pref-card-photo'), pref: { key: 'card-photo', default: 'true' } },
+  ...(
+    [
+      ['weather-more', 'Weather details', 'Ceiling, pressure, density altitude and freezing level'],
+      ['forecast', 'Forecast periods', 'Each period of the forecast, under its summary'],
+      ['pireps', 'Pilot reports', 'Reports near the airport'],
+      ['afd', 'Forecaster notes', 'The National Weather Service aviation discussion (US)'],
+      ['runways', 'Runways', 'Lengths, surfaces and the end the wind favors'],
+      ['frequencies', 'Frequencies', 'Tower, ground, ATIS and more'],
+      ['navaids', 'Navaids', 'Nearby radio navigation aids'],
+      ['destinations', 'Destinations', 'Every nonstop destination'],
+    ] as const
+  ).map(
+    ([key, label, desc]): Feature => ({
+      id: `card-open-${key}`,
+      section: 'cards',
+      label: `${label} start open`,
+      desc,
+      control: sw(`pref-card-open-${key}`),
+      pref: { key: `card-open-${key}`, default: 'false' },
+    })
+  ),
+
   // Units
   {
     id: 'distance',
@@ -215,6 +276,8 @@ export function isSettingKey(key: string): boolean {
   const name = key.slice('zachroute:'.length);
   return (
     name.startsWith('show-') ||
+    name.startsWith('route-') ||
+    name.startsWith('card-') ||
     ['base-map', 'tcf-step', 'spc-day', 'charts-kind', 'radar-mode', 'wxstations-mode', 'distance-unit', 'clock', 'weather-units', 'legend-open', 'settings-open'].includes(name)
   );
 }
