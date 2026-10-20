@@ -276,6 +276,22 @@ export function terrainLegend(): LegendSpec {
   };
 }
 
+/** Airspace in chart colors (airspace.ts airspaceStyle). */
+export function airspaceLegend(): LegendSpec {
+  return {
+    kind: 'items',
+    title: 'Airspace',
+    items: [
+      { color: '#3b82f6', label: 'class B (solid), D (dashed)', mark: 'line' },
+      { color: '#c026d3', label: 'class C', mark: 'line' },
+      { color: '#ef4444', label: 'prohibited, restricted', mark: 'line' },
+      { color: '#fb923c', label: 'warning, danger, military operations', mark: 'line' },
+      { color: '#facc15', label: 'alert area', mark: 'dash' },
+    ],
+    note: 'US: FAA. Tap an area for its floor, ceiling and times. Not for navigation',
+  };
+}
+
 export function tcfLegend(): LegendSpec {
   const [, moderate, severe, extreme] = severityLegendItems([1, 2, 3, 4], 'line');
   return {

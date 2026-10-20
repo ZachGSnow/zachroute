@@ -106,7 +106,9 @@ used once and not stored; denying permission just shows a message.
 (wind arrows, with a ring only when conditions are below VFR; or temperatures colored cold to hot,
 marked where it is at or below freezing and where temperature and dewpoint are close enough for
 fog), the forecast freezing level (shaded dark blue where it is low, with values in thousands of
-feet; from zoom 3), terrain shading (light relief worldwide, pale above 10,000 ft), FAA
+feet; from zoom 3), airspace (US from zoom 7: class B, C and D, and prohibited, restricted,
+warning, alert and danger areas and military operations areas, with floors, ceilings and times of
+use; not for navigation), terrain shading (light relief worldwide, pale above 10,000 ft), FAA
 aeronautical charts for the US (the VFR sectional or the IFR low enroute
 chart, from zoom 8, with the edition date; not for navigation), weather radar (the US from NEXRAD via the Iowa Environmental Mesonet, about
 1 km detail; elsewhere RainViewer, coarser, from countries that share their radar; or, for the US,
@@ -285,6 +287,7 @@ can add on top of the source's age.
 | Earthquakes (M4.5+, worldwide) | [USGS](https://earthquake.usgs.gov) earthquake feed | Within minutes of each quake | Up to 15 min | Public domain (US government) |
 | Volcano alerts (US) | [USGS Volcano Hazards Program](https://volcanoes.usgs.gov) notices | As observatories issue them | Up to 15 min | Public domain (US government) |
 | Space weather scales, Kp and aurora forecast | [NOAA Space Weather Prediction Center](https://www.swpc.noaa.gov) | Scales and Kp as conditions change; aurora (OVATION) every few minutes, about 30-90 min ahead | Up to 25 min | Public domain (US government) |
+| Airspace (US: class B, C, D and special use airspace) | [FAA](https://adds-faa.opendata.arcgis.com) open data (NASR) | Every 56 days (last edited 28 Sep 2026 when added) | Each 4-degree cell cached a day | Public domain (US government); not for navigation |
 | Terrain height along routes | [Open-Meteo](https://open-meteo.com) elevation API (about 90 m terrain data) | Static | Each route cached 30 days, shared | CC BY 4.0, free for non-commercial use |
 | Terrain (shading) | [AWS Open Data terrain tiles](https://registry.opendata.aws/terrain-tiles/) (Mapzen; from SRTM, ETOPO1, USGS and other sources) | Static | Browser cache | Open data; credit Mapzen and the sources (credited on the map) |
 | Aeronautical charts (US: VFR sectional, IFR low enroute) | [FAA Aeronautical Information Services](https://www.faa.gov/air_traffic/flight_info/aeronav) tile service | Charts every 56 days; the tile service is updated less often (last on 9 Jul 2026), and the app shows its edition date | Tiles cached 1 hour by the browser | Public domain (US government); not for navigation |
