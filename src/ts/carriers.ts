@@ -45,6 +45,11 @@ const CARRIERS: Record<string, CarrierInfo> = {
   C5: { name: 'CommuteAir', note: 'regional, flies for United' },
 };
 
+/** The app's short name for an airline code, or the code itself when it has none. */
+export function airlineName(code: string): string {
+  return CARRIERS[code]?.name || code;
+}
+
 export interface RouteCarrier {
   code: string;
   name: string;

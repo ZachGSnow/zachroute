@@ -124,10 +124,22 @@ export function aggregatePairs(rows, latest) {
   return pairs;
 }
 
-/** "Airbus Industrie A320-100/200" -> "Airbus A320-100/200". */
+/**
+ * BTS aircraft names, tidied: "Airbus Industrie A320-100/200" -> "Airbus A320-100/200",
+ * "A220-300 BD-500-1A11" -> "Airbus A220-300", "Airbus 350-1000" -> "Airbus A350-1000",
+ * "B787-900 Dreamliner" -> "Boeing 787-900 Dreamliner".
+ */
 export function aircraftLabel(code, names) {
   const n = names[code];
-  return n ? n.replace(/Airbus Industrie/i, 'Airbus').replace(/\s+/g, ' ').trim() : `type ${code}`;
+  if (!n) return `type ${code}`;
+  return n
+    .replace(/Airbus Industrie/i, 'Airbus')
+    .replace(/\s+BD-\S+$/, '')
+    .replace(/^A(\d{3})/, 'Airbus A$1')
+    .replace(/^Airbus (\d{3})/, 'Airbus A$1')
+    .replace(/^B(7\d7)/, 'Boeing $1')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 const top = (map, n) => [...map.entries()].sort((a, b) => b[1] - a[1]).slice(0, n);

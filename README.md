@@ -57,6 +57,8 @@ companion to a FlightWall display: see a plane overhead, look up where it is goi
 - US volcanoes at an elevated alert within 100 miles, with the aviation color code.
 - Tropical cyclones (hurricanes, typhoons, cyclones in every ocean) within 300 miles, or whose
   forecast cone covers the airport, even when the storm is still far away.
+- Traffic, for airports with scheduled flights to or from the US: passengers in the last 12 months,
+  the change on the year before, and the busiest routes (US DOT T-100).
 - Air quality: the US AQI, or the European AQI at European airports, with PM2.5, a note when
   smoke, dust or haze may reduce visibility, and a heads-up when it is forecast to get worse in the
   next 12 hours.
@@ -85,6 +87,9 @@ used once and not stored; denying permission just shows a message.
   above the freezing level, and the highest terrain and where it is. Airliners cruise far above
   terrain, but the highest ground decides the escape plan after a depressurization or engine
   failure.
+- Traffic on routes touching the US (US DOT T-100, last 12 months, both directions): passengers,
+  flights, how full they were, the busiest month, the change on the year before, the airlines by
+  share of passengers and the main aircraft.
 - When there is no nonstop, one-stop and two-stop connections from the route data (not live
   schedules) are drawn and listed; the selected itinerary shows per-leg distance and time.
 - Weather advisories the route passes through are listed and drawn: US G-AIRMETs (the graphical
@@ -282,6 +287,7 @@ can add on top of the source's age.
 | Forecasts (TAF) | Aviation Weather Center | Every 6 hours (3 in some countries), plus amendments | Up to 25 min | Public domain (US government) |
 | Pilot reports | Aviation Weather Center | As pilots file them; the last 3 hours are shown | Up to 7 min | Public domain (US government) |
 | G-AIRMETs, SIGMETs, international SIGMETs, center weather advisories | Aviation Weather Center | G-AIRMETs every 6 hours, as snapshots 3 hours apart; SIGMETs when issued, valid up to 4 hours (6 for ash and cyclones); CWAs when issued, valid up to 2 hours | Up to 9 min; the map layer redraws every 5 min | Public domain (US government) |
+| Route and airport traffic (flights touching the US) | US DOT Bureau of Transportation Statistics T-100 Segment (all carriers), built by `npm run etl:t100` | Monthly, about 3 months behind; in the app as of the last build (the months are on each card) | Static files, browser cache | Public domain (US government) |
 | Delay programs (US) | [FAA NAS Status](https://nasstatus.faa.gov) | Continuously | Up to 10 min | Public domain (US government) |
 | Weather alerts (US) | [National Weather Service](https://www.weather.gov) | Real time | Up to 5 min | Public domain (US government) |
 | Forecaster aviation notes (US) | National Weather Service forecast discussions (api.weather.gov) | About 4 times a day per office, plus updates | Up to 45 min | Public domain (US government) |
