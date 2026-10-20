@@ -10,7 +10,7 @@ const noaa20 = readFixture('firms-viirs-noaa20-westus.csv');
 const snpp = readFixture('firms-viirs-snpp-westus.csv');
 const noaa21 = readFixture('firms-viirs-noaa21-westus.csv');
 const NOW = Date.parse('2026-10-20T12:00:00Z');
-const KEY = 'test-key-0123456789abcdef';
+const KEY = 'fake-firms-key'; // a stand-in: tests check it never reaches a response
 
 afterEach(() => {
   vi.useRealTimers();

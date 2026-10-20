@@ -1,0 +1,2 @@
+# False positive: a made-up stand-in key in a test, replaced in the next commit (never a real key).
+715b7cf6010bd975e3453b8db6f1edaad9ede36d:test/viirs.test.ts:generic-api-key:13
