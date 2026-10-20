@@ -27,6 +27,7 @@ import { fetchFreezingLevel, describeFreezingLevel, routeFreezingSummary } from 
 import { tfrChips, describeTfr } from './tfr';
 import { volcanoChips } from './geohazards';
 import { fetchSpaceWeather, polarConcerns, maxAbsLat, scaleSeverity, POLAR_LAT } from './spaceWeather';
+import { fetchTerrainProfile, profileSvg, highestPoint, frozenTerrainMiles, type ElevationProfile } from './terrainProfile';
 import { severityBadge } from './severityBadge';
 import { advisorySeverity, cycloneSeverity, tfrSeverity, chipLevel } from './severity';
 import { fetchForecasterNotes, forecasterNotesLabel } from './forecasterNotes';
@@ -855,13 +856,43 @@ function timeDifferenceLabel(origin: Airport, destination: Airport): string {
   return `${destCode} is ${hoursLabel} hour${hours === 1 ? '' : 's'} ${diffMinutes > 0 ? 'ahead' : 'earlier'}`;
 }
 
+/** The terrain chart and its notes, or nothing when the terrain could not be loaded. */
+function renderTerrainProfile(el: HTMLElement, p: ElevationProfile | null, freezingFt: number[], origin: Airport, destination: Airport) {
+  if (!el.isConnected) return;
+  if (!p || p.elevationsM.length < 2) {
+    el.remove();
+    return;
+  }
+  const code = (a: Airport) => a.iata || a.icao;
+  const levels = freezingFt.length >= 2 && freezingFt.every(Number.isFinite) ? freezingFt : [];
+  const hi = highestPoint(p);
+  const metric = getWeatherUnits() === 'metric';
+  const hiLabel = `${hi.ft.toLocaleString()} ft${metric ? ` (${Math.round(hi.ft / 3.28084).toLocaleString()} m)` : ''}`;
+  const frozenMi = levels.length ? frozenTerrainMiles(p, levels) : 0;
+  const notes = [
+    hi.ft > 0 ? `Highest terrain ${hiLabel}, ${formatDistance(hi.mi)} after ${code(origin)}` : 'No terrain above sea level along the route',
+    levels.length ? 'Dashed blue: forecast freezing level' : '',
+    frozenMi > 0 ? `Pale blue: terrain above the freezing level (about ${formatDistance(frozenMi)})` : '',
+    `Sampled every ${formatDistance(p.spacingMi)}; peaks between samples can be higher`,
+  ].filter(Boolean);
+  el.innerHTML =
+    `<div class="tp-head">\u26f0\ufe0f Terrain along the route</div>` +
+    profileSvg(p, levels, code(origin), code(destination)) +
+    `<div class="tp-note">${notes.join('. ')}.</div>`;
+}
+
 async function wireWindAdjustedBlockTime(origin: Airport, destination: Airport, distanceMiles: number, bearingDeg: number) {
   const valueEl = resultsContent.querySelector('.wind-adjusted-value');
   if (!valueEl) return;
 
+  // The terrain profile (direct routes) loads alongside the cruise winds, which carry its freezing level.
+  const profileEl = resultsContent.querySelector('.terrain-profile') as HTMLElement | null;
+  const terrain = profileEl ? fetchTerrainProfile(origin, destination) : Promise.resolve(null);
+
   // Preferred: forecast winds at cruise level along the route. Fallback: origin surface wind.
   const cruise = await fetchCruiseWind(origin, destination, distanceMiles);
   if (!valueEl.isConnected) return;
+  if (profileEl) void terrain.then((p) => renderTerrainProfile(profileEl, p, cruise?.freezingLevelsFt ?? [], origin, destination));
 
   // The freezing level along the route comes with the cruise winds; without them, drop the row.
   const freezingEl = resultsContent.querySelector('.freezing-level-value');
@@ -1013,6 +1044,7 @@ export function renderRoute(origin: Airport, destination: Airport) {
       <div class="stats-row"><span class="stats-label">\u23f1️ Block time</span><span class="stats-value">${formatBlockTime(block)}</span></div>
       ${direct ? `<div class="stats-row"><span class="stats-label">🌬️ Wind-adjusted</span><span class="stats-value wind-adjusted-value">\u2026</span></div>` : ''}
       ${direct ? `<div class="stats-row"><span class="stats-label">🧊 Freezing level</span><span class="stats-value freezing-level-value">\u2026</span></div>` : ''}
+      ${direct ? '<div class="terrain-profile"></div>' : ''}
       <div class="stats-row"><span class="stats-label">✅ Known direct route</span><span class="stats-value">${direct ? 'Yes' : 'No'}</span></div>
       ${directAirlines ? `<div class="stats-row"><span class="stats-label">✈️ Airlines</span><span class="stats-value" title="${carrierDataNote()}">${directAirlines}</span></div>` : ''}
       ${viaResult ? viaConnectionsHtml(origin, destination, viaResult.options, viaResult.totalFound, selectedKey, viaResult.depth) : ''}

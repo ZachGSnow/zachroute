@@ -1529,3 +1529,30 @@ body {
   color: var(--text);
   font-size: 0.82rem;
 }
+
+/* Route terrain profile (route card, direct routes) */
+.terrain-profile {
+  margin: 8px 0 4px;
+}
+
+.tp-head {
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
+.tp-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.tp-axis {
+  font-size: 7px;
+  fill: var(--text-muted);
+}
+
+.tp-note {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
