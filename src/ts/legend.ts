@@ -15,7 +15,7 @@ export type LegendSpec =
   | { kind: 'items'; title: string; items: LegendItem[]; note?: string };
 
 /** Rows are shown in this order, whatever order the layers were switched on in. */
-export const LEGEND_ORDER = ['route', 'stations', 'radar', 'pireps', 'hazards', 'tcf', 'spc', 'cyclones', 'geohazards', 'tfrs', 'fires', 'freezing', 'aurora', 'satellite', 'aerosol'];
+export const LEGEND_ORDER = ['route', 'stations', 'radar', 'pireps', 'hazards', 'tcf', 'spc', 'cyclones', 'geohazards', 'tfrs', 'fires', 'freezing', 'terrain', 'aurora', 'satellite', 'aerosol'];
 
 const OPEN_KEY = 'zachroute:legend-open';
 
