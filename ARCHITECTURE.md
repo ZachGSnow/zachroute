@@ -18,7 +18,8 @@ browser (src/ts) <--------------------------------------+
 
 | Path | Role |
 |---|---|
-| `src/ts/main.ts` | Boot, search box, history and shareable links (`runSearch` is the single entry point), settings menu |
+| `src/ts/main.ts` | Boot, search box, history and shareable links (`runSearch` is the single entry point), wiring of every setting |
+| `src/ts/features.ts`, `settingsPanel.ts` | Every setting the app offers (section, label, one-line description, input ids) and the settings window built from it: folding sections, on/off switches, segmented sub-options over hidden selects, turn off all, reset |
 | `src/ts/suggestList.ts` | Suggestion dropdown (keyboard, tap, utility rows) |
 | `src/ts/history.ts` | Recent searches and favorite airports (device-only `localStorage`) |
 | `src/ts/sheet.ts` | Phone bottom sheet: peek / half / full, drag and tap |
