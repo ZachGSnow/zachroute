@@ -5,6 +5,7 @@
 // except the radius, which applies the next time it is turned on.
 
 import { readPref } from './prefs';
+import { setLegend } from './legend';
 import { formatDistance } from './units';
 import { compassPoint } from './forecast';
 import {
@@ -12,6 +13,7 @@ import {
   SESSION_MS,
   METERS_PER_MI,
   altitudeColor,
+  liveLegend,
   liveQuery,
   verticalLabel,
   type LiveAircraft,
@@ -143,6 +145,7 @@ async function start() {
   layer.addLayer(circle);
   layer.addLayer(L.circleMarker(center, { radius: 5, color: '#0f172a', weight: 2, fillColor: '#38bdf8', fillOpacity: 1, interactive: false }));
   map.flyToBounds(circle.getBounds(), { padding: [30, 30], duration: 0.8 });
+  setLegend('live', liveLegend());
   resume();
 }
 
@@ -178,6 +181,7 @@ export function stop() {
   markers.clear();
   tracked = [];
   center = null;
+  setLegend('live', null);
   hooks?.clear();
 }
 

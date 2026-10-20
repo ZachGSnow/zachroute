@@ -21,6 +21,8 @@ browser (src/ts) <--------------------------------------+
 | `src/ts/main.ts` | Boot, search box, history and shareable links (`runSearch` is the single entry point), wiring of every setting |
 | `src/ts/help.ts`, `helpPanel.ts` | Help window: topics on using the app and an entry per setting (from `features.ts`, with the layers' legends), search, deep links (`#help/<id>`) |
 | `src/ts/focusTarget.ts` | Tap to focus: the shapes and points each chip or row frames on the map (NWS areas or zone outlines, storms, TFRs, advisories, reports), their bounds, and the registry behind `data-focus`; `mapOverlays.focusOn` draws the highlight |
+| `functions/api/live.ts`, `live-route.ts` | Live track server: aircraft in the air within 1 to 15 miles from adsb.lol (key in `x-api-key`), cut by height above ground and speed, at most 5, tracked ones first; a flight's route by callsign |
+| `src/ts/liveTrack.ts`, `liveLayer.ts`, `liveDraw.ts`, `aircraftTypes.ts` | Live track client: pure helpers (route fit check, look-ahead, labels, colors, legend), the header button's controller (location, fixed circle, 10 s refresh, 5-minute pause, card), the paths, look-ahead and destination lines, and type names |
 | `src/ts/prefs.ts` | Route drawing and airport card choices stored by the settings window: what to draw along a route, route focus, how alerts and card sections start |
 | `src/ts/features.ts`, `settingsPanel.ts` | Every setting the app offers (section, label, one-line description, input ids) and the settings window built from it: folding sections, on/off switches, segmented sub-options over hidden selects, turn off all, reset |
 | `src/ts/suggestList.ts` | Suggestion dropdown (keyboard, tap, utility rows) |
