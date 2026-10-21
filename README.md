@@ -7,13 +7,19 @@
 
 Live at **[zachroute.pages.dev](https://zachroute.pages.dev)**. For information only: not for navigation or flight planning.
 
-![Guam to Tokyo Narita: the route passes through Typhoon Champi's forecast cone, drawn with its past and forecast track, and the tropical cyclone SIGMETs it crosses are listed](docs/screenshot-route.png)
+![Guam to Taipei: the route passes through Typhoon Champi's forecast cone, drawn with its past and forecast track, and the route card lists the cyclone, the tropical cyclone SIGMET and a flight restriction, worst grade Extreme](docs/screenshot-route.png)
 
-| Airport view: Palembang, Indonesia, with smoke from nearby fires | On a phone: Jakarta to Bali crosses volcanic ash |
+| Live track: aircraft in the air around you, with their routes | Route overview: the whole flight, how far it has come and how far is left |
 |---|---|
-| ![Palembang airport card: very poor visibility, unhealthy air quality with a haze note, and satellite fire detections around the airport on the map](docs/screenshot-airport.png) | ![Phone layout of the Jakarta to Bali route with the volcanic ash warning for Mt Semeru](docs/screenshot-mobile.png) |
+| ![Live track near O'Hare: a 10-mile circle with aircraft colored by altitude, lines on to their destinations, and a card listing each flight by airline and number with its route, altitude, speed and climb](docs/screenshot-live.png) | ![Route overview of a flight departing O'Hare: origin and destination, the part flown and the part to go, with distances, a rough time to go and a button for the weather along the route](docs/screenshot-overview.png) |
 
-![The dust and smoke layer over Africa and Asia, with a Saharan dust plume over West Africa](docs/screenshot-dust.png)
+| Settings: layers in folding sections with on/off switches | Satellite base map: San Francisco with its runways |
+|---|---|
+| ![The settings window open over San Francisco, with the Weather section showing radar on and its precipitation or storm tops choice](docs/screenshot-settings.png) | ![SFO on the satellite base map, with its runway outlines and the airport card](docs/screenshot-satellite.png) |
+
+| On a phone: Live track | The dust and smoke layer over Africa and Asia |
+|---|---|
+| ![Live track on a phone near O'Hare, with the aircraft card in the bottom sheet](docs/screenshot-mobile.png) | ![The dust and smoke layer over Africa and Asia, with Saharan dust over North Africa](docs/screenshot-dust.png) |
 
 ## Why
 
@@ -21,7 +27,9 @@ Aviation data is free and public, but it is scattered across a dozen sites and w
 shorthand (`TAF KORD 161120Z 1612/1718 28012KT P6SM BKN035`). I wanted one fast page that answers
 "what is happening at this airport and on this route right now" in plain English, keeps working
 for airport lookups when the signal drops, and installs on a phone like an app. It started as a
-companion to a FlightWall display: see a plane overhead, look up where it is going.
+companion to a FlightWall display: see a plane overhead, look up where it is going. Live track now
+answers that directly: tap the radar button and the aircraft around you are listed with their
+airline, type and route.
 
 ## Features
 
@@ -314,6 +322,12 @@ for the design and the reasoning behind the main decisions.
 - Radar outside the US covers only countries that share their radar with RainViewer, at zoom 7
   detail at most; some networks (Mexico's, for one) report in coarse steps, so strong cells can
   show as solid blocks of one level.
+- Live track depends on adsb.lol's volunteer receivers: coverage is good around busy airports and
+  thin over oceans and remote areas, and aircraft that do not broadcast their position are not
+  shown. Flight routes come from community data that is often missing (private and cargo flights)
+  or out of date (regional airlines reuse flight numbers), so the app shows "Route unknown" rather
+  than a route that does not match where the aircraft is. The adsb.lol key has a daily allowance;
+  when it is used up, Live track says when it can be used again (the window resets at midnight UTC).
 - The map UI has no automated browser tests; it is checked by hand and through the screenshots.
 
 ## Testing
@@ -334,13 +348,20 @@ found real bugs: the FAA parser's `<Delay` pattern also matched `<Delay_type>`, 
 arrival/departure delays were never parsed; the international SIGMET feed lists some SIGMETs
 twice; and NASA FIRMS' "24h" file actually spans about two days.
 
+Later features use real responses captured when they were built (listed in
+`test/fixtures/README.md`): adsb.lol aircraft around O'Hare from the re-api and `/v2/point`, its route
+files and route API, the daily-limit 429 it sends, NWS alert areas and forecast zones, BTS T-100 rows
+and OpenFlights airlines.
+
 Not verified against real data: the FAA ground-stop XML block (no ground stop was active when the
 fixtures were captured; the parser follows the published `AirportStatus.dtd` element names). Stadia
 domain authentication was checked by HTTP status (200 from the registered domain, 401 otherwise).
 
-The README screenshots come from the running app: `node scripts/capture-screenshots.mjs` drives a
-local Chrome or Edge in headless mode against `npx wrangler pages dev dist` and writes
-`docs/screenshot-*.png`.
+The README screenshots come from the running app: `node scripts/capture-screenshots.mjs [baseUrl]`
+drives a local Chrome or Edge in headless mode (against `npx wrangler pages dev dist` by default)
+and writes `docs/screenshot-*.png`, each from a fresh browser profile. Shots that need a location
+(Live track) use a fixed public position beside O'Hare, never the machine's own. `SHOT=live` takes
+one shot.
 
 ## Data sources, freshness and licenses
 
