@@ -27,8 +27,8 @@ const API = 'https://re-api.adsb.lol/';
 /** Barometric altitude can read a few hundred feet off true height; ask adsb.lol for this much lower. */
 const BARO_MARGIN_FT = 1000;
 const REUSE_MS = 8000;
-/** adsb.lol has taken 20 s to answer at busy times; give up sooner and let the app try again. */
-const UPSTREAM_TIMEOUT_MS = 12000;
+/** adsb.lol has taken about 20 s to answer at busy times; give up after 25 and let the app try again. */
+const UPSTREAM_TIMEOUT_MS = 25000;
 const EARTH_RADIUS_NM = 3440.065;
 export const LICENSE = 'Aircraft data (c) adsb.lol contributors, ODbL 1.0 (https://opendatacommons.org/licenses/odbl/1-0/)';
 

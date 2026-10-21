@@ -202,7 +202,10 @@ async function start() {
   }
   center = where;
   radiusMi = Math.min(15, Math.max(1, Number(readPref('live-radius-mi', '5')) || 5));
-  void loadAirlines().then((t) => (airlines = t));
+  void loadAirlines().then((t) => {
+    airlines = t;
+    refreshCard(); // names show as soon as the table is in, not at the next refresh
+  });
   elevFt = await groundFt(center[0], center[1]);
   if (my !== gen) return;
   setPanel(cardHtml('Looking for aircraft around you\u2026', []));
@@ -296,7 +299,8 @@ async function poll() {
   } catch {
     message = navigator.onLine ? 'Live aircraft data is unavailable right now; trying again.' : 'You are offline.';
   }
-  if (message) setPanel(cardHtml(message, tracked));
+  // A failed refresh keeps the last list on screen, with a note, rather than replacing it.
+  if (message) setPanel(tracked.length ? cardHtml(null, tracked, false, lastQualifying, message) : cardHtml(message, tracked));
   // While adsb.lol asks to wait, the next request waits too.
   const delay = Math.max(POLL_MS, busyUntil - Date.now());
   if (state === 'tracking' && my === gen) pollTimer = window.setTimeout(() => void poll(), delay);
@@ -424,3 +428,10 @@ function cardHtml(message: string | null, aircraft: LiveAircraft[], error = fals
 }
 
 export const liveState = () => state;
+
+/** Redraws the card and popups from the aircraft already in hand (a name table or a route arrived). */
+export function refreshCard() {
+  if (state === 'off' || !tracked.length) return;
+  draw();
+  setPanel(cardHtml(null, tracked, false, lastQualifying));
+}
