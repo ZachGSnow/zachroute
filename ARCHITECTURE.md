@@ -161,8 +161,9 @@ transition so Leaflet re-measures. New results open at half; the last position i
 
 `vite-plugin-pwa` generates the service worker at build time with a revisioned precache manifest,
 so every deploy produces a new worker; `skipWaiting` and `clientsClaim` make it take over on the
-next launch. Lore and weather API responses are network-first with a cache fallback; Leaflet from
-unpkg is cache-first (version-pinned). Map tiles and the other API calls are network-only.
+next launch. Lore and weather API responses are network-first with a cache fallback. Leaflet is
+bundled into the app script and its CSS imported at the top of `main.css`, so it is precached with
+the app and no third-party script loads at runtime. Map tiles and the other API calls are network-only.
 `index.html` links the manifest and the generated icons; all three (manifest link, valid icons,
 registered worker) are needed for Chrome to offer a real install instead of a shortcut.
 

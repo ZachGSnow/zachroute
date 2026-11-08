@@ -10,6 +10,7 @@
 // "Back to Live track". It asks adsb.lol nothing extra: if the aircraft leaves the Live track
 // circle, it stays at its last known position, marked out of range.
 
+import L from 'leaflet';
 import { setLiveDrawHooks, fitLiveCircle, frame, planeIcon, refreshCard, type LiveDrawHooks } from './liveLayer';
 import { aircraftTypeName } from './aircraftTypes';
 import { slerpArc, type Airport } from './geoMath';

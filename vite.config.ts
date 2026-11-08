@@ -58,16 +58,6 @@ export default defineConfig({
               expiration: { maxEntries: 300 },
             },
           },
-          {
-            // Leaflet JS/CSS/marker images load from unpkg (pinned version),
-            // so they're safe to cache permanently -- needed for offline boot.
-            urlPattern: /^https:\/\/unpkg\.com\/leaflet@/,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'zachroute-leaflet',
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
         ],
       },
     }),
