@@ -6,7 +6,7 @@ import { readCache, writeCache } from '../../shared/apiCache';
 // forecast, the latest planetary Kp, and the OVATION aurora forecast (chance of aurora overhead, on
 // a 1-degree grid, about 30-90 minutes ahead). Polar flights reroute for radiation storms, and HF
 // radio fails near the poles and on the day side during storms. Only aurora cells with a chance of
-// 5% or more are sent. KV-cached 15 minutes.
+// 5% or more are sent. Edge-cached 15 minutes.
 
 interface Env {
   LORE_KV?: KVNamespace;

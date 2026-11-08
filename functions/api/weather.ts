@@ -2,8 +2,8 @@ import { USER_AGENT } from '../../shared/userAgent';
 import { readCache, writeCache } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/weather?icao=XXXX
 // Resolves current METAR conditions via aviationweather.gov's public Data API
-// (no key required) and caches briefly in KV - weather goes stale fast, so this
-// uses a much shorter TTL than the lore cache (10 minutes vs 7 days).
+// (no key required) and caches it briefly at the edge (shared/apiCache.ts): weather goes stale
+// fast, so 10 minutes, against 7 days for lore.
 
 interface Env {
   LORE_KV?: KVNamespace;

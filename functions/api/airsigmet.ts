@@ -10,7 +10,7 @@ import { readCache, writeCache } from '../../shared/apiCache';
 //     (thunderstorms, turbulence, icing, volcanic ash, tropical cyclones)
 //   - US Center Weather Advisories: short-notice (up to 2 hours) warnings from an air route
 //     traffic control center's weather unit, often ahead of a SIGMET
-// The feeds are merged into one list. Trimmed, KV-cached 5 minutes.
+// The feeds are merged into one list. Trimmed, edge-cached 5 minutes.
 
 interface Env {
   LORE_KV?: KVNamespace;

@@ -4,7 +4,7 @@ import { readCache, writeCache, type CacheContext } from '../../shared/apiCache'
 // Earthquakes of magnitude 4.5 and up worldwide in the last day (USGS earthquake feed) and US
 // volcanoes at an elevated alert (USGS Volcano Hazards Program notices, with the aviation color
 // code). Both free, no key. Volcano notices carry no coordinates, so each volcano's position comes
-// from the USGS volcano API, KV-cached 30 days. The result is KV-cached 10 minutes.
+// from the USGS volcano API, KV-cached 30 days. The result is edge-cached 10 minutes.
 
 interface Env {
   LORE_KV?: KVNamespace;

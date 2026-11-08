@@ -11,7 +11,7 @@ import { readCache, writeCache } from '../../shared/apiCache';
 //     key). Despite its "24h" name it spans about two days, so older detections are dropped. It is
 //     about 1.4 MB, cached at the Cloudflare edge for 30 minutes and scanned line by line.
 // The key goes in the FIRMS URL path, so no upstream URL or error text is ever returned or logged.
-// Results are KV-cached 30 minutes per rectangle.
+// Results are edge-cached 30 minutes per rectangle.
 
 interface Env {
   LORE_KV?: KVNamespace;

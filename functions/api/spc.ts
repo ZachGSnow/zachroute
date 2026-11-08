@@ -3,7 +3,7 @@ import { readCache, writeCache } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/spc?day=1|2
 // NOAA Storm Prediction Center categorical convective outlook (free, no key): where severe
 // thunderstorms (large hail, damaging wind, tornadoes) are expected over the US today (day 1) or
-// tomorrow (day 2), by risk category. Updated several times a day. Trimmed, KV-cached 15 minutes.
+// tomorrow (day 2), by risk category. Updated several times a day. Trimmed, edge-cached 15 minutes.
 
 interface Env {
   LORE_KV?: KVNamespace;

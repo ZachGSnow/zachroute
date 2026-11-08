@@ -39,7 +39,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,png,svg,ico,json}'],
         // World airspace (~1,400 cell files) and route traffic (~900 airport files) load on demand: not precached.
         globIgnores: ['data/airspace/**', 'data/t100/**'],
-        // public/data/airports.json is ~18 MB and must be precached for
+        // public/data/airports.json is about 9 MB and must be precached for
         // offline use; Workbox's default per-file cap is 2 MiB. 25 MiB matches
         // Cloudflare Pages' own per-file limit.
         maximumFileSizeToCacheInBytes: 25 * 1024 * 1024,

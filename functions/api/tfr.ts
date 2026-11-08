@@ -4,7 +4,7 @@ import { readCache, writeCache } from '../../shared/apiCache';
 // US temporary flight restrictions (TFRs) with their shapes, from the FAA (free, no key): the
 // FAA's map service for the polygons, joined with its current TFR list to keep only active ones.
 // Altitudes and exact times are only in each TFR's own file, so this links to the FAA page for
-// those. Trimmed, KV-cached 10 minutes.
+// those. Trimmed, edge-cached 10 minutes.
 
 interface Env {
   LORE_KV?: KVNamespace;
