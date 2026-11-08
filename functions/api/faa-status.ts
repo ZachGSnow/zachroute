@@ -5,7 +5,7 @@ import { readCache, writeCache } from '../../shared/apiCache';
 // general arrival/departure delays) keyed by 3-letter US airport code. Free, no key.
 // The upstream feed is XML; this parses just the delay lists. Airport closures are
 // ignored on purpose: the feed lumps partial (GA-only, hours-limited) NOTAM closures
-// in with real ones, which would be misleading on a card. KV-cached 5 minutes.
+// in with real ones, which would be misleading on a card. Edge-cached 5 minutes.
 
 interface Env {
   LORE_KV?: KVNamespace;

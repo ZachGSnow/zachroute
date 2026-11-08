@@ -2,7 +2,7 @@ import { USER_AGENT } from '../../shared/userAgent';
 import { readCache, writeCache } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/taf?icao=XXXX
 // Terminal Aerodrome Forecast from aviationweather.gov (free, no key), trimmed to
-// the fields the client decodes into plain English. Cached 15 minutes in KV.
+// the fields the client decodes into plain English. Edge-cached 15 minutes.
 
 interface Env {
   LORE_KV?: KVNamespace;

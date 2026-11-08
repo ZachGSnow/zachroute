@@ -3,7 +3,7 @@ import { readCache, writeCache } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/pireps
 //   ?icao=XXXX                      pilot reports within 75nm of an airport (last 3 hours)
 //   ?bbox=minLat,minLon,maxLat,maxLon  notable pilot reports in a map rectangle (map layer / route corridor)
-// Source: aviationweather.gov (free, no key). KV-cached 5 minutes.
+// Source: aviationweather.gov (free, no key). Edge-cached 5 minutes.
 // Bbox mode returns only notable reports (turbulence, icing, low visibility) to keep the payload small.
 
 interface Env {

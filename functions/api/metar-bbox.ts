@@ -2,7 +2,7 @@ import { USER_AGENT } from '../../shared/userAgent';
 import { readCache, writeCache } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/metar-bbox?bbox=minLat,minLon,maxLat,maxLon
 // Every METAR station in a map rectangle in one request (flight category, wind, temperature),
-// for the map's weather layer. Trimmed and KV-cached 5 minutes per rounded box.
+// for the map's weather layer. Trimmed and edge-cached 5 minutes per rounded box.
 
 interface Env {
   LORE_KV?: KVNamespace;

@@ -5,7 +5,7 @@ import { readCache, writeCache } from '../../shared/apiCache';
 // key: the OPENAQ_API_KEY Pages secret, sent as a header and never returned). Many listed stations
 // stopped reporting years ago, and a station's sensors report separately, so only a PM2.5 sensor
 // reading from the last 3 hours counts. Reference monitors are preferred over low-cost sensors.
-// KV-cached 30 minutes per 0.1-degree cell, to stay well inside the key's hourly limit.
+// Edge-cached 30 minutes per 0.1-degree cell, to stay well inside the key's hourly limit.
 
 interface Env {
   LORE_KV?: KVNamespace;

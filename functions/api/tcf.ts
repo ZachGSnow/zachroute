@@ -4,7 +4,7 @@ import { readCache, writeCache } from '../../shared/apiCache';
 // The Aviation Weather Center's TFM Convective Forecast (TCF), from aviationweather.gov (free, no
 // key): where thunderstorms are expected over the US 4, 6 and 8 hours ahead, with how much of each
 // area they will cover, the forecasters' confidence and the storm tops. Air traffic flow planners
-// use it to plan reroutes. Issued every 2 hours. Trimmed, KV-cached 10 minutes.
+// use it to plan reroutes. Issued every 2 hours. Trimmed, edge-cached 10 minutes.
 
 interface Env {
   LORE_KV?: KVNamespace;

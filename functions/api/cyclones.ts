@@ -6,7 +6,7 @@ import { readCache, writeCache, type CacheContext } from '../../shared/apiCache'
 // advisories (NHC, JTWC, ...), but hours late. For the Atlantic, East and Central Pacific the
 // National Hurricane Center's own current advisory replaces it (CurrentStorms.json, plus cone and
 // track from NOAA's tropical map service as GeoJSON; free, no key). Each storm is trimmed to its
-// position, track and forecast uncertainty cone. KV-cached 30 minutes.
+// position, track and forecast uncertainty cone. Edge-cached 30 minutes.
 
 interface Env {
   LORE_KV?: KVNamespace;

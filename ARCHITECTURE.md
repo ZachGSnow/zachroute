@@ -47,7 +47,7 @@ browser (src/ts) <--------------------------------------+
 | `src/ts/airQuality.ts` | Air quality, haze and smoke at an airport (Open-Meteo air-quality API): AQI bands, haze note, 12-hour worsening check |
 | `src/ts/geoMath.ts` | Great circle, bearings, destination points, block time |
 | `src/ts/connections.ts`, `carriers.ts` | Nonstop topology, one/two-stop search, airlines per route |
-| `functions/api/*.ts` | `weather`, `taf`, `pireps`, `metar-bbox`, `airsigmet`, `cyclones`, `fires`, `faa-status`, `lore` |
+| `functions/api/*.ts`, `shared/apiCache.ts` | The 20 Pages Functions (listed under "Pages Functions and caching" below) and their shared cache |
 | `shared/userAgent.ts` | User-Agent for upstream calls, built from `package.json` |
 | `scripts/` | Data pipeline (below), and `capture-screenshots.mjs`, which captures the README screenshots from the running app with headless Chrome or Edge |
 
@@ -96,10 +96,19 @@ an upstream error message.
 | `/api/airsigmet` | aviationweather.gov US AIRMET/SIGMET, international SIGMET and US center weather advisories, merged (multi-area SIGMETs split into one polygon each; rings unwrapped across the antimeridian) | 5 min |
 | `/api/faa-status` | FAA NAS status XML (closures ignored: the feed mixes partial NOTAM closures with real ones) | 5 min |
 | `/api/cyclones` | GDACS event list plus one geometry request per current tropical cyclone, trimmed to position, track and a thinned forecast cone | 30 min |
-| `/api/fires?bbox=` | NASA FIRMS MODIS global 24-hour CSV (about 1 MB, cached at the Cloudflare edge); scanned line by line keeping only the rectangle and confidence >= 50, so it stays within a function's CPU budget | 30 min |
+| `/api/fires?bbox=` | NASA FIRMS: with `FIRMS_MAP_KEY`, VIIRS detections for the rectangle from the area API; otherwise the MODIS global 24-hour CSV (about 1 MB, cached at the Cloudflare edge), scanned line by line keeping only the rectangle and confidence >= 50, so it stays within a function's CPU budget | 30 min |
 | `/api/afd?lat=&lon=` | api.weather.gov: the forecast office for the position (cached 30 days), then the `.AVIATION` section of its latest forecast discussion | 30 min |
 | `/api/tfr` | FAA TFR map service (shapes) joined with the FAA TFR list (only active TFRs; several shapes of one TFR merged) | 10 min |
 | `/api/lore?iata=&title=&name=&lat=&lon=` | Wikipedia page summary: the article Wikidata or OurAirports links to, else a search by name, then by code, keeping only a hit that is an airport article near the airport (`shared/wikiLore.js`); 404 when none is | 7 days |
+| `/api/tcf` | aviationweather.gov TFM Convective Forecast: where thunderstorms are expected over the US 4, 6 and 8 hours ahead, with coverage, confidence and tops | 10 min |
+| `/api/spc?day=1` or `2` | NOAA Storm Prediction Center categorical convective outlook over the US for today or tomorrow | 15 min |
+| `/api/spaceweather` | NOAA SWPC space weather scales (R, S, G) with tomorrow's forecast, the latest Kp, and the OVATION aurora forecast (cells of 5% or more) | 15 min |
+| `/api/geohazards` | USGS earthquakes of magnitude 4.5 and up in the last day, and US volcanoes at an elevated alert with their aviation color code (each volcano's position from the USGS volcano API, cached 30 days) | 10 min |
+| `/api/openaq?lat=&lon=` | OpenAQ v3 with `OPENAQ_API_KEY`: the nearest ground station's PM2.5 within 25 km from the last 3 hours, looked up once per 0.1-degree cell | 30 min |
+| `/api/elevation?from=&to=` | Open-Meteo elevation along the great circle, about every 5 miles (20 to 200 points), for the route terrain profile | 30 days |
+| `/api/airspace?cell=` | FAA open data (NASR): class B, C and D and special use airspace for one 4 x 4 degree cell in the US, simplified to about 500 m | 1 day |
+| `/api/live?lat=&lon=&mi=...` | adsb.lol re-api with `ADSBLOL_API_KEY`: up to 10 aircraft in the air within 1 to 15 miles, cut by height above ground and speed | none (one answer per area reused 8 s per isolate) |
+| `/api/live-route?callsign=` | The route known for a callsign, from adsb.lol's Virtual Radar Server standing data (one static file per callsign); kept only if it fits the aircraft's position and track | none (reused 6 h per isolate) |
 
 Upstream failures return `{available: false}` or an empty list, and the card simply omits that
 section. NWS alerts, Open-Meteo and Wikipedia photos send CORS headers, so the browser calls them
@@ -182,4 +191,15 @@ weather data come from about a dozen providers and a missing one would silently 
 Cloudflare Pages, direct upload: `npm run build`, then
 `npx wrangler pages deploy dist --project-name=<project> --branch=main`. The project's production
 branch is `main`; any other branch name creates a preview. `wrangler.toml` holds the KV namespace
-IDs and is not committed (see `wrangler.toml.example`). No secrets are required.
+IDs and is not committed (see `wrangler.toml.example`).
+
+Pages secrets (Settings > Variables and Secrets, Production and Preview; `.dev.vars` locally, see
+`.dev.vars.example`):
+
+| Secret | Used by | Without it |
+|---|---|---|
+| `ADSBLOL_API_KEY` | `/api/live`, `/api/live-route` | Live track answers 503 (keyless calls from Cloudflare's shared IPs are rate-limited) |
+| `FIRMS_MAP_KEY` | `/api/fires` | Fires fall back to the keyless MODIS file |
+| `OPENAQ_API_KEY` | `/api/openaq` | The card shows modeled air quality only, no measured PM2.5 |
+
+`FAA_CLIENT_ID` and `FAA_CLIENT_SECRET` are listed in `.dev.vars.example` but no Function reads them.
