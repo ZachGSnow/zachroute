@@ -22,6 +22,7 @@ import {
   type RunwayEnd,
 } from './approach';
 import type { WindSample } from './windsAloft';
+import { escapeHtml } from './escapeHtml';
 
 const VIA_PURPLE = '#c084fc';
 const VIA_PURPLE_DIM = '#7e22ce';
@@ -202,7 +203,7 @@ export function showSingleAirport(airport: Airport) {
     fillOpacity: 0.3,
   }).addTo(map);
 
-  marker.bindPopup(`<strong>${airport.iata}</strong><br>${airport.name}<br><small style="color:#64748b">Click marker again to load lore</small>`);
+  marker.bindPopup(`<strong>${escapeHtml(airport.iata)}</strong><br>${escapeHtml(airport.name)}<br><small style="color:#64748b">Click marker again to load lore</small>`);
   marker.on('click', () => {
     // Re-render the side panel with lore fetch button
     if ((window as any).renderSingleAirport) {

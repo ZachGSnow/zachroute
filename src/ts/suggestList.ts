@@ -1,5 +1,6 @@
 // Dropdown under the search box. Shows suggestions as the user types; nothing changes on the
 // map until one is picked (tap, click, or Enter on the highlighted row).
+import { escapeHtml } from './escapeHtml';
 
 export interface SuggestItem {
   query: string;
@@ -21,10 +22,6 @@ export interface SuggestList {
   handleKey(e: KeyboardEvent): boolean;
 }
 
-function esc(text: string): string {
-  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
 export function createSuggestList(input: HTMLInputElement, listEl: HTMLElement, onPick: (item: SuggestItem) => void): SuggestList {
   let items: SuggestItem[] = [];
   let active = -1;
@@ -34,9 +31,9 @@ export function createSuggestList(input: HTMLInputElement, listEl: HTMLElement, 
       .map(
         (item, i) =>
           `<li role="option" id="suggest-${i}" class="suggest-item${i === active ? ' is-active' : ''}${item.subtle ? ' is-subtle' : ''}" data-index="${i}" aria-selected="${i === active}">` +
-          `<span class="suggest-title">${esc(item.title)}</span>` +
-          (item.badge ? `<span class="suggest-badge">${esc(item.badge)}</span>` : '') +
-          (item.detail ? `<span class="suggest-detail">${esc(item.detail)}</span>` : '') +
+          `<span class="suggest-title">${escapeHtml(item.title)}</span>` +
+          (item.badge ? `<span class="suggest-badge">${escapeHtml(item.badge)}</span>` : '') +
+          (item.detail ? `<span class="suggest-detail">${escapeHtml(item.detail)}</span>` : '') +
           `</li>`
       )
       .join('');

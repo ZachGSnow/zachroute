@@ -47,6 +47,7 @@ import {
   type ConnectingDepth,
   type ViaOption,
 } from './connections';
+import { escapeHtml } from './escapeHtml';
 
 const resultsContent = document.getElementById('results-content')!;
 const BULLET = '\u00b7';
@@ -262,7 +263,7 @@ function buildNavaidsHtml(airport: Airport): string {
   const rows = navaids
     .map((n) => {
       const freq = navaidFrequencyLabel(n.type, n.freqKhz);
-      return `<div class="detail-row"><span>${n.ident} - ${n.name} (${n.type})</span><span class="mono">${freq}</span></div>`;
+      return `<div class="detail-row"><span>${escapeHtml(n.ident)} - ${escapeHtml(n.name)} (${escapeHtml(n.type)})</span><span class="mono">${freq}</span></div>`;
     })
     .join('');
   return expandableSection(`Navaids (${navaids.length})`, rows, 'navaids');
@@ -286,13 +287,13 @@ function buildDestinationsHtml(airport: Airport): string {
   const rows = resolved
     .map(({ code, dest }) => {
       if (!dest) {
-        return `<div class="detail-row destination-row destination-row--unresolved"><span>${code}</span></div>`;
+        return `<div class="detail-row destination-row destination-row--unresolved"><span>${escapeHtml(code)}</span></div>`;
       }
       const destCode = dest.iata || dest.icao;
       const label = [dest.city, destCode].filter(Boolean).join(' \u2014 ');
       const names = carrierNames(carriersFor(airport, dest), 3);
-      const airlines = names ? `<span class="dest-carriers" title="${carrierDataNote()}">${names}</span>` : '';
-      return `<button type="button" class="detail-row destination-row" data-dest-code="${destCode}"><span>${label}</span>${airlines}</button>`;
+      const airlines = names ? `<span class="dest-carriers" title="${escapeHtml(carrierDataNote())}">${escapeHtml(names)}</span>` : '';
+      return `<button type="button" class="detail-row destination-row" data-dest-code="${escapeHtml(destCode)}"><span>${escapeHtml(label)}</span>${airlines}</button>`;
     })
     .join('');
 
@@ -456,7 +457,7 @@ function buildFacilityCard(airport: Airport): string {
   return `
     <div class="facility-card" data-iata="${airport.iata}" data-icao="${airport.icao}">
       <div class="card-title-row">
-        <h3>${airport.iata || airport.icao}${airport.formerIata ? ` <span class="muted">(formerly ${airport.formerIata})</span>` : ''} \u2014 ${airport.name} ${typePill}</h3>
+        <h3>${airport.iata || airport.icao}${airport.formerIata ? ` <span class="muted">(formerly ${airport.formerIata})</span>` : ''} \u2014 ${escapeHtml(airport.name)} ${typePill}</h3>
         ${favButtonHtml(airport)}
       </div>
       <div class="subhead">${locationLine} \u2022 ${elevationText}</div>
@@ -509,7 +510,7 @@ function wireLoreButton(cardEl: HTMLElement, airport: Airport) {
 
 function chipsHtml(chips: Chip[]): string {
   return chips
-    .map((c) => `<span class="chip chip-${c.level}"${c.title ? ` title="${c.title.replace(/"/g, '&quot;')}"` : ''}${focusAttrs(c.focus)}>${c.text}</span>`)
+    .map((c) => `<span class="chip chip-${c.level}"${c.title ? ` title="${escapeHtml(c.title)}"` : ''}${focusAttrs(c.focus)}>${escapeHtml(c.text)}</span>`)
     .join('');
 }
 
@@ -584,7 +585,7 @@ async function fillPhoto(cardEl: HTMLElement, airport: Airport) {
   if (!el || !link) return;
   const url = await fetchAirportPhoto(link);
   if (!url || !el.isConnected) return;
-  el.innerHTML = `<img class="airport-photo" src="${url}" alt="${airport.name}" loading="lazy" referrerpolicy="no-referrer" /><div class="photo-credit muted">Photo via Wikipedia</div>`;
+  el.innerHTML = `<img class="airport-photo" src="${escapeHtml(url)}" alt="${escapeHtml(airport.name)}" loading="lazy" referrerpolicy="no-referrer" /><div class="photo-credit muted">Photo via Wikipedia</div>`;
   const img = el.querySelector('img');
   img?.addEventListener('error', () => {
     el.innerHTML = '';
@@ -615,8 +616,6 @@ async function fillPireps(cardEl: HTMLElement, airport: Airport) {
   el.innerHTML = expandableSection(`Pilot reports (${lines.length})`, rows, 'pireps');
   wireExpandables(el);
 }
-
-const escapeHtml = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 async function fillForecasterNotes(cardEl: HTMLElement, airport: Airport) {
   const el = cardEl.querySelector('.afd-block') as HTMLElement | null;
@@ -1020,7 +1019,7 @@ function routePoints(origin: Airport, destination: Airport, via?: ViaOption | nu
 
 /** "Volcanic ash along the route (Mt Ibu, surface to FL060). ..." */
 function ashBanner(ash: Advisory[]): string {
-  const names = [...new Set(ash.map((a) => a.name).filter(Boolean))].join(', ');
+  const names = escapeHtml([...new Set(ash.map((a) => a.name).filter(Boolean))].join(', '));
   const alt = ash.length === 1 ? advisoryAltitude(ash[0]) : '';
   const detail = [names, alt].filter(Boolean).join(', ');
   return `🌋 <strong>Volcanic ash along the route</strong>${detail ? ` (${detail})` : ''}. Flights route around ash clouds, so expect reroutes or delays.`;
@@ -1058,7 +1057,7 @@ async function wireRouteHazards(points: Array<[number, number]>) {
   const ashHtml = ash.length > 0 ? `<div class="route-hazard-ash"${focusAttrs(ashFocus)}>${ashBanner(ash)}</div>` : '';
   if (spaceConcerns.length > 0) {
     const rows = spaceConcerns
-      .map((c) => `<div class="route-hazard-row">${severityBadge(scaleSeverity(c.level))}${c.code}: ${c.text}</div>`)
+      .map((c) => `<div class="route-hazard-row">${severityBadge(scaleSeverity(c.level))}${escapeHtml(c.code)}: ${escapeHtml(c.text)}</div>`)
       .join('');
     parts.push(`<div class="route-hazard-head">\u2600\ufe0f Space weather on a polar route (NOAA)</div>${rows}`);
   }
@@ -1074,7 +1073,7 @@ async function wireRouteHazards(points: Array<[number, number]>) {
   if (result.advisories.length > 0) {
     // Worst first (ash is always Extreme: flights do not fly through it at any altitude).
     const ordered = [...result.advisories].sort((a, b) => advisorySeverity(b) - advisorySeverity(a));
-    const rows = ordered.map((a) => `<div class="route-hazard-row"${focusAttrs(advisoryFocus(a))}>${severityBadge(advisorySeverity(a))}${describeAdvisory(a)}</div>`).join('');
+    const rows = ordered.map((a) => `<div class="route-hazard-row"${focusAttrs(advisoryFocus(a))}>${severityBadge(advisorySeverity(a))}${escapeHtml(describeAdvisory(a))}</div>`).join('');
     parts.push(`<div class="route-hazard-head">⚠️ Route passes through ${result.advisories.length} weather advisor${result.advisories.length === 1 ? 'y' : 'ies'} (${onMap(show.advisories, 'outlined on the map')})</div>${rows}`);
   }
   if (result.tfrs.length > 0) {
@@ -1092,7 +1091,7 @@ async function wireRouteHazards(points: Array<[number, number]>) {
     .slice(0, 5);
   if (pirepLines.length > 0) {
     const rows = pirepLines
-      .map(({ p, text }) => `<div class="route-hazard-row"${focusAttrs({ title: text.replace(/<[^>]+>/g, ''), shapes: [], points: [[p.lat, p.lon]] })}>${text}</div>`)
+      .map(({ p, text }) => `<div class="route-hazard-row"${focusAttrs({ title: text, shapes: [], points: [[p.lat, p.lon]] })}>${escapeHtml(text)}</div>`)
       .join('');
     parts.push(`<div class="route-hazard-head">📣 Pilot reports near the route (${result.pireps.length}, ${onMap(show.pireps, 'dots on the map')})</div>${rows}`);
   }
@@ -1190,7 +1189,7 @@ export function renderNearby(list: Array<{ airport: Airport; miles: number; bear
       const catHtml = cat ? `<span class="muted">${categoryDot(cat)} ${cat}</span>` : '';
       return (
         `<button type="button" class="detail-row destination-row nearby-row" data-code="${code}">` +
-        `<span><strong>${code}</strong> ${airport.name}<br><span class="muted">${formatDistance(miles)} ${compassPoint(bearingDeg)} ${BULLET} ${airport.city || ''}</span></span>` +
+        `<span><strong>${escapeHtml(code)}</strong> ${escapeHtml(airport.name)}<br><span class="muted">${formatDistance(miles)} ${compassPoint(bearingDeg)} ${BULLET} ${escapeHtml(airport.city)}</span></span>` +
         `${catHtml}</button>`
       );
     })

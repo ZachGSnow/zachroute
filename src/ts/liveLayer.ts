@@ -24,6 +24,7 @@ import {
   verticalLabel,
   type LiveAircraft,
 } from './liveTrack';
+import { escapeHtml } from './escapeHtml';
 
 type State = 'off' | 'locating' | 'tracking' | 'paused';
 
@@ -400,7 +401,6 @@ function showAircraft(hex: string) {
   m.openPopup();
 }
 
-const escapeHtml = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 function cardHtml(message: string | null, aircraft: LiveAircraft[], error = false, qualifying?: number, note: string | null = null): string {
   const radius = formatDistance(radiusMi);

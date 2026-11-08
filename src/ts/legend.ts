@@ -1,6 +1,7 @@
 // Map legend: one panel at the bottom left with a row for each layer that is switched on, built
 // from the same colors the layers draw with. Open on a computer; on a phone it starts as a
 // "Legend (n)" chip so it does not cover the map. Opening or closing it is remembered.
+import { escapeHtml } from './escapeHtml';
 
 export interface LegendItem {
   color: string;
@@ -19,30 +20,26 @@ export const LEGEND_ORDER = ['route', 'live', 'airspace', 'stations', 'radar', '
 
 const OPEN_KEY = 'zachroute:legend-open';
 
-function esc(text: string): string {
-  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
 function swatchHtml(item: LegendItem): string {
   const mark = item.mark || 'dot';
-  if (mark === 'glyph') return `<span class="lg-glyph" style="color:${item.color}">${esc(item.glyph || '')}</span>`;
+  if (mark === 'glyph') return `<span class="lg-glyph" style="color:${item.color}">${escapeHtml(item.glyph || '')}</span>`;
   return `<span class="lg-swatch lg-${mark}" style="--c:${item.color}"></span>`;
 }
 
 function itemsHtml(items: LegendItem[]): string {
-  return `<div class="lg-items">${items.map((i) => `<span class="lg-item">${swatchHtml(i)}${esc(i.label)}</span>`).join('')}</div>`;
+  return `<div class="lg-items">${items.map((i) => `<span class="lg-item">${swatchHtml(i)}${escapeHtml(i.label)}</span>`).join('')}</div>`;
 }
 
 /** One legend row as HTML. Pure, so it can be tested. */
 export function legendRowHtml(spec: LegendSpec): string {
-  const note = spec.note ? `<div class="lg-note">${esc(spec.note)}</div>` : '';
+  const note = spec.note ? `<div class="lg-note">${escapeHtml(spec.note)}</div>` : '';
   if (spec.kind === 'items') {
-    return `<div class="lg-row"><div class="lg-title">${esc(spec.title)}</div>${itemsHtml(spec.items)}${note}</div>`;
+    return `<div class="lg-row"><div class="lg-title">${escapeHtml(spec.title)}</div>${itemsHtml(spec.items)}${note}</div>`;
   }
   const bar = `<div class="lg-bar" style="background:linear-gradient(90deg, ${spec.colors.join(', ')})"></div>`;
-  const labels = `<div class="lg-labels">${spec.labels.map((l) => `<span>${esc(l)}</span>`).join('')}</div>`;
+  const labels = `<div class="lg-labels">${spec.labels.map((l) => `<span>${escapeHtml(l)}</span>`).join('')}</div>`;
   const extra = spec.items?.length ? itemsHtml(spec.items) : '';
-  return `<div class="lg-row"><div class="lg-title">${esc(spec.title)}</div>${bar}${labels}${extra}${note}</div>`;
+  return `<div class="lg-row"><div class="lg-title">${escapeHtml(spec.title)}</div>${bar}${labels}${extra}${note}</div>`;
 }
 
 const specs = new Map<string, LegendSpec>();
