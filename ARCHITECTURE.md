@@ -76,6 +76,9 @@ tested against real samples of each file format.
 
 ## Pages Functions and caching
 
+Functions are typechecked against the Workers runtime types (`@cloudflare/workers-types`, no DOM)
+through `functions/tsconfig.json`, which `npm run typecheck` runs after the app's own tsconfig.
+
 Each function validates its input, calls one upstream source with an identifying User-Agent,
 trims the response to what the client renders, and caches it in the `LORE_KV` namespace:
 
