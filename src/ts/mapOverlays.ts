@@ -1,3 +1,4 @@
+import L from 'leaflet';
 import { focusBounds, resolveZones, type FocusTarget } from './focusTarget';
 import type { RouteDraw } from './prefs';
 import type { Airport, RunwayDetail } from './geoMath';

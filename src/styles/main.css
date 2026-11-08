@@ -1,3 +1,6 @@
+/* Leaflet's own styles first, bundled from node_modules, so the rules below override them. */
+@import 'leaflet/dist/leaflet.css';
+
 :root {
   --bg: #0f172a;
   --panel: #1e293b;

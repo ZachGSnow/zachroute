@@ -4,6 +4,7 @@
 // until Continue; turning it off clears everything. Settings changes apply at the next refresh,
 // except the radius, which applies the next time it is turned on.
 
+import L from 'leaflet';
 import { readPref, PREF_CHANGED } from './prefs';
 import { clockOptions } from './units';
 import { loadAirlines, flightName, type AirlineTable } from './airlineCallsign';

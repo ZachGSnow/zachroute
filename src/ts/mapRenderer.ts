@@ -1,3 +1,4 @@
+import L from 'leaflet';
 import { baseLayerSpecs, type BaseStyle } from './baseMap';
 import type { Airport } from './geoMath';
 import { setLegend } from './legend';
