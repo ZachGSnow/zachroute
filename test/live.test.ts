@@ -89,20 +89,20 @@ describe('/api/live', () => {
   it('asks the re-api with the key in x-api-key about the rounded area and returns the selection', async () => {
     const { fn, calls } = stubFetch([['re-api.adsb.lol/?circle=', circle]]);
     const ctx = pagesContext('https://x/api/live?lat=41.97321&lon=-87.90488&mi=5&minft=0&minkt=0&elev=680');
-    ctx.env.ADSBLOL_API_KEY = 'test-key';
+    ctx.env.ADSBLOL_API_KEY = 'zz9-key';
     const out = await json(await liveFn(ctx));
     expect(calls[0]).toBe('https://re-api.adsb.lol/?circle=41.97,-87.9,4.9');
-    expect((fn.mock.calls[0][1] as any).headers['x-api-key']).toBe('test-key');
+    expect((fn.mock.calls[0][1] as any).headers['x-api-key']).toBe('zz9-key');
     expect(out.aircraft.length).toBeGreaterThan(0);
     expect(out.license).toContain('ODbL');
-    expect(JSON.stringify(out)).not.toContain('test-key');
+    expect(JSON.stringify(out)).not.toContain('zz9-key');
   });
 
   it('is off without a key and says nothing about the upstream on failure', async () => {
     expect((await liveFn(pagesContext('https://x/api/live?lat=1&lon=1'))).status).toBe(503);
     stubFetch([['re-api.adsb.lol', { status: 'x' }]]);
     const ctx = pagesContext('https://x/api/live?lat=10.5&lon=10.5');
-    ctx.env.ADSBLOL_API_KEY = 'test-key';
+    ctx.env.ADSBLOL_API_KEY = 'zz9-key';
     const res = await liveFn(ctx);
     expect(res.status).toBe(200); // a body without aircraft is simply none in the air
     expect((await json(res)).aircraft).toEqual([]);
@@ -114,7 +114,7 @@ describe('when adsb.lol says wait (429)', () => {
 
   const ctx = (url: string) => {
     const c = pagesContext(url);
-    c.env.ADSBLOL_API_KEY = 'test-key';
+    c.env.ADSBLOL_API_KEY = 'zz9-key';
     return c;
   };
 
@@ -181,7 +181,7 @@ describe('where a flight is going', () => {
 
   const routeCtx = (callsign: string) => {
     const c = pagesContext(`https://x/api/live-route?callsign=${callsign}&lat=41.97&lon=-87.9`);
-    c.env.ADSBLOL_API_KEY = 'test-key';
+    c.env.ADSBLOL_API_KEY = 'zz9-key';
     return c;
   };
 
@@ -367,7 +367,7 @@ describe('the daily allowance (429 "1d window")', () => {
   const DAILY = 'rate limit exceeded: 1d window for tier adhoc\n';
   const ctx = (url: string) => {
     const c = pagesContext(url);
-    c.env.ADSBLOL_API_KEY = 'test-key';
+    c.env.ADSBLOL_API_KEY = 'zz9-key';
     return c;
   };
 
