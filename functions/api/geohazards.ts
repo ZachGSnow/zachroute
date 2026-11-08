@@ -1,4 +1,5 @@
 import { USER_AGENT } from '../../shared/userAgent';
+import { readCache, writeCache, type CacheContext } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/geohazards
 // Earthquakes of magnitude 4.5 and up worldwide in the last day (USGS earthquake feed) and US
 // volcanoes at an elevated alert (USGS Volcano Hazards Program notices, with the aviation color
@@ -40,6 +41,8 @@ export interface Volcano {
 
 const CACHE_KEY = 'geohazards:v1';
 const CACHE_TTL_SECONDS = 600;
+/** Volcanoes do not move: their USGS records keep 30 days. */
+const VOLCANO_TTL_SECONDS = 30 * 24 * 60 * 60;
 const QUAKES_URL = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson';
 const VOLCANOES_URL = 'https://volcanoes.usgs.gov/hans-public/api/volcano/getElevatedVolcanoes';
 const VOLCANO_URL = 'https://volcanoes.usgs.gov/hans-public/api/volcano/getVolcano/';
@@ -105,32 +108,26 @@ async function getJson(url: string): Promise<any | null> {
 }
 
 /** A volcano's record from the USGS API, KV-cached 30 days (volcanoes do not move). */
-async function volcanoRecord(env: Env, vnum: string): Promise<any | null> {
+async function volcanoRecord(ctx: CacheContext, vnum: string): Promise<any | null> {
   const key = `volcano:v1:${vnum}`;
-  if (env.LORE_KV) {
-    const cached = await env.LORE_KV.get(key, { type: 'json' });
-    if (cached) return cached;
-  }
+  const cached = await readCache(ctx, key, VOLCANO_TTL_SECONDS);
+  if (cached) return cached;
   const rec = await getJson(VOLCANO_URL + encodeURIComponent(vnum));
-  if (rec && Number.isFinite(Number(rec.latitude)) && env.LORE_KV) {
+  if (rec && Number.isFinite(Number(rec.latitude))) {
     const slim = { volcano_name: rec.volcano_name, latitude: rec.latitude, longitude: rec.longitude };
-    await env.LORE_KV.put(key, JSON.stringify(slim), { expirationTtl: 30 * 24 * 60 * 60 });
+    writeCache(ctx, key, slim, VOLCANO_TTL_SECONDS);
   }
   return rec;
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
-  if (context.env.LORE_KV) {
-    const cached = await context.env.LORE_KV.get(CACHE_KEY, { type: 'json' });
-    if (cached) return json(cached);
-  }
+  const cached = await readCache(context, CACHE_KEY, CACHE_TTL_SECONDS);
+  if (cached) return json(cached);
   const [quakeData, notices] = await Promise.all([getJson(QUAKES_URL), getJson(VOLCANOES_URL)]);
   const list: any[] = Array.isArray(notices) ? notices.filter((n) => /^\d+$/.test(String(n?.vnum || ''))).slice(0, 40) : [];
-  const records = await Promise.all(list.map((n) => volcanoRecord(context.env, String(n.vnum))));
+  const records = await Promise.all(list.map((n) => volcanoRecord(context, String(n.vnum))));
   const volcanoes = list.map((n, i) => buildVolcano(n, records[i])).filter((v): v is Volcano => !!v);
   const result = { quakes: buildQuakes(quakeData), volcanoes, complete: !!quakeData && Array.isArray(notices) };
-  if (result.complete && context.env.LORE_KV) {
-    await context.env.LORE_KV.put(CACHE_KEY, JSON.stringify(result), { expirationTtl: CACHE_TTL_SECONDS });
-  }
+  if (result.complete) writeCache(context, CACHE_KEY, result, CACHE_TTL_SECONDS);
   return json(result);
 };

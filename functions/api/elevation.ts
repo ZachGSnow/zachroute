@@ -1,4 +1,5 @@
 import { USER_AGENT } from '../../shared/userAgent';
+import { readCache, writeCache } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/elevation?from=lat,lon&to=lat,lon
 // Terrain height along the great circle between two points, for the route terrain profile, from
 // the Open-Meteo elevation API (about 90 m terrain data; free, no key; 100 points per request).
@@ -99,16 +100,14 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   if (!from || !to) return json({ error: 'from and to must be lat,lon' }, 400);
 
   const key = `elev:v1:${from.map((n) => n.toFixed(3)).join(',')}:${to.map((n) => n.toFixed(3)).join(',')}`;
-  if (context.env.LORE_KV) {
-    const cached = await context.env.LORE_KV.get(key, { type: 'json' });
-    if (cached) return json(cached);
-  }
+  const cached = await readCache(context, key, CACHE_TTL_SECONDS);
+  if (cached) return json(cached);
   const miles = distanceMi(from, to);
   const count = sampleCount(miles);
   const points = greatCirclePoints(from, to, count);
   const elevationsM = await elevations(points);
   if (!elevationsM) return json({ error: 'upstream' }, 502);
   const result: ElevationProfile = { points, elevationsM, spacingMi: Math.round((miles / (count - 1)) * 10) / 10 };
-  if (context.env.LORE_KV) await context.env.LORE_KV.put(key, JSON.stringify(result), { expirationTtl: CACHE_TTL_SECONDS });
+  writeCache(context, key, result, CACHE_TTL_SECONDS);
   return json(result);
 };

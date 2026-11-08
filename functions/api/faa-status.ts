@@ -1,4 +1,5 @@
 import { USER_AGENT } from '../../shared/userAgent';
+import { readCache, writeCache } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/faa-status
 // FAA National Airspace System status (ground delay programs, ground stops,
 // general arrival/departure delays) keyed by 3-letter US airport code. Free, no key.
@@ -35,10 +36,8 @@ interface AirportStatus {
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
-  if (context.env.LORE_KV) {
-    const cached = await context.env.LORE_KV.get(CACHE_KEY, { type: 'json' });
-    if (cached) return json(cached);
-  }
+  const cached = await readCache(context, CACHE_KEY, CACHE_TTL_SECONDS);
+  if (cached) return json(cached);
 
   try {
     const res = await fetch('https://nasstatus.faa.gov/api/airport-status-information', {
@@ -72,11 +71,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     }
 
     const result = { available: true, updated: tag(xml, 'Update_Time'), airports };
-    if (context.env.LORE_KV) {
-      await context.env.LORE_KV.put(CACHE_KEY, JSON.stringify(result), { expirationTtl: CACHE_TTL_SECONDS });
-    }
+    writeCache(context, CACHE_KEY, result, CACHE_TTL_SECONDS);
     return json(result);
-  } catch (err: any) {
-    return json({ available: false, airports: {}, error: err.message || 'FAA status lookup failed' });
+  } catch {
+    return json({ available: false, airports: {}, error: 'FAA status lookup failed' });
   }
 };

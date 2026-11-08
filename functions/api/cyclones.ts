@@ -1,4 +1,5 @@
 import { USER_AGENT } from '../../shared/userAgent';
+import { readCache, writeCache, type CacheContext } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/cyclones
 // Active tropical cyclones worldwide (every ocean basin) from GDACS, the UN / European Commission
 // Global Disaster Alert and Coordination System (free, no key). GDACS republishes the official
@@ -50,6 +51,7 @@ const MAX_CONE_POINTS = 90;
 const NHC_STORMS_URL = 'https://www.nhc.noaa.gov/CurrentStorms.json';
 const NHC_MAP = 'https://mapservices.weather.noaa.gov/tropical/rest/services/tropical/NHC_tropical_weather/MapServer';
 const NHC_LAYERS_KEY = 'nhc:layers:v1';
+const NHC_LAYERS_TTL_SECONDS = 24 * 60 * 60;
 const MAX_NHC_STORMS = 8;
 
 const json = (body: unknown) =>
@@ -269,24 +271,22 @@ export function mergeNhc(gdacs: Cyclone[], nhc: Cyclone[]): Cyclone[] {
   return [...merged, ...nhc.filter((s) => !used.has(s))];
 }
 
-async function nhcLayers(env: Env): Promise<Record<string, number> | null> {
-  if (env.LORE_KV) {
-    const cached = await env.LORE_KV.get(NHC_LAYERS_KEY, { type: 'json' });
-    if (cached) return cached as Record<string, number>;
-  }
+async function nhcLayers(ctx: CacheContext): Promise<Record<string, number> | null> {
+  const cached = await readCache<Record<string, number>>(ctx, NHC_LAYERS_KEY, NHC_LAYERS_TTL_SECONDS);
+  if (cached) return cached;
   const ids = nhcLayerIds(await getJson(`${NHC_MAP}?f=json`));
   if (!Object.keys(ids).length) return null;
-  if (env.LORE_KV) await env.LORE_KV.put(NHC_LAYERS_KEY, JSON.stringify(ids), { expirationTtl: 24 * 60 * 60 });
+  writeCache(ctx, NHC_LAYERS_KEY, ids, NHC_LAYERS_TTL_SECONDS);
   return ids;
 }
 
 /** Current NHC storms, or null when NHC could not be read (GDACS then stands alone). */
-async function nhcStorms(env: Env): Promise<Cyclone[] | null> {
+async function nhcStorms(ctx: CacheContext): Promise<Cyclone[] | null> {
   const current = await getJson(NHC_STORMS_URL);
   if (!current) return null;
   const active: any[] = (Array.isArray(current.activeStorms) ? current.activeStorms : []).slice(0, MAX_NHC_STORMS);
   if (!active.length) return [];
-  const ids = await nhcLayers(env);
+  const ids = await nhcLayers(ctx);
   if (!ids) return null;
   const query = (name: string) => (ids[name] === undefined ? Promise.resolve(null) : getJson(`${NHC_MAP}/${ids[name]}/query?where=1%3D1&outFields=*&f=geojson`));
   return Promise.all(
@@ -316,12 +316,10 @@ async function getJson(url: string): Promise<any | null> {
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
-  if (context.env.LORE_KV) {
-    const cached = await context.env.LORE_KV.get(CACHE_KEY, { type: 'json' });
-    if (cached) return json(cached);
-  }
+  const cached = await readCache(context, CACHE_KEY, CACHE_TTL_SECONDS);
+  if (cached) return json(cached);
 
-  const [events, nhc] = await Promise.all([getJson(EVENTS_URL), nhcStorms(context.env).catch(() => null)]);
+  const [events, nhc] = await Promise.all([getJson(EVENTS_URL), nhcStorms(context).catch(() => null)]);
   if (!events && !nhc) return json({ available: false, storms: [] });
 
   const list = currentStorms(events).slice(0, MAX_STORMS);
@@ -332,8 +330,6 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   const result = { available: true, storms };
   // Only cache when both sources answered, so an outage does not stick for half an hour.
-  if (events && nhc && context.env.LORE_KV) {
-    await context.env.LORE_KV.put(CACHE_KEY, JSON.stringify(result), { expirationTtl: CACHE_TTL_SECONDS });
-  }
+  if (events && nhc) writeCache(context, CACHE_KEY, result, CACHE_TTL_SECONDS);
   return json(result);
 };

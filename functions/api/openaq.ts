@@ -1,4 +1,5 @@
 import { USER_AGENT } from '../../shared/userAgent';
+import { readCache, writeCache } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/openaq?lat=..&lon=..
 // The nearest ground station's measured PM2.5 (fine particles) within 25 km, from OpenAQ v3 (free
 // key: the OPENAQ_API_KEY Pages secret, sent as a header and never returned). Many listed stations
@@ -109,10 +110,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const cLat = Math.round(lat * 10) / 10;
   const cLon = Math.round(lon * 10) / 10;
   const cacheKey = `openaq:v1:${cLat.toFixed(1)},${cLon.toFixed(1)}`;
-  if (context.env.LORE_KV) {
-    const cached = await context.env.LORE_KV.get(cacheKey, { type: 'json' });
-    if (cached) return json(cached);
-  }
+  const cached = await readCache(context, cacheKey, CACHE_TTL_SECONDS);
+  if (cached) return json(cached);
 
   const locations = await getJson(`${API}/locations?coordinates=${cLat},${cLon}&radius=${RADIUS_M}&limit=1000&parameters_id=2`, key);
   if (!locations) return json({ available: false, reading: null });
@@ -122,6 +121,6 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     if (reading) break;
   }
   const result = { available: true, reading };
-  if (context.env.LORE_KV) await context.env.LORE_KV.put(cacheKey, JSON.stringify(result), { expirationTtl: CACHE_TTL_SECONDS });
+  writeCache(context, cacheKey, result, CACHE_TTL_SECONDS);
   return json(result);
 };

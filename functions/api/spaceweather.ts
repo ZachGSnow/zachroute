@@ -1,4 +1,5 @@
 import { USER_AGENT } from '../../shared/userAgent';
+import { readCache, writeCache } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/spaceweather
 // NOAA Space Weather Prediction Center (free, no key): the current NOAA space weather scales
 // (R radio blackouts, S solar radiation storms, G geomagnetic storms, each 0-5) with tomorrow's
@@ -92,15 +93,11 @@ async function getJson(url: string): Promise<any | null> {
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
-  if (context.env.LORE_KV) {
-    const cached = await context.env.LORE_KV.get(CACHE_KEY, { type: 'json' });
-    if (cached) return json(cached);
-  }
+  const cached = await readCache(context, CACHE_KEY, CACHE_TTL_SECONDS);
+  if (cached) return json(cached);
   const [scales, kp, aurora] = await Promise.all([getJson(SCALES_URL), getJson(KP_URL), getJson(AURORA_URL)]);
   if (!scales) return json({ error: 'upstream' }, 502);
   const result: SpaceWeather = { ...readScales(scales), ...latestKp(kp), aurora: aurora ? auroraCells(aurora) : undefined };
-  if (kp && aurora && context.env.LORE_KV) {
-    await context.env.LORE_KV.put(CACHE_KEY, JSON.stringify(result), { expirationTtl: CACHE_TTL_SECONDS });
-  }
+  if (kp && aurora) writeCache(context, CACHE_KEY, result, CACHE_TTL_SECONDS);
   return json(result);
 };

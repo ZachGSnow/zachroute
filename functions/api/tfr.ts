@@ -1,4 +1,5 @@
 import { USER_AGENT } from '../../shared/userAgent';
+import { readCache, writeCache } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/tfr
 // US temporary flight restrictions (TFRs) with their shapes, from the FAA (free, no key): the
 // FAA's map service for the polygons, joined with its current TFR list to keep only active ones.
@@ -90,10 +91,8 @@ async function getJson(url: string): Promise<any | null> {
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
-  if (context.env.LORE_KV) {
-    const cached = await context.env.LORE_KV.get(CACHE_KEY, { type: 'json' });
-    if (cached) return json(cached);
-  }
+  const cached = await readCache(context, CACHE_KEY, CACHE_TTL_SECONDS);
+  if (cached) return json(cached);
 
   const [shapes, list] = await Promise.all([getJson(SHAPES_URL), getJson(LIST_URL)]);
   const features: any[] = Array.isArray(shapes?.features) ? shapes.features : [];
@@ -101,8 +100,6 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const result = { tfrs: buildTfrs(features, active), complete: !!shapes && !!active };
 
   // Only cache a complete answer, so one FAA endpoint being down does not stick for ten minutes.
-  if (result.complete && context.env.LORE_KV) {
-    await context.env.LORE_KV.put(CACHE_KEY, JSON.stringify(result), { expirationTtl: CACHE_TTL_SECONDS });
-  }
+  if (result.complete) writeCache(context, CACHE_KEY, result, CACHE_TTL_SECONDS);
   return json(result);
 };

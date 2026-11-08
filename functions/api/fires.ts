@@ -1,4 +1,5 @@
 import { USER_AGENT } from '../../shared/userAgent';
+import { readCache, writeCache } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/fires?bbox=minLat,minLon,maxLat,maxLon
 // Satellite fire and heat detections from the last 24 hours, worldwide, from NASA FIRMS.
 // Detections include wildfires, agricultural burning and gas flares.
@@ -193,17 +194,15 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   }
 
   const cacheKey = `fires:v2:${box.minLat},${box.minLon},${box.maxLat},${box.maxLon}`;
-  if (context.env.LORE_KV) {
-    const cached = await context.env.LORE_KV.get(cacheKey, { type: 'json' });
-    if (cached) return json(cached);
-  }
+  const cached = await readCache(context, cacheKey, CACHE_TTL_SECONDS);
+  if (cached) return json(cached);
 
   const key = context.env.FIRMS_MAP_KEY;
   if (key) {
     const fires = await viirsFires(key, box);
     if (fires) {
       const result = { available: true, source: 'VIIRS', fires };
-      if (context.env.LORE_KV) await context.env.LORE_KV.put(cacheKey, JSON.stringify(result), { expirationTtl: CACHE_TTL_SECONDS });
+      writeCache(context, cacheKey, result, CACHE_TTL_SECONDS);
       return json(result);
     }
   }
@@ -218,11 +217,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     if (!res.ok) return json({ available: false, fires: [] });
     const fires = parseFires(await res.text(), box);
     const result = { available: true, source: 'MODIS', fires };
-    if (context.env.LORE_KV) {
-      await context.env.LORE_KV.put(cacheKey, JSON.stringify(result), { expirationTtl: CACHE_TTL_SECONDS });
-    }
+    writeCache(context, cacheKey, result, CACHE_TTL_SECONDS);
     return json(result);
-  } catch (err: any) {
-    return json({ available: false, fires: [], error: err.message || 'FIRMS lookup failed' });
+  } catch {
+    return json({ available: false, fires: [], error: 'FIRMS lookup failed' });
   }
 };
