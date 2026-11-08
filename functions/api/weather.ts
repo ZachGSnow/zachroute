@@ -1,4 +1,5 @@
 import { USER_AGENT } from '../../shared/userAgent';
+import { readCache, writeCache } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/weather?icao=XXXX
 // Resolves current METAR conditions via aviationweather.gov's public Data API
 // (no key required) and caches briefly in KV - weather goes stale fast, so this
@@ -24,19 +25,20 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const url = new URL(context.request.url);
   const icao = url.searchParams.get('icao')?.toUpperCase();
 
-  if (!icao) {
-    return new Response(JSON.stringify({ error: 'Missing icao parameter' }), { status: 400 });
+  if (!icao || !/^[A-Z0-9]{3,4}$/.test(icao)) {
+    return new Response(JSON.stringify({ error: 'Missing or invalid icao parameter' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   const cacheKey = `weather:${icao}`;
 
-  if (context.env.LORE_KV) {
-    const cached = await context.env.LORE_KV.get(cacheKey, { type: 'json' });
-    if (cached) {
-      return new Response(JSON.stringify(cached), {
-        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300' },
-      });
-    }
+  const cached = await readCache(context, cacheKey, CACHE_TTL_SECONDS);
+  if (cached) {
+    return new Response(JSON.stringify(cached), {
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300' },
+    });
   }
 
   try {
@@ -46,7 +48,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     });
 
     if (!res.ok) {
-      return new Response(JSON.stringify({ available: false }), { status: 200 });
+      return new Response(JSON.stringify({ available: false }), { headers: { 'Content-Type': 'application/json' } });
     }
 
     const data: any[] = await res.json();
@@ -78,16 +80,14 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       };
     }
 
-    if (context.env.LORE_KV) {
-      await context.env.LORE_KV.put(cacheKey, JSON.stringify(result), { expirationTtl: CACHE_TTL_SECONDS });
-    }
+    writeCache(context, cacheKey, result, CACHE_TTL_SECONDS);
 
     return new Response(JSON.stringify(result), {
       headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300' },
     });
-  } catch (err: any) {
-    return new Response(JSON.stringify({ available: false, error: err.message || 'Weather lookup failed' }), {
-      status: 200,
+  } catch {
+    return new Response(JSON.stringify({ available: false, error: 'Weather lookup failed' }), {
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 };

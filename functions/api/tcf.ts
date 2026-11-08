@@ -1,4 +1,5 @@
 import { USER_AGENT } from '../../shared/userAgent';
+import { readCache, writeCache } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/tcf
 // The Aviation Weather Center's TFM Convective Forecast (TCF), from aviationweather.gov (free, no
 // key): where thunderstorms are expected over the US 4, 6 and 8 hours ahead, with how much of each
@@ -82,10 +83,8 @@ export function buildTcf(features: any[], now: number): TcfArea[] {
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
-  if (context.env.LORE_KV) {
-    const cached = await context.env.LORE_KV.get(CACHE_KEY, { type: 'json' });
-    if (cached) return json(cached);
-  }
+  const cached = await readCache(context, CACHE_KEY, CACHE_TTL_SECONDS);
+  if (cached) return json(cached);
 
   let data: any = null;
   try {
@@ -98,8 +97,6 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const features: any[] = Array.isArray(data?.features) ? data.features : [];
   const result = { areas: buildTcf(features, Math.floor(Date.now() / 1000)), complete: !!data };
 
-  if (result.complete && context.env.LORE_KV) {
-    await context.env.LORE_KV.put(CACHE_KEY, JSON.stringify(result), { expirationTtl: CACHE_TTL_SECONDS });
-  }
+  if (result.complete) writeCache(context, CACHE_KEY, result, CACHE_TTL_SECONDS);
   return json(result);
 };

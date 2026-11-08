@@ -1,4 +1,5 @@
 import { USER_AGENT } from '../../shared/userAgent';
+import { readCache, writeCache } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/afd?lat=..&lon=..
 // The aviation section of the National Weather Service forecast discussion (US only): the
 // forecaster's own notes on what to expect for flying, written about four times a day.
@@ -59,14 +60,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   if (!Number.isFinite(lat) || !Number.isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) {
     return json({ error: 'lat and lon are required' }, 400);
   }
-  const kv = context.env.LORE_KV;
   const point = `${lat.toFixed(2)},${lon.toFixed(2)}`;
 
   try {
     // 1. Forecast office for the position (outside the US, weather.gov answers 404).
     let office: { id: string; name?: string } | null = null;
     const officeKey = `afd:office:v2:${point}`;
-    if (kv) office = await kv.get(officeKey, { type: 'json' });
+    office = await readCache(context, officeKey, OFFICE_TTL_SECONDS);
     if (!office) {
       const p = await getJson(`https://api.weather.gov/points/${point}`);
       // cwa is the office that writes the discussion; gridId can differ (Alaska's grids are AER/ALU).
@@ -76,12 +76,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       office = { id, name: undefined };
       const officeInfo = await getJson(`https://api.weather.gov/offices/${id}`).catch(() => null);
       office.name = officeInfo?.name || (city ? `near ${city}` : undefined);
-      if (kv) await kv.put(officeKey, JSON.stringify(office), { expirationTtl: OFFICE_TTL_SECONDS });
+      writeCache(context, officeKey, office, OFFICE_TTL_SECONDS);
     }
 
     // 2. That office's latest discussion, cut to the aviation section.
     const afdKey = `afd:text:v2:${office.id}`;
-    const cached = kv ? await kv.get(afdKey, { type: 'json' }) : null;
+    const cached = await readCache(context, afdKey, AFD_TTL_SECONDS);
     if (cached) return json(cached);
 
     const list = await getJson(`https://api.weather.gov/products/types/AFD/locations/${office.id}`);
@@ -92,9 +92,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const result = section
       ? { available: true, office: office.id, officeName: office.name, issued: product.issuanceTime || latest.issuanceTime, ...section }
       : { available: false, office: office.id };
-    if (kv) await kv.put(afdKey, JSON.stringify(result), { expirationTtl: AFD_TTL_SECONDS });
+    writeCache(context, afdKey, result, AFD_TTL_SECONDS);
     return json(result);
-  } catch (err: any) {
-    return json({ available: false, error: err.message || 'NWS lookup failed' });
+  } catch {
+    return json({ available: false, error: 'NWS lookup failed' });
   }
 };

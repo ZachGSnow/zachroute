@@ -1,4 +1,5 @@
 import { USER_AGENT } from '../../shared/userAgent';
+import { readCache, writeCache } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/metar-bbox?bbox=minLat,minLon,maxLat,maxLon
 // Every METAR station in a map rectangle in one request (flight category, wind, temperature),
 // for the map's weather layer. Trimmed and KV-cached 5 minutes per rounded box.
@@ -33,10 +34,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   const key = `${minLat},${minLon},${maxLat},${maxLon}`;
   const cacheKey = `metarbox:v2:${key}`; // v2: stations carry temperature and dewpoint
-  if (context.env.LORE_KV) {
-    const cached = await context.env.LORE_KV.get(cacheKey, { type: 'json' });
-    if (cached) return json(cached);
-  }
+  const cached = await readCache(context, cacheKey, CACHE_TTL_SECONDS);
+  if (cached) return json(cached);
 
   try {
     const res = await fetch(`https://aviationweather.gov/api/data/metar?bbox=${key}&format=json`, {
@@ -60,11 +59,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       }));
 
     const result = { stations };
-    if (context.env.LORE_KV) {
-      await context.env.LORE_KV.put(cacheKey, JSON.stringify(result), { expirationTtl: CACHE_TTL_SECONDS });
-    }
+    writeCache(context, cacheKey, result, CACHE_TTL_SECONDS);
     return json(result);
-  } catch (err: any) {
-    return json({ stations: [], error: err.message || 'METAR box lookup failed' });
+  } catch {
+    return json({ stations: [], error: 'METAR box lookup failed' });
   }
 };

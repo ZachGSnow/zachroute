@@ -1,4 +1,5 @@
 import { USER_AGENT } from '../../shared/userAgent';
+import { readCache, writeCache } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/airspace?cell=lat,lon
 // Airspace for one 4 x 4 degree cell (south-west corner lat,lon, multiples of 4). In the US, from
 // the FAA's open data services (NASR; public domain, no key): class B, C and D airspace (class E
@@ -164,17 +165,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   if (!cellTouchesUs(cell)) return json({ areas: [], complete: true, sources: [] });
 
   const key = `airspace:v1:${cell.join(',')}`;
-  if (context.env.LORE_KV) {
-    const cached = await context.env.LORE_KV.get(key, { type: 'json' });
-    if (cached) return json(cached);
-  }
+  const cached = await readCache(context, key, CACHE_TTL_SECONDS);
+  if (cached) return json(cached);
   const [cls, sua] = await Promise.all([
     getJson(query('Class_Airspace', "CLASS IN ('B','C','D')", `GLOBAL_ID,NAME,CLASS,${LIMIT_FIELDS}`, cell)),
     getJson(query('Special_Use_Airspace', '1=1', `GLOBAL_ID,NAME,TYPE_CODE,TIMESOFUSE,${LIMIT_FIELDS}`, cell)),
   ]);
   const result = { areas: [...specialUseAreas(sua), ...classAreas(cls)], complete: !!cls && !!sua, sources: ['FAA'] };
-  if (result.complete && context.env.LORE_KV) {
-    await context.env.LORE_KV.put(key, JSON.stringify(result), { expirationTtl: CACHE_TTL_SECONDS });
-  }
+  if (result.complete) writeCache(context, key, result, CACHE_TTL_SECONDS);
   return json(result);
 };

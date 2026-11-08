@@ -1,4 +1,5 @@
 import { USER_AGENT } from '../../shared/userAgent';
+import { readCache, writeCache } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/spc?day=1|2
 // NOAA Storm Prediction Center categorical convective outlook (free, no key): where severe
 // thunderstorms (large hail, damaging wind, tornadoes) are expected over the US today (day 1) or
@@ -67,10 +68,8 @@ export function buildOutlook(day: 1 | 2, data: any): SpcOutlook {
 export const onRequest: PagesFunction<Env> = async (context) => {
   const day = new URL(context.request.url).searchParams.get('day') === '2' ? 2 : 1;
   const key = `spc:v1:${day}`;
-  if (context.env.LORE_KV) {
-    const cached = await context.env.LORE_KV.get(key, { type: 'json' });
-    if (cached) return json(cached);
-  }
+  const cached = await readCache(context, key, CACHE_TTL_SECONDS);
+  if (cached) return json(cached);
   let data: any = null;
   try {
     const res = await fetch(URLS[day], { headers: { 'User-Agent': USER_AGENT, Accept: 'application/geo+json' } });
@@ -80,8 +79,6 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   }
   if (!data) return json({ day, areas: [], error: 'upstream' }, 502);
   const result = buildOutlook(day, data);
-  if (context.env.LORE_KV) {
-    await context.env.LORE_KV.put(key, JSON.stringify(result), { expirationTtl: CACHE_TTL_SECONDS });
-  }
+  writeCache(context, key, result, CACHE_TTL_SECONDS);
   return json(result);
 };

@@ -1,4 +1,5 @@
 import { USER_AGENT } from '../../shared/userAgent';
+import { readCache, writeCache } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/airsigmet
 // Active weather advisories as polygons from aviationweather.gov (free, no key):
 //   - US SIGMETs (convection, severe turbulence and icing)
@@ -322,10 +323,8 @@ async function getFeed(url: string): Promise<any[] | null> {
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
-  if (context.env.LORE_KV) {
-    const cached = await context.env.LORE_KV.get(CACHE_KEY, { type: 'json' });
-    if (cached) return json(cached);
-  }
+  const cached = await readCache(context, CACHE_KEY, CACHE_TTL_SECONDS);
+  if (cached) return json(cached);
 
   const [us, intl, cwa, ...gairmets] = await Promise.all([
     getFeed(US_URL),
@@ -339,8 +338,6 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const result = { advisories };
 
   // Only cache a complete answer, so one feed being down does not hide it for five minutes.
-  if (us && intl && cwa && gairmets.every(Boolean) && context.env.LORE_KV) {
-    await context.env.LORE_KV.put(CACHE_KEY, JSON.stringify(result), { expirationTtl: CACHE_TTL_SECONDS });
-  }
+  if (us && intl && cwa && gairmets.every(Boolean)) writeCache(context, CACHE_KEY, result, CACHE_TTL_SECONDS);
   return json(result);
 };

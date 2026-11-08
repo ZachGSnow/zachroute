@@ -1,4 +1,5 @@
 import { USER_AGENT } from '../../shared/userAgent';
+import { readCache, writeCache } from '../../shared/apiCache';
 import { resolveAirportLore, WikiUpstreamError } from '../../shared/wikiLore.js';
 // Cloudflare Pages Function: /api/lore?iata=XXX[&title=...&name=...&lat=..&lon=..]
 // Resolves the airport's Wikipedia summary (linked article first, then a checked search; see
@@ -9,6 +10,7 @@ interface Env {
 }
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
+const LORE_TTL_SECONDS = 7 * 24 * 60 * 60;
 
 function clean(value: string | null, max: number): string | undefined {
   const v = value?.trim();
@@ -44,13 +46,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     query.title ? `lore:v2:t:${query.title}:${place}` : `lore:v2:q:${iata}:${query.name || ''}:${place}`
   ).slice(0, 480);
 
-  if (context.env.LORE_KV) {
-    const cached: any = await context.env.LORE_KV.get(cacheKey, { type: 'json' });
-    if (cached) {
-      return new Response(JSON.stringify({ ...cached, iata }), {
-        headers: { ...JSON_HEADERS, 'Cache-Control': 'public, max-age=86400' },
-      });
-    }
+  const cached: any = await readCache(context, cacheKey, LORE_TTL_SECONDS);
+  if (cached) {
+    return new Response(JSON.stringify({ ...cached, iata }), {
+      headers: { ...JSON_HEADERS, 'Cache-Control': 'public, max-age=86400' },
+    });
   }
 
   try {
@@ -63,16 +63,14 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     }
 
     // Cache in KV (7 days) if bound
-    if (context.env.LORE_KV) {
-      await context.env.LORE_KV.put(cacheKey, JSON.stringify(found), { expirationTtl: 604800 });
-    }
+    writeCache(context, cacheKey, found, LORE_TTL_SECONDS);
 
     return new Response(JSON.stringify({ iata, ...found }), {
       headers: { ...JSON_HEADERS, 'Cache-Control': 'public, max-age=86400' },
     });
   } catch (err: any) {
     const limited = err instanceof WikiUpstreamError && err.status === 429;
-    return new Response(JSON.stringify({ error: err.message || 'Wikipedia lookup failed' }), {
+    return new Response(JSON.stringify({ error: limited ? 'Wikipedia is busy, try again shortly' : 'Wikipedia lookup failed' }), {
       status: limited ? 503 : 502,
       headers: { ...JSON_HEADERS, ...(limited ? { 'Retry-After': '60' } : {}) },
     });

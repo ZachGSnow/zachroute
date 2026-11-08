@@ -1,4 +1,5 @@
 import { USER_AGENT } from '../../shared/userAgent';
+import { readCache, writeCache } from '../../shared/apiCache';
 // Cloudflare Pages Function: /api/pireps
 //   ?icao=XXXX                      pilot reports within 75nm of an airport (last 3 hours)
 //   ?bbox=minLat,minLon,maxLat,maxLon  notable pilot reports in a map rectangle (map layer / route corridor)
@@ -77,10 +78,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     return json({ error: 'Provide icao or bbox' }, 400);
   }
 
-  if (context.env.LORE_KV) {
-    const cached = await context.env.LORE_KV.get(cacheKey, { type: 'json' });
-    if (cached) return json(cached);
-  }
+  const cached = await readCache(context, cacheKey, CACHE_TTL_SECONDS);
+  if (cached) return json(cached);
 
   try {
     const res = await fetch(upstream, { headers: { 'User-Agent': USER_AGENT } });
@@ -95,11 +94,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       .slice(0, notableOnly ? 300 : 40);
 
     const result = { available: true, reports };
-    if (context.env.LORE_KV) {
-      await context.env.LORE_KV.put(cacheKey, JSON.stringify(result), { expirationTtl: CACHE_TTL_SECONDS });
-    }
+    writeCache(context, cacheKey, result, CACHE_TTL_SECONDS);
     return json(result);
-  } catch (err: any) {
-    return json({ available: false, reports: [], error: err.message || 'PIREP lookup failed' });
+  } catch {
+    return json({ available: false, reports: [], error: 'PIREP lookup failed' });
   }
 };

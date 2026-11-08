@@ -80,9 +80,14 @@ Functions are typechecked against the Workers runtime types (`@cloudflare/worker
 through `functions/tsconfig.json`, which `npm run typecheck` runs after the app's own tsconfig.
 
 Each function validates its input, calls one upstream source with an identifying User-Agent,
-trims the response to what the client renders, and caches it in the `LORE_KV` namespace:
+trims the response to what the client renders, and caches it through `shared/apiCache.ts`.
+Answers that expire within an hour go to the Cloudflare Cache API (free, no write limit, kept per
+data center); longer ones (lore, forecast offices, elevation profiles, airspace, volcano records)
+go to the `LORE_KV` namespace, which allows only 1,000 writes a day on the free plan. A failed
+cache read or write never costs the caller its answer, and errors sent to the browser never carry
+an upstream error message.
 
-| Endpoint | Upstream | KV TTL |
+| Endpoint | Upstream | Cache TTL |
 |---|---|---|
 | `/api/weather?icao=` | aviationweather.gov METAR | 10 min |
 | `/api/taf?icao=` | aviationweather.gov TAF | 15 min |
