@@ -23,20 +23,20 @@
     "data": "node scripts/etl_ourairports.js && node scripts/openaip_airspace.js && node scripts/build_us_routes.js && node scripts/build_t100.js && node scripts/build_airlines.js && node scripts/build_connections.js"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20261027.1",
+    "@cloudflare/workers-types": "^5.20261104.1",
     "@resvg/resvg-js": "^2.6.2",
     "@types/leaflet": "^1.9.12",
     "@types/suncalc": "^1.9.2",
-    "geo-tz": "^8.1.10",
+    "geo-tz": "^8.1.11",
     "geomagnetism": "^0.2.0",
     "leaflet": "^1.9.4",
     "typescript": "^7.0.2",
-    "vite": "^8.3.4",
+    "vite": "^8.3.6",
     "vite-plugin-pwa": "^2.0.0",
-    "vitest": "^5.0.4"
+    "vitest": "^5.1.0"
   },
   "dependencies": {
-    "suncalc": "^2.1.1"
+    "suncalc": "^2.1.2"
   },
   "homepage": "https://zachroute.pages.dev"
 }
