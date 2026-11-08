@@ -19,3 +19,6 @@
 *.webp binary
 *.pdf  binary
 *.zip  binary
+
+# Cloudflare Pages reads this; deploys run from Windows checkouts, so keep it LF.
+public/_headers text eol=lf
