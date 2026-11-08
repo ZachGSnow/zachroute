@@ -27,6 +27,7 @@ import {
 } from './legends';
 import { severityLegendItems } from './severity';
 import { liveLegend } from './liveTrack';
+import { escapeHtml } from './escapeHtml';
 
 export interface HelpEntry {
   /** What it shows and how to read it. */
@@ -255,20 +256,19 @@ export const TOPICS: Array<{ id: string; title: string; html: string }> = [
   },
 ];
 
-const esc = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 function entryHtml(f: Feature, e: HelpEntry): string {
   const facts = [
-    e.coverage && `<dt>Where</dt><dd>${esc(e.coverage)}</dd>`,
-    e.updates && `<dt>Updates</dt><dd>${esc(e.updates)}</dd>`,
-    e.source && `<dt>Source</dt><dd>${esc(e.source)}</dd>`,
+    e.coverage && `<dt>Where</dt><dd>${escapeHtml(e.coverage)}</dd>`,
+    e.updates && `<dt>Updates</dt><dd>${escapeHtml(e.updates)}</dd>`,
+    e.source && `<dt>Source</dt><dd>${escapeHtml(e.source)}</dd>`,
   ]
     .filter(Boolean)
     .join('');
   const legends = e.legends ? `<div class="help-legends">${e.legends().map(legendRowHtml).join('')}</div>` : '';
   return `<article class="help-entry" id="help-${f.id}" data-help-entry="${f.id}">
-    <h4>${esc(f.label)}</h4>
-    <p>${esc(e.about)}</p>${facts ? `<dl class="help-facts">${facts}</dl>` : ''}${legends}
+    <h4>${escapeHtml(f.label)}</h4>
+    <p>${escapeHtml(e.about)}</p>${facts ? `<dl class="help-facts">${facts}</dl>` : ''}${legends}
   </article>`;
 }
 

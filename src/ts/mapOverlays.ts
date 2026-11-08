@@ -69,6 +69,7 @@ import { fetchFires, type Fire } from './fires';
 import { aerosolTileUrl, aerosolDays, AEROSOL_MAX_NATIVE_ZOOM, fillFromYesterday, keepAerosolPixels } from './aerosolTiles';
 import { compassPoint } from './forecast';
 import { summarizePirep, pirepAgeLabel, pirepAltitudeLabel, type RawPirep, type PirepKind } from './pirepText';
+import { escapeHtml } from './escapeHtml';
 
 // Map overlays that sit on top of the base map and the route layers:
 //   - weather stations (wind arrows for every METAR station in view; a ring only when not VFR)
@@ -87,10 +88,6 @@ const WX_COLOR = FLIGHT_CATEGORY_COLOR;
 
 function hasCoords(r: RunwayDetail): boolean {
   return [r.leLat, r.leLon, r.heLat, r.heLon].every((v) => typeof v === 'number' && Number.isFinite(v));
-}
-
-function esc(text: string): string {
-  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 // ---------------------------------------------------------------------------
@@ -503,11 +500,11 @@ function advisoryLayers(adv: Advisory, strong: boolean): L.Layer[] {
   });
   const alt = advisoryAltitude(adv);
   const popup =
-    `<strong>${esc(severityName(level))}: ${esc(typeLabel(adv))}: ${esc(advisoryTitle(adv))}</strong>` +
-      (adv.region ? `<br>${esc(issuerLabel(adv))}` : '') +
-      (alt ? `<br>${esc(alt)}` : '') +
-      (adv.validTo ? `<br>Until ${esc(timeLabel(adv.validTo))}` : '') +
-      (adv.raw ? `<br><small style="color:#64748b">${esc(String(adv.raw).replace(/\s+/g, ' ').slice(0, 320))}</small>` : '');
+    `<strong>${escapeHtml(severityName(level))}: ${escapeHtml(typeLabel(adv))}: ${escapeHtml(advisoryTitle(adv))}</strong>` +
+      (adv.region ? `<br>${escapeHtml(issuerLabel(adv))}` : '') +
+      (alt ? `<br>${escapeHtml(alt)}` : '') +
+      (adv.validTo ? `<br>Until ${escapeHtml(timeLabel(adv.validTo))}` : '') +
+      (adv.raw ? `<br><small style="color:#64748b">${escapeHtml(String(adv.raw).replace(/\s+/g, ' ').slice(0, 320))}</small>` : '');
   poly.bindPopup(popup);
   const [lat, lon] = ringMiddle(adv.coords);
   const glyph = L.marker([lat, lon], {
@@ -571,7 +568,7 @@ function pirepMarker(p: RawPirep): L.Marker | null {
   });
   const level = summary.severity ? `${severityName(summary.severity)}: ` : '';
   const meta = [pirepAltitudeLabel(p), placeNear(p.lat, p.lon), p.acType, pirepAgeLabel(p.obsTime)].filter(Boolean).join(' &middot; ');
-  marker.bindPopup(`<strong>${esc(level + summary.headline)}</strong><br><small>${meta}</small><br><small style="color:#64748b">Reported by a pilot</small>`);
+  marker.bindPopup(`<strong>${escapeHtml(level + summary.headline)}</strong><br><small>${meta}</small><br><small style="color:#64748b">Reported by a pilot</small>`);
   return marker;
 }
 
@@ -645,8 +642,8 @@ function fireMarker(f: Fire): L.CircleMarker {
   const when = new Date(f.time);
   const label = `${when.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })} ${f.time.slice(11, 16)} UTC`;
   marker.bindPopup(
-    `<strong>Fire or heat source: ${esc(severityName(level).toLowerCase())}</strong><br>${Math.round(f.frp)} MW, seen by satellite ${esc(label)}` +
-      `<br><small>${esc(placeNear(f.lat, f.lon))}</small>` +
+    `<strong>Fire or heat source: ${escapeHtml(severityName(level).toLowerCase())}</strong><br>${Math.round(f.frp)} MW, seen by satellite ${escapeHtml(label)}` +
+      `<br><small>${escapeHtml(placeNear(f.lat, f.lon))}</small>` +
       (f.pixels && f.pixels > 1 ? `<br><small>${f.pixels} neighbouring detections, summed</small>` : '') +
       `<br><small style="color:#64748b">NASA FIRMS (${f.source === 'VIIRS' ? 'VIIRS, 375 m' : 'MODIS, 1 km'}). Includes wildfires, field burning and gas flares.</small>`
   );
@@ -818,8 +815,8 @@ function tfrPolygons(t: Tfr, strong: boolean): L.Polygon[] {
       fillOpacity: strong ? 0.22 : 0.12,
     });
     poly.bindPopup(
-      `<strong>${esc(severityName(level))}: flight restriction (${esc(tfrTypeLabel(t.type))})</strong><br>${esc(tfrPlace(t.description))}` +
-        `<br><a href="${esc(t.url)}" target="_blank" rel="noopener">FAA details (altitudes, times)</a>`
+      `<strong>${escapeHtml(severityName(level))}: flight restriction (${escapeHtml(tfrTypeLabel(t.type))})</strong><br>${escapeHtml(tfrPlace(t.description))}` +
+        `<br><a href="${escapeHtml(t.url)}" target="_blank" rel="noopener">FAA details (altitudes, times)</a>`
     );
     return poly;
   });
@@ -868,11 +865,11 @@ function tcfLayers(a: TcfArea): L.Layer[] {
   const color = severityColor(level);
   const low = a.confidence === 'low';
   const popup =
-    `<strong>${esc(severityName(level))}: thunderstorms forecast</strong>` +
-    `<br>Coverage: ${esc(tcfCoverageLabel(a))}` +
-    `<br>Confidence: ${esc(a.confidence || 'not given')}` +
-    (a.tops ? `<br>Tops to ${esc(topsLabel(a.tops))}` : '') +
-    `<br>For ${esc(timeLabel(a.validTime))}` +
+    `<strong>${escapeHtml(severityName(level))}: thunderstorms forecast</strong>` +
+    `<br>Coverage: ${escapeHtml(tcfCoverageLabel(a))}` +
+    `<br>Confidence: ${escapeHtml(a.confidence || 'not given')}` +
+    (a.tops ? `<br>Tops to ${escapeHtml(topsLabel(a.tops))}` : '') +
+    `<br>For ${escapeHtml(timeLabel(a.validTime))}` +
     `<br><small style="color:#64748b">TFM Convective Forecast, Aviation Weather Center</small>`;
   const shape =
     a.kind === 'line'
@@ -982,8 +979,8 @@ async function refreshSpc(announce: boolean) {
     const level = spcLevel(area.category);
     const color = level === 0 ? SPC_TSTM_COLOR : severityColor(level);
     const popup =
-      `<strong>${level === 0 ? '' : `${esc(severityName(level))}: `}${esc(spcCategoryName(area.category))}</strong>` +
-      (when ? `<br>${esc(when)}` : '') +
+      `<strong>${level === 0 ? '' : `${escapeHtml(severityName(level))}: `}${escapeHtml(spcCategoryName(area.category))}</strong>` +
+      (when ? `<br>${escapeHtml(when)}` : '') +
       `<br><small style="color:#64748b">NOAA Storm Prediction Center, day ${day} outlook</small>`;
     for (const poly of area.polygons) {
       spcLayer.addLayer(
@@ -1045,10 +1042,10 @@ async function refreshGeohazards(announce: boolean) {
     const color = severityColor(level);
     geoLayer.addLayer(
       L.circleMarker([q.lat, q.lon], { pane: 'hazards', radius: quakeRadius(q.mag), color, weight: 1.5, fillColor: color, fillOpacity: 0.35 }).bindPopup(
-        `<strong>${esc(severityName(level))}: magnitude ${q.mag} earthquake</strong><br>${esc(q.place)}` +
-          `<br>${esc(quakeAgeLabel(q.time))}${q.depthKm !== undefined ? `, ${q.depthKm} km deep` : ''}` +
+        `<strong>${escapeHtml(severityName(level))}: magnitude ${q.mag} earthquake</strong><br>${escapeHtml(q.place)}` +
+          `<br>${escapeHtml(quakeAgeLabel(q.time))}${q.depthKm !== undefined ? `, ${q.depthKm} km deep` : ''}` +
           (q.tsunami ? '<br>USGS flags a possible tsunami: check official warnings' : '') +
-          (q.url ? `<br><a href="${esc(q.url)}" target="_blank" rel="noopener">USGS event page</a>` : '')
+          (q.url ? `<br><a href="${escapeHtml(q.url)}" target="_blank" rel="noopener">USGS event page</a>` : '')
       )
     );
   }
@@ -1062,11 +1059,11 @@ async function refreshGeohazards(announce: boolean) {
         icon: L.divIcon({ className: 'hazard-glyph', html: `<span style="--c:${color}">${HAZARD_GLYPH.ASH}</span>`, iconSize: [20, 20], iconAnchor: [10, 10] }),
         keyboard: false,
       }).bindPopup(
-        `<strong>${esc(severityName(level))}: ${esc(v.name)} volcano</strong>` +
-          `<br>Aviation color code ${esc(colorCodeLabel(v.colorCode))}` +
-          (v.alertLevel ? `<br>Alert level ${esc(v.alertLevel)}` : '') +
-          (v.observatory ? `<br>${esc(v.observatory)}` : '') +
-          (v.url ? `<br><a href="${esc(v.url)}" target="_blank" rel="noopener">Latest notice</a>` : '')
+        `<strong>${escapeHtml(severityName(level))}: ${escapeHtml(v.name)} volcano</strong>` +
+          `<br>Aviation color code ${escapeHtml(colorCodeLabel(v.colorCode))}` +
+          (v.alertLevel ? `<br>Alert level ${escapeHtml(v.alertLevel)}` : '') +
+          (v.observatory ? `<br>${escapeHtml(v.observatory)}` : '') +
+          (v.url ? `<br><a href="${escapeHtml(v.url)}" target="_blank" rel="noopener">Latest notice</a>` : '')
       )
     );
   }
@@ -1091,13 +1088,13 @@ function stormTimeLabel(iso: string): string {
 
 function stormPopup(storm: Cyclone): string {
   const nhc = storm.source === 'NHC';
-  const source = nhc ? 'National Hurricane Center advisory' : storm.source ? `${esc(storm.source)} advisory via GDACS` : 'via GDACS';
-  const link = storm.report ? `<br><a href="${esc(storm.report)}" target="_blank" rel="noopener">${nhc ? 'NHC advisory' : 'GDACS report'}</a>` : '';
+  const source = nhc ? 'National Hurricane Center advisory' : storm.source ? `${escapeHtml(storm.source)} advisory via GDACS` : 'via GDACS';
+  const link = storm.report ? `<br><a href="${escapeHtml(storm.report)}" target="_blank" rel="noopener">${nhc ? 'NHC advisory' : 'GDACS report'}</a>` : '';
   return (
-    `<strong>${esc(severityName(cycloneSeverity(storm.category, storm.peakWindKmh)))}: ${esc(stormTitle(storm))}</strong>` +
+    `<strong>${escapeHtml(severityName(cycloneSeverity(storm.category, storm.peakWindKmh)))}: ${escapeHtml(stormTitle(storm))}</strong>` +
     (storm.peakWindKmh ? `<br>Strongest winds so far: ${storm.peakWindKmh} km/h (${Math.round(storm.peakWindKmh / 1.852)} kt)` : '') +
-    `<br>As of ${esc(stormTimeLabel(storm.asOf))} (${source})` +
-    (storm.alert ? `<br>Impact alert (GDACS): ${esc(storm.alert)}` : '') +
+    `<br>As of ${escapeHtml(stormTimeLabel(storm.asOf))} (${source})` +
+    (storm.alert ? `<br>Impact alert (GDACS): ${escapeHtml(storm.alert)}` : '') +
     (storm.cone ? '<br><small>Shaded: forecast uncertainty cone. Dashed: forecast track.</small>' : '') +
     link +
     '<br><small style="color:#64748b">For information only; follow official advisories.</small>'
@@ -1767,11 +1764,11 @@ let airspaceShown = '';
 function airspacePopup(a: AirspaceArea): string {
   const style = airspaceStyle(a.kind);
   return (
-    `<strong>${esc(style.label)}: ${esc(a.name)}</strong>` +
-    `<br>${esc(describeLimit(a.lower))} to ${esc(describeLimit(a.upper))}` +
-    (a.times ? `<br><small>Active: ${esc(a.times.toLowerCase().replace(/\bnotam\b/g, 'NOTAM'))}</small>` : '') +
+    `<strong>${escapeHtml(style.label)}: ${escapeHtml(a.name)}</strong>` +
+    `<br>${escapeHtml(describeLimit(a.lower))} to ${escapeHtml(describeLimit(a.upper))}` +
+    (a.times ? `<br><small>Active: ${escapeHtml(a.times.toLowerCase().replace(/\bnotam\b/g, 'NOTAM'))}</small>` : '') +
     (a.source === 'openAIP'
-      ? `<br><small style="color:#64748b"><a href="https://www.openaip.net" target="_blank" rel="noopener">openAIP</a> (CC BY-NC 4.0)${a.built ? `, data as of ${esc(a.built)}` : ''}. Not for navigation.</small>`
+      ? `<br><small style="color:#64748b"><a href="https://www.openaip.net" target="_blank" rel="noopener">openAIP</a> (CC BY-NC 4.0)${a.built ? `, data as of ${escapeHtml(a.built)}` : ''}. Not for navigation.</small>`
       : '<br><small style="color:#64748b">FAA airspace data. Not for navigation.</small>')
   );
 }
@@ -2019,7 +2016,7 @@ function addEndLabel(target: L.LayerGroup, ident: string, end: { lat: number; lo
   const rot = labelRotation(outward);
   const icon = L.divIcon({
     className: 'rwy-label',
-    html: `<span style="transform:rotate(${rot}deg)">${esc(ident)}</span>`,
+    html: `<span style="transform:rotate(${rot}deg)">${escapeHtml(ident)}</span>`,
     iconSize: [44, 18],
     iconAnchor: [22, 9],
   });

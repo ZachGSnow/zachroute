@@ -27,6 +27,7 @@ import {
   type LiveRoute,
 } from './liveTrack';
 import { resolveCode } from './searchParser';
+import { escapeHtml } from './escapeHtml';
 
 const NM_TO_MI = 1.150779;
 
@@ -121,7 +122,6 @@ function redraw() {
 // ---------------------------------------------------------------------------------------------
 
 const strip = () => document.getElementById('live-overview');
-const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 function drawOverview(fit: boolean) {
   const map = lastMap;
@@ -157,8 +157,8 @@ function renderStrip() {
     .join(' \u00b7 ');
   const name = a.callsign || a.reg || a.hex.toUpperCase();
   el.innerHTML =
-    `<div class="live-ov-title"><strong>${esc(name)}</strong> ${esc(routePlaces(overviewLeg, cityOf))}</div>` +
-    `<div class="live-ov-facts">${esc(facts)}${overviewOut ? ` <span class="live-ov-out">Out of range, last seen ${esc(when)}</span>` : ''}</div>` +
+    `<div class="live-ov-title"><strong>${escapeHtml(name)}</strong> ${escapeHtml(routePlaces(overviewLeg, cityOf))}</div>` +
+    `<div class="live-ov-facts">${escapeHtml(facts)}${overviewOut ? ` <span class="live-ov-out">Out of range, last seen ${escapeHtml(when)}</span>` : ''}</div>` +
     `<div class="live-ov-actions"><button type="button" class="live-banner-btn" data-ov="weather">Weather along this route</button>` +
     `<button type="button" class="live-banner-btn live-banner-btn--plain" data-ov="back">Back to Live track</button></div>`;
   el.hidden = false;
