@@ -1,0 +1,14 @@
+# Cloudflare Pages response headers for the static app (not the /api Functions).
+#
+# Content-Security-Policy:
+#   script-src 'self'     the app bundle and registerSW.js only: no inline scripts, no CDN.
+#   style-src             'unsafe-inline' because cards and Leaflet set style attributes.
+#   img-src, connect-src  any https host: map tiles, radar, satellite and weather APIs come from
+#                         about a dozen providers, and missing one would silently blank a layer.
+#   object-src, base-uri, form-action, frame-ancestors are locked down.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https:; font-src 'self' data:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(self), camera=(), microphone=(), payment=(), usb=()

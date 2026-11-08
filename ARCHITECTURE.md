@@ -167,6 +167,16 @@ the app and no third-party script loads at runtime. Map tiles and the other API 
 `index.html` links the manifest and the generated icons; all three (manifest link, valid icons,
 registered worker) are needed for Chrome to offer a real install instead of a shortcut.
 
+## Security headers
+
+`public/_headers` gives every static response a Content Security Policy and a few hardening
+headers (Pages applies it to static files, not to `/api` Functions). Scripts may come only from the
+site itself, so `index.html` keeps no inline script and no CDN tag; `test/headers.test.ts` checks
+both. Images and `fetch` may reach any `https:` host, because map tiles, radar, satellite and
+weather data come from about a dozen providers and a missing one would silently blank a layer.
+`upgrade-insecure-requests` is left out: on a plain-http local server it rewrites the
+`/index.html` -> `/` redirect to `https://localhost`, and the service worker then fails to install.
+
 ## Deployment
 
 Cloudflare Pages, direct upload: `npm run build`, then
